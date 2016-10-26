@@ -1,5 +1,5 @@
 {
-    "name": "payone-gmbH/magento-2",
+    "name": "payone-gmbh/magento-2",
     "description": "PAYONE FinanceGate payment gateway for all german online and offline payment methods including PayPal, all major Credit Cards and Maestro.",
     "type": "magento2-module",
     "version": "1.2.2",
