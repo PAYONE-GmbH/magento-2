@@ -1,0 +1,213 @@
+<?php
+
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+namespace Payone\Core\Model\Api;
+
+use Payone\Core\Model\Api\Request\Base;
+use Magento\Sales\Model\Order;
+
+/**
+ * Collect all invoice parameters
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+class Invoice
+{
+    /**
+     * Index of added invoice items
+     *
+     * @var integer
+     */
+    protected $iIndex = 1;
+
+    /**
+     * Invoice amount
+     *
+     * @var integer
+     */
+    protected $dAmount = 0;
+
+    /**
+     * Vat rate for following entities which may not have the vat attached to it
+     *
+     * @var double
+     */
+    protected $dTax = false;
+
+    /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
+     * Request object
+     *
+     * @var Base
+     */
+    protected $oRequest;
+
+    /**
+     * Constructor
+     *
+     * @param  \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
+     * @return void
+     */
+    public function __construct(\Payone\Core\Helper\Toolkit $toolkitHelper)
+    {
+        $this->toolkitHelper = $toolkitHelper;
+    }
+
+    /**
+     * Add parameters for a invoice position
+     *
+     * @param  string $sId       item identification
+     * @param  double $dPrice    item price
+     * @param  string $sItemType item type
+     * @param  int    $iAmount   item amount
+     * @param  string $sDesc     item description
+     * @param  double $dVat      item tax rate
+     * @return void
+     */
+    protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat)
+    {
+        $this->oRequest->addParameter('id['.$this->iIndex.']', $sId);// add invoice item id
+        $this->oRequest->addParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100);// expected in smallest unit of currency
+        $this->oRequest->addParameter('it['.$this->iIndex.']', $sItemType);// add invoice item type
+        $this->oRequest->addParameter('no['.$this->iIndex.']', $iAmount);// add invoice item amount
+        $this->oRequest->addParameter('de['.$this->iIndex.']', $sDesc);// add invoice item description
+        $this->oRequest->addParameter('va['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dVat * 100, 0));// expected * 100 to also handle vats with decimals
+        $this->dAmount += $dPrice * $iAmount;// needed for return of the main method
+        $this->iIndex++;// increase index for next item
+    }
+
+    /**
+     * Add invoicing data to the request and return the summed invoicing amount
+     *
+     * @param  Base  $oRequest   Request object
+     * @param  Order $oOrder     Order object
+     * @param  array $aPositions Is given with non-complete captures or debits
+     * @param  bool  $blDebit    Is the call coming from a debit request
+     * @return float
+     */
+    public function addProductInfo(Base $oRequest, Order $oOrder, $aPositions = false, $blDebit = false)
+    {
+        $this->oRequest = $oRequest;// write request to property for manipulation of the object
+        $sInvoiceAppendix = $this->toolkitHelper->getInvoiceAppendix($oOrder);// get invoice appendix
+        if (!empty($sInvoiceAppendix)) {// invoice appendix existing?
+            $this->oRequest->addParameter('invoiceappendix', $sInvoiceAppendix);// add appendix to request
+        }
+
+        foreach ($oOrder->getAllItems() as $oItem) {// add invoice items for all order items
+            $this->addProductItem($oItem, $aPositions);// add product invoice params to request
+        }
+
+        $blFirstCapture = true;// Is first capture?
+        if ($aPositions === false || $blFirstCapture === true || $blDebit === true) {
+            $this->addShippingItem($oOrder, $aPositions, $blDebit);// add shipping invoice params to request
+            $this->addDiscountItem($oOrder, $aPositions, $blDebit);// add discount invoice params to request
+        }
+        return $this->dAmount;
+    }
+
+    /**
+     * Add invoicing item for a product
+     *
+     * @param  \Magento\Sales\Model\Order\Item $oItem
+     * @param  array $aPositions
+     * @return void
+     */
+    protected function addProductItem($oItem, $aPositions)
+    {
+        if ($aPositions === false || array_key_exists($oItem->getProductId(), $aPositions) !== false) {// full or single-invoice?
+            $dItemAmount = $oItem->getQtyOrdered();// get ordered item amount
+            if ($aPositions !== false && array_key_exists($oItem->getProductId(), $aPositions) !== false) {// product existing in single-invoice?
+                $dItemAmount = $aPositions[$oItem->getProductId()]['amount'];// use amount from single-invoice
+            }
+            $dBrutPrice = $oItem->getBasePrice() + ($oItem->getBaseTaxAmount() / $oItem->getQtyOrdered());// cals single item price
+            $this->addInvoicePosition($oItem->getSku(), $dBrutPrice, 'goods', $dItemAmount, $oItem->getName(), $oItem->getTaxPercent());
+            if ($this->dTax === false) {// is dTax not set yet?
+                $this->dTax = $oItem->getTaxPercent();// set the tax for following entities which dont have the vat attached to it
+            }
+        }
+    }
+
+    /**
+     * Add invoicing item for shipping
+     *
+     * @param  Order $oOrder
+     * @param  array $aPositions
+     * @param  bool  $blDebit
+     * @return void
+     */
+    protected function addShippingItem(Order $oOrder, $aPositions, $blDebit)
+    {
+        // shipping costs existing or given for partial captures/debits?
+        if ($oOrder->getBaseShippingInclTax() != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('oxdelcost', $aPositions) !== false))) {
+            $sDelDesc = __('Surcharge').' '.__('Shipping Costs');// default description
+            if ($oOrder->getBaseShippingInclTax() < 0) {// negative shipping cost
+                $sDelDesc = __('Deduction').' '.__('Shipping Costs');// change item description to deduction
+            }
+            $sShippingSku = $this->toolkitHelper->getConfigParam('sku', 'costs', 'payone_misc');// get configured shipping SKU
+            $this->addInvoicePosition($sShippingSku, $oOrder->getBaseShippingInclTax(), 'shipment', 1, $sDelDesc, $this->dTax);
+        }
+    }
+
+    /**
+     * Add invoicing item for discounts
+     *
+     * @param  Order $oOrder
+     * @param  array $aPositions
+     * @param  bool  $blDebit
+     * @return void
+     */
+    protected function addDiscountItem(Order $oOrder, $aPositions, $blDebit)
+    {
+        // discount costs existing or given for partial captures/debis?
+        if ($oOrder->getBaseDiscountAmount() != 0 && $oOrder->getCouponCode() && ($aPositions === false || ($blDebit === false || array_key_exists('oxvoucherdiscount', $aPositions) !== false))) {
+            $dDiscount = $this->toolkitHelper->formatNumber($oOrder->getBaseDiscountAmount());
+            if ($aPositions === false) {// full invoice?
+                // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
+                // the calculated positions don't match, so we compensate for rounding-problems here
+                $dDiff = ($this->dAmount + $oOrder->getBaseDiscountAmount()) - $oOrder->getGrandTotal();// calc rounding discrepancy
+                $dDiscount -= $dDiff;// subtract difference from discount
+            }
+            $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'discount', 'payone_misc');// get configured discount SKU
+            $sDesc = (string)__('Discount');// default description
+            if ($oOrder->getCouponCode()) {// was a coupon code used?
+                $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc');// get configured voucher SKU
+                $sDesc = (string)__('Coupon').' - '.$oOrder->getCouponCode();// add counpon code to description
+            }
+            $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax);// add invoice params to request
+        }
+    }
+}

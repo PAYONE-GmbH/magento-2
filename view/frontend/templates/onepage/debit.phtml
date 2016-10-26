@@ -1,0 +1,69 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+?>
+<script type = 'text/javascript'>
+    function togglePlaceOrderButton(oCheckbox) {
+        if (oCheckbox.checked) {
+            document.getElementById('payonePlaceOrder').style.display = '';
+        } else {
+            document.getElementById('payonePlaceOrder').style.display = 'none';
+        }
+    }
+</script>
+<div id="fcpoSEPAMandate">
+    <?php if ($this->getErrorMessage()): ?>
+        <div class="message message-error error">
+            <div data-ui-id="checkout-cart-validationmessages-message-error"><?php echo $this->getErrorMessage(); ?></div>
+        </div>
+    <?php endif; ?>
+    <form method="post" action="<?php echo $this->getCheckoutUrl(); ?> ">
+        <button class="action primary checkout" type="submit">
+            <span><?php echo __('Back'); ?></span>
+        </button>
+    </form>
+    <?php if (!$this->getErrorMessage()): ?>
+        <h3 class="section">
+            <strong><?php echo __('SEPA debit note'); ?></strong>
+        </h3>
+        <?php echo __('In order to debit the SEPA direct debit, we need a SEPA mandate from you.'); ?>
+        <div class="fcpoSEPAMandate">
+            <?php echo $this->getMandateText(); ?>
+        </div>
+
+        <div class="fcpoSEPAMandateCheckbox">
+            <form method="post">
+                <input type="hidden" name="mandate_id" value="<?php echo $this->getMandateId(); ?>">
+
+                <label style="float:left; padding-right:10px;" for="mandate_status" class="control-label"><?php echo __('I want to grant the mandate (transmitted electronically)'); ?></label>
+                <input type="hidden" name="mandate_granted" value="0">
+                <input type="checkbox" name="mandate_granted" value="1" id="payoneMandateGranted" onchange="togglePlaceOrderButton(this);">
+                <div class="clear"></div><br>
+                <button class="action primary checkout" type="submit" id="payonePlaceOrder" style="display:none;">
+                    <span><?php echo __('Place Order'); ?></span>
+                </button>
+            </form>
+        </div>
+    <?php endif; ?>
+</div>

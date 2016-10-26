@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<payment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd">
+    <groups>
+        <group id="payone">
+            <label>Payone Payment Methods</label>
+        </group>
+    </groups>
+    <methods>
+        <method name="payone_cash_on_delivery">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_creditcard">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_debit">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_paypal">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_advance_payment">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_invoice">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_obt_sofortueberweisung">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_obt_giropay">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_obt_eps">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_obt_postfinance_efinance">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_obt_postfinance_card">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_obt_ideal">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_obt_przelewy">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_barzahlen">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_paydirekt">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_billsafe">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_klarna">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+    </methods>
+</payment>

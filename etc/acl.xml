@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Payone_Core::payone" title="Payone" sortOrder="500">
+                    <resource id="Payone_Core::payone_orders" title="Orders" sortOrder="10" />
+                    <resource id="Payone_Core::payone_configuration" title="Configuration" sortOrder="20">
+                        <resource id="Payone_Core::payone_configuration_general" title="General" sortOrder="10" />
+                        <resource id="Payone_Core::payone_configuration_payment" title="Payment" sortOrder="20" />
+                        <resource id="Payone_Core::payone_configuration_misc" title="Misc" sortOrder="30" />
+                        <resource id="Payone_Core::payone_configuration_export" title="Export Configuration" sortOrder="40" />
+                    </resource>
+                    <resource id="Payone_Core::payone_protocol" title="Logs" sortOrder="30">
+                        <resource id="Payone_Core::payone_protocol_api" title="Api" sortOrder="10" />
+                        <resource id="Payone_Core::payone_protocol_transactionstatus" title="Transactionstatus" sortOrder="20" />
+                    </resource>
+                    <resource id="Payone_Core::payone_information" title="Information" sortOrder="40" />
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

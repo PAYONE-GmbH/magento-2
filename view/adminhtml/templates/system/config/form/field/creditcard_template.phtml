@@ -1,0 +1,341 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+?>
+<script type="text/javascript">
+    function _groupExp(oElement) {
+        var _cur = oElement.parentNode;
+
+        if (_cur.className == "exp") {
+            _cur.className = "";
+        } else {
+            _cur.className = "exp";
+        }
+    }
+    
+    function toggleHostedTemplate() {
+        if (document.getElementById('fcpoHostedCCTemplate').style.display != "") {
+            document.getElementById('fcpoHostedCCTemplate').style.display = "";
+        } else {
+            document.getElementById('fcpoHostedCCTemplate').style.display = "none";
+        }
+    }
+    
+    function togglePreview() {
+        if (document.getElementById('fcpoHostedCCPreview').style.display != "") {
+            document.getElementById('fcpoHostedCCPreview').style.display = "";
+        } else {
+            document.getElementById('fcpoHostedCCPreview').style.display = "none";
+        }
+    }
+    
+    function inputEnable(sInputId) {
+        document.getElementById(sInputId).disabled = false;
+    }
+    function inputDisable(sInputId) {
+        document.getElementById(sInputId).disabled = true;
+    }
+    
+    function handleSizeFields(oSelect, sRowName) {
+        if (oSelect.options[oSelect.selectedIndex].value == 'custom') {
+            inputEnable('input_height_' + sRowName);
+            inputEnable('input_width_' + sRowName);
+        } else {
+            inputDisable('input_height_' + sRowName);
+            inputDisable('input_width_' + sRowName);            
+        }
+    }
+    
+    function handleCss(oSelect, sRowName) {
+        if (oSelect.options[oSelect.selectedIndex].value == 'custom') {
+            inputEnable('input_css_' + sRowName);
+        } else {
+            inputDisable('input_css_' + sRowName);
+        }
+    }
+    
+</script>
+
+<a href="#" onclick="toggleHostedTemplate();return false;" style="text-decoration: underline;line-height:33px;"><?php echo __('Custom styling hosted-Iframe') ?></a>
+<div id="fcpoHostedCCTemplate" style="display:none;padding-top:10px;">
+    <?php foreach ($this->getCCFields() as $sField): ?>
+        <table>                
+            <tr>
+                <th style="text-align:left;width:120px;">
+                    <?php echo __('FCPO_CC_ROW_CC_'.$sField).' '.__('Field') ?>
+                </th>
+                <td></td>
+            </tr>
+            <tr>
+                <td><?php echo __('Type') ?></td>
+                <td>
+                    <?php $sFieldIdent = $sField.'_type'; ?>
+                    <select name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" style="width:inherit;">
+                        <?php foreach ($this->getCCTypes($sField) as $sType => $sTitle): ?>
+                            <option value="<?php echo $sType; ?>" <?php if ($sType == $this->fcpoGetValue($sFieldIdent)) echo 'selected'; ?>><?php echo $sTitle; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo __('Digit-<br>count') ?></td>
+                <td>
+                    <?php $sFieldIdent = $sField.'_count'; ?>
+                    <input type="text" class="txt" size="4" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>">
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo __('Max-<br>digits') ?></td>
+                <td>
+                    <?php $sFieldIdent = $sField.'_max'; ?>
+                    <input type="text" class="txt" size="4" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>">
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo __('Iframe') ?></td>
+                <td>
+                    <?php $sFieldIdentIframe = $sField.'_iframe'; ?>
+                    <select name="<?php echo $this->getElement()->getName().'['.$sFieldIdentIframe.']'; ?>" onchange="handleSizeFields(this, '<?php echo $sField; ?>')" style="width:inherit;">
+                        <?php foreach ($this->getCCStyles() as $sType => $sTitle): ?>
+                            <option value="<?php echo $sType; ?>" <?php if ($sType == $this->fcpoGetValue($sFieldIdentIframe)) echo 'selected'; ?>><?php echo $sTitle; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo __('Width') ?></td>
+                <td>
+                    <?php $sFieldIdent = $sField.'_width'; ?>
+                    <input id="input_width_<?php echo $sField; ?>" type="text" class="txt" size="4" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>" <?php if ($this->fcpoGetValue($sFieldIdentIframe) != "custom") echo 'disabled'; ?>>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo __('Height') ?></td>
+                <td>
+                    <?php $sFieldIdent = $sField.'_height'; ?>
+                    <input id="input_height_<?php echo $sField; ?>" type="text" class="txt" size="4" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>" <?php if ($this->fcpoGetValue($sFieldIdentIframe) != "custom") echo 'disabled'; ?>>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo __('Style') ?></td>
+                <td>
+                    <?php $sFieldIdentCSS = $sField.'_style'; ?>
+                    <select name="<?php echo $this->getElement()->getName().'['.$sFieldIdentCSS.']'; ?>" onchange="handleCss(this, '<?php echo $sField; ?>')" style="width:inherit;">
+                        <?php foreach ($this->getCCStyles() as $sType => $sTitle): ?>
+                            <option value="<?php echo $sType; ?>" <?php if ($sType == $this->fcpoGetValue($sFieldIdentCSS)) echo 'selected'; ?>><?php echo $sTitle; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo __('CSS') ?></td>
+                <td>
+                    <?php $sFieldIdent = $sField.'_css'; ?>
+                    <input id="input_css_<?php echo $sField; ?>" type="text" class="txt" size="50" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>" <?php if ($this->fcpoGetValue($sFieldIdentCSS) != "custom") echo 'disabled'; ?>>
+                </td>
+            </tr>
+        </table>
+        <br>
+    <?php endforeach; ?>
+    <br>
+    <table>
+        <tr>
+            <td colspan="2">
+                <br><b><?php echo __('Standard-style'); ?></b>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo __('Input'); ?></td>
+            <td>
+                <?php $sFieldIdent = 'Standard_input'; ?>
+                <input type="text" size="50" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>">
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo __('Selection'); ?></td>
+            <td>
+                <?php $sFieldIdent = 'Standard_selection'; ?>
+                <input type="text" size="50" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <br><b><?php echo __('Iframe'); ?></b>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo __('Width'); ?></td>
+            <td>
+                <?php $sFieldIdent = 'Iframe_width'; ?>
+                <input type="text" size="4" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>">
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo __('Height'); ?></td>
+            <td>
+                <?php $sFieldIdent = 'Iframe_height'; ?>
+                <input type="text" size="4" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="<?php echo $this->fcpoGetValue($sFieldIdent); ?>">                
+            </td>
+        </tr>
+    </table>
+    <br>
+    <table>
+        <tr>
+            <th style="text-align:left;width:120px;"><?php echo __('Error-output'); ?></th>
+            <td></td>
+        </tr>
+        <tr>
+            <td><?php echo __('Active'); ?></td>
+            <td>
+                <?php $sFieldIdent = 'Errors_active'; ?>
+                <input type="hidden" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="false">
+                <input type="checkbox" name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>" value="true" <?php if ($this->fcpoGetValue($sFieldIdent) == "true") echo 'checked'; ?>>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo __('Language'); ?></td>
+            <td>
+                <?php $sFieldIdent = 'Errors_lang'; ?>
+                <select name="<?php echo $this->getElement()->getName().'['.$sFieldIdent.']'; ?>">
+                    <option value="de" <?php if ($this->fcpoGetValue($sFieldIdent) == 'de') echo 'selected'; ?>><?php echo __('German'); ?></option>
+                    <option value="en" <?php if ($this->fcpoGetValue($sFieldIdent) == 'en') echo 'selected'; ?>><?php echo __('English'); ?></option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <a href="#" onclick="togglePreview();return false;" style="text-decoration: underline;"><?php echo __('Preview'); ?></a>
+    <div id="fcpoHostedCCPreview" style="display:none;padding-top:10px;">
+
+        <?php echo __('You need to save before the changes are visible in the preview!'); ?>
+        <div style="border:1px solid #000;padding:10px;background-color: #fff;">
+            <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
+            <table>
+                <tr>
+                    <td><label for="cardpanInput"><?php echo __('Number:'); ?></label></td>
+                    <td><span class="inputIframe" id="cardpan"></span></td>
+                </tr>
+                <tr>
+                    <td><label for="cvcInput"><?php echo __('CVV2 or CVC2 security code:'); ?></label></td>
+                    <td><span id="cardcvc2" class="inputIframe"></span></td>
+                </tr>
+                <tr>
+                    <td><label for="expireInput"><?php echo __('Valid until:'); ?></label></td>
+                    <td>
+                        <span id="expireInput" class="inputIframe">
+                            <span id="cardexpiremonth"></span>
+                            <span id="cardexpireyear"></span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+            <script>
+                var request, config;
+                config = {
+                    fields: {
+                        cardpan: {
+                            selector: "cardpan", // put name of your div-container here
+                            type: "<?php echo $this->fcpoGetValue('Number_type'); ?>", // text (default), password, tel
+                            size: "<?php echo $this->fcpoGetValue('Number_count'); ?>",
+                            maxlength: "<?php echo $this->fcpoGetValue('Number_max'); ?>",
+                            <?php if ($this->fcpoGetValue('Number_style') == "custom"): ?>
+                                style: "<?php echo $this->fcpoGetValue('Number_css'); ?>",
+                            <?php endif; ?>
+                            <?php if ($this->fcpoGetValue('Number_iframe') == "custom"): ?>
+                                iframe: {
+                                    width: "<?php echo $this->fcpoGetValue('Number_width'); ?>",
+                                    height: "<?php echo $this->fcpoGetValue('Number_height'); ?>"
+                                }
+                            <?php endif; ?>
+                        },
+                        cardcvc2: {
+                            selector: "cardcvc2", // put name of your div-container here
+                            type: "<?php echo $this->fcpoGetValue('CVC_type'); ?>", // text (default), password, tel
+                            size: "<?php echo $this->fcpoGetValue('CVC_count'); ?>",
+                            maxlength: "<?php echo $this->fcpoGetValue('CVC_max'); ?>",
+                            <?php if ($this->fcpoGetValue('CVC_style') == "custom"): ?>
+                                style: "<?php echo $this->fcpoGetValue('CVC_css'); ?>",
+                            <?php endif; ?>
+                            <?php if ($this->fcpoGetValue('CVC_iframe') == "custom"): ?>
+                                iframe: {
+                                    width: "<?php echo $this->fcpoGetValue('CVC_width'); ?>",
+                                    height: "<?php echo $this->fcpoGetValue('CVC_height'); ?>"
+                                }
+                            <?php endif; ?>
+                        },
+                        cardexpiremonth: {
+                            selector: "cardexpiremonth", // put name of your div-container here
+                            type: "<?php echo $this->fcpoGetValue('Month_type'); ?>",
+                            size: "<?php echo $this->fcpoGetValue('Month_count'); ?>",
+                            maxlength: "<?php echo $this->fcpoGetValue('Month_max'); ?>",
+                            <?php if ($this->fcpoGetValue('Month_style') == "custom"): ?>
+                                style: "<?php echo $this->fcpoGetValue('Month_css'); ?>",
+                            <?php endif; ?>
+                            <?php if ($this->fcpoGetValue('Month_iframe') == "custom"): ?>
+                                iframe: {
+                                    width: "<?php echo $this->fcpoGetValue('Month_width'); ?>",
+                                    height: "<?php echo $this->fcpoGetValue('Month_height'); ?>"
+                                }
+                            <?php endif; ?>
+                        },
+                        cardexpireyear: {
+                            selector: "cardexpireyear", // put name of your div-container here
+                            type: "<?php echo $this->fcpoGetValue('Year_type'); ?>",
+                            size: "<?php echo $this->fcpoGetValue('Year_count'); ?>",
+                            maxlength: "<?php echo $this->fcpoGetValue('Year_max'); ?>",
+                            <?php if ($this->fcpoGetValue('Year_style') == "custom"): ?>
+                                style: "<?php echo $this->fcpoGetValue('Year_css'); ?>",
+                            <?php endif; ?>
+                            <?php if ($this->fcpoGetValue('Year_iframe') == "custom"): ?>
+                                iframe: {
+                                    width: "<?php echo $this->fcpoGetValue('Year_width'); ?>",
+                                    height: "<?php echo $this->fcpoGetValue('Year_height'); ?>"
+                                }
+                            <?php endif; ?>
+                        }
+                    },
+                    defaultStyle: {
+                        input: "<?php echo $this->fcpoGetValue('Standard_input'); ?>",
+                        select: "<?php echo $this->fcpoGetValue('Standard_selection'); ?>",
+                        iframe: {
+                            width: "<?php echo $this->fcpoGetValue('Iframe_width'); ?>",
+                            height: "<?php echo $this->fcpoGetValue('Iframe_height'); ?>"
+                        }
+                    },
+
+                    <?php if ($this->fcpoGetValue('Errors_active') == "true"): ?>
+                        error: "errorOutput", // area to display error-messages (optional)
+                        <?php if ($this->fcpoGetValue('Errors_lang') == "de"): ?>
+                            language: Payone.ClientApi.Language.de // Language to display error-messages
+                        <?php else: ?>
+                            language: Payone.ClientApi.Language.en 
+                        <?php endif; ?>
+                    <?php endif; ?>
+                };
+                var iframes = new Payone.ClientApi.HostedIFrames(config, request);
+            </script>
+        </div>
+        
+    </div>
+</div>

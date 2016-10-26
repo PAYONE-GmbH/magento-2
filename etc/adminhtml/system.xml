@@ -1,0 +1,268 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="payone" translate="label" sortOrder="1111111">
+            <label>Payone</label>
+        </tab>
+        <section id="payone_general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>General</label>
+            <tab>payone</tab>
+            <resource>Payone_Core::payone_configuration_general</resource>
+            <group id="global" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Global</label>
+                <field id="mid" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Merchant-ID</label>
+                </field>
+                <field id="portalid" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Portal-ID</label>
+                </field>
+                <field id="aid" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Sub-Account-ID</label>
+                </field>
+                <field id="key" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Security Key</label>
+                </field>
+                <field id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Referencenumber prefix</label>
+                    <comment>optional</comment>
+                    <tooltip>A unique referencenumber has to be transferred to PAYONE with every request. This is a consecutive number, normally starting at 1. When operating multiple shops ( e.g. live- and test-shop ) with the same PAYONE account-data there will be problems when the current referencenumber was already used. This can be avoided by using different prefixes on different shops.</tooltip>
+                </field>
+                <field id="allowspecific" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment from Specific Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <depends>
+                        <field id="allowspecific">1</field>
+                    </depends>
+                </field>
+                <field id="request_type" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Authorize-method</label>
+                    <source_model>Payone\Core\Model\Source\RequestType</source_model>
+                </field>
+                <field id="transmit_ip" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Transmit IP address</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+            <group id="invoicing" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Send invoicing information</label>
+                <field id="transmit_enabled" translate="label,comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Transmit invoice information</label>
+                    <comment>Please note that you can use these options only, if you subscribe to the invoicing module of PAYONE.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="invoice_appendix" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Dynamic invoice message</label>
+                    <comment>Maximum 255 digits. Placeholders: {{order_increment_id}}, {{customer_id}}</comment>
+                </field>  
+                <field id="invoice_appendix_refund" translate="label,comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Dynamic refund message</label>
+                    <comment>Maximum 255 digits. Placeholders: {{order_increment_id}}, {{order_id}}, {{customer_id}}</comment>
+                </field>  
+            </group>
+            <group id="statusmapping" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Status Mapping</label>
+                <field id="payone_creditcard" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Creditcard</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_debit" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Debit Payment</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_paypal" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>PayPal</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_cash_on_delivery" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cash on Delivery</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_advance_payment" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Advance Payment</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_invoice" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Invoice</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_obt_sofortueberweisung" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Sofort-Ueberweisung</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_obt_giropay" translate="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>giropay</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_obt_eps" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>eps - Online-Ueberweisung</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_obt_postfinance_efinance" translate="label" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>PostFinance E-Finance</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_obt_postfinance_card" translate="label" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>PostFinance Card</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_obt_ideal" translate="label" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>iDeal</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_obt_przelewy" translate="label" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Przelewy24</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_barzahlen" translate="label" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Barzahlen</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_paydirekt" translate="label" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Paydirekt</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_billsafe" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>BillSAFE</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_klarna" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Klarna Invoice</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+            </group>
+            <group id="creditcard" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Payment Creditcard</label>
+                <field id="cc_template" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Input-configuration</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\CreditcardTemplate</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+            </group>
+            <group id="text" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Narrative Text</label>
+                <field id="payone_creditcard" translate="label,comment" type="textarea" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Creditcard</label>
+                    <comment>Maximum 81 digits. Placeholders: {{order_increment_id}}</comment>
+                </field>
+                <field id="payone_debit" translate="label,comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Debit Payment</label>
+                    <comment>Maximum 3 lines à 27 digits. Placeholders: {{order_increment_id}}</comment>
+                </field>
+                <field id="payone_paypal" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>PayPal</label>
+                    <comment>Maximum 81 digits. Placeholders: {{order_increment_id}}</comment>
+                </field>
+                <field id="payone_paydirekt" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Paydirekt</label>
+                    <comment>Maximum 37 digits. Placeholders: {{order_increment_id}}</comment>
+                </field>
+            </group>
+        </section>
+        <section id="payone_payment" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Payment</label>
+            <tab>payone</tab>
+            <resource>Payone_Core::payone_configuration_payment</resource>
+            <include path="Payone_Core::system/payone_creditcard.xml"/>
+            <include path="Payone_Core::system/payone_debit.xml"/>
+            <include path="Payone_Core::system/payone_paypal.xml"/>
+            <include path="Payone_Core::system/payone_cash_on_delivery.xml"/>
+            <include path="Payone_Core::system/payone_advance_payment.xml"/>
+            <include path="Payone_Core::system/payone_invoice.xml"/>
+            <include path="Payone_Core::system/payone_obt_sofortueberweisung.xml"/>
+            <include path="Payone_Core::system/payone_obt_giropay.xml"/>
+            <include path="Payone_Core::system/payone_obt_eps.xml"/>
+            <include path="Payone_Core::system/payone_obt_postfinance_efinance.xml"/>
+            <include path="Payone_Core::system/payone_obt_postfinance_card.xml"/>
+            <include path="Payone_Core::system/payone_obt_ideal.xml"/>
+            <include path="Payone_Core::system/payone_obt_przelewy.xml"/>
+            <include path="Payone_Core::system/payone_barzahlen.xml"/>
+            <include path="Payone_Core::system/payone_paydirekt.xml"/>
+            <include path="Payone_Core::system/payone_billsafe.xml"/>
+            <include path="Payone_Core::system/payone_klarna.xml"/>
+        </section>
+        <section id="payone_misc" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Miscellaneous</label>
+            <tab>payone</tab>
+            <resource>Payone_Core::payone_configuration_misc</resource>
+            <group id="processing" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Transaction-Status Processing</label>
+                <field id="valid_ips" translate="label,comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Valid PAYONE IPs</label>
+                    <comment>Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use * </comment>
+                </field>
+            </group>
+            <group id="forwarding" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Transaction-Status Forwarding</label>
+                <field id="config" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Forwarding</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusForwarding</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+           </group>
+            <group id="discount" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Invoicing Data - Discount</label>
+                <field id="sku" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SKU</label>
+                </field>
+            </group>
+            <group id="costs" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Invoicing Data - Shipping Costs</label>
+                <field id="sku" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SKU</label>
+                </field>
+            </group>
+            <group id="voucher" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Invoicing Data - Voucher</label>
+                <field id="sku" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>SKU</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

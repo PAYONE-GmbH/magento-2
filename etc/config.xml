@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <payone_cash_on_delivery translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\CashOnDelivery</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Cash on Delivery</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_cash_on_delivery>
+            <payone_creditcard>
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Creditcard</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Creditcard</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_creditcard>
+            <payone_debit>
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Debit</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Debit</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_debit>
+            <payone_paypal>
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Paypal</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - PayPal</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_paypal>
+            <payone_advance_payment translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\AdvancePayment</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Advance Payment</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_advance_payment>
+            <payone_invoice translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Invoice</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Invoice</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_invoice>
+            <payone_obt_sofortueberweisung translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\OnlineBankTransfer\SofortUeberweisung</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Sofort-Ueberweisung</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_obt_sofortueberweisung>
+            <payone_obt_giropay translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\OnlineBankTransfer\Giropay</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - giropay</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_obt_giropay>
+            <payone_obt_eps translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\OnlineBankTransfer\Eps</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - eps - Online-Ueberweisung</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_obt_eps>
+            <payone_obt_postfinance_efinance translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\OnlineBankTransfer\PostFinanceEFinance</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - PostFinance E-Finance</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_obt_postfinance_efinance>
+            <payone_obt_postfinance_card translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\OnlineBankTransfer\PostFinanceCard</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - PostFinance Card</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_obt_postfinance_card>
+            <payone_obt_ideal translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\OnlineBankTransfer\Ideal</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - iDeal</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_obt_ideal>
+            <payone_obt_przelewy translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\OnlineBankTransfer\Przelewy</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Przelewy24</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_obt_przelewy>
+            <payone_barzahlen>
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Barzahlen</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Barzahlen</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_barzahlen>
+            <payone_paydirekt>
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Paydirekt</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Paydirekt</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_paydirekt>
+            <payone_billsafe translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Billsafe</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - BillSAFE</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_billsafe>
+            <payone_klarna translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Klarna</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Klarna Invoice</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_klarna>
+        </payment>
+        <payone_general>
+            <global>
+                <mid></mid>
+                <portalid></portalid>
+                <aid></aid>
+                <key></key>
+                <transmit_ip>1</transmit_ip>
+            </global>
+            <invoicing>
+                <transmit_enabled>1</transmit_enabled>
+            </invoicing>
+            <statusmapping>
+                <payone_creditcard>a:1:{s:18:"_1343137391927_927";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_creditcard>
+                <payone_debit>a:1:{s:18:"_1338893616379_379";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_debit>
+                <payone_paypal>a:1:{s:18:"_1343137411652_652";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_paypal>
+                <payone_cash_on_delivery>a:1:{s:18:"_1338893625332_332";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_cash_on_delivery>
+                <payone_invoice>a:1:{s:18:"_1338893611948_948";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_invoice>
+                <payone_advance_payment>a:2:{s:18:"_1338893618715_715";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:7:"pending";}s:18:"_1458214328719_719";a:2:{s:8:"txaction";s:4:"paid";s:12:"state_status";s:10:"processing";}}</payone_advance_payment>
+                <payone_obt_sofortueberweisung>a:1:{s:18:"_1343137411652_152";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_sofortueberweisung>
+                <payone_obt_giropay>a:1:{s:18:"_1343137411652_252";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_giropay>
+                <payone_obt_eps>a:1:{s:18:"_1343137411652_352";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_eps>
+                <payone_obt_postfinance_efinance>a:1:{s:18:"_1343137411652_452";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_postfinance_efinance>
+                <payone_obt_postfinance_card>a:1:{s:18:"_1343137411652_552";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_postfinance_card>
+                <payone_obt_ideal>a:1:{s:18:"_1343137411652_752";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_ideal>
+                <payone_obt_przelewy>a:1:{s:18:"_1343137411652_852";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_przelewy>
+                <payone_barzahlen>a:1:{s:23:"_payone_status_mapping6";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_barzahlen>
+                <payone_paydirekt>a:1:{s:18:"_1343118466182_183";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_paydirekt>
+                <payone_billsafe>a:1:{s:23:"_payone_status_mapping4";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_billsafe>
+                <payone_klarna>a:1:{s:23:"_payone_status_mapping2";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_klarna>
+            </statusmapping>
+        </payone_general>
+        <payone_payment>
+            <payone_cash_on_delivery>
+                <use_global>1</use_global>
+            </payone_cash_on_delivery>
+            <payone_creditcard>
+                <use_global>1</use_global>
+                <check_cvc>always</check_cvc>
+            </payone_creditcard>
+            <payone_debit>
+                <use_global>1</use_global>
+                <request_bic>0</request_bic>
+                <sepa_country>DE</sepa_country>
+            </payone_debit>
+            <payone_paypal>
+                <use_global>1</use_global>
+                <bill_as_del_address>1</bill_as_del_address>
+                <express_active>0</express_active>
+            </payone_paypal>
+            <payone_advance_payment>
+                <use_global>1</use_global>
+            </payone_advance_payment>
+            <payone_invoice>
+                <use_global>1</use_global>
+            </payone_invoice>
+            <payone_obt_sofortueberweisung>
+                <use_global>1</use_global>
+            </payone_obt_sofortueberweisung>
+            <payone_obt_giropay>
+                <use_global>1</use_global>
+            </payone_obt_giropay>
+            <payone_obt_eps>
+                <use_global>1</use_global>
+            </payone_obt_eps>
+            <payone_obt_postfinance_efinance>
+                <use_global>1</use_global>
+            </payone_obt_postfinance_efinance>
+            <payone_obt_postfinance_card>
+                <use_global>1</use_global>
+            </payone_obt_postfinance_card>
+            <payone_obt_ideal>
+                <use_global>1</use_global>
+            </payone_obt_ideal>
+            <payone_obt_przelewy>
+                <use_global>1</use_global>
+            </payone_obt_przelewy>
+            <payone_barzahlen>
+                <use_global>1</use_global>
+            </payone_barzahlen>
+            <payone_paydirekt>
+                <use_global>1</use_global>
+            </payone_paydirekt>
+            <payone_billsafe>
+                <use_global>1</use_global>
+            </payone_billsafe>
+            <payone_klarna>
+                <use_global>1</use_global>
+            </payone_klarna>
+        </payone_payment>
+        <payone_misc>
+            <processing>
+                <valid_ips><![CDATA[185.60.20.*]]></valid_ips>
+            </processing>
+            <costs>
+                <sku>delivery</sku>
+            </costs>
+            <voucher>
+                <sku>voucher</sku>
+            </voucher>
+            <discount>
+                <sku>discount</sku>
+            </discount>
+            <email_error>
+                <template>payone_misc_email_error_template</template>
+            </email_error>
+            <email_avs>
+                <template>payone_misc_email_avs_template</template>
+            </email_avs>
+        </payone_misc>
+    </default>
+</config>

@@ -1,0 +1,23 @@
+{
+    "name": "payone/module-core",
+    "description": "PAYONE FinanceGate payment gateway for all german online and offline payment methods including PayPal, all major Credit Cards and Maestro.",
+    "type": "magento2-module",
+    "version": "1.2.2",
+    "license": [
+      "OSL-3.0",
+      "AFL-3.0"
+    ],
+    "require": {
+        "php": "~5.5.0|~5.6.0|~7.0.0",
+        "magento/framework": "100.0.*",
+        "magento/module-store": "100.0.*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Payone\\Core\\": ""
+        }
+    }
+}
