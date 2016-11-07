@@ -96,18 +96,20 @@ class HostedIframe extends \Payone\Core\Helper\Base
         $aHostedParams = $this->getHostedParams();
 
         $aField = [];
-        $aField['selector'] = $sName;
-        $aField['type'] = $aHostedParams[$sParamPrefix.'_type'];
-        $aField['size'] = $aHostedParams[$sParamPrefix.'_count'];
-        $aField['maxlength'] = $aHostedParams[$sParamPrefix.'_max'];
-        if ($aHostedParams[$sParamPrefix.'_style'] == "custom") {
-            $aField['style'] = $aHostedParams[$sParamPrefix.'_css'];
-        }
-        if ($aHostedParams[$sParamPrefix.'_iframe'] == "custom") {
-            $aField['iframe'] = [
-                'width' => $aHostedParams[$sParamPrefix.'_width'],
-                'height' => $aHostedParams[$sParamPrefix.'_height'],
-            ];
+        if (!empty($aHostedParams)) {
+            $aField['selector'] = $sName;
+            $aField['type'] = $aHostedParams[$sParamPrefix.'_type'];
+            $aField['size'] = $aHostedParams[$sParamPrefix.'_count'];
+            $aField['maxlength'] = $aHostedParams[$sParamPrefix.'_max'];
+            if ($aHostedParams[$sParamPrefix.'_style'] == "custom") {
+                $aField['style'] = $aHostedParams[$sParamPrefix.'_css'];
+            }
+            if ($aHostedParams[$sParamPrefix.'_iframe'] == "custom") {
+                $aField['iframe'] = [
+                    'width' => $aHostedParams[$sParamPrefix.'_width'],
+                    'height' => $aHostedParams[$sParamPrefix.'_height'],
+                ];
+            }
         }
         return $aField;
     }
@@ -157,11 +159,13 @@ class HostedIframe extends \Payone\Core\Helper\Base
         $aHostedParams = $this->getHostedParams();// get hosted params from config
 
         $aFieldConfig = [];
-        $aFieldConfig['fields'] = $this->getFieldConfig();// generate config for all field types
-        $aFieldConfig['defaultStyle'] = $this->getDefaultStyles($aHostedParams);
-        if ($aHostedParams['Errors_active'] == "true") {
-            $aFieldConfig['error'] = 'errorOutput';// area to display error-messages (optional)
-            $aFieldConfig['language'] = $aHostedParams['Errors_lang'];// has to be defined in javascript
+        if (!empty($aHostedParams)) {
+            $aFieldConfig['fields'] = $this->getFieldConfig();// generate config for all field types
+            $aFieldConfig['defaultStyle'] = $this->getDefaultStyles($aHostedParams);
+            if ($aHostedParams['Errors_active'] == "true") {
+                $aFieldConfig['error'] = 'errorOutput';// area to display error-messages (optional)
+                $aFieldConfig['language'] = $aHostedParams['Errors_lang'];// has to be defined in javascript
+            }
         }
         return $aFieldConfig;
     }
