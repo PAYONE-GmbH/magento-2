@@ -41,8 +41,14 @@ define(
             },
             
             handleCreditcardPayment: function () {
-                if (this.validate() && additionalValidators.validate() && document.getElementById(this.getCode() + '_pseudocardpan').value == '') {
-                    // update payment method information if additional data was changed
+                var firstValidation = additionalValidators.validate();
+                if (!(firstValidation)) {
+                    return false;
+                }
+
+                // if (this.validate() && additionalValidators.validate() && document.getElementById(this.getCode() + '_pseudocardpan').value == '') {
+                if (this.validate() && firstValidation) {
+                        // update payment method information if additional data was changed
                     this.selectPaymentMethod();
                     handleRedirectAction(this.getData(), this.messageContainer);
                     return false;
