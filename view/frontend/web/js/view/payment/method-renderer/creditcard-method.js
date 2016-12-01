@@ -27,9 +27,10 @@ define(
         'Payone_Core/js/view/payment/method-renderer/base',
         'Magento_Ui/js/model/messageList',
         'mage/translate',
-        'Payone_Core/js/action/handle-redirect'
+        'Payone_Core/js/action/handle-redirect',
+        'Magento_Checkout/js/model/full-screen-loader'
     ],
-    function ($, Component, messageList, $t, handleRedirectAction) {
+    function ($, Component, messageList, $t, handleRedirectAction, fullScreenLoader) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -143,12 +144,14 @@ define(
                     window.ccjs = this;
                     window.iframes.creditCardCheck('processPayoneResponseCCHosted');// Perform "CreditCardCheck" to create and get a
                     // PseudoCardPan; then call your function "payCallback"
+                    fullScreenLoader.startLoader();
                 } else {
                     console.debug("not complete");
                 }
             },
             
             processPayoneResponseCCHosted: function (response) {
+                fullScreenLoader.stopLoader();
                 if (response.status === "VALID") {
                     if (document.getElementById(this.getCode() + '_pseudocardpan')) {
                         document.getElementById(this.getCode() + '_pseudocardpan').value = response.pseudocardpan;

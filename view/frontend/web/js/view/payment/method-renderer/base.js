@@ -41,7 +41,12 @@ define(
             },
             
             handleCreditcardPayment: function () {
-                if (this.validate() && additionalValidators.validate() && document.getElementById(this.getCode() + '_pseudocardpan').value == '') {
+                var firstValidation = additionalValidators.validate();
+                if (!(firstValidation)) {
+                    return false;
+                }
+                
+                if (this.validate() && firstValidation) {
                     // update payment method information if additional data was changed
                     this.selectPaymentMethod();
                     handleRedirectAction(this.getData(), this.messageContainer);

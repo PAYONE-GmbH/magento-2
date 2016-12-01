@@ -24,6 +24,8 @@
  * @link      http://www.payone.de
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
-    <module name="Payone_Core" setup_version="1.2.4" />
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_payment_place_end">
+        <observer name="payone_order_payment_place_end" instance="Payone\Core\Observer\OrderPaymentPlaceEnd" />
+    </event>
 </config>

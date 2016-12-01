@@ -77,15 +77,14 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getStateByStatus($sStatus)
     {
-        $oDb = $this->getDb();
         $sQuery = " SELECT
                         state
                     FROM
-                        ".$oDb->getTableName('sales_order_status_state')."
+                        ".$this->databaseResource->getTableName('sales_order_status_state')."
                     WHERE
                         status = :status
                     LIMIT 1";
-        $sState = $oDb->fetchOne($sQuery, ['status' => $sStatus]);
+        $sState = $this->getDb()->fetchOne($sQuery, ['status' => $sStatus]);
         return $sState;
     }
 
@@ -97,15 +96,14 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getOrderIncrementIdByTxid($sTxid)
     {
-        $oDb = $this->getDb();
         $sQuery = " SELECT
                         order_id
                     FROM
-                        ".$oDb->getTableName('payone_protocol_api')."
+                        ".$this->databaseResource->getTableName('payone_protocol_api')."
                     WHERE
                         txid = :txid
                     LIMIT 1";
-        $sIncrementId = $oDb->fetchOne($sQuery, ['txid' => $sTxid]);
+        $sIncrementId = $this->getDb()->fetchOne($sQuery, ['txid' => $sTxid]);
         return $sIncrementId;
     }
 
@@ -116,14 +114,13 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getModuleInfo()
     {
-        $oDb = $this->getDb();
         $sQuery = " SELECT
                         module, schema_version
                     FROM
-                        ".$oDb->getTableName('setup_module')."
+                        ".$this->databaseResource->getTableName('setup_module')."
                     WHERE
                         module NOT LIKE 'Magento_%'";
-        $aResult = $oDb->fetchAll($sQuery);
+        $aResult = $this->getDb()->fetchAll($sQuery);
         return $aResult;
     }
 
@@ -135,18 +132,14 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getIncrementIdByOrderId($sOrderId)
     {
-        $oDb = $this->getDb();
         $sQuery = " SELECT
-                        *
+                        increment_id
                     FROM
-                        ".$oDb->getTableName('sales_order')."
+                        ".$this->databaseResource->getTableName('sales_order')."
                     WHERE
                         entity_id = :entity_id";
-        $aResult = $oDb->fetchRow($sQuery, ['entity_id' => $sOrderId]);
-        if ($aResult) {
-            return $aResult['increment_id'];
-        }
-        return false;
+        $sIncrementId = $this->getDb()->fetchOne($sQuery, ['entity_id' => $sOrderId]);
+        return $sIncrementId;
     }
 
     /**
@@ -157,15 +150,14 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getPayoneUserIdByCustNr($sCustNr)
     {
-        $oDb = $this->getDb();
         $sQuery = " SELECT
                         userid
                     FROM
-                        ".$oDb->getTableName('payone_protocol_transactionstatus')."
+                        ".$this->databaseResource->getTableName('payone_protocol_transactionstatus')."
                     WHERE
                         customerid = :customerid
                     LIMIT 1";
-        $sUserId = $oDb->fetchOne($sQuery, ['customerid' => $sCustNr]);
+        $sUserId = $this->getDb()->fetchOne($sQuery, ['customerid' => $sCustNr]);
         return $sUserId;
     }
 
@@ -177,14 +169,13 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getSequenceNumber($iTxid)
     {
-        $oDb = $this->getDb();
         $sQuery = " SELECT
                         MAX(sequencenumber)
                     FROM
-                        {$oDb->getTableName('payone_protocol_transactionstatus')}
+                        ".$this->databaseResource->getTableName('payone_protocol_transactionstatus')."
                     WHERE
                         txid = :txid";
-        $iCount = $oDb->fetchOne($sQuery, ['txid' => $iTxid]);
+        $iCount = $this->getDb()->fetchOne($sQuery, ['txid' => $iTxid]);
         if ($iCount === null) {
             return 0;
         }

@@ -57,6 +57,6 @@ class Information extends \Magento\Backend\Block\Template
      */
     public function getPayoneUrl()
     {
-        return '//www.payone.de/embedded-sites/magento/information/';
+        return 'http://www.payone.de/embedded-sites/magento/information/';
     }
 }
