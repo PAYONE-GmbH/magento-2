@@ -51,6 +51,13 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
      * @var \Payone\Core\Model\Source\TransactionStatus
      */
     protected $transactionStatus;
+    
+    /**
+     * Rows cache
+     *
+     * @var array|null
+     */
+    private $_arrayRowsCache;
 
     /**
      * Constructor
@@ -116,5 +123,57 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
             $aOptions
         );
         return str_replace("\n", '', $oElement->getElementHtml());
+    }
+    
+    /**
+     * Obtain existing data from form element
+     *
+     * Each row will be instance of \Magento\Framework\DataObject
+     *
+     * @return array
+     */
+    public function getArrayRows()
+    {
+        if (null !== $this->_arrayRowsCache) {
+            return $this->_arrayRowsCache;
+        }
+        $result = [];
+        /** @var \Magento\Framework\Data\Form\Element\AbstractElement */
+        $element = $this->getElement();
+        $aValue = $element->getValue();
+        if (!is_array($aValue)) {
+            $aValue = unserialize($aValue);
+        }
+        
+        if ($aValue && is_array($aValue)) {
+            foreach ($aValue as $rowId => $row) {
+                $rowColumnValues = [];
+                foreach ($row as $key => $value) {
+                    $row[$key] = $value;
+                    $rowColumnValues[$this->_getCellInputElementId($rowId, $key)] = $row[$key];
+                }
+                $row['_id'] = $rowId;
+                $row['column_values'] = $rowColumnValues;
+                $result[$rowId] = new \Magento\Framework\DataObject($row);
+                $this->_prepareArrayRow($result[$rowId]);
+            }
+        }
+        $this->_arrayRowsCache = $result;
+        return $this->_arrayRowsCache;
+    }
+
+    /**
+     * Get the grid and scripts contents
+     *
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @return string
+     */
+    protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
+    {
+        $this->setElement($element);
+        $html = $this->_toHtml();
+        $this->_arrayRowsCache = null;
+        // doh, the object is used as singleton!
+        return $html;
     }
 }
