@@ -48,21 +48,18 @@ class Checkout extends \Payone\Core\Helper\Base
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Helper\Context              $context
-     * @param  \Magento\Store\Model\StoreManagerInterface         $storeManager
-     * @param  \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param  \Magento\Customer\Model\Session                    $customerSession
-     * @param  \Magento\Checkout\Helper\Data                      $checkoutData
-     * @return void
+     * @param \Magento\Framework\App\Helper\Context      $context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Customer\Model\Session            $customerSession
+     * @param \Magento\Checkout\Helper\Data              $checkoutData
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Checkout\Helper\Data $checkoutData
     ) {
-        parent::__construct($context, $storeManager, $scopeConfig);
+        parent::__construct($context, $storeManager);
         $this->customerSession = $customerSession;
         $this->checkoutData = $checkoutData;
     }

@@ -67,25 +67,22 @@ class Order extends \Payone\Core\Helper\Base
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Helper\Context              $context
-     * @param  \Magento\Store\Model\StoreManagerInterface         $storeManager
-     * @param  \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param  \Payone\Core\Helper\Database                       $databaseHelper
-     * @param  \Payone\Core\Helper\Customer                       $customerHelper
-     * @param  \Magento\Sales\Model\OrderFactory                  $orderFactory
-     * @param  \Magento\Quote\Model\Quote\TotalsCollector         $totalsCollector
-     * @return void
+     * @param \Magento\Framework\App\Helper\Context      $context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Payone\Core\Helper\Database               $databaseHelper
+     * @param \Payone\Core\Helper\Customer               $customerHelper
+     * @param \Magento\Sales\Model\OrderFactory          $orderFactory
+     * @param \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Payone\Core\Helper\Database $databaseHelper,
         \Payone\Core\Helper\Customer $customerHelper,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector
     ) {
-        parent::__construct($context, $storeManager, $scopeConfig);
+        parent::__construct($context, $storeManager);
         $this->databaseHelper = $databaseHelper;
         $this->customerHelper = $customerHelper;
         $this->orderFactory = $orderFactory;

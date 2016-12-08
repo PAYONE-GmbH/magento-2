@@ -54,7 +54,7 @@ class AddPaypalExpressButtons implements ObserverInterface
     }
 
     /**
-     * Add Braintree PayPal shortcut buttons
+     * Add PayPal shortcut buttons
      *
      * @param  Observer $observer
      * @return void

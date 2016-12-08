@@ -86,7 +86,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\SofortUeberweisung</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Sofort-Ueberweisung</title>
+                <title>PAYONE - SOFORT Überweisung</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_sofortueberweisung>
