@@ -43,19 +43,16 @@ class Database extends \Payone\Core\Helper\Base
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Helper\Context              $context
-     * @param  \Magento\Store\Model\StoreManagerInterface         $storeManager
-     * @param  \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param  \Magento\Framework\App\ResourceConnection          $resource
-     * @return void
+     * @param \Magento\Framework\App\Helper\Context      $context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Framework\App\ResourceConnection  $resource
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\App\ResourceConnection $resource
     ) {
-        parent::__construct($context, $storeManager, $scopeConfig);
+        parent::__construct($context, $storeManager);
         $this->databaseResource = $resource;
     }
 

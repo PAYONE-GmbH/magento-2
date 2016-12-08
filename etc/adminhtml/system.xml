@@ -121,7 +121,7 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
                 <field id="payone_obt_sofortueberweisung" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Sofort-Ueberweisung</label>
+                    <label>SOFORT Überweisung</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>

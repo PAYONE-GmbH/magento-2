@@ -41,28 +41,17 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
     protected $storeManager;
 
     /**
-     * Scope config object
-     *
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
      * Constructor
      *
      * @param  \Magento\Framework\App\Helper\Context              $context
      * @param  \Magento\Store\Model\StoreManagerInterface         $storeManager
-     * @param  \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @return void
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         parent::__construct($context);
         $this->storeManager = $storeManager;
-        $this->scopeConfig = $scopeConfig;
     }
 
     /**
