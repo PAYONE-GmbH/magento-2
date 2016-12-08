@@ -66,23 +66,20 @@ class Api extends \Payone\Core\Helper\Base
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Helper\Context              $context
-     * @param  \Magento\Store\Model\StoreManagerInterface         $storeManager
-     * @param  \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param  \Payone\Core\Helper\Connection\CurlPhp             $connCurlPhp
-     * @param  \Payone\Core\Helper\Connection\CurlCli             $connCurlCli
-     * @param  \Payone\Core\Helper\Connection\Fsockopen           $connFsockopen
-     * @return void
+     * @param \Magento\Framework\App\Helper\Context      $context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Payone\Core\Helper\Connection\CurlPhp     $connCurlPhp
+     * @param \Payone\Core\Helper\Connection\CurlCli     $connCurlCli
+     * @param \Payone\Core\Helper\Connection\Fsockopen   $connFsockopen
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Payone\Core\Helper\Connection\CurlPhp $connCurlPhp,
         \Payone\Core\Helper\Connection\CurlCli $connCurlCli,
         \Payone\Core\Helper\Connection\Fsockopen $connFsockopen
     ) {
-        parent::__construct($context, $storeManager, $scopeConfig);
+        parent::__construct($context, $storeManager);
         $this->connCurlPhp = $connCurlPhp;
         $this->connCurlCli = $connCurlCli;
         $this->connFsockopen = $connFsockopen;
