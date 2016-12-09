@@ -128,9 +128,7 @@ class Invoice
         }
 
         foreach ($oOrder->getAllItems() as $oItem) {// add invoice items for all order items
-            if ($oItem->isDummy() === false) {// prevent variant-products of adding 2 items
-                $this->addProductItem($oItem, $aPositions);// add product invoice params to request
-            }
+            $this->addProductItem($oItem, $aPositions);// add product invoice params to request
         }
 
         $blFirstCapture = true;// Is first capture?
