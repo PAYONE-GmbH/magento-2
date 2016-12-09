@@ -14,12 +14,6 @@
         "magento/framework": "^100.0.0",
         "magento/module-store": "^100.0.0"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://repo.magento.com/"
-        }
-    ],
     "autoload": {
         "files": [
             "registration.php"
