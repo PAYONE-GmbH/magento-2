@@ -34,7 +34,7 @@ class Shop extends \Payone\Core\Helper\Base
     /**
      * Product metadata object
      *
-     * @var \Magento\Framework\App\ResourceConnection
+     * @var \Magento\Framework\App\ProductMetadata
      */
     protected $productMetadata;
 

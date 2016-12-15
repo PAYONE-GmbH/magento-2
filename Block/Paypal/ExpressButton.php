@@ -127,7 +127,7 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
      */
     protected function getSupportedLocaleCode($sLocale = null)
     {
-        if (!$sLocale || !in_array($sLocale, $this->aSupportedLocales)) {
+        if (empty($sLocale) || !in_array($sLocale, $this->aSupportedLocales)) {
             return 'en_US';
         }
         return $sLocale;
