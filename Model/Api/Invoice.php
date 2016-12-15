@@ -115,7 +115,7 @@ class Invoice
      *
      * @param  Base  $oRequest   Request object
      * @param  Order $oOrder     Order object
-     * @param  array $aPositions Is given with non-complete captures or debits
+     * @param  array|bool $aPositions Is given with non-complete captures or debits
      * @param  bool  $blDebit    Is the call coming from a debit request
      * @return float
      */
@@ -145,14 +145,14 @@ class Invoice
      * Add invoicing item for a product
      *
      * @param  \Magento\Sales\Model\Order\Item $oItem
-     * @param  array $aPositions
+     * @param  array|bool $aPositions
      * @return void
      */
     protected function addProductItem($oItem, $aPositions)
     {
         if ($aPositions === false || array_key_exists($oItem->getProductId(), $aPositions) !== false) {// full or single-invoice?
             $dItemAmount = $oItem->getQtyOrdered();// get ordered item amount
-            if ($aPositions !== false && array_key_exists($oItem->getProductId(), $aPositions) !== false) {// product existing in single-invoice?
+            if (is_array($aPositions) && array_key_exists($oItem->getProductId(), $aPositions) !== false) {// product existing in single-invoice?
                 $dItemAmount = $aPositions[$oItem->getProductId()]['amount'];// use amount from single-invoice
             }
             $dBrutPrice = $oItem->getBasePrice() + ($oItem->getBaseTaxAmount() / $oItem->getQtyOrdered());// cals single item price
@@ -167,7 +167,7 @@ class Invoice
      * Add invoicing item for shipping
      *
      * @param  Order $oOrder
-     * @param  array $aPositions
+     * @param  array|bool $aPositions
      * @param  bool  $blDebit
      * @return void
      */
@@ -188,7 +188,7 @@ class Invoice
      * Add invoicing item for discounts
      *
      * @param  Order $oOrder
-     * @param  array $aPositions
+     * @param  array|bool $aPositions
      * @param  bool  $blDebit
      * @return void
      */

@@ -125,7 +125,7 @@ class Klarna extends PayoneMethod
         $sBirthday = $this->toolkitHelper->getAdditionalDataEntry($data, 'birthday');
         $sBirthmonth = $this->toolkitHelper->getAdditionalDataEntry($data, 'birthmonth');
         $sBirthyear = $this->toolkitHelper->getAdditionalDataEntry($data, 'birthyear');
-        if ($sBirthday && $sBirthmonth && $sBirthyear) {
+        if (!empty($sBirthday) && !empty($sBirthmonth) && !empty($sBirthyear)) {
             $sDob = $sBirthyear.'-'.$sBirthmonth.'-'.$sBirthday;
             $iDobTime = strtotime($sDob);
             if ($iDobTime !== false) {
@@ -149,7 +149,7 @@ class Klarna extends PayoneMethod
 
         foreach ($this->aAssignKeys as $sKey) {
             $sData = $this->toolkitHelper->getAdditionalDataEntry($data, $sKey);
-            if ($sData) {
+            if (!empty($sData)) {
                 $oInfoInstance->setAdditionalInformation($sKey, $sData);
             }
         }

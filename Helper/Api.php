@@ -95,6 +95,10 @@ class Api extends \Payone\Core\Helper\Base
     {
         $aParsedRequestUrl = parse_url($sRequestUrl);
 
+        if ($aParsedRequestUrl === false) {
+            throw new \Exception("Malformed URL " . $sRequestUrl);
+        }
+
         $aResponse = [];
         if (function_exists("curl_init")) {
             // php native curl exists so we gonna use it for requesting
