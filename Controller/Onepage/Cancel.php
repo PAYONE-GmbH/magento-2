@@ -27,7 +27,6 @@
 namespace Payone\Core\Controller\Onepage;
 
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Controller\Result\Redirect;
 
 /**
  * Cancel controller for back links from redirect payment-types
@@ -69,7 +68,7 @@ class Cancel extends \Magento\Framework\App\Action\Action
     /**
      * Checkout is canceled and old basket is reactivated
      *
-     * @return Redirect
+     * @return \Magento\Framework\Controller\Result\Redirect
      */
     public function execute()
     {
