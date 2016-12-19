@@ -167,15 +167,15 @@ class ChecksumCheck
     /**
      * Main method executing checksum check
      *
-     * @param  bool $blOutput
+     * @throws \Exception
      * @return string
      */
     public function checkChecksumXml()
     {
         if (ini_get('allow_url_fopen') == 0) {// Is file_get_contents for urls active on this server?
-            throw new LocalizedException("Cant verify checksums, allow_url_fopen is not activated on customer-server!");
+            throw new \Exception("Cant verify checksums, allow_url_fopen is not activated on customer-server!");
         } elseif (!function_exists('curl_init')) {// is curl usable on this server?
-            throw new LocalizedException("Cant verify checksums, curl is not activated on customer-server!");
+            throw new \Exception("Cant verify checksums, curl is not activated on customer-server!");
         }
 
         $aFiles = $this->getFilesToCheck(); // Requests all files that need to be checked from the Fatchip Checksum Server
@@ -203,5 +203,6 @@ class ChecksumCheck
         if (is_array($aErrors)) {
             return $aErrors;
         }
+        return false;
     }
 }

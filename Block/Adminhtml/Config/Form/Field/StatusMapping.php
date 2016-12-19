@@ -64,10 +64,9 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
      *
      * @param  \Magento\Backend\Block\Template\Context         $context
      * @param  \Magento\Framework\Data\Form\Element\Factory    $elementFactory
-     * @param  \Magento\Sales\Model\Config\Source\Order\Status $orderStatus
+     * @param  \Magento\Sales\Model\ResourceModel\Order\Status\Collection $orderStatus
      * @param  \Payone\Core\Model\Source\TransactionStatus     $transactionStatus
      * @param  array                                           $data
-     * @return void
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,

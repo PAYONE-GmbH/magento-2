@@ -80,7 +80,6 @@ class Debit extends \Magento\Framework\App\Action\Action
      * @param  \Magento\Framework\View\Result\PageFactory   $pageFactory
      * @param  \Magento\Quote\Api\CartManagementInterface   $cartManagement
      * @param  \Magento\Checkout\Model\Type\Onepage         $typeOnepage
-     * @return void
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

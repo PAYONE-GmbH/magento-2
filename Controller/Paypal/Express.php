@@ -86,7 +86,6 @@ class Express extends \Magento\Framework\App\Action\Action
      * @param  \Magento\Checkout\Helper\Data                               $checkoutHelper
      * @param  \Magento\Customer\Model\Session                             $customerSession
      * @param  \Payone\Core\Helper\Payment                                 $paymentHelper
-     * @return void
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

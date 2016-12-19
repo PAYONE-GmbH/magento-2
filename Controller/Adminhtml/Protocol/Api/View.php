@@ -56,7 +56,6 @@ class View extends \Magento\Backend\App\Action
      * @param  \Magento\Backend\App\Action\Context               $context
      * @param  \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
      * @param  \Magento\Framework\View\Result\PageFactory        $resultPageFactory
-     * @return void
      */
     public function __construct(
         Context $context,

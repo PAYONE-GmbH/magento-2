@@ -50,9 +50,8 @@ class KlarnaStoreId extends \Payone\Core\Block\Adminhtml\Config\Form\Field\Field
      *
      * @param  \Magento\Backend\Block\Template\Context      $context
      * @param  \Magento\Framework\Data\Form\Element\Factory $elementFactory
-     * @param  \Payone\Core\Model\Source\TransactionStatus  $klarnaCountries
+     * @param  \Payone\Core\Model\Source\KlarnaCountry      $klarnaCountries
      * @param  array                                        $data
-     * @return void
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
