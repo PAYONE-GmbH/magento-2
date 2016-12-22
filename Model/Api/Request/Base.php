@@ -93,11 +93,10 @@ abstract class Base
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Shop                $shopHelper
-     * @param  \Payone\Core\Helper\Environment         $environmentHelper
-     * @param  \Payone\Core\Helper\Api                 $apiHelper
-     * @param  \Payone\Core\Model\ResourceModel\ApiLog $apiLog
-     * @return void
+     * @param \Payone\Core\Helper\Shop                $shopHelper
+     * @param \Payone\Core\Helper\Environment         $environmentHelper
+     * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
@@ -246,6 +245,7 @@ abstract class Base
             $aResponse['errormessage'] = "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)";
             return $aResponse;
         }
+
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
         if ($blOnlyGetUrl === true) {// sometimes you only need the request url
             return $sRequestUrl;

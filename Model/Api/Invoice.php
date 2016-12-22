@@ -79,8 +79,7 @@ class Invoice
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
-     * @return void
+     * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
      */
     public function __construct(\Payone\Core\Helper\Toolkit $toolkitHelper)
     {
@@ -156,7 +155,7 @@ class Invoice
                 $dItemAmount = $aPositions[$oItem->getProductId()]['amount'];// use amount from single-invoice
             }
             $dBrutPrice = $oItem->getBasePrice() + ($oItem->getBaseTaxAmount() / $oItem->getQtyOrdered());// cals single item price
-            $this->addInvoicePosition($oItem->getSku(), $dBrutPrice, 'goods', $dItemAmount, $oItem->getName(), $oItem->getTaxPercent());
+            $this->addInvoicePosition($oItem->getSku(), $dBrutPrice, 'goods', $dItemAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
             if ($this->dTax === false) {// is dTax not set yet?
                 $this->dTax = $oItem->getTaxPercent();// set the tax for following entities which dont have the vat attached to it
             }
@@ -180,7 +179,7 @@ class Invoice
                 $sDelDesc = __('Deduction').' '.__('Shipping Costs');// change item description to deduction
             }
             $sShippingSku = $this->toolkitHelper->getConfigParam('sku', 'costs', 'payone_misc');// get configured shipping SKU
-            $this->addInvoicePosition($sShippingSku, $oOrder->getBaseShippingInclTax(), 'shipment', 1, $sDelDesc, $this->dTax);
+            $this->addInvoicePosition($sShippingSku, $oOrder->getBaseShippingInclTax(), 'shipment', 1, $sDelDesc, $this->dTax); // add invoice params to request
         }
     }
 
@@ -196,7 +195,7 @@ class Invoice
     {
         // discount costs existing or given for partial captures/debis?
         if ($oOrder->getBaseDiscountAmount() != 0 && $oOrder->getCouponCode() && ($aPositions === false || ($blDebit === false || array_key_exists('oxvoucherdiscount', $aPositions) !== false))) {
-            $dDiscount = $this->toolkitHelper->formatNumber($oOrder->getBaseDiscountAmount());
+            $dDiscount = $this->toolkitHelper->formatNumber($oOrder->getBaseDiscountAmount()); // format discount
             if ($aPositions === false) {// full invoice?
                 // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
                 // the calculated positions don't match, so we compensate for rounding-problems here

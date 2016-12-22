@@ -33,7 +33,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 /**
  * Class for installing all PAYONE specific tables
  */
-class InstallSchema implements InstallSchemaInterface
+class InstallSchema extends BaseSchema implements InstallSchemaInterface
 {
     /**
      * Install method
@@ -65,33 +65,5 @@ class InstallSchema implements InstallSchemaInterface
             \Payone\Core\Setup\Tables\Api::getData(),
             \Payone\Core\Setup\Tables\Transactionstatus::getData()
         ];
-    }
-
-    /**
-     * This method will add a new table into the shop database
-     *
-     * @param  SchemaSetupInterface $installer
-     * @param  array                $aTableData
-     * @return void
-     */
-    protected function addTable(SchemaSetupInterface $installer, $aTableData)
-    {
-        $oConnection = $installer->getConnection();
-        $sRealTableName = $installer->getTable($aTableData['title']);
-        if (!$oConnection->isTableExists($sRealTableName)) {
-            $table = $oConnection->newTable($sRealTableName);
-
-            foreach ($aTableData['columns'] as $sColumnName => $aColumnData) {
-                $table->addColumn($sColumnName, $aColumnData['type'], $aColumnData['length'], $aColumnData['option']);
-            }
-
-            foreach ($aTableData['indexes'] as $sIndex) {
-                $table->addIndex($installer->getIdxName($aTableData['title'], $sIndex), $sIndex);
-            }
-
-            $table->setComment($aTableData['comment']);
-
-            $oConnection->createTable($table);
-        }
     }
 }

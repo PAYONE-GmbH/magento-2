@@ -84,10 +84,9 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\View\Element\Template\Context $context
-     * @param  \Magento\Framework\Locale\ResolverInterface      $localeResolver
-     * @param  array $data
-     * @return void
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Magento\Framework\Locale\ResolverInterface      $localeResolver
+     * @param array                                            $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,

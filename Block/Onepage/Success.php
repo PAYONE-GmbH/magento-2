@@ -64,11 +64,10 @@ class Success extends Template
     /**
      * Constructor
      *
-     * @param  \Magento\Checkout\Model\Session                  $checkoutSession
-     * @param  \Magento\Framework\View\Element\Template\Context $context
-     * @param  \Payone\Core\Helper\Payment                      $paymentHelper
-     * @param  array $data
-     * @return void
+     * @param \Magento\Checkout\Model\Session                  $checkoutSession
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param \Payone\Core\Helper\Payment                      $paymentHelper
+     * @param array                                            $data
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,

@@ -52,10 +52,9 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\Model\ResourceModel\Db\Context $context
-     * @param  \Magento\Store\Model\StoreManagerInterface        $storeManager
-     * @param  string $connectionName
-     * @return void
+     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
+     * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
+     * @param string $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,

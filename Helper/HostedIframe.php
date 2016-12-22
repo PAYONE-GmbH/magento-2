@@ -70,9 +70,9 @@ class HostedIframe extends \Payone\Core\Helper\Base
     {
         if ($this->aHostedParams === null) {
             $this->aHostedParams = [];
-            $sHostedParams = $this->getConfigParam('cc_template', 'creditcard');
-            if ($sHostedParams) {
-                $aHostedParams = unserialize($sHostedParams);
+            $sHostedParams = $this->getConfigParam('cc_template', 'creditcard'); // get params from config
+            if ($sHostedParams) { // params set in config?
+                $aHostedParams = unserialize($sHostedParams); // create array from serialized string
                 if ($aHostedParams) {
                     $this->aHostedParams = $aHostedParams;
                 }
@@ -120,7 +120,7 @@ class HostedIframe extends \Payone\Core\Helper\Base
     {
         $aFields = [];
         $aFields['cardpan'] = $this->getFieldConfigField('cardpan', 'Number');
-        if ($this->paymentHelper->isCheckCvcActive() === true) {
+        if ($this->paymentHelper->isCheckCvcActive() === true) { // cvc field activated?
             $aFields['cardcvc2'] = $this->getFieldConfigField('cardcvc2', 'CVC');
         }
         $aFields['cardexpiremonth'] = $this->getFieldConfigField('cardexpiremonth', 'Month');
@@ -156,7 +156,7 @@ class HostedIframe extends \Payone\Core\Helper\Base
         $aHostedParams = $this->getHostedParams();// get hosted params from config
 
         $aFieldConfig = [];
-        if (!empty($aHostedParams)) {
+        if (!empty($aHostedParams)) { // hosted iframe config existing?
             $aFieldConfig['fields'] = $this->getFieldConfig();// generate config for all field types
             $aFieldConfig['defaultStyle'] = $this->getDefaultStyles($aHostedParams);
             if ($aHostedParams['Errors_active'] == "true") {

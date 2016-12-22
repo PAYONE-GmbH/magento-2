@@ -39,6 +39,17 @@
                                             <item name="children" xsi:type="array">
                                                 <item name="payment" xsi:type="array">
                                                     <item name="children" xsi:type="array">
+                                                        <item name="beforeMethods" xsi:type="array">
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="boni-agreement" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Payone_Core/js/view/boni-agreement</item>
+                                                                    <item name="sortOrder" xsi:type="string">200</item>
+                                                                    <item name="displayArea" xsi:type="string">beforeMethods</item>
+                                                                    <item name="dataScope" xsi:type="string">beforeMethods</item>
+                                                                    <item name="provider" xsi:type="string">checkoutProvider</item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
                                                         <item name="renders" xsi:type="array">
                                                             <item name="children" xsi:type="array">
                                                                 <item name="payone-payments" xsi:type="array">

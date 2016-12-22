@@ -74,13 +74,12 @@ class Debit extends \Magento\Framework\App\Action\Action
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Action\Context        $context
-     * @param  \Magento\Checkout\Model\Session              $checkoutSession
-     * @param  \Payone\Core\Model\Api\Request\Managemandate $managemandateRequest
-     * @param  \Magento\Framework\View\Result\PageFactory   $pageFactory
-     * @param  \Magento\Quote\Api\CartManagementInterface   $cartManagement
-     * @param  \Magento\Checkout\Model\Type\Onepage         $typeOnepage
-     * @return void
+     * @param \Magento\Framework\App\Action\Context        $context
+     * @param \Magento\Checkout\Model\Session              $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Managemandate $managemandateRequest
+     * @param \Magento\Framework\View\Result\PageFactory   $pageFactory
+     * @param \Magento\Quote\Api\CartManagementInterface   $cartManagement
+     * @param \Magento\Checkout\Model\Type\Onepage         $typeOnepage
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

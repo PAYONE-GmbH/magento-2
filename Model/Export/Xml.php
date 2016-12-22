@@ -70,8 +70,6 @@ class Xml
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop $shopHelper
-     *
-     * @return void
      */
     public function __construct(\Payone\Core\Helper\Shop $shopHelper)
     {

@@ -50,9 +50,9 @@ class Debit extends Template
     /**
      * Constructor
      *
+     * @param  \Magento\Checkout\Model\Session                  $checkoutSession
      * @param  \Magento\Framework\View\Element\Template\Context $context
-     * @param  array $data
-     * @return void
+     * @param  array                                            $data
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,

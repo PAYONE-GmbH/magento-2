@@ -50,10 +50,9 @@ class Index extends Action
     /**
      * Constructor
      *
-     * @param  \Magento\Backend\App\Action\Context             $context
-     * @param  \Payone\Core\Model\Config\Export                $configExport
-     * @param  \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
-     * @return void
+     * @param \Magento\Backend\App\Action\Context             $context
+     * @param \Payone\Core\Model\Config\Export                $configExport
+     * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,

@@ -180,24 +180,23 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\Model\Context                        $context
-     * @param  \Magento\Framework\Registry                             $registry
-     * @param  \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory
-     * @param  \Magento\Framework\Api\AttributeValueFactory            $customAttrFactory
-     * @param  \Magento\Payment\Helper\Data                            $paymentData
-     * @param  \Magento\Framework\App\Config\ScopeConfigInterface      $scopeConfig
-     * @param  \Magento\Payment\Model\Method\Logger                    $logger
-     * @param  \Payone\Core\Helper\Toolkit                             $toolkitHelper
-     * @param  \Payone\Core\Helper\Shop                                $shopHelper
-     * @param  \Magento\Framework\Url                                  $url
-     * @param  \Magento\Checkout\Model\Session                         $checkoutSession
-     * @param  \Payone\Core\Model\Api\Request\Debit                    $debitRequest
-     * @param  \Payone\Core\Model\Api\Request\Capture                  $captureRequest
-     * @param  \Payone\Core\Model\Api\Request\Authorization            $authorizationRequest
-     * @param  \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-     * @param  \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
-     * @param  array $data
-     * @return void
+     * @param \Magento\Framework\Model\Context                        $context
+     * @param \Magento\Framework\Registry                             $registry
+     * @param \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory
+     * @param \Magento\Framework\Api\AttributeValueFactory            $customAttrFactory
+     * @param \Magento\Payment\Helper\Data                            $paymentData
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface      $scopeConfig
+     * @param \Magento\Payment\Model\Method\Logger                    $logger
+     * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
+     * @param \Payone\Core\Helper\Shop                                $shopHelper
+     * @param \Magento\Framework\Url                                  $url
+     * @param \Magento\Checkout\Model\Session                         $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Debit                    $debitRequest
+     * @param \Payone\Core\Model\Api\Request\Capture                  $captureRequest
+     * @param \Payone\Core\Model\Api\Request\Authorization            $authorizationRequest
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
+     * @param array                                                   $data
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,

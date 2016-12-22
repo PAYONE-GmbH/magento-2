@@ -27,6 +27,8 @@
 namespace Payone\Core\Helper;
 
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Helper class for everything that has to do with database connections
@@ -177,5 +179,91 @@ class Database extends \Payone\Core\Helper\Base
             return 0;
         }
         return $iCount+1;
+    }
+
+    /**
+     * Helper method to get parameter from the config directly from db without cache
+     *
+     * @param  string $sKey
+     * @param  string $sGroup
+     * @param  string $sSection
+     * @param  string $sScopeId
+     * @return string
+     */
+    public function getConfigParamWithoutCache($sKey, $sGroup = 'global', $sSection = 'payone_general', $sScopeId = null)
+    {
+        $sQuery = " SELECT
+                        value
+                    FROM
+                        ".$this->databaseResource->getTableName('core_config_data')."
+                    WHERE
+                        path = :path AND
+                        scope = :scope AND
+                        scope_id = :scope_id";
+        $sPath = $sSection."/".$sGroup."/".$sKey;
+        $sScope = ScopeInterface::SCOPE_STORE;
+        if (!$sScopeId) {
+            $sScopeId = $this->storeManager->getStore()->getId();
+        }
+        $sReturn = $this->getDb()->fetchOne($sQuery, ['path' => $sPath, 'scope' => $sScope, 'scope_id' => $sScopeId]);
+        return $sReturn;
+    }
+
+    /**
+     * Get the address status from a previous order address
+     *
+     * @param  AddressInterface $oAddress
+     * @param  bool             $blIsCreditrating
+     * @return string
+     */
+    public function getOldAddressStatus(AddressInterface $oAddress, $blIsCreditrating = true)
+    {
+        $sSelectField = 'payone_protect_score';
+        if ($blIsCreditrating === false) {
+            $sSelectField = 'payone_addresscheck_score';
+        }
+
+        $aParams = [
+            'firstname' => $oAddress->getFirstname(),
+            'lastname' => $oAddress->getLastname(),
+            'street' => $oAddress->getStreet()[0],
+            'city' => $oAddress->getCity(),
+            'region' => $oAddress->getRegion(),
+            'postcode' => $oAddress->getPostcode(),
+            'country_id' => $oAddress->getCountryId(),
+        ];
+        $sQuery = " SELECT
+                        {$sSelectField}
+                    FROM
+                        {$this->databaseResource->getTableName('quote_address')}
+                    WHERE
+                        firstname = :firstname AND
+                        lastname = :lastname AND
+                        street = :street AND
+                        city = :city AND
+                        region = :region AND
+                        postcode = :postcode AND
+                        country_id = :country_id";
+        if (!empty($oAddress->getId())) {
+            $sQuery .= " AND address_id != :curr_id";
+            $aParams['curr_id'] = $oAddress->getId();
+        }
+        if (!empty($oAddress->getCustomerId())) {
+            $sQuery .= " AND customer_id = :cust_id";
+            $aParams['cust_id'] = $oAddress->getCustomerId();
+        }
+        if (!empty($oAddress->getAddressType())) {
+            $sQuery .= " AND address_type = :addr_type";
+            $aParams['addr_type'] = $oAddress->getAddressType();
+        }
+        if ($blIsCreditrating === true) {
+            $sQuery .= " AND payone_protect_score != ''";
+        } else {
+            $sQuery .= " AND payone_addresscheck_score != ''";
+        }
+        $sQuery .= " ORDER BY address_id DESC LIMIT 1";
+
+        $sReturn = $this->getDb()->fetchOne($sQuery, $aParams);
+        return $sReturn;
     }
 }

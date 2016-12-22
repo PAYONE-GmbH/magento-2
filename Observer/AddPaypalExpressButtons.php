@@ -45,8 +45,7 @@ class AddPaypalExpressButtons implements ObserverInterface
     /**
      * Constructor
      *
-     * @param  Payment $paymentHelper
-     * @return void
+     * @param Payment $paymentHelper
      */
     public function __construct(Payment $paymentHelper)
     {

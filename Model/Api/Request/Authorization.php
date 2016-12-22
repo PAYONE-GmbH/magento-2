@@ -79,15 +79,14 @@ class Authorization extends AddressRequest
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Shop                $shopHelper
-     * @param  \Payone\Core\Helper\Environment         $environmentHelper
-     * @param  \Payone\Core\Helper\Api                 $apiHelper
-     * @param  \Payone\Core\Model\ResourceModel\ApiLog $apiLog
-     * @param  \Payone\Core\Helper\Customer            $customerHelper
-     * @param  \Payone\Core\Model\Api\Invoice          $invoiceGenerator
-     * @param  \Magento\Checkout\Model\Session         $checkoutSession
-     * @param  \Payone\Core\Helper\Toolkit             $toolkitHelper
-     * @return void
+     * @param \Payone\Core\Helper\Shop                $shopHelper
+     * @param \Payone\Core\Helper\Environment         $environmentHelper
+     * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Helper\Customer            $customerHelper
+     * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
+     * @param \Magento\Checkout\Model\Session         $checkoutSession
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,

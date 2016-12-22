@@ -57,11 +57,10 @@ class Returned extends \Magento\Framework\App\Action\Action
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Action\Context                       $context
-     * @param  \Magento\Checkout\Model\Session                             $checkoutSession
-     * @param  \Payone\Core\Model\Methods\Paypal                           $paypalPayment
-     * @param  \Payone\Core\Model\Paypal\ReturnHandler                     $returnHandler
-     * @return void
+     * @param \Magento\Framework\App\Action\Context   $context
+     * @param \Magento\Checkout\Model\Session         $checkoutSession
+     * @param \Payone\Core\Model\Methods\Paypal       $paypalPayment
+     * @param \Payone\Core\Model\Paypal\ReturnHandler $returnHandler
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

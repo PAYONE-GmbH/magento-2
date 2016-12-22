@@ -71,12 +71,11 @@ class Download extends \Magento\Framework\App\Action\Action
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Action\Context           $context
-     * @param  \Magento\Checkout\Model\Session                 $checkoutSession
-     * @param  \Payone\Core\Model\Api\Request\Getfile          $getfileRequest
-     * @param  \Payone\Core\Helper\Payment                     $paymentHelper
-     * @param  \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
-     * @return void
+     * @param \Magento\Framework\App\Action\Context           $context
+     * @param \Magento\Checkout\Model\Session                 $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Getfile          $getfileRequest
+     * @param \Payone\Core\Helper\Payment                     $paymentHelper
+     * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

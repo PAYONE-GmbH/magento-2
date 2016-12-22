@@ -52,13 +52,12 @@ class Debit extends Base
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Shop                $shopHelper
-     * @param  \Payone\Core\Helper\Environment         $environmentHelper
-     * @param  \Payone\Core\Helper\Api                 $apiHelper
-     * @param  \Payone\Core\Model\ResourceModel\ApiLog $apiLog
-     * @param  \Payone\Core\Helper\Database            $databaseHelper
-     * @param  \Payone\Core\Helper\Toolkit             $toolkitHelper
-     * @return void
+     * @param \Payone\Core\Helper\Shop                $shopHelper
+     * @param \Payone\Core\Helper\Environment         $environmentHelper
+     * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Helper\Database            $databaseHelper
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,

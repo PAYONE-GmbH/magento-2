@@ -55,26 +55,26 @@ define(
                 return this;
             },
             requestTelephone: function () {
-                if (typeof quote.billingAddress().telephone != 'undefined' && quote.billingAddress().telephone != '') {
+                if (quote.billingAddress() != null && typeof quote.billingAddress().telephone != 'undefined' && quote.billingAddress().telephone != '') {
                     return false;
                 }
                 return true;
             },
             requestAddressAddInfo: function () {
-                if (typeof quote.billingAddress().countryId != 'undefined' && quote.billingAddress().countryId != 'NL') {
+                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && quote.billingAddress().countryId != 'NL') {
                     return false;
                 }
                 return true;
             },
             requestDelAddressAddInfo: function () {
-                if (typeof quote.billingAddress().countryId != 'undefined' && quote.billingAddress().countryId != 'NL') {
+                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && quote.billingAddress().countryId != 'NL') {
                     return false;
                 }
                 return true;
             },
             requestGender: function () {
                 var aTriggerCountries = ['DE', 'NL', 'AT'];
-                if (typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
+                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
                     if (window.checkoutConfig.payment.payone.customerHasGivenGender == false) {
                         return true;
                     }
@@ -83,14 +83,14 @@ define(
             },
             requestPersonalId: function () {
                 var aTriggerCountries = ['DK', 'FI', 'NO', 'SE'];
-                if (typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
+                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
                     return true;
                 }
                 return false;
             },
             requestBirthday: function () {
                 var aTriggerCountries = ['DE', 'NL', 'AT'];
-                if (typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
+                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
                     if (window.checkoutConfig.payment.payone.customerHasGivenBirthday == false) {
                         return true;
                     }
@@ -99,19 +99,19 @@ define(
             },
             
             getData: function () {
-                return {
-                    'method': this.item.method,
-                    'additional_data': {
-                        'telephone': this.telephone(),
-                        'addinfo': this.addinfo(),
-                        'del_addinfo': this.delAddinfo(),
-                        'gender': this.gender(),
-                        'personal_id': this.personalId(),
-                        'birthday': this.birthday(),
-                        'birthmonth': this.birthmonth(),
-                        'birthyear': this.birthyear()
-                    }
-                };
+                var parentReturn = this._super();
+                if (parentReturn.additional_data === null) {
+                    parentReturn.additional_data = {};
+                }
+                parentReturn.additional_data.telephone = this.telephone();
+                parentReturn.additional_data.addinfo = this.addinfo();
+                parentReturn.additional_data.del_addinfo = this.delAddinfo();
+                parentReturn.additional_data.gender = this.gender();
+                parentReturn.additional_data.personal_id = this.personalId();
+                parentReturn.additional_data.birthday = this.birthday();
+                parentReturn.additional_data.birthmonth = this.birthmonth();
+                parentReturn.additional_data.birthyear = this.birthyear();
+                return parentReturn;
             },
 
             /** Returns payment method instructions */

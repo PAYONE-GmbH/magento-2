@@ -43,8 +43,8 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Helper\Context              $context
-     * @param  \Magento\Store\Model\StoreManagerInterface         $storeManager
+     * @param \Magento\Framework\App\Helper\Context      $context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -69,11 +69,8 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
         if (!$sStoreCode) {
             $sStoreCode = $this->storeManager->getStore()->getCode();
         }
-        return $this->scopeConfig->getValue(
-            $sSection."/".$sGroup."/".$sKey,
-            ScopeInterface::SCOPE_STORE,
-            $sStoreCode
-        );
+        $sPath = $sSection."/".$sGroup."/".$sKey;
+        return $this->scopeConfig->getValue($sPath, ScopeInterface::SCOPE_STORE, $sStoreCode);
     }
 
     /**

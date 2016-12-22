@@ -110,14 +110,15 @@ define(
                 if (this.requestBic() == 1) {
                     document.getElementById(this.getCode() + '_bic').value = this.getCleanedNumber(this.bic());
                 }
-                return {
-                    'method': this.item.method,
-                    'additional_data': {
-                        'bank_country': this.bankCountry(),
-                        'iban': this.getCleanedNumber(this.iban()),
-                        'bic': this.getCleanedNumber(this.bic())
-                    }
-                };
+                
+                var parentReturn = this._super();
+                if (parentReturn.additional_data === null) {
+                    parentReturn.additional_data = {};
+                }
+                parentReturn.additional_data.bank_country = this.bankCountry();
+                parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
+                parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
+                return parentReturn;
             },
             
             isManageMandateActive: function () {

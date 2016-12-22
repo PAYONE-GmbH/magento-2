@@ -41,8 +41,7 @@ class Forwarding
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Config $configHelper
-     * @return void
+     * @param \Payone\Core\Helper\Config $configHelper
      */
     public function __construct(\Payone\Core\Helper\Config $configHelper)
     {

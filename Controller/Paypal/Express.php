@@ -79,14 +79,13 @@ class Express extends \Magento\Framework\App\Action\Action
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Action\Context                       $context
-     * @param  \Magento\Checkout\Model\Session                             $checkoutSession
-     * @param  \Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress $genericRequest
-     * @param  \Payone\Core\Model\Methods\Paypal                           $paypalPayment
-     * @param  \Magento\Checkout\Helper\Data                               $checkoutHelper
-     * @param  \Magento\Customer\Model\Session                             $customerSession
-     * @param  \Payone\Core\Helper\Payment                                 $paymentHelper
-     * @return void
+     * @param \Magento\Framework\App\Action\Context                       $context
+     * @param \Magento\Checkout\Model\Session                             $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress $genericRequest
+     * @param \Payone\Core\Model\Methods\Paypal                           $paypalPayment
+     * @param \Magento\Checkout\Helper\Data                               $checkoutHelper
+     * @param \Magento\Customer\Model\Session                             $customerSession
+     * @param \Payone\Core\Helper\Payment                                 $paymentHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

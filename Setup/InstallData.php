@@ -45,8 +45,7 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
     /**
      * Constructor
      *
-     * @param  SalesSetupFactory $salesSetupFactory
-     * @return void
+     * @param SalesSetupFactory $salesSetupFactory
      */
     public function __construct(SalesSetupFactory $salesSetupFactory)
     {

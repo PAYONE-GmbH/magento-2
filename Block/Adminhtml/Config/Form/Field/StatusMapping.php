@@ -62,12 +62,11 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
     /**
      * Constructor
      *
-     * @param  \Magento\Backend\Block\Template\Context         $context
-     * @param  \Magento\Framework\Data\Form\Element\Factory    $elementFactory
-     * @param  \Magento\Sales\Model\Config\Source\Order\Status $orderStatus
-     * @param  \Payone\Core\Model\Source\TransactionStatus     $transactionStatus
-     * @param  array                                           $data
-     * @return void
+     * @param \Magento\Backend\Block\Template\Context         $context
+     * @param \Magento\Framework\Data\Form\Element\Factory    $elementFactory
+     * @param \Magento\Sales\Model\Config\Source\Order\Status $orderStatus
+     * @param \Payone\Core\Model\Source\TransactionStatus     $transactionStatus
+     * @param array                                           $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -89,10 +88,10 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
      */
     protected function _construct()
     {
-        $this->addColumn('txaction', ['label' => __('Transactionstatus-message')]);
-        $this->addColumn('state_status', ['label' => __('Magento-status')]);
-        $this->addAfter = false;
-        $this->addButtonLabel = __('Add Statusmapping');
+        $this->addColumn('txaction', ['label' => __('Transactionstatus-message')]); // set column name for txaction
+        $this->addColumn('state_status', ['label' => __('Magento-status')]); // set column name for state_status
+        $this->addAfter = false; // dont add "add after" button
+        $this->addButtonLabel = __('Add Statusmapping'); // set the label text of the button
         parent::_construct();
     }
 
@@ -105,23 +104,18 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
     public function renderCellTemplate($columnName)
     {
         if ($columnName == 'txaction' && isset($this->_columns[$columnName])) {
-            $aOptions = $this->transactionStatus->toOptionArray();
+            $aOptions = $this->transactionStatus->toOptionArray(); // add transction status action options to dropdown
         } elseif ($columnName == 'state_status' && isset($this->_columns[$columnName])) {
-            $aOptions = $this->orderStatus->toOptionArray();
+            $aOptions = $this->orderStatus->toOptionArray(); // add state_status options to dropdown
         } else {
             return parent::renderCellTemplate($columnName);
         }
 
         $oElement = $this->elementFactory->create('select');
-        $oElement->setForm(
-            $this->getForm()
-        )->setName(
-            $this->_getCellInputElementName($columnName)
-        )->setHtmlId(
-            $this->_getCellInputElementId('<%- _id %>', $columnName)
-        )->setValues(
-            $aOptions
-        );
+        $oElement->setForm($this->getForm());
+        $oElement->setName($this->_getCellInputElementName($columnName));
+        $oElement->setHtmlId($this->_getCellInputElementId('<%- _id %>', $columnName));
+        $oElement->setValues($aOptions);
         return str_replace("\n", '', $oElement->getElementHtml());
     }
     
@@ -135,22 +129,21 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
     public function getArrayRows()
     {
         if (null !== $this->_arrayRowsCache) {
-            return $this->_arrayRowsCache;
+            return $this->_arrayRowsCache; // return cached values if set
         }
         $result = [];
         /** @var \Magento\Framework\Data\Form\Element\AbstractElement */
         $element = $this->getElement();
-        $aValue = $element->getValue();
-        if (!is_array($aValue)) {
-            $aValue = unserialize($aValue);
+        $aValue = $element->getValue(); // get values
+        if (!is_array($aValue)) { // values given as array?
+            $aValue = unserialize($aValue); // convert string to array
         }
-        
         if ($aValue && is_array($aValue)) {
             foreach ($aValue as $rowId => $row) {
                 $rowColumnValues = [];
                 foreach ($row as $key => $value) {
                     $row[$key] = $value;
-                    $rowColumnValues[$this->_getCellInputElementId($rowId, $key)] = $row[$key];
+                    $rowColumnValues[$this->_getCellInputElementId($rowId, $key)] = $row[$key]; // add value the row
                 }
                 $row['_id'] = $rowId;
                 $row['column_values'] = $rowColumnValues;
@@ -170,9 +163,9 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
      */
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        $this->setElement($element);
-        $html = $this->_toHtml();
-        $this->_arrayRowsCache = null;
+        $this->setElement($element); // set element
+        $html = $this->_toHtml(); // get render html for the object
+        $this->_arrayRowsCache = null; // reset cache
         // doh, the object is used as singleton!
         return $html;
     }
