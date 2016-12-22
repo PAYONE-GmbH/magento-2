@@ -81,7 +81,6 @@ class Consumerscore extends AddressRequest
      * Send request "addresscheck" to PAYONE server API
      *
      * @param  AddressInterface $oAddress
-     * @param  bool             $blIsBillingAddress
      * @return array|bool
      */
     public function sendRequest(AddressInterface $oAddress)
@@ -91,8 +90,8 @@ class Consumerscore extends AddressRequest
         }
 
         $this->addParameter('request', 'consumerscore');
-        $this->addParameter('mode', $this->shopHelper->getConfigParam('mode', 'creditrating', 'payone_protect'));//Operationmode live or test
-        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid'));//ID of PayOne Sub-Account
+        $this->addParameter('mode', $this->shopHelper->getConfigParam('mode', 'creditrating', 'payone_protect')); //Operationmode live or test
+        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); //ID of PayOne Sub-Account
         $this->addParameter('addresschecktype', $this->shopHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect'));
         $this->addParameter('consumerscoretype', $this->shopHelper->getConfigParam('type', 'creditrating', 'payone_protect'));
         $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));

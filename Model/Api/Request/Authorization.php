@@ -115,20 +115,20 @@ class Authorization extends AddressRequest
      */
     public function sendRequest(PayoneMethod $oPayment, Order $oOrder, $dAmount)
     {
-        $this->setOrderId($oOrder->getRealOrderId());// save order id to object for later use
+        $this->setOrderId($oOrder->getRealOrderId()); // save order id to object for later use
 
-        $this->addParameter('request', $oPayment->getAuthorizationMode());// add request type
-        $this->addParameter('mode', $oPayment->getOperationMode());// add mode ( live or test )
-        $this->addParameter('customerid', $oOrder->getCustomerId());// add customer id
-        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid'));// add sub account id
-        $this->setAuthorizationParameters($oPayment, $oOrder, $dAmount);// set authorization params
+        $this->addParameter('request', $oPayment->getAuthorizationMode()); // add request type
+        $this->addParameter('mode', $oPayment->getOperationMode()); // add mode ( live or test )
+        $this->addParameter('customerid', $oOrder->getCustomerId()); // add customer id
+        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // add sub account id
+        $this->setAuthorizationParameters($oPayment, $oOrder, $dAmount); // set authorization params
         if ($oPayment->hasCustomConfig()) {// if payment type doesnt use the global settings
-            $this->addCustomParameters($oPayment);// add custom connection settings
+            $this->addCustomParameters($oPayment); // add custom connection settings
         }
 
-        $aResponse = $this->send();// send request to PAYONE Server API
+        $aResponse = $this->send(); // send request to PAYONE Server API
 
-        $this->apiHelper->addPayoneOrderData($oOrder, $this->getParameters(), $aResponse);// add payone data to order
+        $this->apiHelper->addPayoneOrderData($oOrder, $this->getParameters(), $aResponse); // add payone data to order
 
         return $aResponse;
     }
@@ -142,15 +142,15 @@ class Authorization extends AddressRequest
      */
     protected function setUserParameters(PayoneMethod $oPayment, Order $oOrder)
     {
-        $oQuote = $this->checkoutSession->getQuote();// get quote from session
-        $oCustomer = $oQuote->getCustomer();// get customer object from quote
+        $oQuote = $this->checkoutSession->getQuote(); // get quote from session
+        $oCustomer = $oQuote->getCustomer(); // get customer object from quote
         $this->addUserDataParameters($oOrder->getBillingAddress(), $oPayment, $oCustomer->getGender(), $oOrder->getCustomerEmail(), $oCustomer->getDob());
 
         $oShipping = $oOrder->getShippingAddress(); // get shipping address from order
         if ($oShipping) {// shipping address existing?
-            $this->addAddress($oShipping, true);// add regular shipping address
+            $this->addAddress($oShipping, true); // add regular shipping address
         } elseif ($oPayment->getCode() == PayoneConfig::METHOD_PAYPAL && $this->shopHelper->getConfigParam('bill_as_del_address', PayoneConfig::METHOD_PAYPAL, 'payone_payment')) {
-            $this->addAddress($oOrder->getBillingAddress(), true);// add billing address as shipping address
+            $this->addAddress($oOrder->getBillingAddress(), true); // add billing address as shipping address
         }
     }
 
@@ -164,22 +164,22 @@ class Authorization extends AddressRequest
      */
     protected function setAuthorizationParameters(PayoneMethod $oPayment, Order $oOrder, $dAmount)
     {
-        $sRefNr = $this->shopHelper->getConfigParam('ref_prefix').$oOrder->getIncrementId();// ref_prefix to prevent duplicate refnumbers in testing environments
-        $sRefNr = $oPayment->formatReferenceNumber($sRefNr);// some payment methods have refnr regulations
-        $this->addParameter('reference', $sRefNr);// add ref-nr to request
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '')*100);// add price to request
-        $this->addParameter('currency', $oOrder->getOrderCurrencyCode());// add currency to request
+        $sRefNr = $this->shopHelper->getConfigParam('ref_prefix').$oOrder->getIncrementId(); // ref_prefix to prevent duplicate refnumbers in testing environments
+        $sRefNr = $oPayment->formatReferenceNumber($sRefNr); // some payment methods have refnr regulations
+        $this->addParameter('reference', $sRefNr); // add ref-nr to request
+        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // add currency to request
         if ($this->shopHelper->getConfigParam('transmit_ip') == '1') {// is IP transmission needed?
-            $sIp = $this->environmentHelper->getRemoteIp();// get remote IP
+            $sIp = $this->environmentHelper->getRemoteIp(); // get remote IP
             if ($sIp != '') {// is IP not empty
-                $this->addParameter('ip', $sIp);// add IP address to the request
+                $this->addParameter('ip', $sIp); // add IP address to the request
             }
         }
-        $this->setUserParameters($oPayment, $oOrder);// add user data - addresses etc.
-        $this->setPaymentParameters($oPayment, $oOrder);// add payment specific parameters
+        $this->setUserParameters($oPayment, $oOrder); // add user data - addresses etc.
+        $this->setPaymentParameters($oPayment, $oOrder); // add payment specific parameters
 
         if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {//
-            $this->invoiceGenerator->addProductInfo($this, $oOrder);// add invoice parameters
+            $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
         }
     }
 
@@ -192,15 +192,15 @@ class Authorization extends AddressRequest
      */
     protected function setPaymentParameters(PayoneMethod $oPayment, Order $oOrder)
     {
-        $this->addParameter('clearingtype', $oPayment->getClearingtype());// add payment type to request
+        $this->addParameter('clearingtype', $oPayment->getClearingtype()); // add payment type to request
         $sNarrativeText = $this->toolkitHelper->getNarrativeText($oOrder, $oPayment);
         if (!empty($sNarrativeText)) {// narrative text existing?
-            $this->addParameter('narrative_text', $sNarrativeText);// add narrative text parameter
+            $this->addParameter('narrative_text', $sNarrativeText); // add narrative text parameter
         }
-        $aPaymentParams = $oPayment->getPaymentSpecificParameters($oOrder);// get payment params specific to the payment type
-        $this->aParameters = array_merge($this->aParameters, $aPaymentParams);// merge payment params with other params
+        $aPaymentParams = $oPayment->getPaymentSpecificParameters($oOrder); // get payment params specific to the payment type
+        $this->aParameters = array_merge($this->aParameters, $aPaymentParams); // merge payment params with other params
         if ($oPayment->needsRedirectUrls() === true) {// does the used payment type need redirect urls?
-            $this->addRedirectUrls($oPayment);// add needed redirect urls
+            $this->addRedirectUrls($oPayment); // add needed redirect urls
         }
     }
 
@@ -213,9 +213,9 @@ class Authorization extends AddressRequest
     protected function addCustomParameters(PayoneMethod $oPayment)
     {
         foreach ($this->aCustomParamMap as $sParamName => $sConfigName) {// add all custom parameters
-            $sCustomConfig = $oPayment->getCustomConfigParam($sConfigName);// get custom config param
+            $sCustomConfig = $oPayment->getCustomConfigParam($sConfigName); // get custom config param
             if (!empty($sCustomConfig)) {// only add if the param is configured
-                $this->addParameter($sParamName, $sCustomConfig);// add custom param to request
+                $this->addParameter($sParamName, $sCustomConfig); // add custom param to request
             }
         }
     }

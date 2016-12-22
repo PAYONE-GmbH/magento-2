@@ -107,7 +107,7 @@ class CheckoutSubmitBefore implements ObserverInterface
         }
 
         if ($oMethodInstance->getInfoInstance()->getAdditionalInformation('payone_boni_agreement') === false) {
-            return false;// agreement checkbox was not checked by the customer
+            return false; // agreement checkbox was not checked by the customer
         }
 
         $dTotal = $oQuote->getGrandTotal();
@@ -126,6 +126,13 @@ class CheckoutSubmitBefore implements ObserverInterface
         return true;
     }
 
+    /**
+     * Determine if the payment type can be used with this score
+     * 
+     * @param  Quote $oQuote
+     * @param  string $sScore
+     * @return bool
+     */
     protected function isPaymentApplicableForScore(Quote $oQuote, $sScore)
     {
         if ($sScore == 'G') {
@@ -155,7 +162,7 @@ class CheckoutSubmitBefore implements ObserverInterface
     protected function getScoreByCreditrating(AddressInterface $oBilling)
     {
         $aResponse = $this->consumerscore->sendRequest($oBilling);
-        if ($aResponse === true) {// creditrating not executed because of a previous check
+        if ($aResponse === true) { // creditrating not executed because of a previous check
             $this->consumerscoreHelper->copyOldStatusToNewAddress($oBilling);
         }
 
@@ -189,7 +196,7 @@ class CheckoutSubmitBefore implements ObserverInterface
         $oShipping = $oQuote->getShippingAddress();
 
         $aScores = [];
-        if ($this->getConfigParam('enabled', true)) {// is addresscheck active
+        if ($this->getConfigParam('enabled', true)) { // is addresscheck active
             $aScores[] = $oBilling->getPayoneAddresscheckScore();
             $aScores[] = $oShipping->getPayoneAddresscheckScore();
         }

@@ -111,11 +111,11 @@ class ChecksumCheck
         if (file_exists($this->getBasePath().'composer.json')) {// does composer.json exist here?
             $this->handleComposerJson($this->getBasePath().'composer.json'); // Read module information from the composer.json
         }
-        if ($this->blGotModuleInfo === true) {// was composer.json readable?
+        if ($this->blGotModuleInfo === true) { // was composer.json readable?
             $sRequestUrl = $this->sVersionCheckUrl.'?module='.$this->sModuleId.'&version='.$this->sModuleVersion;
-            $sResponse = file_get_contents($sRequestUrl);// request info from fatchip checksum server
+            $sResponse = file_get_contents($sRequestUrl); // request info from fatchip checksum server
             if (!empty($sResponse)) {// Did the server answer?
-                $aFiles = json_decode($sResponse);// Decode the json encoded answer from the server
+                $aFiles = json_decode($sResponse); // Decode the json encoded answer from the server
             }
         }
         return $aFiles;
@@ -167,7 +167,6 @@ class ChecksumCheck
     /**
      * Main method executing checksum check
      *
-     * @param  bool $blOutput
      * @return string
      */
     public function checkChecksumXml()

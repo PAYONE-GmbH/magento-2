@@ -76,8 +76,8 @@ class Managemandate extends AddressRequest
         $oCustomer = $oQuote->getCustomer();
 
         $this->addParameter('request', 'managemandate'); // Request method
-        $this->addParameter('mode', $oPayment->getOperationMode());// PayOne Portal Operation Mode (live or test)
-        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid'));// ID of PayOne Sub-Account
+        $this->addParameter('mode', $oPayment->getOperationMode()); // PayOne Portal Operation Mode (live or test)
+        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // ID of PayOne Sub-Account
         $this->addParameter('clearingtype', 'elv');
 
         $this->addParameter('customerid', $oCustomer->getId());

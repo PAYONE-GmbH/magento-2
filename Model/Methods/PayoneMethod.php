@@ -111,7 +111,7 @@ abstract class PayoneMethod extends BaseMethod
     protected function sendPayoneAuthorization(InfoInterface $payment, $amount)
     {
         $oOrder = $payment->getOrder();
-        $this->checkoutSession->unsPayoneRedirectUrl();// remove redirect url from session
+        $this->checkoutSession->unsPayoneRedirectUrl(); // remove redirect url from session
         $aResponse = $this->authorizationRequest->sendRequest($this, $oOrder, $amount);
         $this->handleResponse($aResponse);
         if ($aResponse['status'] == 'ERROR') {// request returned an error
@@ -154,7 +154,7 @@ abstract class PayoneMethod extends BaseMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        return [];// filled in child classes
+        return []; // filled in child classes
     }
 
     /**
@@ -272,7 +272,7 @@ abstract class PayoneMethod extends BaseMethod
      */
     public function getSubTypeSpecificParameters(Order $oOrder)
     {
-        return [];// filled in child classes
+        return []; // filled in child classes
     }
 
     /**

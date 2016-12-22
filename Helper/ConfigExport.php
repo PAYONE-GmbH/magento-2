@@ -174,6 +174,6 @@ class ConfigExport extends \Payone\Core\Helper\Base
         if ($this->getPaymentConfig('allowspecific', $sPaymentCode, $sStoreCode, true) == '1') {
             return $this->getPaymentConfig('specificcountry', $sPaymentCode, $sStoreCode, true);
         }
-        return '';// empty return value if all countries are available
+        return ''; // empty return value if all countries are available
     }
 }

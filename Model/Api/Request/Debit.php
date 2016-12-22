@@ -85,19 +85,19 @@ class Debit extends Base
         $oOrder = $oPaymentInfo->getOrder();
         $iTxid = $oPaymentInfo->getParentTransactionId();
         if (strpos($iTxid, '-') !== false) {
-            $iTxid = substr($iTxid, 0, strpos($iTxid, '-'));// clean the txid from the magento-suffixes
+            $iTxid = substr($iTxid, 0, strpos($iTxid, '-')); // clean the txid from the magento-suffixes
         }
 
         $this->setOrderId($oOrder->getRealOrderId());
 
         $this->addParameter('request', 'debit'); // Request method
-        $this->addParameter('mode', $oPayment->getOperationMode());// PayOne Portal Operation Mode (live or test)
+        $this->addParameter('mode', $oPayment->getOperationMode()); // PayOne Portal Operation Mode (live or test)
         $this->addParameter('txid', $iTxid); // PayOne Transaction ID
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));
 
         // Total order sum in smallest currency unit
         $this->addParameter('amount', number_format((-1 * $dAmount), 2, '.', '')*100);
-        $this->addParameter('currency', $oOrder->getOrderCurrencyCode());// Currency
+        $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // Currency
         $this->addParameter('transactiontype', 'GT');
 
         $sRefundAppendix = $this->getRefundAppendix($oOrder, $oPayment);

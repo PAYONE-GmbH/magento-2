@@ -99,7 +99,8 @@ class Customer extends \Payone\Core\Helper\Base
     /**
      * Get the region object for the state and country given by PayPal
      *
-     * @param  array $aResponse
+     * @param  string $sCountry
+     * @param  string $sState
      * @return Region|bool
      */
     public function getRegion($sCountry, $sState)

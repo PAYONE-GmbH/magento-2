@@ -27,6 +27,8 @@
 namespace Payone\Core\Model\Risk;
 
 use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Quote\Model\Quote;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Model for calling the addresscheck request
@@ -76,20 +78,30 @@ class Addresscheck
     protected $toolkitHelper;
 
     /**
+     * Checkout session
+     *
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+    
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Addresscheck $addresscheck
      * @param \Payone\Core\Helper\Database                $databaseHelper
      * @param \Payone\Core\Helper\Toolkit                 $toolkitHelper
+     * @param \Magento\Checkout\Model\Session             $checkoutSession
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Addresscheck $addresscheck,
         \Payone\Core\Helper\Database $databaseHelper,
-        \Payone\Core\Helper\Toolkit $toolkitHelper
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Magento\Checkout\Model\Session $checkoutSession
     ) {
         $this->addresscheck = $addresscheck;
         $this->databaseHelper = $databaseHelper;
         $this->toolkitHelper = $toolkitHelper;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -112,6 +124,17 @@ class Addresscheck
         return $this->addressCorrected;
     }
 
+    /**
+     * Get addresscheck config parameter
+     * 
+     * @param  string $sParam
+     * @return string
+     */
+    public function getConfigParam($sParam)
+    {
+        return $this->databaseHelper->getConfigParam($sParam, 'address_check', 'payone_protect');
+    }
+    
     /**
      * Change the address according to the response
      *
@@ -171,17 +194,17 @@ class Addresscheck
      */
     public function isCheckNeededForQuote($isBillingAddress, $isVirtual, $dTotal)
     {
-        $dMinBasketValue = $this->databaseHelper->getConfigParam('min_order_total', 'address_check', 'payone_protect');
+        $dMinBasketValue = $this->getConfigParam('min_order_total');
         if (!empty($dMinBasketValue) && is_numeric($dMinBasketValue) && $dTotal < $dMinBasketValue) {
             return false;
         }
 
-        $dMaxBasketValue = $this->databaseHelper->getConfigParam('max_order_total', 'address_check', 'payone_protect');
+        $dMaxBasketValue = $this->getConfigParam('max_order_total');
         if (!empty($dMaxBasketValue) && is_numeric($dMaxBasketValue) && $dTotal > $dMaxBasketValue) {
             return false;
         }
 
-        $blCheckVirtual = (bool)$this->databaseHelper->getConfigParam('check_billing_for_virtual_order', 'address_check', 'payone_protect');
+        $blCheckVirtual = (bool)$this->getConfigParam('check_billing_for_virtual_order');
         if ($isBillingAddress === true && $isVirtual === true && $blCheckVirtual === false) {
             return false;
         }
@@ -198,7 +221,7 @@ class Addresscheck
     {
         $aReturnMappings = [];
 
-        $sMappings = $this->databaseHelper->getConfigParam('mapping_personstatus', 'address_check', 'payone_protect');
+        $sMappings = $this->getConfigParam('mapping_personstatus');
         $aMappings = unserialize($sMappings);
         if (!is_array($aMappings)) {
             $aMappings = [];
@@ -219,7 +242,7 @@ class Addresscheck
      */
     public function getInvalidMessage($sCustomermessage)
     {
-        $sInvalidMessage = $this->databaseHelper->getConfigParam('message_response_invalid', 'address_check', 'payone_protect');
+        $sInvalidMessage = $this->getConfigParam('message_response_invalid');
         if (!empty($sInvalidMessage)) {
             $aSubstitutionArray = [
                 '{{payone_customermessage}}' => __($sCustomermessage),
@@ -230,6 +253,96 @@ class Addresscheck
         return __($sCustomermessage);
     }
 
+    /**
+     * Return error message
+     *
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        $sErrorMessage = $this->getConfigParam('stop_checkout_message');
+        if (empty($sErrorMessage)) { // add default errormessage if none is configured
+            $sErrorMessage = 'An error occured during the addresscheck.';
+        }
+        return $sErrorMessage;
+    }
+
+    /**
+     * Get error message by the given response
+     * 
+     * @param  array $aResponse
+     * @return string
+     */
+    public function getErrorMessageByResponse($aResponse)
+    {
+        $sErrorMessage = false;
+        if ($aResponse['status'] == 'INVALID') {
+            $sErrorMessage = $this->getInvalidMessage($aResponse['customermessage']);
+        } elseif ($aResponse['status'] == 'ERROR') {
+            if ($this->getConfigParam('handle_response_error') == 'stop_checkout') {
+                $sErrorMessage = $this->getErrorMessage();
+            }
+        }
+        return $sErrorMessage;
+    }
+    
+    /**
+     * Execute addresscheck and return the response
+     *
+     * @param  AddressInterface $oAddress
+     * @return array
+     */
+    
+    /**
+     * 
+     * @param AddressInterface $oAddress
+     * @return type
+     * @throws LocalizedException
+     */
+    protected function handleAddresscheck(AddressInterface $oAddress)
+    {
+        $aResponse = $this->getResponse($oAddress);
+        if (is_array($aResponse)) {
+            $sErrorMessage = $this->getErrorMessageByResponse($aResponse);
+            if (!empty($sErrorMessage)) {
+                throw new LocalizedException(__($sErrorMessage));
+            }
+        }
+        return $aResponse;
+    }
+    
+    /**
+     * Get score from session or from a new addresscheck and add it to the address
+     * 
+     * @param  AddressInterface $oAddress
+     * @param  Quote            $oQuote
+     * @param  bool             $blIsBillingAddress
+     * @return AddressInterface
+     */
+    public function handleAddressManagement(AddressInterface $oAddress, Quote $oQuote, $blIsBillingAddress = true)
+    {
+        $sScore = $this->checkoutSession->getPayoneBillingAddresscheckScore();
+        if ($blIsBillingAddress === false) {
+            $sScore = $this->checkoutSession->getPayoneShippingAddresscheckScore();
+        }
+        $this->checkoutSession->unsPayoneBillingAddresscheckScore();
+        $this->checkoutSession->unsPayoneShippingAddresscheckScore();
+        
+        if (!$sScore && empty($oAddress->getPayoneAddresscheckScore())) {
+            if ($this->isCheckNeededForQuote(false, $oQuote->isVirtual(), $oQuote->getSubtotal())) {
+                $aResponse = $this->handleAddresscheck($oAddress);
+                if (isset($aResponse['status']) && $aResponse['status'] == 'VALID') {
+                    $oAddress = $this->correctAddress($oAddress);
+                }
+                $sScore = $this->getScore($oAddress);
+            }
+        }
+        if ($sScore) {
+            $oAddress->setPayoneAddresscheckScore($sScore);
+        }
+        return $oAddress;
+    }
+    
     /**
      * Get score from response or an old saved score from the database
      *

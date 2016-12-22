@@ -60,6 +60,13 @@ class Addresscheck extends AddressRequest
         'HU',
         'US',
     ];
+    
+    /**
+     * Checked addresses resource model
+     * 
+     * @var \Payone\Core\Model\ResourceModel\CheckedAddresses 
+     */
+    protected $addressesChecked;
 
     /**
      * Constructor
@@ -157,8 +164,8 @@ class Addresscheck extends AddressRequest
         }
 
         $this->addParameter('request', 'addresscheck');
-        $this->addParameter('mode', $this->shopHelper->getConfigParam('mode', 'address_check', 'payone_protect'));//Operationmode live or test
-        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid'));//ID of PayOne Sub-Account
+        $this->addParameter('mode', $this->shopHelper->getConfigParam('mode', 'address_check', 'payone_protect')); //Operationmode live or test
+        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); //ID of PayOne Sub-Account
         $this->addParameter('addresschecktype', $sType);
         $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
         $this->addAddress($oAddress);

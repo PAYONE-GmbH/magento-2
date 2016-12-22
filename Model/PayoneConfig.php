@@ -58,8 +58,8 @@ abstract class PayoneConfig
     const TRANSACTIONSTATUS_REMINDER = 'reminder';
     const TRANSACTIONSTATUS_VAUTHORIZATION = 'vauthorization';
     const TRANSACTIONSTATUS_VSETTLEMENT = 'vsettlement';
-    const TRANSACTIONSTATUS_TRANSFER= 'transfer';
-    const TRANSACTIONSTATUS_INVOICE= 'invoice';
+    const TRANSACTIONSTATUS_TRANSFER = 'transfer';
+    const TRANSACTIONSTATUS_INVOICE = 'invoice';
 
     /* Payment method codes */
     const METHOD_CREDITCARD = 'payone_creditcard';

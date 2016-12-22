@@ -75,7 +75,7 @@ class TransactionStatus extends AbstractModel
         $sRequest = $this->getData($sKey);
         if ($sRequest) {
             if (Toolkit::isUTF8($sRequest)) {
-                $sRequest = utf8_decode($sRequest);// needed for unserializing the array
+                $sRequest = utf8_decode($sRequest); // needed for unserializing the array
             }
             $aRequest = unserialize($sRequest);
             if (is_array($aRequest)) {

@@ -76,7 +76,7 @@ abstract class AddressRequest extends Base
     {
         $sPre = '';
         if ($blIsShipping === true) {
-            $sPre = 'shipping_';// add shipping prefix for shipping addresses
+            $sPre = 'shipping_'; // add shipping prefix for shipping addresses
         }
         $this->addParameter($sPre.'firstname', $oAddress->getFirstname());
         $this->addParameter($sPre.'lastname', $oAddress->getLastname());
@@ -85,7 +85,7 @@ abstract class AddressRequest extends Base
         }
 
         $aStreet = $oAddress->getStreet();
-        $sStreet = is_array($aStreet) ? implode(' ', $aStreet) : $aStreet;// street may be an array
+        $sStreet = is_array($aStreet) ? implode(' ', $aStreet) : $aStreet; // street may be an array
         $this->addParameter($sPre.'street', trim($sStreet));
         $this->addParameter($sPre.'zip', $oAddress->getPostcode());
         $this->addParameter($sPre.'city', $oAddress->getCity());

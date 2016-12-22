@@ -107,7 +107,7 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
         $aRequest = $oContext->getRequest()->getPostValue();
         $sRawStatus = serialize($aRequest);
         if (!Toolkit::isUTF8($sRawStatus)) {
-            $sRawStatus = utf8_encode($sRawStatus);// needed for serializing the array
+            $sRawStatus = utf8_encode($sRawStatus); // needed for serializing the array
         }
         $sOrderId = $oOrder !== null ? $oOrder->getIncrementId() : '';
         $this->getConnection()->insert(

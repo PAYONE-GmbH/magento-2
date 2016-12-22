@@ -134,7 +134,7 @@ class Transactionstatus
             'cardpan' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
             'clearing_bankaccountholder' => ['type' => Table::TYPE_TEXT, 'length' => 255, 'option' => []],
             'clearing_bankaccount' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
-            'clearing_bankcode' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => [],],
+            'clearing_bankcode' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
             'clearing_bankname' => ['type' => Table::TYPE_TEXT, 'length' => 255, 'option' => []],
             'clearing_bankbic' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
             'clearing_bankiban' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],

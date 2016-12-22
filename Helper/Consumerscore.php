@@ -81,7 +81,7 @@ class Consumerscore extends \Payone\Core\Helper\Base
             'creditrating',
             'payone_protect'
         );
-        if (empty($iCounter) or !is_numeric($iCounter)) {
+        if (empty($iCounter) || !is_numeric($iCounter)) {
             $iCounter = 0;
         }
         return $iCounter;

@@ -36,13 +36,6 @@ use Magento\Framework\Exception\LocalizedException;
 class BillingAddressManagement
 {
     /**
-     * Checkout session
-     *
-     * @var \Magento\Checkout\Model\Session
-     */
-    protected $checkoutSession;
-
-    /**
      * Quote repository.
      *
      * @var \Magento\Quote\Api\CartRepositoryInterface
@@ -60,50 +53,19 @@ class BillingAddressManagement
      * Constructor
      *
      * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
-     * @param \Magento\Checkout\Model\Session            $checkoutSession
      * @param \Payone\Core\Model\Risk\Addresscheck       $addresscheck
      */
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
-        \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\Risk\Addresscheck $addresscheck
     ) {
         $this->quoteRepository = $quoteRepository;
-        $this->checkoutSession = $checkoutSession;
         $this->addresscheck = $addresscheck;
     }
 
     /**
-     * Execute addresscheck and return the response
-     *
-     * @param  AddressInterface $oAddress
-     * @return array
-     */
-    protected function handleAddresscheck(AddressInterface $oAddress)
-    {
-        $aResponse = $this->addresscheck->getResponse($oAddress);
-        if (is_array($aResponse)) {
-            $sErrorMessage = false;
-            if ($aResponse['status'] == 'INVALID') {
-                $sErrorMessage = $this->addresscheck->getInvalidMessage($aResponse['customermessage']);
-            } elseif ($aResponse['status'] == 'ERROR') {
-                if ($this->toolkitHelper->getConfigParam('handle_response_error', 'address_check', 'payone_protect') == 'stop_checkout') {
-                    $sErrorMessage = $this->toolkitHelper->getConfigParam('stop_checkout_message', 'address_check', 'payone_protect');
-                    if (empty($sErrorMessage)) {
-                        $sErrorMessage = 'An error occured during the addresscheck.';
-                    }
-                }
-            }
-
-            if (!empty($sErrorMessage)) {
-                throw new LocalizedException(__($sErrorMessage));
-            }
-        }
-        return $aResponse;
-    }
-
-    /**
-     *
+     * This writes the addresscheck score to the quote address
+     * 
      * @param  BillingAddressManagementOrig $oSource
      * @param  int                          $sCartId
      * @param  AddressInterface             $oAddress
@@ -112,21 +74,8 @@ class BillingAddressManagement
      */
     public function beforeAssign(BillingAddressManagementOrig $oSource, $sCartId, AddressInterface $oAddress, $useForShipping = false)
     {
-        $sScore = $this->checkoutSession->getPayoneBillingAddresscheckScore();
-        if (!$sScore && empty($oAddress->getPayoneAddresscheckScore())) {
-            $oQuote = $this->quoteRepository->getActive($sCartId);
-            if ($this->addresscheck->isCheckNeededForQuote(false, $oQuote->isVirtual(), $oQuote->getSubtotal())) {
-                $aResponse = $this->handleAddresscheck($oAddress);
-                if (isset($aResponse['status']) && $aResponse['status'] == 'VALID') {
-                    $oAddress = $this->addresscheck->correctAddress($oAddress);
-                }
-                $sScore = $this->addresscheck->getScore($oAddress);
-            }
-        }
-        if ($sScore) {
-            $oAddress->setPayoneAddresscheckScore($sScore);
-            $this->checkoutSession->unsPayoneBillingAddresscheckScore();
-        }
+        $oQuote = $this->quoteRepository->getActive($sCartId);
+        $oAddress = $this->addresscheck->handleAddressManagement($oAddress, $oQuote);
         return [$sCartId, $oAddress, $useForShipping];
     }
 }

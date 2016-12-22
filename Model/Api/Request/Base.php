@@ -119,14 +119,14 @@ abstract class Base
      */
     protected function initRequest()
     {
-        $this->addParameter('mid', $this->shopHelper->getConfigParam('mid'));// PayOne Merchant ID
-        $this->addParameter('portalid', $this->shopHelper->getConfigParam('portalid'));// PayOne Portal ID
-        $this->addParameter('key', md5($this->shopHelper->getConfigParam('key')));// PayOne Portal Key
-        $this->addParameter('encoding', $this->environmentHelper->getEncoding());// Encoding
-        $this->addParameter('integrator_name', 'Magento2');// Shop-system
-        $this->addParameter('integrator_version', $this->shopHelper->getMagentoVersion());// Shop version
-        $this->addParameter('solution_name', 'fatchip');// Company developing the module
-        $this->addParameter('solution_version', PayoneConfig::MODULE_VERSION);// Module version
+        $this->addParameter('mid', $this->shopHelper->getConfigParam('mid')); // PayOne Merchant ID
+        $this->addParameter('portalid', $this->shopHelper->getConfigParam('portalid')); // PayOne Portal ID
+        $this->addParameter('key', md5($this->shopHelper->getConfigParam('key'))); // PayOne Portal Key
+        $this->addParameter('encoding', $this->environmentHelper->getEncoding()); // Encoding
+        $this->addParameter('integrator_name', 'Magento2'); // Shop-system
+        $this->addParameter('integrator_version', $this->shopHelper->getMagentoVersion()); // Shop version
+        $this->addParameter('solution_name', 'fatchip'); // Company developing the module
+        $this->addParameter('solution_version', PayoneConfig::MODULE_VERSION); // Module version
     }
 
     /**
@@ -140,7 +140,7 @@ abstract class Base
     public function addParameter($sKey, $sValue, $blAddAsNullIfEmpty = false)
     {
         if ($blAddAsNullIfEmpty === true && empty($sValue)) {
-            $sValue = 'NULL';// add value as string NULL - needed in certain situations
+            $sValue = 'NULL'; // add value as string NULL - needed in certain situations
         }
         $this->aParameters[$sKey] = $sValue;
     }
@@ -251,8 +251,8 @@ abstract class Base
             return $sRequestUrl;
         }
 
-        $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl);// send request to PAYONE
-        $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']);// log request to db
+        $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
+        $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
         return $aResponse;
     }
 }

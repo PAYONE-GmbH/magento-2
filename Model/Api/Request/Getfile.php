@@ -65,7 +65,7 @@ class Getfile extends Base
                 'content' => http_build_query($this->aParameters),
             ],
         ];
-        $oContext  = stream_context_create($aOptions);
+        $oContext = stream_context_create($aOptions);
         $sMandate = file_get_contents($this->sApiUrl, false, $oContext);
         if ($sMandate !== false) {
             $sReturn = $sMandate;

@@ -69,7 +69,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         array $meta = [],
         array $data = []
     ) {
-        $this->databaseHelper = $databaseHelper;// needs to be in front of constructor, doesnt work otherwise for no apparent reason
+        $this->databaseHelper = $databaseHelper; // needs to be in front of constructor, doesnt work otherwise for no apparent reason
         parent::__construct($name, $primaryFieldName, $requestFieldName, $reporting, $searchCritBuilder, $request, $filterBuilder, $meta, $data);
     }
 

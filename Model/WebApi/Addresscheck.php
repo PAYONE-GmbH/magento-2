@@ -41,13 +41,6 @@ class Addresscheck
     protected $addresscheck;
 
     /**
-     * PAYONE toolkit helper
-     *
-     * @var \Payone\Core\Helper\Toolkit
-     */
-    protected $toolkitHelper;
-
-    /**
      * Factory for the response object
      *
      * @var \Payone\Core\Model\WebApi\AddresscheckResponseFactory
@@ -65,18 +58,15 @@ class Addresscheck
      * Constructor
      *
      * @param \Payone\Core\Model\Risk\Addresscheck                  $addresscheck
-     * @param \Payone\Core\Helper\Toolkit                           $toolkitHelper
      * @param \Payone\Core\Model\WebApi\AddresscheckResponseFactory $responseFactory
      * @param \Magento\Checkout\Model\Session                       $checkoutSession
      */
     public function __construct(
         \Payone\Core\Model\Risk\Addresscheck $addresscheck,
-        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\WebApi\AddresscheckResponseFactory $responseFactory,
         \Magento\Checkout\Model\Session $checkoutSession
     ) {
         $this->addresscheck = $addresscheck;
-        $this->toolkitHelper = $toolkitHelper;
         $this->responseFactory = $responseFactory;
         $this->checkoutSession = $checkoutSession;
     }
@@ -101,20 +91,6 @@ class Addresscheck
         $sMessage .= $addressData->getPostcode().' '.$addressData->getCity();
 
         return $sMessage;
-    }
-
-    /**
-     * Return error message
-     *
-     * @return string
-     */
-    protected function getErrorMessage()
-    {
-        $sErrorMessage = $this->toolkitHelper->getConfigParam('stop_checkout_message', 'address_check', 'payone_protect');
-        if (empty($sErrorMessage)) { // add default errormessage if none is configured
-            $sErrorMessage = 'An error occured during the addresscheck.';
-        }
-        return $sErrorMessage;
     }
 
     /**
@@ -161,9 +137,9 @@ class Addresscheck
             } elseif ($aResponse['status'] == 'INVALID') { // given data invalid
                 $oResponse->setData('errormessage', $this->addresscheck->getInvalidMessage($aResponse['customermessage']));
             } elseif ($aResponse['status'] == 'ERROR') { // an error occured in the API
-                $sHandleError = $this->toolkitHelper->getConfigParam('handle_response_error', 'address_check', 'payone_protect');
+                $sHandleError = $this->addresscheck->getConfigParam('handle_response_error');
                 if ($sHandleError == 'stop_checkout') {
-                    $oResponse->setData('errormessage', __($this->getErrorMessage())); // stop checkout with errormsg
+                    $oResponse->setData('errormessage', __($this->addresscheck->getErrorMessage())); // stop checkout with errormsg
                 } elseif ($sHandleError == 'continue_checkout') {
                     $oResponse->setData('success', true); // continue anyways
                 }

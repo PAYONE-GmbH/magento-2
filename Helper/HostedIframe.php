@@ -153,15 +153,15 @@ class HostedIframe extends \Payone\Core\Helper\Base
      */
     public function getHostedFieldConfig()
     {
-        $aHostedParams = $this->getHostedParams();// get hosted params from config
+        $aHostedParams = $this->getHostedParams(); // get hosted params from config
 
         $aFieldConfig = [];
         if (!empty($aHostedParams)) { // hosted iframe config existing?
-            $aFieldConfig['fields'] = $this->getFieldConfig();// generate config for all field types
+            $aFieldConfig['fields'] = $this->getFieldConfig(); // generate config for all field types
             $aFieldConfig['defaultStyle'] = $this->getDefaultStyles($aHostedParams);
             if ($aHostedParams['Errors_active'] == "true") {
-                $aFieldConfig['error'] = 'errorOutput';// area to display error-messages (optional)
-                $aFieldConfig['language'] = $aHostedParams['Errors_lang'];// has to be defined in javascript
+                $aFieldConfig['error'] = 'errorOutput'; // area to display error-messages (optional)
+                $aFieldConfig['language'] = $aHostedParams['Errors_lang']; // has to be defined in javascript
             }
         }
         return $aFieldConfig;

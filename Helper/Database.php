@@ -178,7 +178,7 @@ class Database extends \Payone\Core\Helper\Base
         if ($iCount === null) {
             return 0;
         }
-        return $iCount+1;
+        return $iCount + 1;
     }
 
     /**
