@@ -68,7 +68,6 @@ class Success extends Template
      * @param  \Magento\Framework\View\Element\Template\Context $context
      * @param  \Payone\Core\Helper\Payment                      $paymentHelper
      * @param  array $data
-     * @return void
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,

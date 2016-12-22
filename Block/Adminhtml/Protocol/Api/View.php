@@ -53,7 +53,6 @@ class View extends \Magento\Backend\Block\Widget\Container
      * @param  \Magento\Backend\Block\Widget\Context     $context
      * @param  \Payone\Core\Model\Entities\ApiLogFactory $apiLogFactory
      * @param  array                                     $data
-     * @return void
      */
     public function __construct(
         \Magento\Backend\Block\Widget\Context $context,

@@ -87,7 +87,6 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
      * @param  \Magento\Framework\View\Element\Template\Context $context
      * @param  \Magento\Framework\Locale\ResolverInterface      $localeResolver
      * @param  array $data
-     * @return void
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -127,7 +126,7 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
      */
     protected function getSupportedLocaleCode($sLocale = null)
     {
-        if (!$sLocale || !in_array($sLocale, $this->aSupportedLocales)) {
+        if (empty($sLocale) || !in_array($sLocale, $this->aSupportedLocales)) {
             return 'en_US';
         }
         return $sLocale;

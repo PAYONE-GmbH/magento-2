@@ -86,6 +86,21 @@ class Api extends \Payone\Core\Helper\Base
     }
 
     /**
+     * @param string $sRequestUrl
+     * @return array
+     * @throws \Exception
+     */
+    protected function parseUrl($sRequestUrl)
+    {
+        $aParsedRequestUrl = parse_url($sRequestUrl);
+
+        if ($aParsedRequestUrl === false) {
+            throw new \Exception("Malformed URL " . $sRequestUrl);
+        }
+        return $aParsedRequestUrl;
+    }
+
+    /**
      * Check which communication possibilities are existing and send the request
      *
      * @param  string $sRequestUrl
@@ -93,7 +108,7 @@ class Api extends \Payone\Core\Helper\Base
      */
     public function sendApiRequest($sRequestUrl)
     {
-        $aParsedRequestUrl = parse_url($sRequestUrl);
+        $aParsedRequestUrl = $this->parseUrl($sRequestUrl);
 
         $aResponse = [];
         if (function_exists("curl_init")) {

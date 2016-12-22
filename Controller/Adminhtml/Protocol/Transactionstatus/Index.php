@@ -56,7 +56,6 @@ class Index extends Action
      *
      * @param  Context     $context
      * @param  PageFactory $resultPageFactory
-     * @return void
      */
     public function __construct(Context $context, PageFactory $resultPageFactory)
     {

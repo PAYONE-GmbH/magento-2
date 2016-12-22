@@ -76,7 +76,6 @@ class Download extends \Magento\Framework\App\Action\Action
      * @param  \Payone\Core\Model\Api\Request\Getfile          $getfileRequest
      * @param  \Payone\Core\Helper\Payment                     $paymentHelper
      * @param  \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
-     * @return void
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
