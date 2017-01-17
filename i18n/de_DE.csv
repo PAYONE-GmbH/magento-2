@@ -142,6 +142,7 @@
 
 "Credit rating","Bonitätsprüfung"
 "Creditrating-Checktype","Bonitätscheck-Typ"
+"Combine credit rating with address check","Bonitätsprüfung mit Adressprüfung verbinden"
 "Infoscore (hard criteria)","Infoscore (Harte Merkmale)"
 "Infoscore (all criteria)","Infoscore (Alle Merkmale)"
 "Infoscore (all criteria with boni-score)","Infoscore (Alle Merkmale + Boniscore)"

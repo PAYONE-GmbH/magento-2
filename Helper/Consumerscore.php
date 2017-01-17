@@ -127,10 +127,12 @@ class Consumerscore extends \Payone\Core\Helper\Base
      */
     public function isSampleNeeded()
     {
-        $iCounter = $this->getConsumerscoreSampleCounter(); // get current sample counter
         $iFrequency = $this->getConfigParam('sample_mode_frequency', 'creditrating', 'payone_protect');
-        if ($iCounter % $iFrequency === 0) {
-            return true;
+        if ((bool)$this->getConfigParam('sample_mode_enabled', 'creditrating', 'payone_protect') && !empty($iFrequency)) {
+            $iCounter = $this->getConsumerscoreSampleCounter(); // get current sample counter
+            if ($iCounter % $iFrequency === 0) {
+                return true;
+            }
         }
         return false;
     }
@@ -218,5 +220,48 @@ class Consumerscore extends \Payone\Core\Helper\Base
         if (!empty($sOldStatus)) {
             $oAddress->setPayoneProtectScore($sOldStatus)->save(); // add score to quote address object
         }
+    }
+
+    /**
+     * Determine if the given quote total needs a consumerscore check
+     *
+     * @param double $dTotal
+     * @return bool
+     */
+    public function isCheckNeededForPrice($dTotal)
+    {
+        $dMin = $this->getConfigParam('min_order_total', 'creditrating', 'payone_protect');
+        $dMax = $this->getConfigParam('max_order_total', 'creditrating', 'payone_protect');
+        if (is_numeric($dMin) && is_numeric($dMax) && ($dTotal < $dMin || $dTotal > $dMax)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Base checks if a creditrating check is needed
+     *
+     * @param string $sIntegrationEvent
+     * @param double $dGrandTotal
+     * @return bool
+     */
+    public function isCreditratingNeeded($sIntegrationEvent, $dGrandTotal)
+    {
+        if ((bool)$this->getConfigParam('enabled', 'creditrating', 'payone_protect') === false) {
+            return false;
+        }
+
+        if ($this->getConfigParam('integration_event', 'creditrating', 'payone_protect') != $sIntegrationEvent) {
+            return false;
+        }
+
+        if ($this->isCheckNeededForPrice($dGrandTotal) === false) {
+            return false;
+        }
+
+        if ($this->isSampleNeeded() === false) {
+            return false;
+        }
+        return true;
     }
 }

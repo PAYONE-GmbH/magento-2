@@ -35,7 +35,7 @@ class CreditratingIntegrationEvent implements ArrayInterface
 {
     const BEFORE_PAYMENT = 'before_payment';
     const AFTER_PAYMENT = 'after_payment';
-    
+
     /**
      * Return existing credit score states
      *

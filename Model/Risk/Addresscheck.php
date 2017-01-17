@@ -83,7 +83,7 @@ class Addresscheck
      * @var \Magento\Checkout\Model\Session
      */
     protected $checkoutSession;
-    
+
     /**
      * Constructor
      *
@@ -126,7 +126,7 @@ class Addresscheck
 
     /**
      * Get addresscheck config parameter
-     * 
+     *
      * @param  string $sParam
      * @return string
      */
@@ -134,7 +134,26 @@ class Addresscheck
     {
         return $this->databaseHelper->getConfigParam($sParam, 'address_check', 'payone_protect');
     }
-    
+
+    /**
+     * Correct a single address field if needed
+     *
+     * @param  AddressInterface $oAddress
+     * @param  array            $aResponse
+     * @param  string           $sArrayKey
+     * @param  string           $sPropertyName
+     * @return AddressInterface
+     */
+    protected function correctSingleField(AddressInterface $oAddress, $aResponse, $sArrayKey, $sPropertyName)
+    {
+        if (isset($aResponse[$sArrayKey]) && $aResponse[$sArrayKey] != $oAddress->getData($sPropertyName)) {
+            $oAddress->setData($sPropertyName, $aResponse[$sArrayKey]);
+            $this->addressCorrected = true;
+        }
+
+        return $oAddress;
+    }
+
     /**
      * Change the address according to the response
      *
@@ -149,15 +168,10 @@ class Addresscheck
         }
 
         $this->addressCorrected = false;
-        if (isset($aResponse['firstname']) && $aResponse['firstname'] != $oAddress->getFirstname()) {
-            $oAddress->setFirstname($aResponse['firstname']);
-            $this->addressCorrected = true;
-        }
-
-        if (isset($aResponse['lastname']) && $aResponse['lastname'] != $oAddress->getLastname()) {
-            $oAddress->setLastname($aResponse['lastname']);
-            $this->addressCorrected = true;
-        }
+        $oAddress = $this->correctSingleField($oAddress, $aResponse, 'firstname', 'firstname');
+        $oAddress = $this->correctSingleField($oAddress, $aResponse, 'lastname', 'lastname');
+        $oAddress = $this->correctSingleField($oAddress, $aResponse, 'zip', 'postcode');
+        $oAddress = $this->correctSingleField($oAddress, $aResponse, 'city', 'city');
 
         if (isset($aResponse['street'])) {
             $sStreet = $oAddress->getStreet();
@@ -169,16 +183,6 @@ class Addresscheck
                 $oAddress->setStreet($aResponse['street']);
                 $this->addressCorrected = true;
             }
-        }
-
-        if (isset($aResponse['zip']) && $aResponse['zip'] != $oAddress->getPostcode()) {
-            $oAddress->setPostcode($aResponse['zip']);
-            $this->addressCorrected = true;
-        }
-
-        if (isset($aResponse['city']) && $aResponse['city'] != $oAddress->getCity()) {
-            $oAddress->setCity($aResponse['city']);
-            $this->addressCorrected = true;
         }
 
         return $oAddress;
@@ -269,7 +273,7 @@ class Addresscheck
 
     /**
      * Get error message by the given response
-     * 
+     *
      * @param  array $aResponse
      * @return string
      */
@@ -285,16 +289,16 @@ class Addresscheck
         }
         return $sErrorMessage;
     }
-    
+
     /**
      * Execute addresscheck and return the response
      *
      * @param  AddressInterface $oAddress
      * @return array
      */
-    
+
     /**
-     * 
+     *
      * @param AddressInterface $oAddress
      * @return type
      * @throws LocalizedException
@@ -310,10 +314,10 @@ class Addresscheck
         }
         return $aResponse;
     }
-    
+
     /**
      * Get score from session or from a new addresscheck and add it to the address
-     * 
+     *
      * @param  AddressInterface $oAddress
      * @param  Quote            $oQuote
      * @param  bool             $blIsBillingAddress
@@ -327,7 +331,7 @@ class Addresscheck
         }
         $this->checkoutSession->unsPayoneBillingAddresscheckScore();
         $this->checkoutSession->unsPayoneShippingAddresscheckScore();
-        
+
         if (!$sScore && empty($oAddress->getPayoneAddresscheckScore())) {
             if ($this->isCheckNeededForQuote(false, $oQuote->isVirtual(), $oQuote->getSubtotal())) {
                 $aResponse = $this->handleAddresscheck($oAddress);
@@ -342,7 +346,7 @@ class Addresscheck
         }
         return $oAddress;
     }
-    
+
     /**
      * Get score from response or an old saved score from the database
      *
@@ -354,7 +358,9 @@ class Addresscheck
         $aResponse = $this->getResponse($oAddress);
 
         $sScore = 'G';
-        if (isset($aResponse['personstatus'])) {
+        if (isset($aResponse['status']) && $aResponse['status'] == 'INVALID') {
+            $sScore = 'R';
+        } elseif (isset($aResponse['personstatus'])) {
             $sPersonStatus = $aResponse['personstatus'];
             if ($sPersonStatus != 'NONE') {
                 $aMapping = $this->getPersonstatusMapping();

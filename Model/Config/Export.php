@@ -26,7 +26,7 @@
 
 namespace Payone\Core\Model\Config;
 
-use Magento\Store\Model\Store;
+use Magento\Store\Api\Data\StoreInterface;
 
 /**
  * Generator class for the config export
@@ -67,7 +67,7 @@ class Export extends \Payone\Core\Model\Export\Xml
      * @var \Payone\Core\Helper\Payment
      */
     protected $paymentHelper;
-    
+
     /**
      * PAYONE addresscheck model
      *
@@ -194,7 +194,7 @@ class Export extends \Payone\Core\Model\Export\Xml
 
     /**
      * Add addresscheck config to xml
-     * 
+     *
      * @param  string $sStoreCode
      * @return void
      */
@@ -215,10 +215,10 @@ class Export extends \Payone\Core\Model\Export\Xml
         $this->writeToXml('</personstatusmapping>', 4);
         $this->writeToXml('</addresscheck>', 3);
     }
-    
+
     /**
      * Add consumerscore config to xml
-     * 
+     *
      * @param  string $sStoreCode
      * @return void
      */
@@ -235,7 +235,7 @@ class Export extends \Payone\Core\Model\Export\Xml
         $this->writeNode("duetime", $this->configExportHelper->getConfigParam('result_lifetime', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeToXml('</consumerscore>', 3);
     }
-    
+
     /**
      * Add shop protect config to xml
      *
@@ -249,7 +249,7 @@ class Export extends \Payone\Core\Model\Export\Xml
         $this->addConsumerscore($sStoreCode);
         $this->writeToXml('</protect>', 2);
     }
-    
+
     /**
      * Add shop misc config to xml
      *
@@ -273,11 +273,11 @@ class Export extends \Payone\Core\Model\Export\Xml
     /**
      * Write single shop config to xml
      *
-     * @param  string $sStoreCode
-     * @param  Store  $oStore
+     * @param  string         $sStoreCode
+     * @param  StoreInterface $oStore
      * @return void
      */
-    protected function addSingleShopConfig($sStoreCode, Store $oStore)
+    protected function addSingleShopConfig($sStoreCode, StoreInterface $oStore)
     {
         $this->writeToXml('<shop>', 1);
         $this->writeNode("code", $sStoreCode, 2);

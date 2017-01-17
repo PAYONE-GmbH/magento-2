@@ -129,7 +129,7 @@ define(
             },
             processPayoneResponseELV: function (response) {
                 if (response.get('status') === "VALID") {
-                    window.checkoutConfig.payment.payone.bankCodeValidatedAndValid == true;
+                    window.checkoutConfig.payment.payone.bankCodeValidatedAndValid = true;
                     this.selectPaymentMethod();
                     handleDebitAction(this.getData(), this.messageContainer);
                 } else if (true || response.get('status') === "BLOCKED") {

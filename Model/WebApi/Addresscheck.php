@@ -111,6 +111,47 @@ class Addresscheck
     }
 
     /**
+     * Set error message if checkout is configured to stop on error or set success = true instead
+     *
+     * @param  AddresscheckResponse $oResponse
+     * @return AddresscheckResponse
+     */
+    protected function handleErrorCase(AddresscheckResponse $oResponse)
+    {
+        $sHandleError = $this->addresscheck->getConfigParam('handle_response_error');
+        if ($sHandleError == 'stop_checkout') {
+            $oResponse->setData('errormessage', __($this->addresscheck->getErrorMessage())); // stop checkout with errormsg
+        } elseif ($sHandleError == 'continue_checkout') {
+            $oResponse->setData('success', true); // continue anyways
+        }
+        return $oResponse;
+    }
+
+    /**
+     * Handle the response according to its return status
+     *
+     * @param  AddresscheckResponse $oResponse
+     * @param  array                $aResponse
+     * @return AddresscheckResponse
+     */
+    protected function handleResponse(AddresscheckResponse $oResponse, $aResponse)
+    {
+        if ($aResponse['status'] == 'VALID') { // data was checked successfully
+            $oAddress = $this->addresscheck->correctAddress($oAddress);
+            if ($this->addresscheck->isAddressCorrected() === true) { // was address changed?
+                $oResponse->setData('correctedAddress', $oAddress);
+                $oResponse->setData('confirmMessage', $this->getConfirmMessage($oAddress));
+            }
+            $oResponse->setData('success', true);
+        } elseif ($aResponse['status'] == 'INVALID') { // given data invalid
+            $oResponse->setData('errormessage', $this->addresscheck->getInvalidMessage($aResponse['customermessage']));
+        } elseif ($aResponse['status'] == 'ERROR') { // an error occured in the API
+            $oResponse = $this->handleErrorCase($oResponse);
+        }
+        return $oResponse;
+    }
+
+    /**
      * Send addresscheck request and handle the response object
      *
      * @param  AddresscheckResponse                     $oResponse
@@ -126,24 +167,7 @@ class Addresscheck
         $aResponse = $this->addresscheck->getResponse($oAddress, $blIsBillingAddress);
         if (is_array($aResponse)) { // is a real response existing?
             $this->addScoreToSession($oAddress, $blIsBillingAddress);
-
-            if ($aResponse['status'] == 'VALID') { // data was checked successfully
-                $oAddress = $this->addresscheck->correctAddress($oAddress);
-                if ($this->addresscheck->isAddressCorrected() === true) { // was address changed?
-                    $oResponse->setData('correctedAddress', $oAddress);
-                    $oResponse->setData('confirmMessage', $this->getConfirmMessage($oAddress));
-                }
-                $oResponse->setData('success', true);
-            } elseif ($aResponse['status'] == 'INVALID') { // given data invalid
-                $oResponse->setData('errormessage', $this->addresscheck->getInvalidMessage($aResponse['customermessage']));
-            } elseif ($aResponse['status'] == 'ERROR') { // an error occured in the API
-                $sHandleError = $this->addresscheck->getConfigParam('handle_response_error');
-                if ($sHandleError == 'stop_checkout') {
-                    $oResponse->setData('errormessage', __($this->addresscheck->getErrorMessage())); // stop checkout with errormsg
-                } elseif ($sHandleError == 'continue_checkout') {
-                    $oResponse->setData('success', true); // continue anyways
-                }
-            }
+            $oResponse = $this->handleResponse($oResponse, $aResponse);
         } elseif ($aResponse === true) { // check lifetime still valid, set success to true
             $oResponse->setData('success', true);
         }

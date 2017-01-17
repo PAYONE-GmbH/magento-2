@@ -242,8 +242,7 @@ abstract class Base
     protected function send($blOnlyGetUrl = false)
     {
         if (!$this->validateParameters()) {// all base parameters existing?
-            $aResponse['errormessage'] = "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)";
-            return $aResponse;
+            return ["errormessage" => "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)"];
         }
 
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);

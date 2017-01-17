@@ -241,6 +241,7 @@
                 <agreement_enabled>0</agreement_enabled>
                 <agreement_message></agreement_message>
                 <type>IH</type>
+                <addresscheck>NO</addresscheck>
                 <allow_payment_methods_yellow></allow_payment_methods_yellow>
                 <allow_payment_methods_red></allow_payment_methods_red>
                 <sample_mode_enabled>0</sample_mode_enabled>

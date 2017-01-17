@@ -43,7 +43,7 @@ class Getfile extends Base
     {
         $sReturn = false;
         $sStatus = 'ERROR';
-        $sResponse = '';
+        $aResponse = [];
 
         $this->addParameter('request', 'getfile'); // Request method
         $this->addParameter('file_reference', $oOrder->getPayoneMandateId());
@@ -70,9 +70,10 @@ class Getfile extends Base
         if ($sMandate !== false) {
             $sReturn = $sMandate;
             $sStatus = 'SUCCESS';
-            $sResponse = serialize(['file' => $oOrder->getPayoneMandateId().'.pdf']);
+            $aResponse['file'] = $oOrder->getPayoneMandateId().'.pdf';
         }
 
+        $this->apiLog->addApiLogEntry($this, $aResponse, $sStatus); // log request to db
         return $sReturn;
     }
 }

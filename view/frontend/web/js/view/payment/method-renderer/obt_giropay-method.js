@@ -25,10 +25,9 @@ define(
     [
         'Payone_Core/js/view/payment/method-renderer/base',
         'Magento_Ui/js/model/messageList',
-        'mage/translate',
-        'Payone_Core/js/action/handle-debit'
+        'mage/translate'
     ],
-    function (Component, messageList, $t, handleDebitAction) {
+    function (Component, messageList, $t) {
         'use strict';
         return Component.extend({
             defaults: {

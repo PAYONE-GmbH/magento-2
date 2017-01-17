@@ -31,6 +31,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Api\Data\AddressInterface;
+use Payone\Core\Model\Source\CreditratingIntegrationEvent as Event;
 
 /**
  * Event class to set the orderstatus to new and pending
@@ -89,16 +90,11 @@ class CheckoutSubmitBefore implements ObserverInterface
      */
     protected function isCreditratingNeeded(Quote $oQuote)
     {
-        if ((bool)$this->getConfigParam('enabled') === false) {
-            return false;
-        }
-
-        if ($this->getConfigParam('integration_event') != 'after_payment') {
+        if (!$this->consumerscoreHelper->isCreditratingNeeded(Event::AFTER_PAYMENT, $oQuote->getGrandTotal())) {
             return false;
         }
 
         $oMethodInstance = $oQuote->getPayment()->getMethodInstance();
-
         $sPaymentCode = $oMethodInstance->getCode();
         $sPaymentTypesToCheck = $this->getConfigParam('enabled_for_payment_methods');
         $aPaymentTypesToCheck = explode(',', $sPaymentTypesToCheck);
@@ -110,25 +106,12 @@ class CheckoutSubmitBefore implements ObserverInterface
             return false; // agreement checkbox was not checked by the customer
         }
 
-        $dTotal = $oQuote->getGrandTotal();
-        $dMin = $this->getConfigParam('min_order_total');
-        $dMax = $this->getConfigParam('max_order_total');
-        if (is_numeric($dMin) && is_numeric($dMax) && ($dTotal < $dMin || $dTotal > $dMax)) {
-            return false;
-        }
-
-        if ((bool)$this->getConfigParam('sample_mode_enabled')
-                && !empty($this->getConfigParam('sample_mode_frequency'))
-                && $this->consumerscoreHelper->isSampleNeeded() === false) {
-            return false;
-        }
-
         return true;
     }
 
     /**
      * Determine if the payment type can be used with this score
-     * 
+     *
      * @param  Quote $oQuote
      * @param  string $sScore
      * @return bool
@@ -154,10 +137,25 @@ class CheckoutSubmitBefore implements ObserverInterface
     }
 
     /**
+     *
+     * @param  array $aResponse
+     * @return bool
+     */
+    protected function checkoutNeedsToBeStopped($aResponse)
+    {
+        if (!$aResponse || (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
+                && $this->getConfigParam('handle_response_error') == 'stop_checkout')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Filter payment methods by the creditrating result if applicable
      *
      * @param  AddressInterface $oBilling
      * @return void
+     * @throws LocalizedException
      */
     protected function getScoreByCreditrating(AddressInterface $oBilling)
     {
@@ -166,8 +164,7 @@ class CheckoutSubmitBefore implements ObserverInterface
             $this->consumerscoreHelper->copyOldStatusToNewAddress($oBilling);
         }
 
-        if (!$aResponse || (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
-                && $this->getConfigParam('handle_response_error') == 'stop_checkout')) {
+        if ($this->checkoutNeedsToBeStopped($aResponse)) {
             $sErrorMsg = $this->getConfigParam('stop_checkout_message');
             if (empty($sErrorMsg)) {
                 $sErrorMsg = 'An error occured during the credit check.';

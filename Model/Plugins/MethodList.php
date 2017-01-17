@@ -29,6 +29,7 @@ namespace Payone\Core\Model\Plugins;
 use Magento\Payment\Model\MethodList as OrigMethodList;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Api\Data\AddressInterface;
+use Payone\Core\Model\Source\CreditratingIntegrationEvent as Event;
 
 /**
  * Plugin for Magentos MethodList class
@@ -82,18 +83,12 @@ class MethodList
      */
     protected function filterMethodsByScore($aPaymentMethods, $sWorstScore)
     {
-        if ($sWorstScore == 'G') {
-            return $aPaymentMethods;
-        }
-
-        $aYellowMethods = $this->consumerscoreHelper->getAllowedMethodsForScore('Y');
         $aRedMethods = $this->consumerscoreHelper->getAllowedMethodsForScore('R');
+        $aYellowMethods = array_merge($aRedMethods, $this->consumerscoreHelper->getAllowedMethodsForScore('Y'));
 
         $aReturnMethods = [];
         foreach ($aPaymentMethods as $oMethod) {
-            if ($sWorstScore == 'Y' &&
-                (array_search($oMethod->getCode(), $aYellowMethods) !== false ||
-                array_search($oMethod->getCode(), $aRedMethods) !== false)) {
+            if ($sWorstScore == 'Y' && array_search($oMethod->getCode(), $aYellowMethods) !== false) {
                 $aReturnMethods[] = $oMethod;
             }
 
@@ -152,37 +147,6 @@ class MethodList
     }
 
     /**
-     * Determine if creditrating is needed
-     *
-     * @return bool
-     */
-    protected function isCreditratingNeeded()
-    {
-        if ((bool)$this->getConfigParam('enabled') === false) {
-            return false;
-        }
-
-        if ($this->getConfigParam('integration_event') != 'before_payment') {
-            return false;
-        }
-
-        $dTotal = $this->getQuote()->getGrandTotal();
-        $dMin = $this->getConfigParam('min_order_total');
-        $dMax = $this->getConfigParam('max_order_total');
-        if (is_numeric($dMin) && is_numeric($dMax) && ($dTotal < $dMin || $dTotal > $dMax)) {
-            return false;
-        }
-
-        if ((bool)$this->getConfigParam('sample_mode_enabled')
-                && !empty($this->getConfigParam('sample_mode_frequency'))
-                && $this->consumerscoreHelper->isSampleNeeded() === false) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      *
      * @param  OrigMethodList    $subject
      * @param  MethodInterface[] $aPaymentMethods
@@ -198,12 +162,15 @@ class MethodList
             $aScores[] = $oShipping->getPayoneAddresscheckScore();
         }
 
-        if ($this->isCreditratingNeeded() === true) {
+        $dTotal = $this->getQuote()->getGrandTotal();
+        if ($this->consumerscoreHelper->isCreditratingNeeded(Event::BEFORE_PAYMENT, $dTotal) === true) {
             $aScores[] = $this->getScoreByCreditrating($oShipping);
         }
 
         $sScore = $this->consumerscoreHelper->getWorstScore($aScores);
-        $aPaymentMethods = $this->filterMethodsByScore($aPaymentMethods, $sScore);
+        if ($sScore != 'G') { // no need to filter
+            $aPaymentMethods = $this->filterMethodsByScore($aPaymentMethods, $sScore);
+        }
 
         return $aPaymentMethods;
     }

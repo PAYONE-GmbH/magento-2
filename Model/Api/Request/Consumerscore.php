@@ -92,7 +92,7 @@ class Consumerscore extends AddressRequest
         $this->addParameter('request', 'consumerscore');
         $this->addParameter('mode', $this->shopHelper->getConfigParam('mode', 'creditrating', 'payone_protect')); //Operationmode live or test
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); //ID of PayOne Sub-Account
-        $this->addParameter('addresschecktype', $this->shopHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect'));
+        $this->addParameter('addresschecktype', $this->shopHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect'));
         $this->addParameter('consumerscoretype', $this->shopHelper->getConfigParam('type', 'creditrating', 'payone_protect'));
         $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
 
