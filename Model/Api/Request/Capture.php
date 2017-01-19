@@ -82,7 +82,7 @@ class Capture extends Base
         $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
 
         // Total order sum in smallest currency unit
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
+        $this->addParameter('amount', number_format($dAmount, 2, '.', '')*100);
         $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // Currency
 
         $this->addParameter('txid', $iTxid); // PayOne Transaction ID

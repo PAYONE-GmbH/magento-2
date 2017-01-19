@@ -96,7 +96,7 @@ class Debit extends Base
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));
 
         // Total order sum in smallest currency unit
-        $this->addParameter('amount', number_format((-1 * $dAmount), 2, '.', '') * 100);
+        $this->addParameter('amount', number_format((-1 * $dAmount), 2, '.', '')*100);
         $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // Currency
         $this->addParameter('transactiontype', 'GT');
 

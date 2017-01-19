@@ -130,11 +130,11 @@ class Consumerscore extends \Payone\Core\Helper\Base
         $iFrequency = $this->getConfigParam('sample_mode_frequency', 'creditrating', 'payone_protect');
         if ((bool)$this->getConfigParam('sample_mode_enabled', 'creditrating', 'payone_protect') && !empty($iFrequency)) {
             $iCounter = $this->getConsumerscoreSampleCounter(); // get current sample counter
-            if ($iCounter % $iFrequency !== 0) {
-                return false;
+            if ($iCounter % $iFrequency === 0) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
