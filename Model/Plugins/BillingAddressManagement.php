@@ -28,7 +28,6 @@ namespace Payone\Core\Model\Plugins;
 
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\BillingAddressManagement as BillingAddressManagementOrig;
-use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Plugin for Magentos BillingAddressManagement class
@@ -65,7 +64,7 @@ class BillingAddressManagement
 
     /**
      * This writes the addresscheck score to the quote address
-     * 
+     *
      * @param  BillingAddressManagementOrig $oSource
      * @param  int                          $sCartId
      * @param  AddressInterface             $oAddress
