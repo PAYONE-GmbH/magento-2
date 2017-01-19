@@ -27,6 +27,7 @@
 namespace Payone\Core\Model\WebApi;
 
 use Payone\Core\Model\WebApi\AddresscheckResponse;
+use Magento\Quote\Api\Data\AddressInterface;
 
 /**
  * Web API model for the PAYONE addresscheck
@@ -74,10 +75,10 @@ class Addresscheck
     /**
      * Generate the confirm message from the given address
      *
-     * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
+     * @param  AddressInterface $addressData
      * @return string
      */
-    protected function getConfirmMessage(\Magento\Quote\Api\Data\AddressInterface $addressData)
+    protected function getConfirmMessage(AddressInterface $addressData)
     {
         $sMessage  = __('Address corrected. Please confirm.')."\n\n";
         $sMessage .= $addressData->getFirstname().' '.$addressData->getLastname()."\n";
@@ -96,11 +97,11 @@ class Addresscheck
     /**
      * Add the score to the correct session variable
      *
-     * @param  \Magento\Quote\Api\Data\AddressInterface $oAddress
-     * @param  bool                                     $blIsBillingAddress
+     * @param  AddressInterface $oAddress
+     * @param  bool             $blIsBillingAddress
      * @return void
      */
-    protected function addScoreToSession(\Magento\Quote\Api\Data\AddressInterface $oAddress, $blIsBillingAddress)
+    protected function addScoreToSession(AddressInterface $oAddress, $blIsBillingAddress)
     {
         $sScore = $this->addresscheck->getScore($oAddress);
         if ($blIsBillingAddress === true) { // is billing address?
@@ -131,10 +132,11 @@ class Addresscheck
      * Handle the response according to its return status
      *
      * @param  AddresscheckResponse $oResponse
+     * @param  AddressInterface     $oAddress
      * @param  array                $aResponse
      * @return AddresscheckResponse
      */
-    protected function handleResponse(AddresscheckResponse $oResponse, $aResponse)
+    protected function handleResponse(AddresscheckResponse $oResponse, AddressInterface $oAddress, $aResponse)
     {
         if ($aResponse['status'] == 'VALID') { // data was checked successfully
             $oAddress = $this->addresscheck->correctAddress($oAddress);
@@ -154,20 +156,20 @@ class Addresscheck
     /**
      * Send addresscheck request and handle the response object
      *
-     * @param  AddresscheckResponse                     $oResponse
-     * @param  \Magento\Quote\Api\Data\AddressInterface $oAddress
-     * @param  bool                                     $blIsBillingAddress
+     * @param  AddresscheckResponse $oResponse
+     * @param  AddressInterface     $oAddress
+     * @param  bool                 $blIsBillingAddress
      * @return AddresscheckResponse
      */
     protected function handleAddresscheck(
         AddresscheckResponse $oResponse,
-        \Magento\Quote\Api\Data\AddressInterface $oAddress,
+        AddressInterface $oAddress,
         $blIsBillingAddress
     ) {
         $aResponse = $this->addresscheck->getResponse($oAddress, $blIsBillingAddress);
         if (is_array($aResponse)) { // is a real response existing?
             $this->addScoreToSession($oAddress, $blIsBillingAddress);
-            $oResponse = $this->handleResponse($oResponse, $aResponse);
+            $oResponse = $this->handleResponse($oResponse, $oAddress, $aResponse);
         } elseif ($aResponse === true) { // check lifetime still valid, set success to true
             $oResponse->setData('success', true);
         }
@@ -176,6 +178,8 @@ class Addresscheck
 
     /**
      * PAYONE addresscheck
+     * The full class-paths must be given here otherwise the Magento 2 WebApi
+     * cant handle this with its fake type system!
      *
      * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
      * @param  bool $isBillingAddress

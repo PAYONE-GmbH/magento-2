@@ -85,21 +85,6 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_canCapture = true;
 
     /**
-     * Determines if payment type can use partial captures
-     * Is true for all PAYONE Payment Methods except Barzahlen
-     *
-     * @var bool
-     */
-    protected $_canCapturePartial = true;
-
-    /**
-     * Determines if payment type can use partial refunds
-     *
-     * @var bool
-     */
-    protected $_canRefundInvoicePartial = true;
-
-    /**
      * Clearingtype for PAYONE authorization request
      *
      * @var string|bool
