@@ -48,11 +48,10 @@ class StatusForwarding extends \Payone\Core\Block\Adminhtml\Config\Form\Field\Fi
     /**
      * Constructor
      *
-     * @param  \Magento\Backend\Block\Template\Context      $context
-     * @param  \Magento\Framework\Data\Form\Element\Factory $elementFactory
-     * @param  \Payone\Core\Model\Source\TransactionStatus  $transactionStatus
-     * @param  array                                        $data
-     * @return void
+     * @param \Magento\Backend\Block\Template\Context      $context
+     * @param \Magento\Framework\Data\Form\Element\Factory $elementFactory
+     * @param \Payone\Core\Model\Source\TransactionStatus  $transactionStatus
+     * @param array                                        $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,

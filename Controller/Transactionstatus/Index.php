@@ -92,15 +92,14 @@ class Index extends \Magento\Framework\App\Action\Action
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Action\Context              $context
-     * @param  \Payone\Core\Model\ResourceModel\TransactionStatus $transactionStatus
-     * @param  \Payone\Core\Helper\Toolkit                        $toolkitHelper
-     * @param  \Payone\Core\Helper\Environment                    $environmentHelper
-     * @param  \Payone\Core\Helper\Order                          $orderHelper
-     * @param  \Payone\Core\Model\TransactionStatus\Mapping       $statusMapping
-     * @param  \Payone\Core\Model\TransactionStatus\Forwarding    $statusForwarding
-     * @param  \Magento\Framework\Controller\Result\RawFactory    $resultRawFactory
-     * @return void
+     * @param \Magento\Framework\App\Action\Context              $context
+     * @param \Payone\Core\Model\ResourceModel\TransactionStatus $transactionStatus
+     * @param \Payone\Core\Helper\Toolkit                        $toolkitHelper
+     * @param \Payone\Core\Helper\Environment                    $environmentHelper
+     * @param \Payone\Core\Helper\Order                          $orderHelper
+     * @param \Payone\Core\Model\TransactionStatus\Mapping       $statusMapping
+     * @param \Payone\Core\Model\TransactionStatus\Forwarding    $statusForwarding
+     * @param \Magento\Framework\Controller\Result\RawFactory    $resultRawFactory
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

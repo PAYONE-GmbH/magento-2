@@ -50,9 +50,8 @@ class Mapping
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Payment  $paymentHelper
-     * @param  \Payone\Core\Helper\Database $databaseHelper
-     * @return void
+     * @param \Payone\Core\Helper\Payment  $paymentHelper
+     * @param \Payone\Core\Helper\Database $databaseHelper
      */
     public function __construct(
         \Payone\Core\Helper\Payment $paymentHelper,

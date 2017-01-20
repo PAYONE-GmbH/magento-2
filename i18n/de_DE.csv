@@ -142,6 +142,7 @@
 
 "Credit rating","Bonitätsprüfung"
 "Creditrating-Checktype","Bonitätscheck-Typ"
+"Combine credit rating with address check","Bonitätsprüfung mit Adressprüfung verbinden"
 "Infoscore (hard criteria)","Infoscore (Harte Merkmale)"
 "Infoscore (all criteria)","Infoscore (Alle Merkmale)"
 "Infoscore (all criteria with boni-score)","Infoscore (Alle Merkmale + Boniscore)"
@@ -460,14 +461,6 @@
 "ADDRESS_CORRECT","Adresse korrekt"
 "ADDRESS_CORRECTABLE","Adresse korigierbar"
 "ADDRESS_NONE_CORRECTABLE","Adresse nicht korigierbar"
-
-"PPB","Vor- & Nachname bekannt (PPB)"
-"PHB","Nachname bekannt (PHB)"
-"PAB","Vor- & Nachname nicht bekannt (PAB)"
-"PKI","Mehrdeutigkeit bei Name zu Anschrift (PKI)"
-"PNZ","Nicht zustellbar (PNZ)"
-"PPV","Person verstorben (PPV)"
-"PPF","Adresse postalisch falsch (PPF)"
 
 "DEBITPAYMENT","Lastschrift"
 "CREDITCARD","Kreditkarte"
@@ -1013,3 +1006,15 @@
 "(DD.MM.YYYY)","(TT.MM.YYYY)"
 
 "SEPA debit note","SEPA-Lastschrift"
+
+"NONE","Keine Prüfung der Adressdaten durchgeführt (NONE)"
+"PPB","Vor- & Nachname bekannt (PPB)"
+"PHB","Nachname bekannt (PHB)"
+"PAB","Vor- & Nachname nicht bekannt (PAB)"
+"PKI","Mehrdeutigkeit bei Name zu Anschrift (PKI)"
+"PNZ","Nicht zustellbar (PNZ)"
+"PPV","Person verstorben (PPV)"
+"PPF","Adresse postalisch falsch (PPF)"
+"PUG","Adresse postalisch korrekt, aber Gebäude unbekannt (PUG)"
+"PUZ","Person ist umgezogen, Adresse nicht korrigiert (PUZ)"
+"UKN","Unbekannte Rückgabewerte werden mit UKN abgebildet (UKN)"

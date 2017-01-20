@@ -32,7 +32,7 @@ namespace Payone\Core\Model;
 abstract class PayoneConfig
 {
     /* Module version */
-    const MODULE_VERSION = '1.2.7';
+    const MODULE_VERSION = '1.3.1';
 
     /* Authorization request types */
     const REQUEST_TYPE_PREAUTHORIZATION = 'preauthorization';
@@ -58,8 +58,8 @@ abstract class PayoneConfig
     const TRANSACTIONSTATUS_REMINDER = 'reminder';
     const TRANSACTIONSTATUS_VAUTHORIZATION = 'vauthorization';
     const TRANSACTIONSTATUS_VSETTLEMENT = 'vsettlement';
-    const TRANSACTIONSTATUS_TRANSFER= 'transfer';
-    const TRANSACTIONSTATUS_INVOICE= 'invoice';
+    const TRANSACTIONSTATUS_TRANSFER = 'transfer';
+    const TRANSACTIONSTATUS_INVOICE = 'invoice';
 
     /* Payment method codes */
     const METHOD_CREDITCARD = 'payone_creditcard';

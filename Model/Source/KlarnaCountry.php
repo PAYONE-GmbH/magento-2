@@ -50,8 +50,7 @@ class KlarnaCountry implements ArrayInterface
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Country $countryHelper
-     * @return void
+     * @param \Payone\Core\Helper\Country $countryHelper
      */
     public function __construct(\Payone\Core\Helper\Country $countryHelper)
     {

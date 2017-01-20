@@ -29,6 +29,7 @@ namespace Payone\Core\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Payone\Core\Helper\Consumerscore;
 
 /**
  * Event class to set the orderstatus to new and pending
@@ -36,12 +37,29 @@ use Magento\Framework\Event\Observer;
 class OrderPaymentPlaceEnd implements ObserverInterface
 {
     /**
-     * Set order status
+     * PAYONE payment helper
+     *
+     * @var Consumerscore
+     */
+    protected $consumerscoreHelper;
+
+    /**
+     * Constructor
+     *
+     * @param Consumerscore $consumerscoreHelper
+     */
+    public function __construct(Consumerscore $consumerscoreHelper)
+    {
+        $this->consumerscoreHelper = $consumerscoreHelper;
+    }
+
+    /**
+     * Handle order status
      *
      * @param  Observer $observer
      * @return void
      */
-    public function execute(Observer $observer)
+    protected function handleOrderStatus(Observer $observer)
     {
         $oPayment = $observer->getEvent()->getPayment();
         $oPaymentInstance = $oPayment->getMethodInstance();
@@ -50,5 +68,20 @@ class OrderPaymentPlaceEnd implements ObserverInterface
             $oOrder->setState(Order::STATE_NEW);
             $oOrder->setStatus($oPaymentInstance->getConfigData('order_status'));
         }
+    }
+
+    /**
+     * Execute certain tasks after the payment is placed and thus the order is placed
+     *
+     * @param  Observer $observer
+     * @return void
+     */
+    public function execute(Observer $observer)
+    {
+        // set status to new - pending on new orders
+        $this->handleOrderStatus($observer);
+
+        // increment counter for every order, needed for the A/B test feature
+        $this->consumerscoreHelper->incrementConsumerscoreSampleCounter();
     }
 }

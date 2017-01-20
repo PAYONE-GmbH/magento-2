@@ -92,6 +92,7 @@ class Order extends \Payone\Core\Helper\Base
     /**
      * Return the order related to the given TransactionStatus
      *
+     * @param  string $sTxid
      * @return SalesOrder|null
      */
     public function getOrderByTxid($sTxid)
@@ -125,9 +126,9 @@ class Order extends \Payone\Core\Helper\Base
             }
         }
 
-        if (!empty($aRates)) {// more than one shipping method existing?
-            ksort($aRates);// sort by price ascending
-            return array_shift($aRates);// return the cheapest shipping-method
+        if (!empty($aRates)) { // more than one shipping method existing?
+            ksort($aRates); // sort by price ascending
+            return array_shift($aRates); // return the cheapest shipping-method
         }
         return false;
     }
@@ -157,7 +158,13 @@ class Order extends \Payone\Core\Helper\Base
      * Fill billing and shipping addresses with the needed information from the response
      *
      * @param  Address $oAddress
-     * @param  array   $aResponse
+     * @param  string  $sFirstname
+     * @param  string  $sLastname
+     * @param  string  $sStreet
+     * @param  string  $sCity
+     * @param  string  $sZip
+     * @param  string  $sCountry
+     * @param  string  $sState
      * @return Address
      */
     public function fillSingleAddress(Address $oAddress, $sFirstname, $sLastname, $sStreet, $sCity, $sZip, $sCountry, $sState)

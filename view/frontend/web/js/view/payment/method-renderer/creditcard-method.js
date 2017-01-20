@@ -51,14 +51,14 @@ define(
             },
             
             getData: function () {
-                return {
-                    'method': this.item.method,
-                    'additional_data': {
-                        'firstname': this.firstname(),
-                        'lastname': this.lastname(),
-                        'pseudocardpan': document.getElementById(this.getCode() + '_pseudocardpan').value
-                    }
-                };
+                var parentReturn = this._super();
+                if (parentReturn.additional_data === null) {
+                    parentReturn.additional_data = {};
+                }
+                parentReturn.additional_data.firstname = this.firstname();
+                parentReturn.additional_data.lastname = this.lastname();
+                parentReturn.additional_data.pseudocardpan = document.getElementById(this.getCode() + '_pseudocardpan').value;
+                return parentReturn;
             },
             
             handleIframes: function () {
@@ -142,7 +142,7 @@ define(
                 // PayOne Request if the data is valid
                 if (window.iframes.isComplete()) {
                     window.ccjs = this;
-                    window.iframes.creditCardCheck('processPayoneResponseCCHosted');// Perform "CreditCardCheck" to create and get a
+                    window.iframes.creditCardCheck('processPayoneResponseCCHosted'); // Perform "CreditCardCheck" to create and get a
                     // PseudoCardPan; then call your function "payCallback"
                     fullScreenLoader.startLoader();
                 } else {

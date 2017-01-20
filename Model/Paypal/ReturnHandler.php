@@ -80,13 +80,12 @@ class ReturnHandler
     /**
      * Constructor
      *
-     * @param  \Magento\Checkout\Model\Session                             $checkoutSession
-     * @param  \Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress $genericRequest
-     * @param  \Payone\Core\Model\Methods\Paypal                           $paypalPayment
-     * @param  \Magento\Quote\Api\CartManagementInterface                  $cartManagement
-     * @param  \Payone\Core\Helper\Order                                   $orderHelper
-     * @param  \Payone\Core\Helper\Checkout                                $checkoutHelper
-     * @return void
+     * @param \Magento\Checkout\Model\Session                             $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress $genericRequest
+     * @param \Payone\Core\Model\Methods\Paypal                           $paypalPayment
+     * @param \Magento\Quote\Api\CartManagementInterface                  $cartManagement
+     * @param \Payone\Core\Helper\Order                                   $orderHelper
+     * @param \Payone\Core\Helper\Checkout                                $checkoutHelper
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,

@@ -45,13 +45,12 @@ class Managemandate extends AddressRequest
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Shop                $shopHelper
-     * @param  \Payone\Core\Helper\Environment         $environmentHelper
-     * @param  \Payone\Core\Helper\Api                 $apiHelper
-     * @param  \Payone\Core\Model\ResourceModel\ApiLog $apiLog
-     * @param  \Payone\Core\Helper\Customer            $customerHelper
-     * @param  \Payone\Core\Helper\Database            $databaseHelper
-     * @return void
+     * @param \Payone\Core\Helper\Shop                $shopHelper
+     * @param \Payone\Core\Helper\Environment         $environmentHelper
+     * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Helper\Customer            $customerHelper
+     * @param \Payone\Core\Helper\Database            $databaseHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
@@ -77,8 +76,8 @@ class Managemandate extends AddressRequest
         $oCustomer = $oQuote->getCustomer();
 
         $this->addParameter('request', 'managemandate'); // Request method
-        $this->addParameter('mode', $oPayment->getOperationMode());// PayOne Portal Operation Mode (live or test)
-        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid'));// ID of PayOne Sub-Account
+        $this->addParameter('mode', $oPayment->getOperationMode()); // PayOne Portal Operation Mode (live or test)
+        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // ID of PayOne Sub-Account
         $this->addParameter('clearingtype', 'elv');
 
         $this->addParameter('customerid', $oCustomer->getId());

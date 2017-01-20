@@ -46,12 +46,11 @@ class ViewAction extends Column
     /**
      * Constructor
      *
-     * @param  ContextInterface   $context
-     * @param  UiComponentFactory $uiComponentFactory
-     * @param  UrlInterface       $urlBuilder
-     * @param  array              $components
-     * @param  array              $data
-     * @return void
+     * @param ContextInterface   $context
+     * @param UiComponentFactory $uiComponentFactory
+     * @param UrlInterface       $urlBuilder
+     * @param array              $components
+     * @param array              $data
      */
     public function __construct(
         ContextInterface $context,

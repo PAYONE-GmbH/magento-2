@@ -42,12 +42,12 @@ define(
             },
             
             getData: function () {
-                return {
-                    'method': this.item.method,
-                    'additional_data': {
-                        'bank_group': this.bankGroup()
-                    }
-                };
+                var parentReturn = this._super();
+                if (parentReturn.additional_data === null) {
+                    parentReturn.additional_data = {};
+                }
+                parentReturn.additional_data.bank_group = this.bankGroup();
+                return parentReturn;
             },
 
             /** Returns payment method instructions */

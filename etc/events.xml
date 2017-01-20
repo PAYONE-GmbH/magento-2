@@ -28,4 +28,10 @@
     <event name="sales_order_payment_place_end">
         <observer name="payone_order_payment_place_end" instance="Payone\Core\Observer\OrderPaymentPlaceEnd" />
     </event>
+    <event name="checkout_submit_before">
+        <observer name="payone_checkout_submit_before" instance="Payone\Core\Observer\CheckoutSubmitBefore" />
+    </event>
+    <event name="payment_method_assign_data">
+        <observer name="payone_payment_method_assign_data" instance="Payone\Core\Observer\PaymentMethodAssignData" />
+    </event>
 </config>

@@ -41,10 +41,8 @@ class Redirect extends \Magento\Framework\App\Action\Action
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\App\Action\Context $context
-     * @param  \Magento\Checkout\Model\Session       $checkoutSession
-     * @param  \Magento\Framework\Url\Helper\Data    $urlHelper
-     * @return void
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Checkout\Model\Session       $checkoutSession
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

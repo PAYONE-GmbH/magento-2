@@ -46,17 +46,16 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
     /**
      * Constructor
      *
-     * @param  string                       $name
-     * @param  string                       $primaryFieldName
-     * @param  string                       $requestFieldName
-     * @param  Reporting                    $reporting
-     * @param  SearchCriteriaBuilder        $searchCritBuilder
-     * @param  RequestInterface             $request
-     * @param  FilterBuilder                $filterBuilder
-     * @param  \Payone\Core\Helper\Database $databaseHelper
-     * @param  array                        $meta
-     * @param  array                        $data
-     * @return void
+     * @param string                       $name
+     * @param string                       $primaryFieldName
+     * @param string                       $requestFieldName
+     * @param Reporting                    $reporting
+     * @param SearchCriteriaBuilder        $searchCritBuilder
+     * @param RequestInterface             $request
+     * @param FilterBuilder                $filterBuilder
+     * @param \Payone\Core\Helper\Database $databaseHelper
+     * @param array                        $meta
+     * @param array                        $data
      */
     public function __construct(
         $name,
@@ -70,7 +69,7 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         array $meta = [],
         array $data = []
     ) {
-        $this->databaseHelper = $databaseHelper;// needs to be in front of constructor, doesnt work otherwise for no apparent reason
+        $this->databaseHelper = $databaseHelper; // needs to be in front of constructor, doesnt work otherwise for no apparent reason
         parent::__construct($name, $primaryFieldName, $requestFieldName, $reporting, $searchCritBuilder, $request, $filterBuilder, $meta, $data);
     }
 

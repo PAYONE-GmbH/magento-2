@@ -195,24 +195,23 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
     /**
      * Constructor
      *
-     * @param  \Magento\Framework\Model\Context                        $context
-     * @param  \Magento\Framework\Registry                             $registry
-     * @param  \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory
-     * @param  \Magento\Framework\Api\AttributeValueFactory            $customAttrFactory
-     * @param  \Magento\Payment\Helper\Data                            $paymentData
-     * @param  \Magento\Framework\App\Config\ScopeConfigInterface      $scopeConfig
-     * @param  \Magento\Payment\Model\Method\Logger                    $logger
-     * @param  \Payone\Core\Helper\Toolkit                             $toolkitHelper
-     * @param  \Payone\Core\Helper\Shop                                $shopHelper
-     * @param  \Magento\Framework\Url                                  $url
-     * @param  \Magento\Checkout\Model\Session                         $checkoutSession
-     * @param  \Payone\Core\Model\Api\Request\Debit                    $debitRequest
-     * @param  \Payone\Core\Model\Api\Request\Capture                  $captureRequest
-     * @param  \Payone\Core\Model\Api\Request\Authorization            $authorizationRequest
-     * @param  \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-     * @param  \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
-     * @param  array $data
-     * @return void
+     * @param \Magento\Framework\Model\Context                        $context
+     * @param \Magento\Framework\Registry                             $registry
+     * @param \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory
+     * @param \Magento\Framework\Api\AttributeValueFactory            $customAttrFactory
+     * @param \Magento\Payment\Helper\Data                            $paymentData
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface      $scopeConfig
+     * @param \Magento\Payment\Model\Method\Logger                    $logger
+     * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
+     * @param \Payone\Core\Helper\Shop                                $shopHelper
+     * @param \Magento\Framework\Url                                  $url
+     * @param \Magento\Checkout\Model\Session                         $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Debit                    $debitRequest
+     * @param \Payone\Core\Model\Api\Request\Capture                  $captureRequest
+     * @param \Payone\Core\Model\Api\Request\Authorization            $authorizationRequest
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
+     * @param array                                                   $data
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -250,7 +249,7 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function getInstructions()
     {
-        return trim($this->getConfigData('instructions'));// return description text
+        return trim($this->getConfigData('instructions')); // return description text
     }
 
     /**
@@ -262,9 +261,9 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
     {
         $sRequestType = $this->getAuthorizationMode();
         if ($sRequestType == PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION) {
-            return AbstractMethod::ACTION_AUTHORIZE;// only create order
+            return AbstractMethod::ACTION_AUTHORIZE; // only create order
         } elseif ($sRequestType == PayoneConfig::REQUEST_TYPE_AUTHORIZATION) {
-            return AbstractMethod::ACTION_AUTHORIZE_CAPTURE;// create order and capture
+            return AbstractMethod::ACTION_AUTHORIZE_CAPTURE; // create order and capture
         }
     }
 
@@ -277,9 +276,9 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function authorize(InfoInterface $payment, $amount)
     {
-        $oReturn = parent::authorize($payment, $amount);// execute Magento parent authorization
-        $this->sendPayoneAuthorization($payment, $amount);// send auth request to PAYONE
-        return $oReturn;// return magento parent auth value
+        $oReturn = parent::authorize($payment, $amount); // execute Magento parent authorization
+        $this->sendPayoneAuthorization($payment, $amount); // send auth request to PAYONE
+        return $oReturn; // return magento parent auth value
     }
 
     /**
@@ -291,9 +290,9 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function refund(InfoInterface $payment, $amount)
     {
-        $oReturn = parent::refund($payment, $amount);// execute Magento parent refund
-        $this->sendPayoneDebit($payment, $amount);// send debit request to PAYONE
-        return $oReturn;// return magento parent refund value
+        $oReturn = parent::refund($payment, $amount); // execute Magento parent refund
+        $this->sendPayoneDebit($payment, $amount); // send debit request to PAYONE
+        return $oReturn; // return magento parent refund value
     }
 
     /**
@@ -305,13 +304,13 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function capture(InfoInterface $payment, $amount)
     {
-        $oReturn = parent::capture($payment, $amount);// execute Magento parent capture
+        $oReturn = parent::capture($payment, $amount); // execute Magento parent capture
         if ($payment->getParentTransactionId()) {// does the order already have a transaction?
-            $this->sendPayoneCapture($payment, $amount);// is probably admin invoice capture
+            $this->sendPayoneCapture($payment, $amount); // is probably admin invoice capture
         } else {
-            $this->sendPayoneAuthorization($payment, $amount);// is probably frontend checkout capture
+            $this->sendPayoneAuthorization($payment, $amount); // is probably frontend checkout capture
         }
-        return $oReturn;// return magento parent capture value
+        return $oReturn; // return magento parent capture value
     }
 
     /**
@@ -326,12 +325,12 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
         $iAllowSpecific = $this->shopHelper->getConfigParam('allowspecific');
         $aAvailableCountries = explode(',', $this->shopHelper->getConfigParam('specificcountry'));
         if ($this->hasCustomConfig()) {// check for non-global configuration
-            $iAllowSpecific = $this->getCustomConfigParam('allowspecific');// only specific countries allowed?
-            $aAvailableCountries = explode(',', $this->getCustomConfigParam('specificcountry'));// get allowed countries
+            $iAllowSpecific = $this->getCustomConfigParam('allowspecific'); // only specific countries allowed?
+            $aAvailableCountries = explode(',', $this->getCustomConfigParam('specificcountry')); // get allowed countries
         }
         if ($iAllowSpecific == 1 && !in_array($country, $aAvailableCountries)) {// only specific but not included
-            return false;// cant use for given country
+            return false; // cant use for given country
         }
-        return true;// can use for given country
+        return true; // can use for given country
     }
 }

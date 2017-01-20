@@ -25,10 +25,9 @@ define(
     [
         'Payone_Core/js/view/payment/method-renderer/base',
         'Magento_Ui/js/model/messageList',
-        'mage/translate',
-        'Payone_Core/js/action/handle-debit'
+        'mage/translate'
     ],
-    function (Component, messageList, $t, handleDebitAction) {
+    function (Component, messageList, $t) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -80,13 +79,14 @@ define(
             getData: function () {
                 document.getElementById(this.getCode() + '_iban').value = this.getCleanedNumber(this.iban());
                 document.getElementById(this.getCode() + '_bic').value = this.getCleanedNumber(this.bic());
-                return {
-                    'method': this.item.method,
-                    'additional_data': {
-                        'iban': this.getCleanedNumber(this.iban()),
-                        'bic': this.getCleanedNumber(this.bic())
-                    }
-                };
+                
+                var parentReturn = this._super();
+                if (parentReturn.additional_data === null) {
+                    parentReturn.additional_data = {};
+                }
+                parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
+                parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
+                return parentReturn;
             }
         });
     }

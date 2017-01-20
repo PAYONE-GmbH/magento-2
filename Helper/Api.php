@@ -94,8 +94,10 @@ class Api extends \Payone\Core\Helper\Base
     public function sendApiRequest($sRequestUrl)
     {
         $aParsedRequestUrl = parse_url($sRequestUrl);
+        if ($aParsedRequestUrl === false) {
+            return ["errormessage" => "Payone API request URL could not be parsed."];
+        }
 
-        $aResponse = [];
         if (function_exists("curl_init")) {
             // php native curl exists so we gonna use it for requesting
             $aResponse = $this->connCurlPhp->sendCurlPhpRequest($aParsedRequestUrl);
@@ -122,13 +124,13 @@ class Api extends \Payone\Core\Helper\Base
     {
         $aOutput = [];
 
-        if (is_array($aResponse)) {// correct response existing?
-            foreach ($aResponse as $iLinenum => $sLine) {// go through line by line
+        if (is_array($aResponse)) { // correct response existing?
+            foreach ($aResponse as $iLinenum => $sLine) { // go through line by line
                 $iPos = strpos($sLine, "=");
-                if ($iPos > 0) {// is a "=" as delimiter existing?
-                    $aOutput[substr($sLine, 0, $iPos)] = trim(substr($sLine, $iPos+1));
-                } elseif (!empty($sLine)) {// is line not empty?
-                    $aOutput[$iLinenum] = $sLine;// add the line unedited
+                if ($iPos > 0) { // is a "=" as delimiter existing?
+                    $aOutput[substr($sLine, 0, $iPos)] = trim(substr($sLine, $iPos + 1));
+                } elseif (!empty($sLine)) { // is line not empty?
+                    $aOutput[$iLinenum] = $sLine; // add the line unedited
                 }
             }
         }
@@ -139,13 +141,15 @@ class Api extends \Payone\Core\Helper\Base
     /**
      * Generate the request url out of the params and die api url
      *
+     * @param  array  $aParameters
+     * @param  string $sApiUrl
      * @return string
      */
     public function getRequestUrl($aParameters, $sApiUrl)
     {
         $sRequestUrl = '';
         foreach ($aParameters as $sKey => $mValue) {
-            if (is_array($mValue)) {// might be array
+            if (is_array($mValue)) { // might be array
                 foreach ($mValue as $i => $sSubValue) {
                     $sRequestUrl .= "&".$sKey."[".$i."]=".urlencode($sSubValue);
                 }
@@ -168,11 +172,11 @@ class Api extends \Payone\Core\Helper\Base
     public function addPayoneOrderData(SalesOrder $oOrder, $aRequest, $aResponse)
     {
         if (isset($aResponse['txid'])) {// txid existing?
-            $oOrder->setPayoneTxid($aResponse['txid']);// add txid to order entity
+            $oOrder->setPayoneTxid($aResponse['txid']); // add txid to order entity
         }
-        $oOrder->setPayoneRefnr($aRequest['reference']);// add refnr to order entity
-        $oOrder->setPayoneAuthmode($aRequest['request']);// add authmode to order entity
-        $oOrder->setPayoneMode($aRequest['mode']);// add payone mode to order entity
+        $oOrder->setPayoneRefnr($aRequest['reference']); // add refnr to order entity
+        $oOrder->setPayoneAuthmode($aRequest['request']); // add authmode to order entity
+        $oOrder->setPayoneMode($aRequest['mode']); // add payone mode to order entity
         if (isset($aRequest['mandate_identification'])) {// mandate id existing in request?
             $oOrder->setPayoneMandateId($aRequest['mandate_identification']);
         } elseif (isset($aResponse['mandate_identification'])) {// mandate id existing in response?
@@ -188,11 +192,11 @@ class Api extends \Payone\Core\Helper\Base
      */
     public function isInvoiceDataNeeded(PayoneMethod $oPayment)
     {
-        $sType = $this->getConfigParam('request_type');// auth or preauth?
-        $blInvoiceEnabled = (bool)$this->getConfigParam('transmit_enabled', 'invoicing');// invoicing enabled?
+        $sType = $this->getConfigParam('request_type'); // auth or preauth?
+        $blInvoiceEnabled = (bool)$this->getConfigParam('transmit_enabled', 'invoicing'); // invoicing enabled?
         if ($oPayment->needsProductInfo() || ($sType == PayoneConfig::REQUEST_TYPE_AUTHORIZATION && $blInvoiceEnabled)) {
-            return true;// invoice data needed
+            return true; // invoice data needed
         }
-        return false;// invoice data not needed
+        return false; // invoice data not needed
     }
 }

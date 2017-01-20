@@ -45,12 +45,11 @@ class Capture extends Base
     /**
      * Constructor
      *
-     * @param  \Payone\Core\Helper\Shop                $shopHelper
-     * @param  \Payone\Core\Helper\Environment         $environmentHelper
-     * @param  \Payone\Core\Helper\Api                 $apiHelper
-     * @param  \Payone\Core\Model\ResourceModel\ApiLog $apiLog
-     * @param  \Payone\Core\Helper\Database            $databaseHelper
-     * @return void
+     * @param \Payone\Core\Helper\Shop                $shopHelper
+     * @param \Payone\Core\Helper\Environment         $environmentHelper
+     * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Helper\Database            $databaseHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
@@ -79,12 +78,12 @@ class Capture extends Base
         $this->setOrderId($oOrder->getRealOrderId());
 
         $this->addParameter('request', 'capture'); // Request method
-        $this->addParameter('mode', $oPayment->getOperationMode());// PayOne Portal Operation Mode (live or test)
+        $this->addParameter('mode', $oPayment->getOperationMode()); // PayOne Portal Operation Mode (live or test)
         $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
 
         // Total order sum in smallest currency unit
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '')*100);
-        $this->addParameter('currency', $oOrder->getOrderCurrencyCode());// Currency
+        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
+        $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // Currency
 
         $this->addParameter('txid', $iTxid); // PayOne Transaction ID
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));

@@ -55,4 +55,13 @@
             </argument>
         </arguments>
     </virtualType>
+    <type name="Magento\Payment\Model\MethodList">
+        <plugin name="Payone_Core_Plugin_MethodList" type="Payone\Core\Model\Plugins\MethodList" sortOrder="1" />
+    </type>
+    <type name="Magento\Quote\Model\ShippingAddressManagement">
+        <plugin name="Payone_Core_Plugin_ShippingAddressManagement" type="Payone\Core\Model\Plugins\ShippingAddressManagement" sortOrder="1" />
+    </type>
+    <type name="Magento\Quote\Model\BillingAddressManagement">
+        <plugin name="Payone_Core_Plugin_BillingAddressManagement" type="Payone\Core\Model\Plugins\BillingAddressManagement" sortOrder="1" />
+    </type>
 </config>

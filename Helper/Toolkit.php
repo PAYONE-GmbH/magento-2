@@ -132,7 +132,7 @@ class Toolkit extends \Payone\Core\Helper\Base
         if (!empty($sText)) {
             $sText = str_replace(array_keys($aSubstitutionArray), array_values($aSubstitutionArray), $sText);
             if ($iMaxLength !== false && strlen($sText) > $iMaxLength) {
-                $sText = substr($sText, 0, $iMaxLength);// shorten text if too long
+                $sText = substr($sText, 0, $iMaxLength); // shorten text if too long
             }
             return $sText;
         }
@@ -147,7 +147,7 @@ class Toolkit extends \Payone\Core\Helper\Base
      */
     public function getInvoiceAppendix(SalesOrder $oOrder)
     {
-        $sText = $this->getConfigParam('invoice_appendix', 'invoicing');// get invoice appendix from config
+        $sText = $this->getConfigParam('invoice_appendix', 'invoicing'); // get invoice appendix from config
         $aSubstitutionArray = [
             '{{order_increment_id}}' => $oOrder->getIncrementId(),
             '{{customer_id}}' => $oOrder->getCustomerId(),
@@ -165,7 +165,7 @@ class Toolkit extends \Payone\Core\Helper\Base
      */
     public function getNarrativeText(SalesOrder $oOrder, PayoneMethod $oPayment)
     {
-        $sText = $this->getConfigParam($oPayment->getCode(), 'text');// get narrative text for payment from config
+        $sText = $this->getConfigParam($oPayment->getCode(), 'text'); // get narrative text for payment from config
         $aSubstitutionArray = [
             '{{order_increment_id}}' => $oOrder->getIncrementId(),
         ];
@@ -178,7 +178,7 @@ class Toolkit extends \Payone\Core\Helper\Base
      *
      * @param  double $dPrice    price of any sort
      * @param  int    $iDecimals number of digits behind the decimal point
-     * @return double
+     * @return string
      */
     public function formatNumber($dPrice, $iDecimals = 2)
     {
@@ -207,7 +207,7 @@ class Toolkit extends \Payone\Core\Helper\Base
     public function getAdditionalDataEntry(DataObject $oData, $sKey)
     {
         // The way to read the form-parameters changed with version 2.0.6
-        if (version_compare($this->shopHelper->getMagentoVersion(), '2.0.6', '>=')) {// Magento 2.0.6 and above
+        if (version_compare($this->shopHelper->getMagentoVersion(), '2.0.6', '>=')) { // Magento 2.0.6 and above
             $aAdditionalData = $oData->getAdditionalData();
             if (isset($aAdditionalData[$sKey])) {
                 return $aAdditionalData[$sKey];

@@ -50,10 +50,9 @@ class View extends \Magento\Backend\Block\Widget\Container
     /**
      * Constructor
      *
-     * @param  \Magento\Backend\Block\Widget\Context     $context
-     * @param  \Payone\Core\Model\Entities\ApiLogFactory $apiLogFactory
-     * @param  array                                     $data
-     * @return void
+     * @param \Magento\Backend\Block\Widget\Context     $context
+     * @param \Payone\Core\Model\Entities\ApiLogFactory $apiLogFactory
+     * @param array                                     $data
      */
     public function __construct(
         \Magento\Backend\Block\Widget\Context $context,

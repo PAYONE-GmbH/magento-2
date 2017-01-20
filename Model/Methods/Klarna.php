@@ -116,7 +116,7 @@ class Klarna extends PayoneMethod
      * Returns formatted birthday if possible
      *
      * @param  DataObject $data
-     * @return string|bool
+     * @return string|false
      */
     protected function getFormattedBirthday(DataObject $data)
     {
