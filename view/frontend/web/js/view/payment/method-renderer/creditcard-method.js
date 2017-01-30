@@ -146,7 +146,7 @@ define(
                     // PseudoCardPan; then call your function "payCallback"
                     fullScreenLoader.startLoader();
                 } else {
-                    console.debug("not complete");
+                    this.messageContainer.addErrorMessage({'message': $t("Please enter complete data.")});
                 }
             },
             
