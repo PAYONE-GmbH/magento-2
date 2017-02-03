@@ -184,25 +184,6 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
             </group>
-            <group id="text" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Narrative Text</label>
-                <field id="payone_creditcard" translate="label,comment" type="textarea" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Creditcard</label>
-                    <comment>Maximum 81 digits. Placeholders: {{order_increment_id}}</comment>
-                </field>
-                <field id="payone_debit" translate="label,comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Debit Payment</label>
-                    <comment>Maximum 3 lines à 27 digits. Placeholders: {{order_increment_id}}</comment>
-                </field>
-                <field id="payone_paypal" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>PayPal</label>
-                    <comment>Maximum 81 digits. Placeholders: {{order_increment_id}}</comment>
-                </field>
-                <field id="payone_paydirekt" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Paydirekt</label>
-                    <comment>Maximum 37 digits. Placeholders: {{order_increment_id}}</comment>
-                </field>
-            </group>
         </section>
         <section id="payone_payment" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Payment</label>

@@ -25,6 +25,10 @@
  */
 -->
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <field id="narrative_text" translate="label,comment" type="textarea" sortOrder="485" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>Narrative Text</label>
+        <comment>Maximum 81 digits. Placeholders: {{order_increment_id}}</comment>
+    </field>
     <field id="mode" translate="label" type="select" sortOrder="490" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Mode</label>
         <source_model>Payone\Core\Model\Source\Mode</source_model>
