@@ -160,6 +160,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
                     'mandateManagementActive' => $this->paymentHelper->isMandateManagementActive(),
                     'checkCvc' => (bool)$this->paymentHelper->isCheckCvcActive(),
                     'requestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
+                    'requestIbanBicSofortUeberweisung' => (bool)$this->requestHelper->getConfigParam('show_iban', PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG, 'payone_payment'),
                     'validateBankCode' => (bool)$this->requestHelper->getConfigParam('check_bankaccount', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
                     'bankaccountcheckRequest' => $this->requestHelper->getBankaccountCheckRequest(),
                     'bankCodeValidatedAndValid' => false,
