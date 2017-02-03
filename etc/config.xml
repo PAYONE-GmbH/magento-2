@@ -279,6 +279,7 @@
             </payone_invoice>
             <payone_obt_sofortueberweisung>
                 <use_global>1</use_global>
+                <show_iban>1</show_iban>
             </payone_obt_sofortueberweisung>
             <payone_obt_giropay>
                 <use_global>1</use_global>
