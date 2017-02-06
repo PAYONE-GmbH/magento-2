@@ -44,37 +44,39 @@
         
         <form class="debit_form" action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_iban'}" class="label">
-                        <span><!-- ko i18n: 'IBAN'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[iban]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_iban',
-                                    title: $t('IBAN'),
-                                    'data-container': getCode() + '-iban'},
-                              value: iban,
-                              valueUpdate: 'keyup' "/>
+                <!-- ko if: requestIbanBic() -->
+                    <div class="field number required">
+                        <label data-bind="attr: {for: getCode() + '_iban'}" class="label">
+                            <span><!-- ko i18n: 'IBAN'--><!-- /ko --></span>
+                        </label>
+                        <div class="control">
+                            <input type="text" name="payment[iban]" class="input-text" value=""
+                                   data-bind="attr: {
+                                        autocomplete: off,
+                                        id: getCode() + '_iban',
+                                        title: $t('IBAN'),
+                                        'data-container': getCode() + '-iban'},
+                                  value: iban,
+                                  valueUpdate: 'keyup' "/>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_bic'}" class="label">
-                        <span><!-- ko i18n: 'BIC'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[bic]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_bic',
-                                    title: $t('BIC'),
-                                    'data-container': getCode() + '-bic'},
-                              value: bic,
-                              valueUpdate: 'keyup' "/>
+
+                    <div class="field number required">
+                        <label data-bind="attr: {for: getCode() + '_bic'}" class="label">
+                            <span><!-- ko i18n: 'BIC'--><!-- /ko --></span>
+                        </label>
+                        <div class="control">
+                            <input type="text" name="payment[bic]" class="input-text" value=""
+                                   data-bind="attr: {
+                                        autocomplete: off,
+                                        id: getCode() + '_bic',
+                                        title: $t('BIC'),
+                                        'data-container': getCode() + '-bic'},
+                                  value: bic,
+                                  valueUpdate: 'keyup' "/>
+                        </div>
                     </div>
-                </div>
+                <!--/ko-->
             </fieldset>
         </form>
         

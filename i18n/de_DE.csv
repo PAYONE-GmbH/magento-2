@@ -1018,3 +1018,5 @@
 "PUG","Adresse postalisch korrekt, aber Gebäude unbekannt (PUG)"
 "PUZ","Person ist umgezogen, Adresse nicht korrigiert (PUZ)"
 "UKN","Unbekannte Rückgabewerte werden mit UKN abgebildet (UKN)"
+
+"Show IBAN/BIC fields","IBAN/BIC Felder anzeigen"

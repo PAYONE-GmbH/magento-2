@@ -46,13 +46,15 @@ define(
             },
 
             validate: function () {
-                if (this.iban() == '') {
-                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
-                    return false;
-                }
-                if (this.bic() == '') {
-                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid BIC.')});
-                    return false;
+                if (this.requestIbanBic() == 1) {
+                    if (this.iban() == '') {
+                        this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
+                        return false;
+                    }
+                    if (this.bic() == '') {
+                        this.messageContainer.addErrorMessage({'message': $t('Please enter a valid BIC.')});
+                        return false;
+                    }
                 }
                 return true;
             },
@@ -77,16 +79,22 @@ define(
                 return sCleanedNumber;
             },
             getData: function () {
-                document.getElementById(this.getCode() + '_iban').value = this.getCleanedNumber(this.iban());
-                document.getElementById(this.getCode() + '_bic').value = this.getCleanedNumber(this.bic());
-                
-                var parentReturn = this._super();
-                if (parentReturn.additional_data === null) {
-                    parentReturn.additional_data = {};
+                if (this.requestIbanBic() == 1) {
+                    document.getElementById(this.getCode() + '_iban').value = this.getCleanedNumber(this.iban());
+                    document.getElementById(this.getCode() + '_bic').value = this.getCleanedNumber(this.bic());
+
+                    var parentReturn = this._super();
+                    if (parentReturn.additional_data === null) {
+                        parentReturn.additional_data = {};
+                    }
+                    parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
+                    parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
+                    return parentReturn;
                 }
-                parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
-                parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
-                return parentReturn;
+                return this._super();
+            },
+            requestIbanBic: function () {
+                return window.checkoutConfig.payment.payone.requestIbanBicSofortUeberweisung;
             }
         });
     }

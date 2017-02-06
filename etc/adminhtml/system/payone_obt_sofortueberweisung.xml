@@ -36,6 +36,10 @@
             <label>Title</label>
             <config_path>payment/payone_obt_sofortueberweisung/title</config_path>
         </field>
+        <field id="show_iban" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Show IBAN/BIC fields</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
         <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>New Order Status</label>
             <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>

@@ -59,11 +59,13 @@ class SofortUeberweisung extends OnlineBankTransferBase
     {
         $oInfoInstance = $this->getInfoInstance();
 
-        $aParams = [
-            'bankcountry' => $oOrder->getBillingAddress()->getCountryId(),
-            'iban' => $oInfoInstance->getAdditionalInformation('iban'),
-            'bic' => $oInfoInstance->getAdditionalInformation('bic'),
-        ];
+        $aParams = ['bankcountry' => $oOrder->getBillingAddress()->getCountryId()];
+        if ($oInfoInstance->getAdditionalInformation('iban')) {
+            $aParams['bic'] = $oInfoInstance->getAdditionalInformation('iban');
+        }
+        if ($oInfoInstance->getAdditionalInformation('bic')) {
+            $aParams['bic'] = $oInfoInstance->getAdditionalInformation('bic');
+        }
 
         return $aParams;
     }
