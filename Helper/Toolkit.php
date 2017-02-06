@@ -165,7 +165,7 @@ class Toolkit extends \Payone\Core\Helper\Base
      */
     public function getNarrativeText(SalesOrder $oOrder, PayoneMethod $oPayment)
     {
-        $sText = $this->getConfigParam($oPayment->getCode(), 'text'); // get narrative text for payment from config
+        $sText = $this->getConfigParam('narrative_text', $oPayment->getCode(), 'payone_payment'); // get narrative text for payment from config
         $aSubstitutionArray = [
             '{{order_increment_id}}' => $oOrder->getIncrementId(),
         ];
