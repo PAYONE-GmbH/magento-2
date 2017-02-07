@@ -47,7 +47,7 @@ define(
                 }
 
                 if (this.validate() && firstValidation) {
-                    if (document.getElementById(this.getCode() + '_pseudocardpan').value == '') {
+                    if (document.getElementById(this.getCode() + '_pseudocardpan').value != '') {
                         // update payment method information if additional data was changed
                         this.selectPaymentMethod();
                         handleRedirectAction(this.getData(), this.messageContainer);
