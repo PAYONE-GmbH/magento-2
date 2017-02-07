@@ -45,14 +45,16 @@ define(
                 if (!(firstValidation)) {
                     return false;
                 }
-                
+
                 if (this.validate() && firstValidation) {
-                    // update payment method information if additional data was changed
-                    this.selectPaymentMethod();
-                    handleRedirectAction(this.getData(), this.messageContainer);
-                    return false;
-                } else {
-                    this.handleCreditcardCheck();
+                    if (document.getElementById(this.getCode() + '_pseudocardpan').value != '') {
+                        // update payment method information if additional data was changed
+                        this.selectPaymentMethod();
+                        handleRedirectAction(this.getData(), this.messageContainer);
+                        return false;
+                    } else {
+                        this.handleCreditcardCheck();
+                    }
                 }
             },
             

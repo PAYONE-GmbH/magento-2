@@ -129,13 +129,7 @@ define(
                     this.messageContainer.addErrorMessage({'message': $t('Please enter the lastname.')});
                     return false;
                 }
-                
-                // do some format validation
-                if (document.getElementById(this.getCode() + '_pseudocardpan').value == '') {
-                    return false;
-                } else {
-                    return true;
-                }
+                return true;
             },
             
             handleCreditcardCheck: function () {
