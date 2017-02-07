@@ -24,7 +24,7 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Service;
+namespace Payone\Core\Service\V1;
 
 use Payone\Core\Model\Api\AddresscheckInterface;
 use Payone\Core\Service\AddresscheckResponse;
