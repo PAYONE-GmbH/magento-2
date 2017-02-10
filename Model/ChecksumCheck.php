@@ -101,6 +101,23 @@ class ChecksumCheck
     }
 
     /**
+     * Read module version from module.xml
+     *
+     * @param  string $sFilePath
+     * @return void
+     */
+    protected function handleModuleXml($sFilePath) {
+        $oXml = simplexml_load_file($sFilePath);
+        if ($oXml && $oXml->module) {
+            $sVersion = $oXml->module->attributes()->setup_version;
+            if ($sVersion) {
+                $this->sModuleVersion = $sVersion;
+            }
+            $this->blGotModuleInfo = true;
+        }
+    }
+
+    /**
      * Request files existing in the module from Fatchip checksum server
      *
      * @return array
@@ -110,6 +127,9 @@ class ChecksumCheck
         $aFiles = [];
         if (file_exists($this->getBasePath().'composer.json')) {// does composer.json exist here?
             $this->handleComposerJson($this->getBasePath().'composer.json'); // Read module information from the composer.json
+        }
+        if (file_exists($this->getBasePath()."/etc/module.xml")) {// does module.xml exist here?
+            $this->handleModuleXml($this->getBasePath()."/etc/module.xml"); // Read module information from the module.xml
         }
         if ($this->blGotModuleInfo === true) { // was composer.json readable?
             $sRequestUrl = $this->sVersionCheckUrl.'?module='.$this->sModuleId.'&version='.$this->sModuleVersion;
@@ -168,13 +188,14 @@ class ChecksumCheck
      * Main method executing checksum check
      *
      * @return string
+     * @throws LocalizedException
      */
     public function checkChecksumXml()
     {
         if (ini_get('allow_url_fopen') == 0) {// Is file_get_contents for urls active on this server?
-            throw new LocalizedException("Cant verify checksums, allow_url_fopen is not activated on customer-server!");
+            throw new LocalizedException(__("Cant verify checksums, allow_url_fopen is not activated on customer-server!"));
         } elseif (!function_exists('curl_init')) {// is curl usable on this server?
-            throw new LocalizedException("Cant verify checksums, curl is not activated on customer-server!");
+            throw new LocalizedException(__("Cant verify checksums, curl is not activated on customer-server!"));
         }
 
         $aFiles = $this->getFilesToCheck(); // Requests all files that need to be checked from the Fatchip Checksum Server
