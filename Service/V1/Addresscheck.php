@@ -26,8 +26,8 @@
 
 namespace Payone\Core\Service\V1;
 
-use Payone\Core\Model\Api\AddresscheckInterface;
-use Payone\Core\Service\AddresscheckResponse;
+use Payone\Core\Api\AddresscheckInterface;
+use Payone\Core\Model\WebApi\AddresscheckResponse;
 use Magento\Quote\Api\Data\AddressInterface;
 
 /**
