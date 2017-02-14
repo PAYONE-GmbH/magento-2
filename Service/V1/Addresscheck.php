@@ -24,15 +24,16 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\WebApi;
+namespace Payone\Core\Service\V1;
 
+use Payone\Core\Api\AddresscheckInterface;
 use Payone\Core\Model\WebApi\AddresscheckResponse;
 use Magento\Quote\Api\Data\AddressInterface;
 
 /**
  * Web API model for the PAYONE addresscheck
  */
-class Addresscheck
+class Addresscheck implements AddresscheckInterface
 {
     /**
      * PAYONE addresscheck request model
