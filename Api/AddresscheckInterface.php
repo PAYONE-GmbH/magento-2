@@ -12,7 +12,7 @@ interface AddresscheckInterface
      * @param  bool $isBillingAddress
      * @param  bool $isVirtual
      * @param  double $dTotal
-     * @return \Payone\Core\Model\WebApi\AddresscheckResponse
+     * @return \Payone\Core\Service\V1\Data\AddresscheckResponse
      */
     public function checkAddress(\Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal);
 }
