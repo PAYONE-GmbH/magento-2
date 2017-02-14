@@ -27,7 +27,7 @@
 namespace Payone\Core\Service\V1;
 
 use Payone\Core\Api\AddresscheckInterface;
-use Payone\Core\Model\WebApi\AddresscheckResponse;
+use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Magento\Quote\Api\Data\AddressInterface;
 
 /**
@@ -45,7 +45,7 @@ class Addresscheck implements AddresscheckInterface
     /**
      * Factory for the response object
      *
-     * @var \Payone\Core\Model\WebApi\AddresscheckResponseFactory
+     * @var \Payone\Core\Service\V1\Data\AddresscheckResponseFactory
      */
     protected $responseFactory;
 
@@ -60,12 +60,12 @@ class Addresscheck implements AddresscheckInterface
      * Constructor
      *
      * @param \Payone\Core\Model\Risk\Addresscheck                  $addresscheck
-     * @param \Payone\Core\Model\WebApi\AddresscheckResponseFactory $responseFactory
+     * @param \Payone\Core\Service\V1\Data\AddresscheckResponseFactory $responseFactory
      * @param \Magento\Checkout\Model\Session                       $checkoutSession
      */
     public function __construct(
         \Payone\Core\Model\Risk\Addresscheck $addresscheck,
-        \Payone\Core\Model\WebApi\AddresscheckResponseFactory $responseFactory,
+        \Payone\Core\Service\V1\Data\AddresscheckResponseFactory $responseFactory,
         \Magento\Checkout\Model\Session $checkoutSession
     ) {
         $this->addresscheck = $addresscheck;
@@ -186,7 +186,7 @@ class Addresscheck implements AddresscheckInterface
      * @param  bool $isBillingAddress
      * @param  bool $isVirtual
      * @param  double $dTotal
-     * @return \Payone\Core\Model\WebApi\AddresscheckResponse
+     * @return \Payone\Core\Service\V1\Data\AddresscheckResponse
      */
     public function checkAddress(\Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal)
     {
