@@ -34,4 +34,7 @@
     <event name="payment_method_assign_data">
         <observer name="payone_payment_method_assign_data" instance="Payone\Core\Observer\PaymentMethodAssignData" />
     </event>
+    <event name="controller_action_predispatch_checkout_index_index">
+        <observer name="paypal_predispatch_checkout_index" instance="Payone\Core\Observer\PredispatchCheckoutIndex" />
+    </event>
 </config>

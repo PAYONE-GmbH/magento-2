@@ -32,14 +32,36 @@ namespace Payone\Core\Controller\Onepage;
 class Returned extends \Magento\Framework\App\Action\Action
 {
     /**
+     * Checkout session
+     *
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Checkout\Model\Session       $checkoutSession
+     */
+    public function __construct(
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Checkout\Model\Session $checkoutSession
+    ) {
+        parent::__construct($context);
+        $this->checkoutSession = $checkoutSession;
+    }
+
+    /**
      * Redirect to success page
+     * Do whatever processing is needed after successful return from payment-provider
      *
      * @return void
      */
     public function execute()
     {
-        /* Do whatever processing is needed after successful return from payment-provider
-           Nothing yet */
+        $this->checkoutSession->unsPayoneCustomerIsRedirected();
+
         $this->_redirect($this->_url->getUrl('checkout/onepage/success'));
     }
 }

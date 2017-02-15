@@ -24,12 +24,16 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Controller\Onepage;
+namespace Payone\Core\Observer;
+
+use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Event\Observer;
 
 /**
- * Controller for redirect payment types
+ * Event class to prevent the basket from getting lost with redirect payment types
+ * when the customer uses the browser back-button
  */
-class Redirect extends \Magento\Framework\App\Action\Action
+class PredispatchCheckoutIndex implements ObserverInterface
 {
     /**
      * Checkout session
@@ -41,30 +45,22 @@ class Redirect extends \Magento\Framework\App\Action\Action
     /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Checkout\Model\Session       $checkoutSession
      */
-    public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Checkout\Model\Session $checkoutSession
-    ) {
-        parent::__construct($context);
+    public function __construct(\Magento\Checkout\Model\Session $checkoutSession)
+    {
         $this->checkoutSession = $checkoutSession;
     }
 
     /**
-     * Redirect to payment-provider or to success page
-     *
-     * @return void
+     * @param  Observer $observer
+     * @return $this
      */
-    public function execute()
+    public function execute(Observer $observer)
     {
-        $sPayoneRedirectUrl = $this->checkoutSession->getPayoneRedirectUrl();
-        if (!empty($sPayoneRedirectUrl)) {
-            $this->checkoutSession->setPayoneCustomerIsRedirected(true);
-            $this->getResponse()->setRedirect($sPayoneRedirectUrl);
-            return;
+        if ($this->checkoutSession->getPayoneCustomerIsRedirected()) {
+            $this->checkoutSession->restoreQuote();
+            $this->checkoutSession->unsPayoneCustomerIsRedirected();
         }
-        $this->_redirect($this->_url->getUrl('checkout/onepage/success'));
     }
 }
