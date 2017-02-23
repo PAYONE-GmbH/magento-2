@@ -214,8 +214,12 @@ class Authorization extends AddressRequest
     {
         foreach ($this->aCustomParamMap as $sParamName => $sConfigName) {// add all custom parameters
             $sCustomConfig = $oPayment->getCustomConfigParam($sConfigName); // get custom config param
-            if (!empty($sCustomConfig)) {// only add if the param is configured
-                $this->addParameter($sParamName, $sCustomConfig); // add custom param to request
+            if (!empty($sCustomConfig)) { // only add if the param is configured
+                if ($sConfigName == 'key') {
+                    $this->addParameter($sParamName, md5($sCustomConfig)); // key isn't hashed in db
+                } else {
+                    $this->addParameter($sParamName, $sCustomConfig); // add custom param to request
+                }
             }
         }
     }
