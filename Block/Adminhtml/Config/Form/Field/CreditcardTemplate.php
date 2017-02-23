@@ -148,12 +148,15 @@ class CreditcardTemplate extends \Magento\Config\Block\System\Config\Form\Field\
      */
     public function fcpoGetValue($sIdent)
     {
+        $sReturn = '';
+
         $aValues = $this->getElement()->getValue();
         if (isset($aValues[$sIdent])) {
-            return $aValues[$sIdent];
+            $sReturn = $aValues[$sIdent];
         } elseif (isset($this->aDefaultConfig[$sIdent])) {
-            return $this->aDefaultConfig[$sIdent];
+            $sReturn = $this->aDefaultConfig[$sIdent];
         }
-        return '';
+        $sReturn = str_replace('"', "&quot;", $sReturn);
+        return $sReturn;
     }
 }
