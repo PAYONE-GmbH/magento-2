@@ -27,11 +27,13 @@
 namespace Payone\Core\Controller\Onepage;
 
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\App\Action\Action;
 
 /**
  * Cancel controller for back links from redirect payment-types
  */
-class Cancel extends \Magento\Framework\App\Action\Action
+class Cancel extends Action
 {
     /**
      * Checkout session
@@ -72,6 +74,8 @@ class Cancel extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         try {
+            $this->checkoutSession->setIsPayoneRedirectCancellation(true);
+
             $orderId = $this->checkoutSession->getLastOrderId();
             $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
             if ($order) {
@@ -91,11 +95,7 @@ class Cancel extends \Magento\Framework\App\Action\Action
                 $oQuote->setIsActive(1)->setReservedOrderId(null)->save();
                 $this->checkoutSession->replaceQuote($oQuote);
             }
-
-            $this->messageManager->addSuccessMessage(
-                __('Payment has been canceled.')
-            );
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+        } catch (LocalizedException $e) {
             $this->messageManager->addExceptionMessage($e, $e->getMessage());
         } catch (\Exception $e) {
             $this->messageManager->addExceptionMessage($e, __('Error while canceling the payment'));
@@ -103,6 +103,6 @@ class Cancel extends \Magento\Framework\App\Action\Action
 
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        return $resultRedirect->setPath('checkout/cart');
+        return $resultRedirect->setPath('checkout');
     }
 }

@@ -28,6 +28,9 @@ namespace Payone\Core\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Magento\Checkout\Model\Session;
+use Magento\Sales\Model\OrderFactory;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Event class to prevent the basket from getting lost with redirect payment types
@@ -43,13 +46,22 @@ class PredispatchCheckoutIndex implements ObserverInterface
     protected $checkoutSession;
 
     /**
+     * Order factory
+     *
+     * @var OrderFactory
+     */
+    protected $orderFactory;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Checkout\Model\Session       $checkoutSession
+     * @param Session      $checkoutSession
+     * @param OrderFactory $orderFactory
      */
-    public function __construct(\Magento\Checkout\Model\Session $checkoutSession)
+    public function __construct(Session $checkoutSession, OrderFactory $orderFactory)
     {
         $this->checkoutSession = $checkoutSession;
+        $this->orderFactory = $orderFactory;
     }
 
     /**
@@ -59,8 +71,28 @@ class PredispatchCheckoutIndex implements ObserverInterface
     public function execute(Observer $observer)
     {
         if ($this->checkoutSession->getPayoneCustomerIsRedirected()) {
-            $this->checkoutSession->restoreQuote();
+            try {
+                $orderId = $this->checkoutSession->getLastOrderId();
+                $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
+                if ($order) {
+                    $order->cancel()->save();
+
+                    $this->checkoutSession->restoreQuote();
+
+                    $this->checkoutSession
+                        ->unsLastQuoteId()
+                        ->unsLastSuccessQuoteId()
+                        ->unsLastOrderId()
+                        ->unsLastRealOrderId();
+                }
+            } catch (LocalizedException $e) {
+                // catch and continue - do something when needed
+            } catch (\Exception $e) {
+                // catch and continue - do something when needed
+            }
+
             $this->checkoutSession->unsPayoneCustomerIsRedirected();
+            $this->checkoutSession->setIsPayoneRedirectCancellation(true);
         }
     }
 }
