@@ -61,6 +61,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
     {
         $sPayoneRedirectUrl = $this->checkoutSession->getPayoneRedirectUrl();
         if (!empty($sPayoneRedirectUrl)) {
+            $this->checkoutSession->setPayoneCustomerIsRedirected(true);
             $this->getResponse()->setRedirect($sPayoneRedirectUrl);
             return;
         }

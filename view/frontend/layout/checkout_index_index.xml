@@ -124,6 +124,7 @@
         </referenceBlock>
         <referenceBlock name="content">
             <block class="Payone\Core\Block\ClientApi" name="payone_client_api" template="client_api.phtml"/>
+            <block class="Payone\Core\Block\RedirectReturn" name="payone_redirect_return" template="redirect_return.phtml"/>
         </referenceBlock>
     </body>
 </page>

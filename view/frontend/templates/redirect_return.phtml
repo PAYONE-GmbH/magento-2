@@ -1,0 +1,66 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+?>
+
+<script type="text/javascript">
+    <?php if ($block->isRedirectCancellation()) { ?>
+    require([
+        'Magento_Customer/js/customer-data',
+        'Magento_Checkout/js/checkout-data'
+    ], function (customerData, checkoutData) {
+        customerData.invalidate(['cart', 'checkout-data']);
+
+        <?php $oShippingAddress = $block->getShippingAddress(); ?>
+        <?php if ($block->isGuest() && $oShippingAddress && $oShippingAddress->getFirstname() && $oShippingAddress->getLastname()) { ?>
+        var shippingAddressData = {
+            'company': '<?php echo $oShippingAddress->getCompany(); ?>',
+            'telephone' : '<?php echo $oShippingAddress->getTelephone(); ?>',
+            'firstname' : '<?php echo $oShippingAddress->getFirstname(); ?>',
+            'lastname' : '<?php echo $oShippingAddress->getLastname(); ?>',
+            'street' : {
+                0 : '<?php echo $oShippingAddress->getStreet()[0]; ?>',
+                1 : '<?php echo isset($oShippingAddress->getStreet()[1]) ? $oShippingAddress->getStreet()[1] : ''; ?>'
+            },
+            'city' : '<?php echo $oShippingAddress->getCity(); ?>',
+            'country_id' : '<?php echo $oShippingAddress->getCountryId(); ?>',
+            'postcode' : '<?php echo $oShippingAddress->getPostcode(); ?>'
+        };
+        <?php if ($oShippingAddress->getRegionCode() && $oShippingAddress->getRegionId()) { ?>
+        shippingAddressData.region = '<?php echo $oShippingAddress->getRegionCode(); ?>';
+        shippingAddressData.region_id = '<?php echo $oShippingAddress->getRegionId(); ?>';
+        <?php } ?>
+        checkoutData.setShippingAddressFromData(shippingAddressData);
+        checkoutData.setSelectedShippingRate('<?php echo $oShippingAddress->getShippingMethod(); ?>');
+        checkoutData.setInputFieldEmailValue('<?php echo $oShippingAddress->getEmail(); ?>');
+        checkoutData.setValidatedEmailValue('<?php echo $oShippingAddress->getEmail(); ?>');
+
+        <?php $oQuotePayment = $this->getQuotePayment(); ?>
+        <?php if ($oQuotePayment) { ?>
+        checkoutData.setSelectedPaymentMethod('<?php echo $oQuotePayment->getMethod(); ?>');
+        <?php } ?>
+        <?php } ?>
+    });
+    <?php } ?>
+</script>
