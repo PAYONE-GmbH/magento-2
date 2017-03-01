@@ -25,10 +25,9 @@ define(
     [
         'Payone_Core/js/view/payment/method-renderer/base',
         'Magento_Ui/js/model/messageList',
-        'mage/translate',
-        'Payone_Core/js/action/handle-debit'
+        'mage/translate'
     ],
-    function (Component, messageList, $t, handleDebitAction) {
+    function (Component, messageList, $t) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -130,8 +129,7 @@ define(
             processPayoneResponseELV: function (response) {
                 if (response.get('status') === "VALID") {
                     window.checkoutConfig.payment.payone.bankCodeValidatedAndValid = true;
-                    this.selectPaymentMethod();
-                    handleDebitAction(this.getData(), this.messageContainer);
+                    this.handleSetPaymentInformation('payone/onepage/debit/');
                 } else if (true || response.get('status') === "BLOCKED") {
                     this.messageContainer.addErrorMessage({'message': window.checkoutConfig.payment.payone.blockedMessage});
                 } else {

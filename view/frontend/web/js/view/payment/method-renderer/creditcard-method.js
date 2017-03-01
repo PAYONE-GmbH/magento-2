@@ -27,10 +27,9 @@ define(
         'Payone_Core/js/view/payment/method-renderer/base',
         'Magento_Ui/js/model/messageList',
         'mage/translate',
-        'Payone_Core/js/action/handle-redirect',
         'Magento_Checkout/js/model/full-screen-loader'
     ],
-    function ($, Component, messageList, $t, handleRedirectAction, fullScreenLoader) {
+    function ($, Component, messageList, $t, fullScreenLoader) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -151,8 +150,7 @@ define(
                         document.getElementById(this.getCode() + '_pseudocardpan').value = response.pseudocardpan;
                     }
 
-                    this.selectPaymentMethod();
-                    handleRedirectAction(this.getData(), this.messageContainer);
+                    this.handleRedirectAction('payone/onepage/redirect/');
                 } else if (response.status === "INVALID") {
                     this.messageContainer.addErrorMessage({'message': $t(response.errormessage)});
                 } else if (response.status === "ERROR") {
