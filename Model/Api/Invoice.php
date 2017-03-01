@@ -154,8 +154,7 @@ class Invoice
             if ($aPositions !== false && array_key_exists($oItem->getProductId(), $aPositions) !== false) { // product existing in single-invoice?
                 $dItemAmount = $aPositions[$oItem->getProductId()]['amount']; // use amount from single-invoice
             }
-            $dBrutPrice = $oItem->getBasePrice() + ($oItem->getBaseTaxAmount() / $oItem->getQtyOrdered()); // cals single item price
-            $this->addInvoicePosition($oItem->getSku(), $dBrutPrice, 'goods', $dItemAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
+            $this->addInvoicePosition($oItem->getSku(), $oItem->getPriceInclTax(), 'goods', $dItemAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
             if ($this->dTax === false) { // is dTax not set yet?
                 $this->dTax = $oItem->getTaxPercent(); // set the tax for following entities which dont have the vat attached to it
             }
