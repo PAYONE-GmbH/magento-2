@@ -24,18 +24,61 @@
 define(
     [
         'Magento_Checkout/js/view/payment/default',
-        'Payone_Core/js/action/handle-redirect',
-        'Payone_Core/js/action/handle-debit',
-        'Magento_Checkout/js/model/payment/additional-validators'
+        'jquery',
+        'Magento_Checkout/js/model/payment/additional-validators',
+        'Magento_Checkout/js/action/set-payment-information',
+        'mage/url'
     ],
-    function (Component, handleRedirectAction, handleDebitAction, additionalValidators) {
+    function (Component, $, additionalValidators, setPaymentInformationAction, url) {
         'use strict';
         return Component.extend({
+            redirectToPayoneController: function(sUrl) {
+                window.location.replace(url.build(sUrl));
+            },
+
+            handleRedirectAction: function(sUrl) {
+                var self = this;
+
+                // update payment method information if additional data was changed
+                this.selectPaymentMethod();
+                this.isPlaceOrderActionAllowed(false);
+
+                this.getPlaceOrderDeferredObject()
+                    .fail(
+                        function () {
+                            self.isPlaceOrderActionAllowed(true);
+                        }
+                    ).done(
+                    function () {
+                        self.afterPlaceOrder();
+                        self.redirectToPayoneController(sUrl);
+                    }
+                );
+            },
+
+            handleSetPaymentInformation: function(sUrl) {
+                var self = this;
+
+                // update payment method information if additional data was changed
+                this.selectPaymentMethod();
+                this.isPlaceOrderActionAllowed(false);
+
+                $.when(
+                    setPaymentInformationAction(this.messageContainer, self.getData())
+                ).fail(
+                    function () {
+                        self.isPlaceOrderActionAllowed(true);
+                    }
+                ).done(
+                    function () {
+                        self.redirectToPayoneController(sUrl);
+                    }
+                );
+            },
+
             continueToPayone: function () {
                 if (this.validate() && additionalValidators.validate()) {
-                    // update payment method information if additional data was changed
-                    this.selectPaymentMethod();
-                    handleRedirectAction(this.getData(), this.messageContainer);
+                    this.handleRedirectAction('payone/onepage/redirect/');
                     return false;
                 }
             },
@@ -48,9 +91,7 @@ define(
 
                 if (this.validate() && firstValidation) {
                     if (document.getElementById(this.getCode() + '_pseudocardpan').value != '') {
-                        // update payment method information if additional data was changed
-                        this.selectPaymentMethod();
-                        handleRedirectAction(this.getData(), this.messageContainer);
+                        this.handleRedirectAction('payone/onepage/redirect/');
                         return false;
                     } else {
                         this.handleCreditcardCheck();
@@ -63,9 +104,7 @@ define(
                     if (window.checkoutConfig.payment.payone.validateBankCode == true && window.checkoutConfig.payment.payone.bankCodeValidatedAndValid == false) {
                         this.handleBankaccountCheck();
                     } else {
-                        // update payment method information if additional data was changed
-                        this.selectPaymentMethod();
-                        handleDebitAction(this.getData(), this.messageContainer);
+                        this.handleSetPaymentInformation('payone/onepage/debit/');
                         return false;
                     }
                 }
