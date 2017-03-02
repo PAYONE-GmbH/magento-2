@@ -40,7 +40,7 @@ use Magento\Payment\Model\Method\AbstractMethod;
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
+abstract class BaseMethod extends AbstractMethod
 {
     /**
      * Info instructions block path
@@ -259,20 +259,15 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function getConfigPaymentAction()
     {
-        $sRequestType = $this->getAuthorizationMode();
-        if ($sRequestType == PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION) {
-            return AbstractMethod::ACTION_AUTHORIZE; // only create order
-        } elseif ($sRequestType == PayoneConfig::REQUEST_TYPE_AUTHORIZATION) {
-            return AbstractMethod::ACTION_AUTHORIZE_CAPTURE; // create order and capture
-        }
+        return AbstractMethod::ACTION_AUTHORIZE; // only create order
     }
 
     /**
      * Authorize payment abstract method
      *
-     * @param InfoInterface $payment
-     * @param float         $amount
-     * @return $this
+     * @param  InfoInterface $payment
+     * @param  float         $amount
+     * @return AbstractMethod
      */
     public function authorize(InfoInterface $payment, $amount)
     {
@@ -286,7 +281,7 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
      *
      * @param  InfoInterface $payment
      * @param  float         $amount
-     * @return $this
+     * @return AbstractMethod
      */
     public function refund(InfoInterface $payment, $amount)
     {
@@ -300,7 +295,7 @@ abstract class BaseMethod extends \Magento\Payment\Model\Method\AbstractMethod
      *
      * @param  InfoInterface $payment
      * @param  float         $amount
-     * @return $this
+     * @return AbstractMethod
      */
     public function capture(InfoInterface $payment, $amount)
     {

@@ -90,6 +90,13 @@ class Index extends \Magento\Framework\App\Action\Action
     protected $resultRawFactory;
 
     /**
+     * Event manager object
+     *
+     * @var \Magento\Framework\Event\ManagerInterface
+     */
+    protected $eventManager;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context              $context
@@ -120,6 +127,7 @@ class Index extends \Magento\Framework\App\Action\Action
         $this->statusMapping = $statusMapping;
         $this->statusForwarding = $statusForwarding;
         $this->resultRawFactory = $resultRawFactory;
+        $this->eventManager = $context->getEventManager();
     }
 
     /**
@@ -185,6 +193,15 @@ class Index extends \Magento\Framework\App\Action\Action
                 $this->statusMapping->handleMapping($oOrder, $this->getParam('txaction'));
             }
             $this->statusForwarding->handleForwardings($this->getPostArray());
+
+            $aParams = [
+                'order' => $oOrder,
+                'transactionstatus' => $this->getPostArray(),
+            ];
+
+            $this->eventManager->dispatch('payone_core_transactionstatus_all', $aParams);
+            $this->eventManager->dispatch('payone_core_transactionstatus_'.$this->getParam('txaction'), $aParams);
+
             return 'TSOK';
         }
         return 'Key wrong or missing!';
