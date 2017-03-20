@@ -182,6 +182,15 @@ class Api extends \Payone\Core\Helper\Base
         } elseif (isset($aResponse['mandate_identification'])) {// mandate id existing in response?
             $oOrder->setPayoneMandateId($aResponse['mandate_identification']);
         }
+        if (isset($aResponse['clearing_reference'])) {
+            $oOrder->setPayoneClearingReference($aResponse['clearing_reference']);
+        }
+        if (isset($aResponse['add_paydata[clearing_reference]'])) {
+            $oOrder->setPayoneClearingReference($aResponse['add_paydata[clearing_reference]']);
+        }
+        if (isset($aResponse['add_paydata[workorderid]'])) {
+            $oOrder->setPayoneWorkorderId($aResponse['add_paydata[workorderid]']);
+        }
     }
 
     /**

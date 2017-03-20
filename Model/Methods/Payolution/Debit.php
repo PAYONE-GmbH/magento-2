@@ -19,19 +19,38 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2017 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Api\Request\Genericpayment;
+namespace Payone\Core\Model\Methods\Payolution;
 
-use Payone\Core\Model\Api\Request\AddressRequest;
+use Payone\Core\Model\PayoneConfig;
 
 /**
- * Base class for all PAYONE API genericpayment requests
+ * Model for Payolution debit payment method
  */
-class Base extends AddressRequest
+class Debit extends PayolutionBase
 {
+    /**
+     * Payment method code
+     *
+     * @var string
+     */
+    protected $_code = PayoneConfig::METHOD_PAYOLUTION_DEBIT;
 
+    /**
+     * Payment method sub type
+     *
+     * @var string
+     */
+    protected $sSubType = self::METHOD_PAYOLUTION_SUBTYPE_DEBIT;
+
+    /**
+     * Payment method long sub type
+     *
+     * @var string|bool
+     */
+    protected $sLongSubType = 'Payolution-Debit';
 }

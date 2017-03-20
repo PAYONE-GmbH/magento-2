@@ -62,6 +62,20 @@ abstract class Base
      */
     protected $sApiUrl = 'https://api.pay1.de/post-gateway/';
 
+
+    /**
+     * Map for custom parameters to be added $sParamName => $sConfigName
+     *
+     * @var array
+     */
+    protected $aCustomParamMap = [
+        'mid' => 'mid',
+        'portalid' => 'portalid',
+        'aid' => 'aid',
+        'key' => 'key',
+        'request' => 'request',
+    ];
+
     /**
      * PAYONE shop helper
      *
@@ -183,6 +197,26 @@ abstract class Base
     }
 
     /**
+     * Add non-global parameters specifically configured in the payment type
+     *
+     * @param  PayoneMethod $oPayment
+     * @return void
+     */
+    protected function addCustomParameters(PayoneMethod $oPayment)
+    {
+        foreach ($this->aCustomParamMap as $sParamName => $sConfigName) {// add all custom parameters
+            $sCustomConfig = $oPayment->getCustomConfigParam($sConfigName); // get custom config param
+            if (!empty($sCustomConfig)) { // only add if the param is configured
+                if ($sConfigName == 'key') {
+                    $this->addParameter($sParamName, md5($sCustomConfig)); // key isn't hashed in db
+                } else {
+                    $this->addParameter($sParamName, $sCustomConfig); // add custom param to request
+                }
+            }
+        }
+    }
+
+    /**
      * Set the order id that is associated with this request
      *
      * @param  string $sOrderId
@@ -237,13 +271,18 @@ abstract class Base
      * Send the previously prepared request, log request and response into the database and return the response
      *
      * @param  bool $blOnlyGetUrl
-     * @return array
+     * @return array|string
      */
     protected function send($blOnlyGetUrl = false)
     {
         if (!$this->validateParameters()) {// all base parameters existing?
             return ["errormessage" => "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)"];
         }
+
+        ob_start();
+        print_r($this->getParameters());
+        error_log(ob_get_contents());
+        ob_end_clean();
 
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
         if ($blOnlyGetUrl === true) {// sometimes you only need the request url
@@ -252,6 +291,12 @@ abstract class Base
 
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
         $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
+
+        ob_start();
+        print_r($aResponse);
+        error_log(ob_get_contents());
+        ob_end_clean();
+        
         return $aResponse;
     }
 }

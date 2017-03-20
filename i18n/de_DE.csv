@@ -1020,3 +1020,14 @@
 "UKN","Unbekannte Rückgabewerte werden mit UKN abgebildet (UKN)"
 
 "Show IBAN/BIC fields","IBAN/BIC Felder anzeigen"
+
+"You have to be at least 18 years old to use this payment type!","Sie m&uuml;ssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu k&ouml;nnen!"
+
+"PAYOLUTION_ACCEPTANCE_1","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an payolution bin ich einverstanden."
+"PAYOLUTION_ACCEPTANCE_2","Meine"
+"PAYOLUTION_ACCEPTANCE_3","kann ich jederzeit mit Wirkung für die Zukunft widerrufen."
+"acceptance","Einwilligung"
+"PAYONE_PAYOLUTION_API_ERRORMESSAGE","Diese Zahlung konnte nicht durchgeführt werden. Dies kann unterschiedliche Gruende haben, wie etwa fehlerhafte Eingabedaten, eine unbekannte Adresse, oder ein vorübergehendes technisches Problem. Bitte überprüfen Sie die angegebenen Daten, oder wählen Sie ein anderes Zahlungsmittel."
+"Please confirm the transmission of the necessary data to payolution!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an payolution!"
+
+"Close window","Fenster schließen"
