@@ -186,11 +186,7 @@ class ReturnHandler
     public function handlePayPalReturn($sWorkorderId)
     {
         $oQuote = $this->checkoutSession->getQuote();
-        $aResponse = $this->genericRequest->sendRequest(
-            $oQuote,
-            $this->paypalPayment,
-            $sWorkorderId
-        );
+        $aResponse = $this->genericRequest->sendRequest($oQuote, $this->paypalPayment, $sWorkorderId);
 
         $oQuote = $this->handleQuote($oQuote, $aResponse);
         $this->cartManagement->placeOrder($oQuote->getId());
