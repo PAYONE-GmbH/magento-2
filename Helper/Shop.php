@@ -71,7 +71,7 @@ class Shop extends \Payone\Core\Helper\Base
      */
     public function getMagentoEdition()
     {
-        return "CE";
+        return $this->productMetadata->getEdition();
     }
 
     /**
