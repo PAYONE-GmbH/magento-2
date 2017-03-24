@@ -104,8 +104,12 @@ class Paypal extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        return [
-            'wallettype' => 'PPE',
-        ];
+        $aParams = ['wallettype' => 'PPE'];
+
+        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+        if ($sWorkorderId) {
+            $aParams['workorderid'] = $sWorkorderId;
+        }
+        return $aParams;
     }
 }
