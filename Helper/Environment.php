@@ -42,13 +42,23 @@ class Environment extends \Payone\Core\Helper\Base
     }
 
     /**
+     * Get the IP of the requesting client
+     *
+     * @return string
+     */
+    public function getRemoteIp()
+    {
+        return $this->_remoteAddress->getRemoteAddress();
+    }
+
+    /**
      * Validate if the user-ip-address is in the configured whitelist
      *
      * @return bool
      */
     public function isRemoteIpValid()
     {
-        $sRemoteIp = $this->_remoteAddress->getRemoteAddress();
+        $sRemoteIp = $this->getRemoteIp();
         $sValidIps = $this->getConfigParam('valid_ips', 'processing', 'payone_misc');
         $aWhitelist = explode("\n", $sValidIps);
         if (array_search($sRemoteIp, $aWhitelist) !== false) {
