@@ -84,6 +84,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             'status=APPROVED',
             'txid=42',
             'userid=0815',
+            'test',
             ''
         ];
         $connCurlPhp->method('sendCurlPhpRequest')->willReturn($sendOutput);
@@ -156,6 +157,22 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($txid, $oOrder->getPayoneTxid());
     }
 
+    public function testIfOrderDataIsSetCorrectlyResponseMandate()
+    {
+        $oOrder = $this->objectManager->getObject(Order::class);
+
+        $mandate = 'mandate';
+        $aRequest = [
+            'reference' => 'ref123',
+            'request' => 'authorization',
+            'mode' => 'live',
+        ];
+        $aResponse = ['mandate_identification' => $mandate];
+
+        $this->api->addPayoneOrderData($oOrder, $aRequest, $aResponse);
+        $this->assertEquals($mandate, $oOrder->getPayoneMandateId());
+    }
+
     public function testIfTheRequestUrlIsGeneratedCorretly()
     {
         $aParameters = [
@@ -182,7 +199,8 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'status' => 'APPROVED',
             'txid' => '42',
-            'userid' => '0815'
+            'userid' => '0815',
+            3 => 'test'
         ];
         $this->assertEquals($expected, $return);
     }
