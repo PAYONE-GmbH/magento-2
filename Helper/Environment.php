@@ -48,15 +48,7 @@ class Environment extends \Payone\Core\Helper\Base
      */
     public function getRemoteIp()
     {
-        $sClientIp = null;
-        $sForwardFor = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_FOR', FILTER_SANITIZE_STRING);
-        if (!empty($sForwardFor)) {
-            $aIps = explode(',', $sForwardFor);
-            $sClientIp = trim($aIps[0]);
-        }
-        $sReportAddr = filter_input(INPUT_SERVER, 'REMOTE_ADDR', FILTER_SANITIZE_STRING);
-        $sRemoteIp = isset($sClientIp) ? $sClientIp : $sReportAddr;
-        return $sRemoteIp;
+        return $this->_remoteAddress->getRemoteAddress();
     }
 
     /**
@@ -74,12 +66,13 @@ class Environment extends \Payone\Core\Helper\Base
         }
         foreach ($aWhitelist as $sIP) {
             if (stripos($sIP, '*') !== false) {
+                $sIP = str_replace(array("\r", "\n"), '', $sIP);
                 $sDelimiter = '/';
 
                 $sRegex = preg_quote($sIP, $sDelimiter);
                 $sRegex = str_replace('\*', '\d{1,3}', $sRegex);
                 $sRegex = $sDelimiter.'^'.$sRegex.'$'.$sDelimiter;
-
+                
                 preg_match($sRegex, $sRemoteIp, $aMatches);
                 if (is_array($aMatches) && !empty($aMatches) && $aMatches[0] == $sRemoteIp) {
                     return true;

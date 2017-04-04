@@ -144,10 +144,7 @@ class Express extends \Magento\Framework\App\Action\Action
             }
 
             $this->paypalPayment->setIsPayPalExpress(true);
-            $aResponse = $this->genericRequest->sendRequest(
-                $oQuote,
-                $this->paypalPayment
-            );
+            $aResponse = $this->genericRequest->sendRequest($oQuote, $this->paypalPayment);
             if ($aResponse['status'] == 'ERROR') {
                 $this->messageManager->addError(__($aResponse['customermessage']));
 
