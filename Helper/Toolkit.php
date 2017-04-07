@@ -122,9 +122,9 @@ class Toolkit extends \Payone\Core\Helper\Base
     /**
      * Replace substitutes in a given text with the given replacements
      *
-     * @param  string $sText
-     * @param  string $aSubstitutionArray
-     * @param  int    $iMaxLength
+     * @param  string   $sText
+     * @param  string   $aSubstitutionArray
+     * @param  int|bool $iMaxLength
      * @return string
      */
     public function handleSubstituteReplacement($sText, $aSubstitutionArray, $iMaxLength = false)

@@ -73,7 +73,7 @@ class HostedIframe extends \Payone\Core\Helper\Base
             $sHostedParams = $this->getConfigParam('cc_template', 'creditcard'); // get params from config
             if ($sHostedParams) { // params set in config?
                 $aHostedParams = unserialize($sHostedParams); // create array from serialized string
-                if ($aHostedParams) {
+                if (is_array($aHostedParams) && !empty($aHostedParams)) {
                     $this->aHostedParams = $aHostedParams;
                 }
             }

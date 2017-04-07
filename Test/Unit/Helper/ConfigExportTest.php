@@ -28,7 +28,6 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\ConfigExport;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\App\ObjectManager as MainObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;

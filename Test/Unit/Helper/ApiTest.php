@@ -28,7 +28,6 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Api;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\App\ObjectManager as MainObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Payone\Core\Model\Methods\PayoneMethod;
@@ -62,6 +61,21 @@ class ApiTest extends \PHPUnit_Framework_TestCase
      */
     private $scopeConfig;
 
+    /**
+     * @var CurlPhp|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $connCurlPhp;
+
+    /**
+     * @var CurlCli|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $connCurlCli;
+
+    /**
+     * @var Fsockopen|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $connFsockopen;
+
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
@@ -76,9 +90,9 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
-        $connCurlPhp = $this->getMockBuilder(CurlPhp::class)->disableOriginalConstructor()->getMock();
-        $connCurlCli = $this->getMockBuilder(CurlCli::class)->disableOriginalConstructor()->getMock();
-        $connFsockopen = $this->getMockBuilder(Fsockopen::class)->disableOriginalConstructor()->getMock();
+        $this->connCurlPhp = $this->getMockBuilder(CurlPhp::class)->disableOriginalConstructor()->getMock();
+        $this->connCurlCli = $this->getMockBuilder(CurlCli::class)->disableOriginalConstructor()->getMock();
+        $this->connFsockopen = $this->getMockBuilder(Fsockopen::class)->disableOriginalConstructor()->getMock();
 
         $sendOutput = [
             'status=APPROVED',
@@ -87,16 +101,16 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             'test',
             ''
         ];
-        $connCurlPhp->method('sendCurlPhpRequest')->willReturn($sendOutput);
-        $connCurlCli->method('sendCurlCliRequest')->willReturn($sendOutput);
-        $connFsockopen->method('sendSocketRequest')->willReturn($sendOutput);
+        $this->connCurlPhp->method('sendCurlPhpRequest')->willReturn($sendOutput);
+        $this->connCurlCli->method('sendCurlCliRequest')->willReturn($sendOutput);
+        $this->connFsockopen->method('sendSocketRequest')->willReturn($sendOutput);
 
         $this->api = $this->objectManager->getObject(Api::class, [
             'context' => $context,
             'storeManager' => $storeManager,
-            'connCurlPhp' => $connCurlPhp,
-            'connCurlCli' => $connCurlCli,
-            'connFsockopen' => $connFsockopen
+            'connCurlPhp' => $this->connCurlPhp,
+            'connCurlCli' => $this->connCurlCli,
+            'connFsockopen' => $this->connFsockopen
         ]);
     }
 
@@ -193,8 +207,40 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $return);
     }
 
-    public function testSendApiRequestReturnValue()
+    public function testSendApiRequestReturnValueCurlPhp()
     {
+        $this->connCurlPhp->method('isApplicable')->willReturn(true);
+
+        $return = $this->api->sendApiRequest("http://payone.de");
+        $expected = [
+            'status' => 'APPROVED',
+            'txid' => '42',
+            'userid' => '0815',
+            3 => 'test'
+        ];
+        $this->assertEquals($expected, $return);
+    }
+
+    public function testSendApiRequestReturnValueCurlCli()
+    {
+        $this->connCurlPhp->method('isApplicable')->willReturn(false);
+        $this->connCurlCli->method('isApplicable')->willReturn(true);
+
+        $return = $this->api->sendApiRequest("http://payone.de");
+        $expected = [
+            'status' => 'APPROVED',
+            'txid' => '42',
+            'userid' => '0815',
+            3 => 'test'
+        ];
+        $this->assertEquals($expected, $return);
+    }
+
+    public function testSendApiRequestReturnValueFsockopen()
+    {
+        $this->connCurlPhp->method('isApplicable')->willReturn(false);
+        $this->connCurlCli->method('isApplicable')->willReturn(false);
+
         $return = $this->api->sendApiRequest("http://payone.de");
         $expected = [
             'status' => 'APPROVED',

@@ -29,6 +29,7 @@ namespace Payone\Core\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Payone\Core\Helper\Toolkit;
+use Magento\Payment\Model\InfoInterface;
 
 /**
  * Event class to set the orderstatus to new and pending
@@ -62,7 +63,9 @@ class PaymentMethodAssignData implements ObserverInterface
     {
         $blBoniAgreement = $this->toolkitHelper->getAdditionalDataEntry($observer->getData('data'), 'payone_boni_agreement');
         if ($blBoniAgreement !== null) {
-            $observer->getPaymentModel()->setAdditionalInformation('payone_boni_agreement', (bool)$blBoniAgreement);
+            /** @var InfoInterface $oPaymentInfo */
+            $oPaymentInfo = $observer->getPaymentModel();
+            $oPaymentInfo->setAdditionalInformation('payone_boni_agreement', (bool)$blBoniAgreement);
         }
     }
 }

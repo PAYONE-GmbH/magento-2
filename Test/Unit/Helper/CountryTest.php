@@ -26,15 +26,16 @@
 
 namespace Payone\Core\Test\Unit\Helper;
 
-use Payone\Core\Helper\Base;
+use Payone\Core\Helper\Country;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Directory\Model\Country as CoreCountry;
 
-class BaseTest extends \PHPUnit_Framework_TestCase
+class CountryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -42,14 +43,19 @@ class BaseTest extends \PHPUnit_Framework_TestCase
     private $objectManager;
 
     /**
-     * @var Base
+     * @var Country
      */
-    private $base;
+    private $country;
 
     /**
      * @var ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $scopeConfig;
+
+    /**
+     * @var CoreCountry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $coreCountry;
 
     protected function setUp()
     {
@@ -63,43 +69,68 @@ class BaseTest extends \PHPUnit_Framework_TestCase
 
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
-        $storeManager->method('getStores')->willReturn(['de' => $store, 'en' => $store, 'fr' => $store, 'nl' => $store]);
 
-        $this->base = $this->objectManager->getObject(Base::class, [
+        $this->coreCountry = $this->getMockBuilder(CoreCountry::class)->disableOriginalConstructor()->getMock();
+        $this->coreCountry->method('getName')->willReturn('Deutschland');
+
+        $this->country = $this->objectManager->getObject(Country::class, [
             'context' => $context,
-            'storeManager' => $storeManager
+            'storeManager' => $storeManager,
+            'country' => $this->coreCountry
         ]);
     }
 
-    public function testGetConfigParam()
+    public function testGetCountryNameByIso2()
     {
-        $expected = 'authorization';
-
-        $this->scopeConfig->expects($this->any())
-            ->method('getValue')
-            ->willReturnMap(
-                [
-                    ['payone_general/global/request_type', ScopeInterface::SCOPE_STORE, null, $expected]
-                ]
-            );
-        $result = $this->base->getConfigParam('request_type');
+        $this->coreCountry->method('loadByCode')->willReturn($this->coreCountry);
+        $result = $this->country->getCountryNameByIso2('DE');
+        $expected = 'Deutschland';
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetConfigParamAllStores()
+    public function testGetCountryNameByIso2ReturnFalse()
+    {
+        $this->coreCountry->method('loadByCode')->willReturn(false);
+        $result = $this->country->getCountryNameByIso2('XY');
+        $expected = false;
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetDebitSepaCountriesEmpty()
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'de', '12345'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'en', '23456'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'fr', '12345'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'nl', '34567'],
+                    ['payone_payment/payone_debit/sepa_country', ScopeInterface::SCOPE_STORE, null, null]
                 ]
             );
-        $result = $this->base->getConfigParamAllStores('mid');
-        $expected = ['12345', '23456', '34567'];
+        $result = $this->country->getDebitSepaCountries();
+        $expected = [];
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetDebitSepaCountries()
+    {
+        $this->coreCountry->method('loadByCode')->willReturn($this->coreCountry);
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_payment/payone_debit/sepa_country', ScopeInterface::SCOPE_STORE, null, 'DE']
+                ]
+            );
+        $result = $this->country->getDebitSepaCountries();
+        $expected = [['id' => 'DE', 'title' => 'Deutschland']];
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testIsStateNeeded()
+    {
+        $result = Country::isStateNeeded('US');
+        $this->assertTrue($result);
+
+        $result = Country::isStateNeeded('NL');
+        $this->assertFalse($result);
     }
 }

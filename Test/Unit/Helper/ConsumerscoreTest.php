@@ -28,16 +28,12 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Consumerscore;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\App\ObjectManager as MainObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Database;
-use Payone\Core\Helper\Config;
-use Payone\Core\Helper\Payment;
-use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\Quote\Address;
 
 class ConsumerscoreTest extends \PHPUnit_Framework_TestCase

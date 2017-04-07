@@ -28,7 +28,6 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Shop;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\App\ObjectManager as MainObjectManager;
 use Magento\Framework\App\ProductMetadata;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;

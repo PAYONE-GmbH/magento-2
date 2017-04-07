@@ -32,6 +32,19 @@ namespace Payone\Core\Helper\Connection;
 class CurlPhp
 {
     /**
+     * Determine if this connection type can be used on the given server
+     *
+     * @return bool
+     */
+    public function isApplicable()
+    {
+        if (function_exists("curl_init")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Send php Curl request
      *
      * @param  array $aParsedRequestUrl
@@ -39,6 +52,10 @@ class CurlPhp
      */
     public function sendCurlPhpRequest($aParsedRequestUrl)
     {
+        if (!$this->isApplicable()) {
+            return ["errormessage" => "Php-Curl is not applicable on this server."];
+        }
+
         $aResponse = [];
 
         $oCurl = curl_init($aParsedRequestUrl['scheme']."://".$aParsedRequestUrl['host'].$aParsedRequestUrl['path']);

@@ -28,7 +28,6 @@ namespace Payone\Core\Test\Unit\Helper;
 
 use Payone\Core\Helper\Checkout;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\App\ObjectManager as MainObjectManager;
 use Magento\Checkout\Model\Type\Onepage;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Model\Session;

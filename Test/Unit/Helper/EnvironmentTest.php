@@ -26,15 +26,16 @@
 
 namespace Payone\Core\Test\Unit\Helper;
 
-use Payone\Core\Helper\Base;
+use Payone\Core\Helper\Environment;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 
-class BaseTest extends \PHPUnit_Framework_TestCase
+class EnvironmentTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager
@@ -42,9 +43,9 @@ class BaseTest extends \PHPUnit_Framework_TestCase
     private $objectManager;
 
     /**
-     * @var Base
+     * @var Environment
      */
-    private $base;
+    private $environment;
 
     /**
      * @var ScopeConfigInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -55,51 +56,84 @@ class BaseTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
+        $remoteAddress = $this->getMockBuilder(RemoteAddress::class)->disableOriginalConstructor()->getMock();
+        $remoteAddress->method('getRemoteAddress')->willReturn('192.168.1.100');
+
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
-        $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);
+        $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig, 'remoteAddress' => $remoteAddress]);
 
         $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn(null);
 
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
-        $storeManager->method('getStores')->willReturn(['de' => $store, 'en' => $store, 'fr' => $store, 'nl' => $store]);
 
-        $this->base = $this->objectManager->getObject(Base::class, [
+        $this->environment = $this->objectManager->getObject(Environment::class, [
             'context' => $context,
             'storeManager' => $storeManager
         ]);
     }
 
-    public function testGetConfigParam()
+    public function testGetEncoding()
     {
-        $expected = 'authorization';
-
-        $this->scopeConfig->expects($this->any())
-            ->method('getValue')
-            ->willReturnMap(
-                [
-                    ['payone_general/global/request_type', ScopeInterface::SCOPE_STORE, null, $expected]
-                ]
-            );
-        $result = $this->base->getConfigParam('request_type');
+        $result = $this->environment->getEncoding();
+        $expected = 'UTF-8';
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetConfigParamAllStores()
+    public function testGetRemoteIp()
     {
+        $expected = '192.168.1.100';
+
+        $result = $this->environment->getRemoteIp();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testIsRemoteIpValid()
+    {
+        $sWhitelist = "127.0.0.1\n166.7.1.*\n192.168.*.*\n217.8.19.7";
+
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'de', '12345'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'en', '23456'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'fr', '12345'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'nl', '34567'],
+                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORE, null, $sWhitelist]
                 ]
             );
-        $result = $this->base->getConfigParamAllStores('mid');
-        $expected = ['12345', '23456', '34567'];
-        $this->assertEquals($expected, $result);
+
+        $result = $this->environment->isRemoteIpValid();
+        $this->assertTrue($result);
+    }
+
+    public function testIsRemoteIpNotValid()
+    {
+        $sWhitelist = "127.0.0.1\n166.7.1.*\n217.8.19.7";
+
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORE, null, $sWhitelist]
+                ]
+            );
+
+        $result = $this->environment->isRemoteIpValid();
+        $this->assertFalse($result);
+    }
+
+    public function testIsRemoteIpDirectValid()
+    {
+        $sWhitelist = "127.0.0.1\n166.7.1.*\n217.8.19.7\n192.168.1.100";
+
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORE, null, $sWhitelist]
+                ]
+            );
+
+        $result = $this->environment->isRemoteIpValid();
+        $this->assertTrue($result);
     }
 }

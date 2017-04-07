@@ -98,10 +98,10 @@ class Api extends \Payone\Core\Helper\Base
             return ["errormessage" => "Payone API request URL could not be parsed."];
         }
 
-        if (function_exists("curl_init")) {
+        if ($this->connCurlPhp->isApplicable()) {
             // php native curl exists so we gonna use it for requesting
             $aResponse = $this->connCurlPhp->sendCurlPhpRequest($aParsedRequestUrl);
-        } elseif (file_exists("/usr/local/bin/curl") || file_exists("/usr/bin/curl")) {
+        } elseif ($this->connCurlCli->isApplicable()) {
             // cli version of curl exists on server
             $aResponse = $this->connCurlCli->sendCurlCliRequest($aParsedRequestUrl);
         } else {

@@ -101,7 +101,7 @@ class Request extends \Payone\Core\Helper\Base
      *
      * @return string
      */
-    protected function getHostedIframeRequestCCHash()
+    public function getHostedIframeRequestCCHash()
     {
         $sHash = md5(
             $this->getConfigParam('aid').
@@ -122,7 +122,7 @@ class Request extends \Payone\Core\Helper\Base
      *
      * @return string
      */
-    protected function getBankaccountCheckRequestHash()
+    public function getBankaccountCheckRequestHash()
     {
         $sHash = md5(
             $this->getConfigParam('aid').
