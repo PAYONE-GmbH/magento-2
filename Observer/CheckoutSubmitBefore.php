@@ -73,7 +73,7 @@ class CheckoutSubmitBefore implements ObserverInterface
      * @param  bool   $blIsAddresscheck
      * @return string
      */
-    protected function getConfigParam($sParam, $blIsAddresscheck = false)
+    public function getConfigParam($sParam, $blIsAddresscheck = false)
     {
         $sGroup = 'creditrating';
         if ($blIsAddresscheck === true) {
@@ -88,7 +88,7 @@ class CheckoutSubmitBefore implements ObserverInterface
      * @param  Quote $oQuote
      * @return bool
      */
-    protected function isCreditratingNeeded(Quote $oQuote)
+    public function isCreditratingNeeded(Quote $oQuote)
     {
         if (!$this->consumerscoreHelper->isCreditratingNeeded(Event::AFTER_PAYMENT, $oQuote->getGrandTotal())) {
             return false;
@@ -116,7 +116,7 @@ class CheckoutSubmitBefore implements ObserverInterface
      * @param  string $sScore
      * @return bool
      */
-    protected function isPaymentApplicableForScore(Quote $oQuote, $sScore)
+    public function isPaymentApplicableForScore(Quote $oQuote, $sScore)
     {
         if ($sScore == 'G') {
             return true;
@@ -141,7 +141,7 @@ class CheckoutSubmitBefore implements ObserverInterface
      * @param  array $aResponse
      * @return bool
      */
-    protected function checkoutNeedsToBeStopped($aResponse)
+    public function checkoutNeedsToBeStopped($aResponse)
     {
         if (!$aResponse || (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
                 && $this->getConfigParam('handle_response_error') == 'stop_checkout')) {
@@ -154,10 +154,10 @@ class CheckoutSubmitBefore implements ObserverInterface
      * Filter payment methods by the creditrating result if applicable
      *
      * @param  AddressInterface $oBilling
-     * @return void
+     * @return string
      * @throws LocalizedException
      */
-    protected function getScoreByCreditrating(AddressInterface $oBilling)
+    public function getScoreByCreditrating(AddressInterface $oBilling)
     {
         $aResponse = $this->consumerscore->sendRequest($oBilling);
         if ($aResponse === true) { // creditrating not executed because of a previous check
@@ -185,9 +185,11 @@ class CheckoutSubmitBefore implements ObserverInterface
      *
      * @param  Observer $observer
      * @return void
+     * @throws LocalizedException
      */
     public function execute(Observer $observer)
     {
+        /** @var Quote $oQuote */
         $oQuote = $observer->getQuote();
         $oBilling = $oQuote->getBillingAddress();
         $oShipping = $oQuote->getShippingAddress();

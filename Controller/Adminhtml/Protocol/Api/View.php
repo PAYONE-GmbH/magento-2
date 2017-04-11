@@ -86,9 +86,11 @@ class View extends \Magento\Backend\App\Action
     {
         /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Payone_Core::payone_protocol_api');
-        $resultPage->getConfig()->getTitle()->prepend(__('Protocol - API'));
-        $resultPage->getConfig()->getTitle()->prepend(sprintf("#%s", $this->getRequest()->getParam('id')));
+        if ($this->_isAllowed()) {
+            $resultPage->setActiveMenu('Payone_Core::payone_protocol_api');
+            $resultPage->getConfig()->getTitle()->prepend(__('Protocol - API'));
+            $resultPage->getConfig()->getTitle()->prepend(sprintf("#%s", $this->getRequest()->getParam('id')));
+        }
         return $resultPage;
     }
 }

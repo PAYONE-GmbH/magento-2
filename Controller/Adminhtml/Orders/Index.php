@@ -80,7 +80,9 @@ class Index extends Action
      */
     public function execute()
     {
-        $this->setPageData();
+        if ($this->_isAllowed()) {
+            $this->setPageData();
+        }
         return $this->getResultPage();
     }
 

@@ -29,6 +29,7 @@ namespace Payone\Core\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\Event\Observer;
+use Magento\Paypal\Block\Express\Shortcut;
 
 /**
  * Event class to add the PayPal Express buttons to the frontend

@@ -51,13 +51,6 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
      * @var \Payone\Core\Model\Source\TransactionStatus
      */
     protected $transactionStatus;
-    
-    /**
-     * Rows cache
-     *
-     * @var array|null
-     */
-    private $_arrayRowsCache;
 
     /**
      * Constructor
@@ -118,7 +111,7 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
         $oElement->setValues($aOptions);
         return str_replace("\n", '', $oElement->getElementHtml());
     }
-    
+
     /**
      * Obtain existing data from form element
      *
@@ -128,9 +121,6 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
      */
     public function getArrayRows()
     {
-        if (null !== $this->_arrayRowsCache) {
-            return $this->_arrayRowsCache; // return cached values if set
-        }
         $result = [];
         /** @var \Magento\Framework\Data\Form\Element\AbstractElement */
         $element = $this->getElement();
@@ -151,22 +141,6 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
                 $this->_prepareArrayRow($result[$rowId]);
             }
         }
-        $this->_arrayRowsCache = $result;
-        return $this->_arrayRowsCache;
-    }
-
-    /**
-     * Get the grid and scripts contents
-     *
-     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
-     * @return string
-     */
-    protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
-    {
-        $this->setElement($element); // set element
-        $html = $this->_toHtml(); // get render html for the object
-        $this->_arrayRowsCache = null; // reset cache
-        // doh, the object is used as singleton!
-        return $html;
+        return $result;
     }
 }

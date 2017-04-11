@@ -19,43 +19,46 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2017 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Controller\Adminhtml\Information;
+namespace Payone\Core\Test\Unit\Block\Adminhtml;
 
-/**
- * Controller class for admin information page
- */
-class Index extends \Magento\Backend\App\Action
+use Payone\Core\Block\Adminhtml\Information as ClassToTest;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+
+class InformationTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Return if the user has the needed rights to view this page
-     *
-     * @return bool
+     * @var ClassToTest
      */
-    protected function _isAllowed()
-    {
-        return $this->_authorization->isAllowed('Payone_Core::payone_information');
-    }
+    private $classToTest;
 
     /**
-     * Displays the information page
-     *
-     * @return void
+     * @var ObjectManager
      */
-    public function execute()
+    private $objectManager;
+
+    protected function setUp()
     {
-        if ($this->_isAllowed()) {
-            $this->_view->loadLayout();
-            $this->_setActiveMenu('Payone_Core::payone_information');
-            $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Payone information'));
-            $this->_addContent(
-                $this->_view->getLayout()->createBlock('Payone\Core\Block\Adminhtml\Information')
-            );
-            $this->_view->renderLayout();
-        }
+        $this->objectManager = new ObjectManager($this);
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+    }
+
+    public function testGetHeader()
+    {
+        $result = $this->classToTest->getHeader();
+        $expected = 'Information';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetPayoneUrl()
+    {
+        $result = $this->classToTest->getPayoneUrl();
+        $expected = '//www.payone.de/embedded-sites/magento/information/';
+        $this->assertEquals($expected, $result);
     }
 }

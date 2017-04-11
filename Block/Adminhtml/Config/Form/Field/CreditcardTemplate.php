@@ -83,15 +83,16 @@ class CreditcardTemplate extends \Magento\Config\Block\System\Config\Form\Field\
     protected $_template = 'Payone_Core::system/config/form/field/creditcard_template.phtml';
 
     /**
-     * Prepare to render
+     * Initialise form fields
      *
      * @return void
      */
-    protected function _prepareToRender()
+    protected function _construct()
     {
         $this->addColumn('txaction', ['label' => __('Transactionstatus-message')]);
         $this->_addAfter = false;
         $this->_addButtonLabel = __('Add Minimum Qty');
+        parent::_construct();
     }
 
     /**
