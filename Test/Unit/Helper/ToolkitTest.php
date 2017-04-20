@@ -201,11 +201,11 @@ class ToolkitTest extends \PHPUnit_Framework_TestCase
     public function testIsUTF8()
     {
         $input = 'not utf-8 - ä';
-        $result = Toolkit::isUTF8(utf8_decode($input));
+        $result = $this->toolkit->isUTF8(utf8_decode($input));
         $this->assertFalse($result);
 
         $input = 'utf-8 äöü';
-        $result = Toolkit::isUTF8(utf8_encode($input));
+        $result = $this->toolkit->isUTF8(utf8_encode($input));
         $this->assertTrue($result);
     }
 
