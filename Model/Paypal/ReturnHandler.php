@@ -29,6 +29,8 @@ namespace Payone\Core\Model\Paypal;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote;
+use Magento\Checkout\Model\Type\Onepage;
+use Magento\Customer\Model\Group;
 
 /**
  * Handles the quote object after the return from PayPal
@@ -160,11 +162,11 @@ class ReturnHandler
     {
         $oQuote = $this->handleAddresses($oQuote, $aResponse);
 
-        if ($this->checkoutHelper->getCurrentCheckoutMethod($oQuote) == \Magento\Checkout\Model\Type\Onepage::METHOD_GUEST) {
+        if ($this->checkoutHelper->getCurrentCheckoutMethod($oQuote) == Onepage::METHOD_GUEST) {
             $oQuote->setCustomerId(null)
                 ->setCustomerEmail($oQuote->getBillingAddress()->getEmail())
                 ->setCustomerIsGuest(true)
-                ->setCustomerGroupId(\Magento\Customer\Model\Group::NOT_LOGGED_IN_ID);
+                ->setCustomerGroupId(Group::NOT_LOGGED_IN_ID);
         }
 
         $oPayment = $oQuote->getPayment();

@@ -50,19 +50,29 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
     protected $storeManager;
 
     /**
+     * Toolkit helper object
+     *
+     * @var Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
-     * @param string $connectionName
+     * @param \Payone\Core\Helper\Toolkit                       $toolkitHelper
+     * @param string                                            $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
         $this->storeManager = $storeManager;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -82,11 +92,11 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
      * @param  string $sDefault
      * @return string
      */
-    protected function getParam($sKey, $sDefault = '')
+    public function getParam($sKey, $sDefault = '')
     {
         if ($this->oContext) {
             $sParam = $this->oContext->getRequest()->getParam($sKey, $sDefault);
-            if (!Toolkit::isUTF8($sParam)) {
+            if (!$this->toolkitHelper->isUTF8($sParam)) {
                 $sParam = utf8_encode($sParam);
             }
             return $sParam;
@@ -106,7 +116,7 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
         $this->oContext = $oContext;
         $aRequest = $oContext->getRequest()->getPostValue();
         $sRawStatus = serialize($aRequest);
-        if (!Toolkit::isUTF8($sRawStatus)) {
+        if (!$this->toolkitHelper->isUTF8($sRawStatus)) {
             $sRawStatus = utf8_encode($sRawStatus); // needed for serializing the array
         }
         $sOrderId = $oOrder !== null ? $oOrder->getIncrementId() : '';
