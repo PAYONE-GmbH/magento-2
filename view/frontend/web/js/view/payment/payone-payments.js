@@ -99,6 +99,10 @@ define(
             {
                 type: 'payone_klarna',
                 component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
+            },
+            {
+                type: 'payone_safe_invoice',
+                component: 'Payone_Core/js/view/payment/method-renderer/safe_invoice-method'
             }
         );
         /** Add view logic here if needed */
