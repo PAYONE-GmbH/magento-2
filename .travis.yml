@@ -1,23 +1,19 @@
 dist: trusty
 language: php
+sudo: required
 php:
 - '7.0'
-
-addons:
-  apt:
-    packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
-
+services:
+- mysql
 before_script:
 - phpenv config-rm xdebug.ini
+- mysql -e 'CREATE DATABASE IF NOT EXISTS magentotravis;'
 - composer config -g http-basic.repo.magento.com $M2_KEY_PUB $M2_KEY_PRIV
 - composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition
   /tmp/build/
 - cd /tmp/build
 - php bin/magento setup:install --base-url=http://magebuild.integrations.p1-test.de/build/
-  --db-host=localhost --db-name=magentotravis --db-user=travis --admin-firstname=Dieter
+  --db-host=localhost --db-name=magentotravis --db-user=root --admin-firstname=Dieter
   --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo
   --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin
 - composer require payone-gmbh/magento-2
