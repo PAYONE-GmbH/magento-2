@@ -1,0 +1,25 @@
+language: php
+php:
+- '7.0'
+services:
+- mysql
+before_script:
+- phpenv config-rm xdebug.ini
+- composer config -g http-basic.repo.magento.com $M2_KEY_PUB $M2_KEY_PRIV
+- composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition
+  /tmp/build/
+- cd /tmp/build
+- php bin/magento setup:install --base-url=http://magebuild.integrations.p1-test.de/build/
+  --db-host=localhost --db-name=magentotravis --db-user=travis --admin-firstname=Dieter
+  --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo
+  --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin
+- composer require payone-gmbh/magento-2
+- cp -R /home/travis/build/PAYONE-GmbH/magento-2/* /tmp/build/vendor/payone-gmbh/magento-2
+- php bin/magento setup:upgrade
+- php bin/magento setup:di:compile
+- php bin/magento cache:clean
+script:
+- php vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist vendor/payone-gmbh/magento-2/Test/Unit
+notifications:
+  slack:
+    secure: 0DYnTXLfT5IHhob0D5doC31roXODSF60LNBT2zGisyJwhoLowmGiwH3gG1R+h4UfqVz1/b6raGxB2u2NSsL9yEffS0E1EO2NTvyMWnkmcjloZQ3Rc9iuPWzIS6EdoxSh5HvyCcWXm+bZeseGlM1KijhDU3HlwIRFmTAggm76+oNJWwBUHGWuaGBiqywTbzP/Ttva5LGsVOzTJV1bOSTqVk5UXkf+Gh6qxWHSnECr7F4229a1XfGjz+4gcEf0wB+sbodSZdSbK0UtZpWwEPU7mt90ZuchaxtGZPzWSmjy6nRV8+L8ZtSnbqEVN0tojOhYesaURqkUZqm6/RsrHMBE4t3PJaLV4Yt75rSD/T2hiFgv29TdqFfoSrweLxDcf7CgPMAg4hI5WT+SSMnzRd51LFer3LyA10jcXKzmjk4cTZxz219pfCWfzvrixHwvgTc2z4wDLkHEMdB7CgTYZWG/VeY6GP8PoqY6Q17R33Hbga5F2IZApiIMzPRwE+G2+nyFiQ49ZANNYBnQIFfZ+QW4IVvRItlJUf8XpD2XEeo/tI1Th+7z0vVNHf96Y5Py4p2/hsc9hCjov5C8DtreXb8ctkuZXetgWcOukVcnaMWUVE4hfH/vjk0+pZkqq92zrREuNOXXrbVXkGJjcMHqSsRwdXrbYsomc0YOEBMR8U4k8FM=
