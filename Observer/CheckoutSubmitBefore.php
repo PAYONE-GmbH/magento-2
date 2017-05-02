@@ -181,6 +181,20 @@ class CheckoutSubmitBefore implements ObserverInterface
     }
 
     /**
+     * Get error message for when the creditrating failed because the score is insufficient
+     *
+     * @return string
+     */
+    public function getInsufficientScoreMessage()
+    {
+        $sErrorMsg = $this->getConfigParam('insufficient_score_message');
+        if (empty($sErrorMsg)) {
+            $sErrorMsg = 'An error occured during the credit check.';
+        }
+        return $sErrorMsg;
+    }
+
+    /**
      * Execute certain tasks after the payment is placed and thus the order is placed
      *
      * @param  Observer $observer
@@ -207,7 +221,7 @@ class CheckoutSubmitBefore implements ObserverInterface
         $sScore = $this->consumerscoreHelper->getWorstScore($aScores);
         $blSuccess = $this->isPaymentApplicableForScore($oQuote, $sScore);
         if ($blSuccess === false) {
-            throw new LocalizedException(__('An error occured during the credit check.'));
+            throw new LocalizedException(__($this->getInsufficientScoreMessage()));
         }
     }
 }

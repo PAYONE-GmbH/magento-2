@@ -43,7 +43,11 @@ define([
             
             var addressChecked = this.source.get('payone_address_checked');
             if (!addressChecked) {
-                addresscheck(this.source.get(this.dataScopePrefix), true, this, 'saveNewAddress');
+                var address = this.source.get(this.dataScopePrefix);
+                if (!this.isAddressFormVisible()) {
+                    address = this.selectedAddress()
+                }
+                addresscheck(address, true, this, 'saveNewAddress');
             } else {
                 this.source.set('payone_address_checked', false);
                 return this._super();
