@@ -64,6 +64,11 @@ class Paid implements ObserverInterface
         /* @var $oOrder Order */
         $oOrder = $observer->getOrder();
 
+        // order is not guaranteed to exist if using transaction status forwarding
+        if (null === $oOrder){
+            return;
+        }
+
         $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
         $oInvoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
         $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
