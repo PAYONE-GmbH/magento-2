@@ -44,13 +44,29 @@ class Paid implements ObserverInterface
     protected $invoiceService;
 
     /**
-     * Constructor.
-     *
-     * @param \Magento\Sales\Model\Service\InvoiceService $invoiceService
+     * @var \Magento\Sales\Api\InvoiceRepositoryInterface
      */
-    public function __construct(\Magento\Sales\Model\Service\InvoiceService $invoiceService)
-    {
+    protected $invoiceRepository;
+
+    /**
+     * @var \Magento\Framework\Api\SearchCriteriaBuilder
+     */
+    protected $searchCriteriaBuilder;
+
+    /**
+     * Paid constructor.
+     * @param \Magento\Sales\Model\Service\InvoiceService $invoiceService
+     * @param \Magento\Sales\Api\InvoiceRepositoryInterface $nvoiceRepository
+     * @param \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
+     */
+    public function __construct(
+        \Magento\Sales\Model\Service\InvoiceService $invoiceService,
+        \Magento\Sales\Api\InvoiceRepositoryInterface $nvoiceRepository,
+        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
+    ) {
         $this->invoiceService = $invoiceService;
+        $this->invoiceRepository = $nvoiceRepository;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -69,12 +85,41 @@ class Paid implements ObserverInterface
             return;
         }
 
-        $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
-        $oInvoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
-        $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
-        $oInvoice->register();
-        $oInvoice->save();
+//        check if invoice already created
+        $oInvoice  = $this->getOpenInvoice($oOrder);
+        if ($oInvoice) {
+            $oInvoice->pay();
+        } else {
+            $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
+            $oInvoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
+            $oInvoice->register();
+        }
 
-        $oOrder->save();
+        $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
+        $oInvoice->save();
+        $oInvoice->getOrder()->save();  // not use $order->save() as this comes from event and is not updated during $oInvoice->pay() => all changes would be lost
+    }
+
+    /**
+     * Get open invoice for order
+     * @param Order $order
+     * @return \Magento\Sales\Api\Data\InvoiceInterface|null
+     */
+    public function getOpenInvoice(Order $order)
+    {
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('order_id', $order->getId(), 'eq')
+            ->addFilter('state', Invoice::STATE_OPEN, 'eq')
+            ->addFilter('grand_total', $order->getGrandTotal(), 'eq')
+            ->create()
+        ;
+
+        $invoices = $this->invoiceRepository->getList($searchCriteria)->getItems();
+        if (count($invoices) === 1) {
+            return array_pop($invoices);
+        }
+
+//         0 or more than one invoices found
+        return null;
     }
 }
