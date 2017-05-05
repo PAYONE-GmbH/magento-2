@@ -111,7 +111,7 @@ abstract class PayoneMethod extends BaseMethod
     protected function sendPayoneAuthorization(InfoInterface $payment, $amount)
     {
         $oOrder = $payment->getOrder();
-        $oOrder->setCanSendNewEmailFlag(false); // dont send email for redirect payment types, will be sent on appointed
+        $oOrder->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
         $this->checkoutSession->unsPayoneRedirectUrl(); // remove redirect url from session
         $aResponse = $this->authorizationRequest->sendRequest($this, $oOrder, $amount);
         $this->handleResponse($aResponse);
