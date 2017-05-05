@@ -26,15 +26,14 @@
 
 namespace Payone\Core\Test\Unit\Observer\Transactionstatus;
 
-use Payone\Core\Observer\Transactionstatus\Paid as ClassToTest;
+use Payone\Core\Observer\Transactionstatus\Appointed as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Magento\Sales\Model\Service\InvoiceService;
-use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
-class PaidTest extends \PHPUnit_Framework_TestCase
+
+class AppointedTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ClassToTest
@@ -46,27 +45,39 @@ class PaidTest extends \PHPUnit_Framework_TestCase
      */
     private $objectManager;
 
+    /**
+     * @var OrderSender|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $orderSender;
+
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
 
-        $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
-
-        $invoiceService = $this->getMockBuilder(InvoiceService::class)->disableOriginalConstructor()->getMock();
-        $invoiceService->method('prepareInvoice')->willReturn($invoice);
+        $this->orderSender = $this->getMockBuilder(OrderSender::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'invoiceService' => $invoiceService
+            'orderSender' => $this->orderSender
         ]);
     }
 
     public function testExecute()
     {
-        $payment = $this->getMockBuilder(OrderPaymentInterface::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getLastTransId')->willReturn('123');
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $observer->method('getOrder')->willReturn($order);
+
+        $result = $this->classToTest->execute($observer);
+        $this->assertNull($result);
+    }
+
+    public function testExecuteException()
+    {
+        $exception = new \Exception();
+        $this->orderSender->method('send')->willThrowException($exception);
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
-        $order->method('getPayment')->willReturn($payment);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
