@@ -188,11 +188,11 @@ class Api extends Base
     /**
      * Check if invoice-data has to be added to the authorization request
      *
-     * @param  PayoneMethod                         $oPayment
-     * @param  \Payone\Core\Model\Api\Request\Base  $caller
+     * @param  PayoneMethod                             $oPayment
+     * @param  \Payone\Core\Model\Api\Request\Base|null $caller
      * @return bool
      */
-    public function isInvoiceDataNeeded(PayoneMethod $oPayment, \Payone\Core\Model\Api\Request\Base $caller)
+    public function isInvoiceDataNeeded(PayoneMethod $oPayment, $caller)
     {
         // check if authorization type is auth (true) or pre-auth (false)
         $blRequestTypeIsAuth = ($this->getConfigParam('request_type') == PayoneConfig::REQUEST_TYPE_AUTHORIZATION);
