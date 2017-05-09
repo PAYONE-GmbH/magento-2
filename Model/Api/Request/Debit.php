@@ -36,6 +36,11 @@ use Magento\Payment\Model\InfoInterface;
 class Debit extends Base
 {
     /**
+     * @var \Payone\Core\Model\Api\Invoice $invoiceGenerator
+     */
+    protected $invoiceGenerator;
+
+    /**
      * PAYONE database helper
      *
      * @var \Payone\Core\Helper\Database
@@ -56,6 +61,7 @@ class Debit extends Base
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
      * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
@@ -64,10 +70,12 @@ class Debit extends Base
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+        \Payone\Core\Model\Api\Invoice $invoiceGenerator,
         \Payone\Core\Helper\Database $databaseHelper,
         \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
         $this->toolkitHelper = $toolkitHelper;
     }
@@ -103,6 +111,10 @@ class Debit extends Base
         $sRefundAppendix = $this->getRefundAppendix($oOrder, $oPayment);
         if (!empty($sRefundAppendix)) {
             $this->addParameter('invoiceappendix', $sRefundAppendix);
+        }
+
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $this)) {
+            $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
         }
 
         // Add debit bank data given - see oxid integration
