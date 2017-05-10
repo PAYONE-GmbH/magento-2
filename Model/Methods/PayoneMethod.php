@@ -43,9 +43,6 @@ abstract class PayoneMethod extends BaseMethod
      */
     public function getClearingtype()
     {
-        if ($this->sClearingtype === false) {
-            throw new LocalizedException(__('Clearingtype not implemented for this payment method'));
-        }
         return $this->sClearingtype;
     }
 
