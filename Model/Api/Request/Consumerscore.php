@@ -28,6 +28,8 @@ namespace Payone\Core\Model\Api\Request;
 
 use Locale;
 use Magento\Quote\Api\Data\AddressInterface;
+use Payone\Core\Model\Source\AddressCheckType;
+use Payone\Core\Model\Source\CreditratingCheckType;
 
 /**
  * Class for the PAYONE Server API request "consumerscore"
@@ -78,6 +80,22 @@ class Consumerscore extends AddressRequest
     }
 
     /**
+     * Get check type for combined address checks but enforce 'Boniversum Person'
+     * if the configured credit rating check type is 'Boniversum VERITA'
+     *
+     * @return string
+     */
+    protected function getCombinedAdressCheckType()
+    {
+        $creditRatingCheckType = $this->shopHelper->getConfigParam('type', 'creditrating', 'payone_protect');
+        if ($creditRatingCheckType == CreditratingCheckType::BONIVERSUM_VERITA) {
+            return AddressCheckType::BONIVERSUM_PERSON;
+        } else {
+            return $this->shopHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect');
+        }
+    }
+
+    /**
      * Send request "addresscheck" to PAYONE server API
      *
      * @param  AddressInterface $oAddress
@@ -92,7 +110,7 @@ class Consumerscore extends AddressRequest
         $this->addParameter('request', 'consumerscore');
         $this->addParameter('mode', $this->shopHelper->getConfigParam('mode', 'creditrating', 'payone_protect')); //Operationmode live or test
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); //ID of PayOne Sub-Account
-        $this->addParameter('addresschecktype', $this->shopHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect'));
+        $this->addParameter('addresschecktype', $this->getCombinedAdressCheckType());
         $this->addParameter('consumerscoretype', $this->shopHelper->getConfigParam('type', 'creditrating', 'payone_protect'));
         $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
 

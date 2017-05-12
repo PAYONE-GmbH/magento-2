@@ -36,6 +36,7 @@ class CreditratingCheckType implements ArrayInterface
     const INFOSCORE_HARD = 'IH';
     const INFOSCORE_ALL = 'IA';
     const INFOSCORE_ALL_BONI = 'IB';
+    const BONIVERSUM_VERITA = 'CE';
 
     /**
      * Return existing address check types
@@ -56,7 +57,11 @@ class CreditratingCheckType implements ArrayInterface
             [
                 'value' => self::INFOSCORE_ALL_BONI,
                 'label' => __('Infoscore (all criteria with boni-score)')
-            ]
+            ],
+            [
+                'value' => self::BONIVERSUM_VERITA,
+                'label' => __('Boniversum VERITA Score')
+            ],
         ];
     }
 }

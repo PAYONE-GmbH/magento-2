@@ -324,6 +324,7 @@
                 </field>
                 <field id="addresscheck" translate="label" type="select" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Combine credit rating with address check</label>
+                    <comment>This will always be 'Boniversum Person' when Creditrating-Checktype is 'Boniversum VERITA Score'</comment>
                     <source_model>Payone\Core\Model\Source\AddressCheckType</source_model>
                 </field>
                 <field id="allow_payment_methods_yellow" translate="label" type="multiselect" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
