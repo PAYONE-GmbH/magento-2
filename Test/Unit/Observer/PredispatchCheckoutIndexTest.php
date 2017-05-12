@@ -79,7 +79,10 @@ class PredispatchCheckoutIndexTest extends \PHPUnit_Framework_TestCase
         $order->method('load')->willReturn($order);
         $order->method('cancel')->willReturn($order);
 
-        $orderFactory = $this->getMockBuilder(OrderFactory::class)->disableOriginalConstructor()->getMock();
+        $orderFactory = $this->getMockBuilder(OrderFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $orderFactory->method('create')->willReturn($order);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
