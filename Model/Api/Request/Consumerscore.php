@@ -90,9 +90,8 @@ class Consumerscore extends AddressRequest
         $creditRatingCheckType = $this->shopHelper->getConfigParam('type', 'creditrating', 'payone_protect');
         if ($creditRatingCheckType == CreditratingCheckType::BONIVERSUM_VERITA) {
             return AddressCheckType::BONIVERSUM_PERSON;
-        } else {
-            return $this->shopHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect');
         }
+        return $this->shopHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect');
     }
 
     /**
