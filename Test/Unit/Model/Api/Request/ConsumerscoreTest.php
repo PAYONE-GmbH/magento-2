@@ -93,7 +93,10 @@ class ConsumerscoreTest extends \PHPUnit_Framework_TestCase
 
         $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(false);
 
-        $response = ['status' => 'VALID'];
+        $response = [
+            'status' => 'VALID',
+            'score'  => 'G',
+        ];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
         $this->shopHelper->expects($this->any())
@@ -125,7 +128,10 @@ class ConsumerscoreTest extends \PHPUnit_Framework_TestCase
 
         $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(false);
 
-        $response = ['status' => 'VALID'];
+        $response = [
+            'status' => 'VALID',
+            'score'  => 'U',
+        ];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
         $this->shopHelper->expects(ConsumerscoreTest::any())

@@ -147,6 +147,8 @@
 "Infoscore (all criteria)","Infoscore (Alle Merkmale)"
 "Infoscore (all criteria with boni-score)","Infoscore (Alle Merkmale + Boniscore)"
 "Boniversum VERITA Score","Boniversum VERITA Score"
+"Default value for unknown scores","Standardwert für unbekannte Scores"
+
 "Allowed Payment-Methods for Result ""YELLOW""","Erlaubte Zahlarten bei Ampelwert ""GELB"""
 "Allowed Payment-Methods for Result ""RED""","Erlaubte Zahlarten bei Ampelwert ""ROT"""
 "Lifetime","Gültigkeit"
@@ -160,6 +162,7 @@
 "After Payment Selection","Nach Auswahl der Zahlart"
 "Enabled for Payment-Methods","Aktiviert für folgende Zahlarten:"
 "This will always be 'Boniversum Person' when Creditrating-Checktype is 'Boniversum VERITA Score'","Hier wird immer 'Boniversum Person' verwendet, wenn der Bonitätscheck-Typ 'Boniversum VERITA Score' aktiv ist"
+"This only affects check results when Creditrating-Checktype is 'Boniversum VERITA Score'","Dies betrifft nur Prüfungsergebnisse bei Verwendung des Bonitätscheck-Typs 'Boniversum VERITA Score'"
 "Activate to perform Creditrating check every n-th order","Aktivieren um Bonitätsprüfung stichprobenartig bei jeder n. Bestellung durchzuführen"
 "Perform creditrating for 1 out of n orders.","Durchführung der Bonitätsprüfung, 1 aus n Bestellungen wird geprüft (ganzzahlig)"
 "Sample Mode Enabled","A/B-Test-Modus aktivieren"
