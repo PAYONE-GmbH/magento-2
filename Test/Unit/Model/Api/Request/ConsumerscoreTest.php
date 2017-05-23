@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Api\Request;
 
+use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Helper\Database;
 use Payone\Core\Model\Api\Request\Consumerscore as ClassToTest;
@@ -33,6 +34,8 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\ResourceModel\CheckedAddresses;
+use Payone\Core\Model\Source\AddressCheckType;
+use Payone\Core\Model\Source\CreditratingCheckType;
 
 class ConsumerscoreTest extends \PHPUnit_Framework_TestCase
 {
@@ -90,7 +93,10 @@ class ConsumerscoreTest extends \PHPUnit_Framework_TestCase
 
         $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(false);
 
-        $response = ['status' => 'VALID'];
+        $response = [
+            'status' => 'VALID',
+            'score'  => 'G',
+        ];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
         $this->shopHelper->expects($this->any())
@@ -105,6 +111,47 @@ class ConsumerscoreTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->classToTest->sendRequest($address);
         $this->assertArrayHasKey('status', $result);
+    }
+
+    public function testSendRequestBoniversum()
+    {
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getCountryId')->willReturn('DE');
+
+        $address->method('getFirstname')->willReturn('Paul');
+        $address->method('getLastname')->willReturn('Paytest');
+        $address->method('getCompany')->willReturn('Testcompany Ltd.');
+        $address->method('getStreet')->willReturn(['Teststr. 5', '1st floor']);
+        $address->method('getPostcode')->willReturn('12345');
+        $address->method('getCity')->willReturn('Berlin');
+        $address->method('getRegionCode')->willReturn('Berlin');
+
+        $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(false);
+
+        $response = [
+            'status' => 'VALID',
+            'score'  => 'U',
+        ];
+        $this->apiHelper->method('sendApiRequest')->willReturn($response);
+
+        $this->shopHelper->expects(ConsumerscoreTest::any())
+            ->method('getConfigParam')
+            ->willReturnMap([
+                ['enabled', 'creditrating', 'payone_protect', null, true],
+                ['mode', 'creditrating', 'payone_protect', null, 'test'],
+                ['aid', 'global', 'payone_general', null, '12345'],
+                ['addresscheck', 'creditrating', 'payone_protect', null, 'test'],
+                ['type', 'creditrating', 'payone_protect', null, CreditratingCheckType::BONIVERSUM_VERITA],
+            ]);
+
+        /** @var AddressInterface $address */
+        $result = $this->classToTest->sendRequest($address);
+        ConsumerscoreTest::assertArrayHasKey('status', $result);
+        ConsumerscoreTest::assertEquals(
+            AddressCheckType::BONIVERSUM_PERSON,
+            $this->classToTest->getParameter('addresschecktype'),
+            'Check types do not match!'
+        );
     }
 
     public function testSendRequestTrue()

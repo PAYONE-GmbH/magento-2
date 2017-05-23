@@ -36,6 +36,8 @@ class AddressCheckType implements ArrayInterface
     const NONE = 'NO';
     const BASIC = 'BA';
     const PERSON = 'PE';
+    const BONIVERSUM_BASIC = 'BB';
+    const BONIVERSUM_PERSON = 'PB';
 
     /**
      * Return existing address check types
@@ -56,7 +58,15 @@ class AddressCheckType implements ArrayInterface
             [
                 'value' => self::PERSON,
                 'label' => __('Person')
-            ]
+            ],
+            [
+                'value' => self::BONIVERSUM_BASIC,
+                'label' => __('Boniversum Basic')
+            ],
+            [
+                'value' => self::BONIVERSUM_PERSON,
+                'label' => __('Boniversum Person')
+            ],
         ];
     }
 }

@@ -88,7 +88,10 @@ class IndexTest extends \PHPUnit_Framework_TestCase
         $orderHelper->method('getOrderByTxid')->willReturn($order);
 
         $rawResponse = $this->getMockBuilder(Raw::class)->disableOriginalConstructor()->getMock();
-        $resultRawFactory = $this->getMockBuilder(RawFactory::class)->disableOriginalConstructor()->getMock();
+        $resultRawFactory = $this->getMockBuilder(RawFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $resultRawFactory->method('create')->willReturn($rawResponse);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

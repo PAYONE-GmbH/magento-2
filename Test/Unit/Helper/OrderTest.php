@@ -77,7 +77,10 @@ class OrderTestTest extends \PHPUnit_Framework_TestCase
 
         $this->orderCore = $this->getMockBuilder(OrderCore::class)->disableOriginalConstructor()->getMock();
         $this->orderCore->method('loadByIncrementId')->willReturn($this->orderCore);
-        $orderFactory = $this->getMockBuilder(OrderFactory::class)->disableOriginalConstructor()->getMock();
+        $orderFactory = $this->getMockBuilder(OrderFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $orderFactory->method('create')->willReturn($this->orderCore);
 
         $this->order = $this->objectManager->getObject(Order::class, [
