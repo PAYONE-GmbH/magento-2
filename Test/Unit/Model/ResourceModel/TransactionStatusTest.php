@@ -38,6 +38,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Action\Context as ActionContext;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\DB\Select;
 
 class TransactionStatusTest extends \PHPUnit_Framework_TestCase
 {
@@ -116,6 +117,21 @@ class TransactionStatusTest extends \PHPUnit_Framework_TestCase
     {
         $expected = 'default';
         $result = $this->classToTest->getParam('key', $expected);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetAppointedIdByTxid()
+    {
+        $expected = '54321';
+
+        $select = $this->getMockBuilder(Select::class)->disableOriginalConstructor()->getMock();
+        $select->method('from')->willReturn($select);
+        $select->method('where')->willReturn($select);
+
+        $this->connection->method('select')->willReturn($select);
+        $this->connection->method('fetchOne')->willReturn($expected);
+
+        $result = $this->classToTest->getAppointedIdByTxid('12345');
         $this->assertEquals($expected, $result);
     }
 }
