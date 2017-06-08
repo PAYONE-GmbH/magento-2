@@ -104,6 +104,10 @@
             <?php echo $block->getChildHtml('agreements'); ?>
             <div class="actions-toolbar" id="review-buttons-container">
                 <div class="primary">
+                    <button type="button" id="review-button" class="action checkout primary"
+                            value="<?php echo $block->escapeHtml(__('Place Order')); ?>">
+                        <span><?php echo $block->escapeHtml(__('Place Order')); ?></span>
+                    </button>
                     <button type="button" id="review-submit" class="action checkout primary"
                             value="<?php echo $block->escapeHtml(__('Place Order')); ?>">
                         <span><?php echo $block->escapeHtml(__('Place Order')); ?></span>
@@ -117,3 +121,17 @@
         </form>
     </div>
 </div>
+<script type="text/x-magento-init">
+    {
+        "#order-review-form": {
+            "validation": {},
+            "orderOverview": {
+                "shippingSubmitFormSelector": "#shipping-method-form",
+                "shippingSelector": "#shipping-method",
+                "shippingMethodUpdateUrl": "<?php echo $block->escapeUrl($block->getUpdateShippingMethodsUrl()) ?>",
+                "isAjax": <?php /* @noEscape */ echo $block->getUseAjax() ? 'true' : 'false' ?>,
+                "canEditShippingMethod": <?php /* @noEscape */ echo $block->canEditShippingMethod() ? 'true' : 'false' ?>
+            }
+        }
+    }
+</script>

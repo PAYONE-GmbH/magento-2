@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2017 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -27,9 +27,9 @@
 namespace Payone\Core\Controller\Onepage;
 
 use Magento\Framework\View\Result\Page;
-use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Quote\Model\Quote;
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\Redirect;
 
 /**
  * Controller for mandate management with debit payment
@@ -44,32 +44,11 @@ class Review extends \Magento\Framework\App\Action\Action
     protected $checkoutSession;
 
     /**
-     * PAYONE debit request class
-     *
-     * @var \Payone\Core\Model\Api\Request\Managemandate
-     */
-    protected $managemandateRequest;
-
-    /**
      * Page result factory
      *
      * @var \Magento\Framework\View\Result\PageFactory
      */
     protected $pageFactory;
-
-    /**
-     * Cart management interface
-     *
-     * @var \Magento\Quote\Api\CartManagementInterface
-     */
-    protected $cartManagement;
-
-    /**
-     * Onepage checkout model
-     *
-     * @var \Magento\Checkout\Model\Type\Onepage
-     */
-    protected $typeOnepage;
 
     /**
      * @var \Magento\Quote\Api\CartRepositoryInterface
@@ -81,39 +60,35 @@ class Review extends \Magento\Framework\App\Action\Action
      *
      * @param \Magento\Framework\App\Action\Context        $context
      * @param \Magento\Checkout\Model\Session              $checkoutSession
-     * @param \Payone\Core\Model\Api\Request\Managemandate $managemandateRequest
      * @param \Magento\Framework\View\Result\PageFactory   $pageFactory
-     * @param \Magento\Quote\Api\CartManagementInterface   $cartManagement
-     * @param \Magento\Checkout\Model\Type\Onepage         $typeOnepage
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Model\Api\Request\Managemandate $managemandateRequest,
         \Magento\Framework\View\Result\PageFactory $pageFactory,
-        \Magento\Quote\Api\CartManagementInterface $cartManagement,
-        \Magento\Checkout\Model\Type\Onepage $typeOnepage,
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
-        $this->managemandateRequest = $managemandateRequest;
         $this->pageFactory = $pageFactory;
-        $this->cartManagement = $cartManagement;
-        $this->typeOnepage = $typeOnepage;
         $this->quoteRepository = $quoteRepository;
     }
 
     /**
-     * Handle debit checkout
-     * Display mandate if activated
-     * Just create the order if mandate is deactivated
+     * Render order review
      * Redirect to basket if quote or payment is missing
      *
-     * @return null|Page
+     * @return null|Page|Redirect
      */
     public function execute()
     {
+        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+        if (empty($sWorkorderId)) {
+            /** @var Redirect $resultRedirect */
+            $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+            return $resultRedirect->setPath('checkout');
+        }
+
         $oPageObject = $this->pageFactory->create();
 
         $sSelectedShippingMethod = $this->getRequest()->getParam('shipping_method');
@@ -159,9 +134,6 @@ class Review extends \Magento\Framework\App\Action\Action
         $oQuote->getBillingAddress()->setShouldIgnoreValidation(true);
         if (!$oQuote->getIsVirtual()) {
             $oQuote->getShippingAddress()->setShouldIgnoreValidation(true);
-            #if (!$this->_config->getValue('requireBillingAddress') && !$oQuote->getBillingAddress()->getEmail()) {
-            #    $oQuote->getBillingAddress()->setSameAsBilling(1);
-            #}
         }
     }
 }
