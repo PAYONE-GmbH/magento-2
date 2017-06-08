@@ -36,6 +36,11 @@ use Payone\Core\Model\Methods\PayoneMethod;
 class Capture extends Base
 {
     /**
+     * @var \Payone\Core\Model\Api\Invoice $invoiceGenerator
+     */
+    protected $invoiceGenerator;
+
+    /**
      * PAYONE database helper
      *
      * @var \Payone\Core\Helper\Database
@@ -49,6 +54,7 @@ class Capture extends Base
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
      */
     public function __construct(
@@ -56,9 +62,11 @@ class Capture extends Base
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+        \Payone\Core\Model\Api\Invoice $invoiceGenerator,
         \Payone\Core\Helper\Database $databaseHelper
     ) {
         parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
     }
 
@@ -89,6 +97,10 @@ class Capture extends Base
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));
 
         $this->addParameter('settleaccount', 'auto');
+
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $this)) {
+            $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
+        }
 
         $aResponse = $this->send();
 

@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Helper;
 
+use Payone\Core\Model\Api\Request\Authorization;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Sales\Model\Order as SalesOrder;
@@ -40,7 +41,7 @@ use Magento\Sales\Model\Order as SalesOrder;
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-class Api extends \Payone\Core\Helper\Base
+class Api extends Base
 {
     /**
      * PAYONE connection curl php
@@ -187,16 +188,18 @@ class Api extends \Payone\Core\Helper\Base
     /**
      * Check if invoice-data has to be added to the authorization request
      *
-     * @param  PayoneMethod $oPayment
+     * @param  PayoneMethod                             $oPayment
+     * @param  \Payone\Core\Model\Api\Request\Base|null $caller
      * @return bool
      */
-    public function isInvoiceDataNeeded(PayoneMethod $oPayment)
+    public function isInvoiceDataNeeded(PayoneMethod $oPayment, $caller)
     {
-        $sType = $this->getConfigParam('request_type'); // auth or preauth?
-        $blInvoiceEnabled = (bool)$this->getConfigParam('transmit_enabled', 'invoicing'); // invoicing enabled?
-        if ($oPayment->needsProductInfo() || ($sType == PayoneConfig::REQUEST_TYPE_AUTHORIZATION && $blInvoiceEnabled)) {
-            return true; // invoice data needed
-        }
-        return false; // invoice data not needed
+        // check if authorization type is auth (true) or pre-auth (false)
+        $blRequestTypeIsAuth = ($this->getConfigParam('request_type') == PayoneConfig::REQUEST_TYPE_AUTHORIZATION);
+        $blRequestIsNoAuthRequest = ($caller instanceof Authorization === false);
+        // check if invoice transmission is enabled in the config
+        $blInvoiceEnabled = (bool) $this->getConfigParam('transmit_enabled', 'invoicing');
+        $blSetupNeedsProductInfo = (($blRequestTypeIsAuth || $blRequestIsNoAuthRequest) && $blInvoiceEnabled);
+        return ($oPayment->needsProductInfo() || $blSetupNeedsProductInfo);
     }
 }

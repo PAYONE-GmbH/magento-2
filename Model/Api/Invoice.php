@@ -154,7 +154,8 @@ class Invoice
             if ($aPositions !== false && array_key_exists($oItem->getProductId(), $aPositions) !== false) { // product existing in single-invoice?
                 $dItemAmount = $aPositions[$oItem->getProductId()]['amount']; // use amount from single-invoice
             }
-            $this->addInvoicePosition($oItem->getSku(), $oItem->getPriceInclTax(), 'goods', $dItemAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
+            $iAmount = $this->convertItemAmount($dItemAmount);
+            $this->addInvoicePosition($oItem->getSku(), $oItem->getPriceInclTax(), 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
             if ($this->dTax === false) { // is dTax not set yet?
                 $this->dTax = $oItem->getTaxPercent(); // set the tax for following entities which dont have the vat attached to it
             }
@@ -208,6 +209,21 @@ class Invoice
                 $sDesc = (string)__('Coupon').' - '.$oOrder->getCouponCode(); // add counpon code to description
             }
             $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
+        }
+    }
+
+    /**
+     * @param double $dItemAmount
+     * @throws \InvalidArgumentException
+     * @return integer
+     */
+    private function convertItemAmount($dItemAmount)
+    {
+        if (fmod(floatval($dItemAmount), 1.0) > 0) { // input does not represent an integer
+            $sErrorMessage = "Unable to use floating point values for item amounts! Parameter was: ";
+            throw new \InvalidArgumentException($sErrorMessage . strval($dItemAmount), 1);
+        } else { // return the integer value
+            return intval($dItemAmount);
         }
     }
 }
