@@ -24,11 +24,6 @@
 /*jshint browser:true jquery:true*/
 /*global alert*/
 var config = {
-    map: {
-        '*': {
-            orderOverview: 'Payone_Core/order-overview'
-        }
-    },
     config: {
         mixins: {
             'Magento_Checkout/js/view/shipping': {
@@ -41,5 +36,5 @@ var config = {
                 'Payone_Core/js/view/payment/default-mixin': true
             }
         }
-    },
+    }
 };

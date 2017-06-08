@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2017 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -30,10 +30,6 @@
     </head>
     <update handle="checkout_onepage_review_item_renderers"/>
     <body>
-        <referenceBlock name="head.components">
-            <block class="Magento\Framework\View\Element\Js\Components" name="payone_review_checkout_head_components" template="Magento_Checkout::js/components.phtml"/>
-            <block class="Magento\Framework\View\Element\Js\Components" name="payone_review_head_components" template="Payone_Core::js/components.phtml"/>
-        </referenceBlock>
         <referenceContainer name="content">
             <block class="Payone\Core\Block\Onepage\Review" name="payone_onepage_review" template="onepage/review.phtml" cacheable="false">
                 <block class="Magento\Framework\View\Element\Text\ListText" name="paypal.additional.actions">

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -222,16 +223,6 @@ class Review extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Whether can edit shipping method
-     *
-     * @return bool
-     */
-    public function canEditShippingMethod()
-    {
-        return $this->getData('can_edit_shipping_method') || !$this->getCurrentShippingRate();
-    }
-
-    /**
      * Get quote email
      *
      * @return string
@@ -240,17 +231,6 @@ class Review extends \Magento\Framework\View\Element\Template
     {
         $billingAddress = $this->getBillingAddress();
         return $billingAddress ? $billingAddress->getEmail() : '';
-    }
-
-    /**
-     * Set controller path
-     *
-     * @param string $prefix
-     * @return void
-     */
-    public function setControllerPath($prefix)
-    {
-        $this->_controllerPath = $prefix;
     }
 
     /**
