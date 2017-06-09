@@ -29,6 +29,8 @@ namespace Payone\Core\Block\Onepage;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote\Address\Rate;
+use Magento\Quote\Model\Quote\Address;
+use Magento\Framework\DataObject;
 
 /**
  * Paypal Express Onepage checkout block
@@ -123,7 +125,7 @@ class Review extends \Magento\Framework\View\Element\Template
     /**
      * Return quote billing address
      *
-     * @return \Magento\Quote\Model\Quote\Address
+     * @return Address
      */
     public function getBillingAddress()
     {
@@ -133,7 +135,7 @@ class Review extends \Magento\Framework\View\Element\Template
     /**
      * Return quote shipping address
      *
-     * @return false|\Magento\Quote\Model\Quote\Address
+     * @return false|Address
      */
     public function getShippingAddress()
     {
@@ -146,10 +148,10 @@ class Review extends \Magento\Framework\View\Element\Template
     /**
      * Get HTML output for specified address
      *
-     * @param \Magento\Quote\Model\Quote\Address $address
+     * @param Address $address
      * @return string
      */
-    public function renderAddress($address)
+    public function renderAddress(Address $address)
     {
         /** @var \Magento\Customer\Block\Address\Renderer\RendererInterface $renderer */
         $renderer = $this->_addressConfig->getFormatByCode('html')->getRenderer();
@@ -174,10 +176,10 @@ class Review extends \Magento\Framework\View\Element\Template
     /**
      * Get either shipping rate code or empty value on error
      *
-     * @param \Magento\Framework\DataObject $rate
+     * @param DataObject $rate
      * @return string
      */
-    public function renderShippingRateValue(\Magento\Framework\DataObject $rate)
+    public function renderShippingRateValue(DataObject $rate)
     {
         if ($rate->getErrorMessage()) {
             return '';
@@ -188,12 +190,12 @@ class Review extends \Magento\Framework\View\Element\Template
     /**
      * Get shipping rate code title and its price or error message
      *
-     * @param \Magento\Framework\DataObject $rate
+     * @param DataObject $rate
      * @param string $format
      * @param string $inclTaxFormat
      * @return string
      */
-    public function renderShippingRateOption($rate, $format = '%s - %s%s', $inclTaxFormat = ' (%s %s)')
+    public function renderShippingRateOption(DataObject $rate, $format = '%s - %s%s', $inclTaxFormat = ' (%s %s)')
     {
         $renderedInclTax = '';
         if ($rate->getErrorMessage()) {
@@ -265,7 +267,6 @@ class Review extends \Magento\Framework\View\Element\Template
      * Retrieve payment method and assign additional template values
      *
      * @return $this
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     protected function _beforeToHtml()
     {

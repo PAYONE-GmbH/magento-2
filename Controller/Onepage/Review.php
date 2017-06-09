@@ -29,7 +29,7 @@ namespace Payone\Core\Controller\Onepage;
 use Magento\Framework\View\Result\Page;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\Controller\Result\Redirect as CoreRedirect;
 
 /**
  * Controller for mandate management with debit payment
@@ -78,13 +78,13 @@ class Review extends \Magento\Framework\App\Action\Action
      * Render order review
      * Redirect to basket if quote or payment is missing
      *
-     * @return null|Page|Redirect
+     * @return null|Page|CoreRedirect
      */
     public function execute()
     {
         $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
         if (empty($sWorkorderId)) {
-            /** @var Redirect $resultRedirect */
+            /** @var CoreRedirect $resultRedirect */
             $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
             return $resultRedirect->setPath('checkout');
         }
