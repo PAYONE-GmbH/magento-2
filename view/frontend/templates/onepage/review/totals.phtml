@@ -1,3 +1,4 @@
+<?php
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,20 +22,23 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-/*jshint browser:true jquery:true*/
-/*global alert*/
-var config = {
-    config: {
-        mixins: {
-            'Magento_Checkout/js/view/shipping': {
-                'Payone_Core/js/view/shipping-mixin': true
-            },
-            'Magento_Checkout/js/view/billing-address': {
-                'Payone_Core/js/view/billing-address-mixin': true
-            },
-            'Magento_Checkout/js/view/payment/default': {
-                'Payone_Core/js/view/payment/default-mixin': true
-            }
-        }
-    }
-};
+
+/**
+ * @var \Magento\Checkout\Block\Cart\Totals $block
+ */
+?>
+<?php if ($block->getTotals()): ?>
+    <?php $_colspan = 3; ?>
+    <?php /* @escapeNotVerified */ echo $block->renderTotals(null, $_colspan); ?>
+    <?php /* @escapeNotVerified */ echo $block->renderTotals('footer', $_colspan); ?>
+    <?php if ($block->needDisplayBaseGrandtotal()):?>
+        <tr class="totals charge">
+            <th class="mark" colspan="<?php /* @escapeNotVerified */ echo $_colspan; ?>" scope="row">
+                <?php /* @escapeNotVerified */ echo __('Your credit card will be charged for') ?>
+            </th>
+            <td class="amount" data-th="<?php echo $block->escapeHtml(__('Your credit card will be charged for')); ?>">
+                <?php /* @escapeNotVerified */ echo $block->displayBaseGrandtotal() ?>
+            </td>
+        </tr>
+    <?php endif?>
+<?php endif; ?>

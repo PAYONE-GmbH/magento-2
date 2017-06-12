@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,20 +23,41 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-/*jshint browser:true jquery:true*/
-/*global alert*/
-var config = {
-    config: {
-        mixins: {
-            'Magento_Checkout/js/view/shipping': {
-                'Payone_Core/js/view/shipping-mixin': true
-            },
-            'Magento_Checkout/js/view/billing-address': {
-                'Payone_Core/js/view/billing-address-mixin': true
-            },
-            'Magento_Checkout/js/view/payment/default': {
-                'Payone_Core/js/view/payment/default-mixin': true
-            }
-        }
+
+namespace Payone\Core\Block\Onepage\Review;
+
+use Magento\Sales\Model\Order\Address;
+use Magento\Checkout\Block\Cart\Totals;
+
+class Details extends Totals
+{
+    /**
+     * Address object
+     *
+     * @var Address
+     */
+    protected $_address;
+
+    /**
+     * Returns the totals of the current quote
+     *
+     * @return array
+     */
+    public function getTotals()
+    {
+        return $this->getQuote()->getTotals();
     }
-};
+
+    /**
+     * Returns the current shipping address of the quote
+     *
+     * @return Address
+     */
+    public function getAddress()
+    {
+        if (!$this->_address) {
+            $this->_address = $this->getQuote()->getShippingAddress();
+        }
+        return $this->_address;
+    }
+}
