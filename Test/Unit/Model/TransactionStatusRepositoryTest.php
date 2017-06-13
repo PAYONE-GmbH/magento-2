@@ -54,7 +54,10 @@ class TransactionStatusRepositoryTest extends \PHPUnit_Framework_TestCase
         $transactionStatus = $this->getMockBuilder(TransactionStatus::class)->disableOriginalConstructor()->getMock();
         $transactionStatus->method('load')->willReturn($transactionStatus);
 
-        $transactionStatusFactory = $this->getMockBuilder(TransactionStatusFactory::class)->disableOriginalConstructor()->getMock();
+        $transactionStatusFactory = $this->getMockBuilder(TransactionStatusFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $transactionStatusFactory->method('create')->willReturn($transactionStatus);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

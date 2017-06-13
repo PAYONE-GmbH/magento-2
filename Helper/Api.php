@@ -192,9 +192,8 @@ class Api extends \Payone\Core\Helper\Base
      */
     public function isInvoiceDataNeeded(PayoneMethod $oPayment)
     {
-        $sType = $this->getConfigParam('request_type'); // auth or preauth?
         $blInvoiceEnabled = (bool)$this->getConfigParam('transmit_enabled', 'invoicing'); // invoicing enabled?
-        if ($oPayment->needsProductInfo() || ($sType == PayoneConfig::REQUEST_TYPE_AUTHORIZATION && $blInvoiceEnabled)) {
+        if ($blInvoiceEnabled || $oPayment->needsProductInfo()) {
             return true; // invoice data needed
         }
         return false; // invoice data not needed
