@@ -196,6 +196,27 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
         $this->classToTest->handleAddressManagement($address, $quote, false);
     }
 
+    public function testHandleAddressManagementExceptionNoStatus()
+    {
+        $address = $this->getMockBuilder(Address::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
+            ->getMock();
+        $address->method('getPayoneAddresscheckScore')->willReturn(null);
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote->method('isVirtual')->willReturn(false);
+        $quote->method('getSubtotal')->willReturn(100);
+        $this->addresscheck->method('sendRequest')->willReturn([]);
+        $this->databaseHelper->expects($this->any())
+            ->method('getConfigParam')
+            ->willReturnMap([
+                ['message_response_invalid', 'address_check', 'payone_protect', null, null]
+            ]);
+
+        $this->setExpectedException(LocalizedException::class);
+        $this->classToTest->handleAddressManagement($address, $quote, false);
+    }
+
     public function testHandleAddressManagementExceptionInvalidDefault()
     {
         $address = $this->getMockBuilder(Address::class)

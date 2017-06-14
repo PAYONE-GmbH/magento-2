@@ -280,7 +280,9 @@ class Addresscheck
     public function getErrorMessageByResponse($aResponse)
     {
         $sErrorMessage = false;
-        if ($aResponse['status'] == 'INVALID') {
+        if (!isset($aResponse['status'])) { // the response doesnt have the expected format
+            $sErrorMessage = 'An error occured during the addresscheck.';
+        } elseif ($aResponse['status'] == 'INVALID') {
             $sErrorMessage = $this->getInvalidMessage($aResponse['customermessage']);
         } elseif ($aResponse['status'] == 'ERROR') {
             if ($this->getConfigParam('handle_response_error') == 'stop_checkout') {
