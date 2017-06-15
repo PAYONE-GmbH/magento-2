@@ -33,6 +33,7 @@ use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\ShippingAddressManagement;
+use Magento\Framework\App\Request\Http;
 
 class ShippingAddressManagementTest extends \PHPUnit_Framework_TestCase
 {
@@ -60,9 +61,13 @@ class ShippingAddressManagementTest extends \PHPUnit_Framework_TestCase
         $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $addresscheck->method('handleAddressManagement')->willReturn($address);
 
+        $request = $this->getMockBuilder(Http::class)->disableOriginalConstructor()->getMock();
+        $request->method('getPathInfo')->willReturn('/rest/default/V1/carts/mine/shipping-information');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'quoteRepository' => $quoteRepository,
-            'addresscheck' => $addresscheck
+            'addresscheck' => $addresscheck,
+            'request' => $request
         ]);
     }
 
