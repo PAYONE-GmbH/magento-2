@@ -109,6 +109,7 @@ class DebitTest extends \PHPUnit_Framework_TestCase
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('isInvoiceDataNeeded')->willReturn(true);
 
         $result = $this->classToTest->sendRequest($payment, $paymentInfo, 100);
         $this->assertEquals($response, $result);

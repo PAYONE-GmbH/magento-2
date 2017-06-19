@@ -126,7 +126,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             );
         $this->payment->method('needsProductInfo')->willReturn(true);
 
-        $result = $this->api->isInvoiceDataNeeded($this->payment, null);
+        $result = $this->api->isInvoiceDataNeeded($this->payment);
         $this->assertTrue($result);
     }
 
@@ -142,7 +142,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             );
         $this->payment->method('needsProductInfo')->willReturn(false);
 
-        $result = $this->api->isInvoiceDataNeeded($this->payment, null);
+        $result = $this->api->isInvoiceDataNeeded($this->payment);
         $this->assertFalse($result);
     }
 

@@ -82,6 +82,7 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('isInvoiceDataNeeded')->willReturn(true);
 
         $result = $this->classToTest->sendRequest($payment, $paymentInfo, 100);
         $this->assertArrayHasKey('status', $result);

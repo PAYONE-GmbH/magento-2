@@ -178,7 +178,7 @@ class Authorization extends AddressRequest
         $this->setUserParameters($oPayment, $oOrder); // add user data - addresses etc.
         $this->setPaymentParameters($oPayment, $oOrder); // add payment specific parameters
 
-        if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $this)) {
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
             $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
         }
     }

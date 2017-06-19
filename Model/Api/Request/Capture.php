@@ -98,7 +98,7 @@ class Capture extends Base
 
         $this->addParameter('settleaccount', 'auto');
 
-        if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $this)) {
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
             $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
         }
 

@@ -124,4 +124,25 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
         $result = $this->classToTest->addProductInfo($authorization, $order, $positions);
         $this->assertEquals($expected, $result);
     }
+
+    public function testAddProductInfoException()
+    {
+        $authorization = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
+
+        $items = [$this->getItemMock()];
+
+        $expected = 100;
+
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getAllItems')->willReturn($items);
+        $order->method('getBaseShippingInclTax')->willReturn(5);
+        $order->method('getBaseDiscountAmount')->willReturn(-5);
+        $order->method('getCouponCode')->willReturn('test');
+        $order->method('getGrandTotal')->willReturn($expected);
+
+        $positions = ['12345' => ['amount' => 1.7]];
+
+        $this->setExpectedException(\InvalidArgumentException::class);
+        $result = $this->classToTest->addProductInfo($authorization, $order, $positions);
+    }
 }

@@ -213,11 +213,14 @@ class Invoice
     }
 
     /**
-     * @param double $dItemAmount
+     * Check if item amount has decimal places
+     * Throw exception if given amount is no integer
+     *
+     * @param  double $dItemAmount
      * @throws \InvalidArgumentException
-     * @return integer
+     * @return int
      */
-    private function convertItemAmount($dItemAmount)
+    protected function convertItemAmount($dItemAmount)
     {
         if (fmod(floatval($dItemAmount), 1.0) > 0) { // input does not represent an integer
             $sErrorMessage = "Unable to use floating point values for item amounts! Parameter was: ";
