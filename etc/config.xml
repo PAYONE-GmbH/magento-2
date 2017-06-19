@@ -248,6 +248,7 @@
                 <sample_mode_frequency></sample_mode_frequency>
                 <handle_response_error>continue_checkout</handle_response_error>
                 <stop_checkout_message></stop_checkout_message>
+                <insufficient_score_message></insufficient_score_message>
                 <min_order_total></min_order_total>
                 <max_order_total></max_order_total>
                 <result_lifetime></result_lifetime>

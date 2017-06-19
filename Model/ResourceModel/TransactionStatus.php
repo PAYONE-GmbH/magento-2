@@ -181,4 +181,21 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
         );
         return $this;
     }
+
+    /**
+     * Get TransactionStatus id be txid
+     *
+     * @param  string $sTxid
+     * @return string
+     */
+    public function getAppointedIdByTxid($sTxid)
+    {
+        $oConn = $this->getConnection();
+
+        $oSelect = $oConn->select()->from($this->getMainTable())
+            ->where('txid = :txid')
+            ->where('txaction = :txaction');
+
+        return $oConn->fetchOne($oSelect, ['txid' => $sTxid, 'txaction' => 'appointed']);
+    }
 }

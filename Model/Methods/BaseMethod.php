@@ -47,7 +47,7 @@ abstract class BaseMethod extends AbstractMethod
      *
      * @var string
      */
-    protected $_infoBlockType = 'Magento\Payment\Block\Info\Instructions';
+    protected $_infoBlockType = 'Payone\Core\Block\Info\Basic';
 
     /**
      * Form block path

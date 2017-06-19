@@ -43,6 +43,13 @@ class Klarna extends PayoneMethod
     protected $_code = PayoneConfig::METHOD_KLARNA;
 
     /**
+     * Info instructions block path
+     *
+     * @var string
+     */
+    protected $_infoBlockType = 'Payone\Core\Block\Info\SafeInvoice';
+
+    /**
      * Clearingtype for PAYONE authorization request
      *
      * @var string

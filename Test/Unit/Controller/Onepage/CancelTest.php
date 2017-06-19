@@ -110,7 +110,10 @@ class CancelTest extends \PHPUnit_Framework_TestCase
         $this->order->method('cancel')->willReturn($this->order);
         $this->order->method('save')->willReturn($this->order);
 
-        $orderFactory = $this->getMockBuilder(OrderFactory::class)->disableOriginalConstructor()->getMock();
+        $orderFactory = $this->getMockBuilder(OrderFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $orderFactory->method('create')->willReturn($this->order);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

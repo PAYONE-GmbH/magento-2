@@ -324,7 +324,13 @@
                 </field>
                 <field id="addresscheck" translate="label" type="select" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Combine credit rating with address check</label>
+                    <comment>This will always be 'Boniversum Person' when Creditrating-Checktype is 'Boniversum VERITA Score'</comment>
                     <source_model>Payone\Core\Model\Source\AddressCheckType</source_model>
+                </field>
+                <field id="unknown_value" translate="label" type="select" sortOrder="97" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default value for unknown scores</label>
+                    <comment>This only affects check results when Creditrating-Checktype is 'Boniversum VERITA Score'</comment>
+                    <source_model>Payone\Core\Model\Source\CreditScore</source_model>
                 </field>
                 <field id="allow_payment_methods_yellow" translate="label" type="multiselect" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Allowed Payment-Methods for Result "YELLOW"</label>
@@ -352,10 +358,13 @@
                     <source_model>Payone\Core\Model\Source\HandleResponseError</source_model>
                 </field>
                 <field id="stop_checkout_message" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
-					<label>Message for 'Stop-Checkout'</label>
+                    <label>Message for 'Stop-Checkout'</label>
                     <depends>
                         <field id="handle_response_error">stop_checkout</field>
                     </depends>
+                </field>
+                <field id="insufficient_score_message" translate="label" type="text" sortOrder="155" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Insufficient score error message</label>
                 </field>
                 <field id="min_order_total" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Minimum Order Total</label>

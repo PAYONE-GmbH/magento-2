@@ -30,6 +30,8 @@ use Payone\Core\Model\Methods\Barzahlen as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\PayoneConfig;
+use Payone\Core\Model\Api\Request\Authorization;
+use Magento\Payment\Model\Info;
 
 class BarzahlenTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,11 +45,20 @@ class BarzahlenTest extends \PHPUnit_Framework_TestCase
      */
     private $objectManager;
 
+    /**
+     * @var Authorization|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $authorizationRequest;
+
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $this->authorizationRequest = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'authorizationRequest' => $this->authorizationRequest,
+        ]);
     }
 
     public function testGetAuthorizationMode()
@@ -64,5 +75,19 @@ class BarzahlenTest extends \PHPUnit_Framework_TestCase
         $result = $this->classToTest->getPaymentSpecificParameters($order);
         $expected = ['cashtype' => 'BZN', 'api_version' => '3.10'];
         $this->assertEquals($expected, $result);
+    }
+
+    public function testAuthorize()
+    {
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $paymentInfo->method('getOrder')->willReturn($order);
+
+        $aResponse = ['status' => 'APPROVED', 'txid' => '12345', 'redirecturl' => 'http://testdomain.com', 'add_paydata[instruction_notes]' => 'test'];
+        $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
+
+        $result = $this->classToTest->authorize($paymentInfo, 100);
+        $this->assertInstanceOf(ClassToTest::class, $result);
     }
 }

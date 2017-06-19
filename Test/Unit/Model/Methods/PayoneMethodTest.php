@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Methods;
 use Payone\Core\Model\Methods\Paydirekt as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Shop;
+use Payone\Core\Model\PayoneConfig;
 
 class PayoneMethodTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,7 +44,7 @@ class PayoneMethodTest extends \PHPUnit_Framework_TestCase
     private $objectManager;
 
     /**
-     * @var Shop
+     * @var Shop|\PHPUnit_Framework_MockObject_MockObject
      */
     private $shopHelper;
 
@@ -62,6 +63,68 @@ class PayoneMethodTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->classToTest->getClearingtype();
         $expected = 'wlt';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetAuthorizationMode()
+    {
+        $expected = 'custom_request_type';
+        $this->shopHelper->expects($this->any())
+            ->method('getConfigParam')
+            ->willReturnMap(
+                [
+                    ['request_type', 'global', 'payone_general', null, 'global_request_type'],
+                    ['use_global', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment', null, '0'],
+                    ['request_type', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment', null, $expected]
+                ]
+            );
+        $result = $this->classToTest->getAuthorizationMode();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetOperationMode()
+    {
+        $expected = 'operation_mode';
+        $this->shopHelper->method('getConfigParam')->willReturn($expected);
+        $result = $this->classToTest->getOperationMode();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testNeedsRedirectUrls()
+    {
+        $result = $this->classToTest->needsRedirectUrls();
+        $this->assertTrue($result);
+    }
+
+    public function testNeedsProductInfo()
+    {
+        $result = $this->classToTest->needsProductInfo();
+        $this->assertFalse($result);
+    }
+
+    public function testHasCustomConfig()
+    {
+        $this->shopHelper->method('getConfigParam')->willReturn('1');
+        $result = $this->classToTest->hasCustomConfig();
+        $this->assertFalse($result);
+    }
+
+    public function testIsGroupMethod()
+    {
+        $result = $this->classToTest->isGroupMethod();
+        $this->assertFalse($result);
+    }
+
+    public function testGetGroupName()
+    {
+        $result = $this->classToTest->getGroupName();
+        $this->assertFalse($result);
+    }
+
+    public function testGetNarrativeTextMaxLength()
+    {
+        $result = $this->classToTest->getNarrativeTextMaxLength();
+        $expected = 37;
         $this->assertEquals($expected, $result);
     }
 }
