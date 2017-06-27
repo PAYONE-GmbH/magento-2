@@ -8,10 +8,9 @@ services:
 before_script:
 - phpenv config-rm xdebug.ini
 - mysql -e 'CREATE DATABASE IF NOT EXISTS magentotravis;'
-- composer config -g http-basic.repo.magento.com $M2_KEY_PUB $M2_KEY_PRIV
-- composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition
-  /tmp/build/
+- git clone --depth=10 -b 2.1 https://github.com/magento/magento2 /tmp/build
 - cd /tmp/build
+- composer update
 - php bin/magento setup:install --base-url=http://magebuild.integrations.p1-test.de/build/
   --db-host=localhost --db-name=magentotravis --db-user=root --admin-firstname=Dieter
   --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo

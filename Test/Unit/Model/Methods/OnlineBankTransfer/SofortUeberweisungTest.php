@@ -81,4 +81,10 @@ class SofortUeberweisungTest extends \PHPUnit_Framework_TestCase
         $result = $this->classToTest->assignData($data);
         $this->assertInstanceOf(ClassToTest::class, $result);
     }
+
+    public function testIsGroupMethod()
+    {
+        $result = $this->classToTest->isGroupMethod();
+        $this->assertTrue($result);
+    }
 }

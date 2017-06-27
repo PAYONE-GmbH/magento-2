@@ -27,6 +27,7 @@
 namespace Payone\Core\Controller\Paypal;
 
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\Redirect;
 
 /**
  * Controller for handling the return from PayPal Express
@@ -77,7 +78,7 @@ class Returned extends \Magento\Framework\App\Action\Action
     /**
      * Redirect to payment-provider or to success page
      *
-     * @return void
+     * @return Redirect
      */
     public function execute()
     {
@@ -87,15 +88,15 @@ class Returned extends \Magento\Framework\App\Action\Action
             try {
                 $this->returnHandler->handlePayPalReturn($sWorkorderId);
 
-                /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+                /** @var Redirect $resultRedirect */
                 $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-                return $resultRedirect->setPath('checkout/onepage/success');
+                return $resultRedirect->setPath('payone/onepage/review');
             } catch (\Exception $e) {
                 $this->messageManager->addExceptionMessage($e, __('An error occured during the PayPal Express transaction.'));
             }
         }
 
-        /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+        /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         return $resultRedirect->setPath('checkout/cart');
     }

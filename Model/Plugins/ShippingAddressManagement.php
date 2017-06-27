@@ -49,6 +49,11 @@ class ShippingAddressManagement
     protected $addresscheck;
 
     /**
+     * @var \Magento\Framework\App\Request\Http
+     */
+    protected $request;
+
+    /**
      * Constructor
      *
      * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
@@ -56,10 +61,12 @@ class ShippingAddressManagement
      */
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
-        \Payone\Core\Model\Risk\Addresscheck $addresscheck
+        \Payone\Core\Model\Risk\Addresscheck $addresscheck,
+        \Magento\Framework\App\Request\Http $request
     ) {
         $this->quoteRepository = $quoteRepository;
         $this->addresscheck = $addresscheck;
+        $this->request = $request;
     }
 
     /**
@@ -72,8 +79,10 @@ class ShippingAddressManagement
      */
     public function beforeAssign(ShippingAddressManagementOrig $oSource, $sCartId, AddressInterface $oAddress)
     {
-        $oQuote = $this->quoteRepository->getActive($sCartId);
-        $oAddress = $this->addresscheck->handleAddressManagement($oAddress, $oQuote, false);
+        if (stripos($this->request->getPathInfo(), 'shipping-information') !== false) { // only check for the checkout ajax calls
+            $oQuote = $this->quoteRepository->getActive($sCartId);
+            $oAddress = $this->addresscheck->handleAddressManagement($oAddress, $oQuote, false);
+        }
         return [$sCartId, $oAddress];
     }
 }

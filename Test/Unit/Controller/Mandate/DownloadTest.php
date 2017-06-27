@@ -64,7 +64,10 @@ class OrderPaymentPlaceEndTest extends \PHPUnit_Framework_TestCase
         $paymentHelper->method('isMandateManagementDownloadActive')->willReturn(true);
 
         $rawResponse = $this->getMockBuilder(Raw::class)->disableOriginalConstructor()->getMock();
-        $resultRawFactory = $this->getMockBuilder(RawFactory::class)->disableOriginalConstructor()->getMock();
+        $resultRawFactory = $this->getMockBuilder(RawFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $resultRawFactory->method('create')->willReturn($rawResponse);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

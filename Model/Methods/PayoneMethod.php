@@ -43,9 +43,6 @@ abstract class PayoneMethod extends BaseMethod
      */
     public function getClearingtype()
     {
-        if ($this->sClearingtype === false) {
-            throw new LocalizedException(__('Clearingtype not implemented for this payment method'));
-        }
         return $this->sClearingtype;
     }
 
@@ -111,6 +108,7 @@ abstract class PayoneMethod extends BaseMethod
     protected function sendPayoneAuthorization(InfoInterface $payment, $amount)
     {
         $oOrder = $payment->getOrder();
+        $oOrder->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
         $this->checkoutSession->unsPayoneRedirectUrl(); // remove redirect url from session
         $aResponse = $this->authorizationRequest->sendRequest($this, $oOrder, $amount);
         $this->handleResponse($aResponse);

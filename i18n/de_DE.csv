@@ -146,6 +146,9 @@
 "Infoscore (hard criteria)","Infoscore (Harte Merkmale)"
 "Infoscore (all criteria)","Infoscore (Alle Merkmale)"
 "Infoscore (all criteria with boni-score)","Infoscore (Alle Merkmale + Boniscore)"
+"Boniversum VERITA Score","Boniversum VERITA Score"
+"Default value for unknown scores","Standardwert für unbekannte Scores"
+
 "Allowed Payment-Methods for Result ""YELLOW""","Erlaubte Zahlarten bei Ampelwert ""GELB"""
 "Allowed Payment-Methods for Result ""RED""","Erlaubte Zahlarten bei Ampelwert ""ROT"""
 "Lifetime","Gültigkeit"
@@ -158,6 +161,8 @@
 "Before Payment Selection","Vor Auswahl der Zahlart"
 "After Payment Selection","Nach Auswahl der Zahlart"
 "Enabled for Payment-Methods","Aktiviert für folgende Zahlarten:"
+"This will always be 'Boniversum Person' when Creditrating-Checktype is 'Boniversum VERITA Score'","Hier wird immer 'Boniversum Person' verwendet, wenn der Bonitätscheck-Typ 'Boniversum VERITA Score' aktiv ist"
+"This only affects check results when Creditrating-Checktype is 'Boniversum VERITA Score'","Dies betrifft nur Prüfungsergebnisse bei Verwendung des Bonitätscheck-Typs 'Boniversum VERITA Score'"
 "Activate to perform Creditrating check every n-th order","Aktivieren um Bonitätsprüfung stichprobenartig bei jeder n. Bestellung durchzuführen"
 "Perform creditrating for 1 out of n orders.","Durchführung der Bonitätsprüfung, 1 aus n Bestellungen wird geprüft (ganzzahlig)"
 "Sample Mode Enabled","A/B-Test-Modus aktivieren"
@@ -823,7 +828,8 @@
 "Check if the address is existent, has a typo or is otherwise slightly malformed. This is possible for addresses from Germany, Austria, Switzerland, The Netherlands, Belgium, Luxemburg, France, Italy, Spain, Portugal, Denmark, Sweden, Finland, Norway, Poland, Slovakia, Czech Republic, Hungary, The United States, and Canada.","Prüfung der Adresse auf Existenz sowie Ergänzung und Korrektur der Adresse (Möglich für Adressen aus Deutschland, Österreich, Schweiz, Niederlande, Belgien, Luxemburg, Frankreich, Italien, Spanien, Portugal, Dänemark, Schweden, Finnland, Norwegen, Polen, Slowakei, Tschechien, Ungarn, USA, Kanada)"
 "Person","Person"
 "Check if the given person is known at the given address, check if the address is existent, has a typo or is otherwise slightly malformed. This is only available for German addresses.","Prüfung ob die Person unter der angegebenen Adresse bekannt ist, Prüfung der Adresse auf Existenz sowie Ergänzung und Korrektur der Adresse (nur Deutschland)",
-
+"Boniversum Basic","Boniversum Basic"
+"Boniversum Person","Boniversum Person"
 
 "TEMPLATE","/app/design/adminhtml/default/default/template/payone/core/system/config/tooltip/protect/creditrating.phtml"
 "Credit assessment is done in cooperation with arvato Infoscore.","Die Bonitätsprüfung wird in Zusammenarbeit mit arvato Infoscore durchgeführt."

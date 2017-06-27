@@ -95,4 +95,27 @@ class PaypalTest extends \PHPUnit_Framework_TestCase
         $result = $this->classToTest->getSuccessUrl();
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetCancelUrl()
+    {
+        $expected = 'http://testdomain.org';
+
+        $result = $this->classToTest->getCancelUrl();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetErrorUrl()
+    {
+        $expected = 'http://testdomain.org';
+
+        $result = $this->classToTest->getErrorUrl();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testFormatReferenceNumber()
+    {
+        $expected = 'prefix_000012345';
+        $result = $this->classToTest->formatReferenceNumber($expected);
+        $this->assertEquals($expected, $result);
+    }
 }

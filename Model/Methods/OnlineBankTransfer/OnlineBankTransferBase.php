@@ -44,6 +44,13 @@ class OnlineBankTransferBase extends \Payone\Core\Model\Methods\PayoneMethod
     const METHOD_OBT_SUBTYPE_PRZELEWY = 'P24';
 
     /**
+     * Info instructions block path
+     *
+     * @var string
+     */
+    protected $_infoBlockType = 'Payone\Core\Block\Info\Debit';
+
+    /**
      * Clearingtype for PAYONE authorization request
      *
      * @var string
