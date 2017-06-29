@@ -90,6 +90,14 @@ class Debit extends Base
      */
     public function sendRequest(PayoneMethod $oPayment, InfoInterface $oPaymentInfo, $dAmount)
     {
+        $aCreditmemo = $this->shopHelper->getRequestParameter('creditmemo');
+        ob_start();
+        print_r($aCreditmemo);
+        error_log(ob_get_contents());
+        ob_end_clean();
+
+        return false;
+
         $oOrder = $oPaymentInfo->getOrder();
         $iTxid = $oPaymentInfo->getParentTransactionId();
         if (strpos($iTxid, '-') !== false) {

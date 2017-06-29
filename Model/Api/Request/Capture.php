@@ -80,6 +80,9 @@ class Capture extends Base
      */
     public function sendRequest(PayoneMethod $oPayment, InfoInterface $oPaymentInfo, $dAmount)
     {
+        ///@TODO: Develop partial capture here
+        $aInvoice = $this->shopHelper->getRequestParameter('invoice');
+
         $oOrder = $oPaymentInfo->getOrder();
         $iTxid = $oPaymentInfo->getParentTransactionId();
 
