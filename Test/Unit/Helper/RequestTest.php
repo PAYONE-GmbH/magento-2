@@ -83,6 +83,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
         $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $shopHelper->method('getMagentoVersion')->willReturn($this->version);
+        $shopHelper->method('getLocale')->willReturn('de');
 
         $this->request = $this->objectManager->getObject(Request::class, [
             'context' => $context,
@@ -117,7 +118,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             'aid' => '54321',
             'portalid' => '0815',
             'encoding' => $this->encoding,
-            'language' => Locale::getPrimaryLanguage(Locale::getDefault()),
+            'language' => 'de',
             'checktype' => '1',
             'hash' => $this->request->getBankaccountCheckRequestHash(),
             'integrator_name' => 'Magento2',
