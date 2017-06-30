@@ -26,7 +26,6 @@
 
 namespace Payone\Core\Model\Api\Request;
 
-use Locale;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Model\Source\AddressCheckType;
 use Payone\Core\Model\Source\CreditratingCheckType;
@@ -111,7 +110,7 @@ class Consumerscore extends AddressRequest
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); //ID of PayOne Sub-Account
         $this->addParameter('addresschecktype', $this->getCombinedAdressCheckType());
         $this->addParameter('consumerscoretype', $this->shopHelper->getConfigParam('type', 'creditrating', 'payone_protect'));
-        $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
+        $this->addParameter('language', $this->shopHelper->getLocale());
 
         $this->addAddress($oAddress);
         if ($this->addressesChecked->wasAddressCheckedBefore($oAddress, true) === false) {

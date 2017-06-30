@@ -26,8 +26,6 @@
 
 namespace Payone\Core\Model\Api\Request;
 
-use Locale;
-
 /**
  * Class for the PAYONE Server API request "addresscheck"
  */
@@ -167,7 +165,7 @@ class Addresscheck extends AddressRequest
         $this->addParameter('mode', $this->shopHelper->getConfigParam('mode', 'address_check', 'payone_protect')); //Operationmode live or test
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); //ID of PayOne Sub-Account
         $this->addParameter('addresschecktype', $sType);
-        $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
+        $this->addParameter('language', $this->shopHelper->getLocale());
         $this->addAddress($oAddress);
 
         if ($this->addressesChecked->wasAddressCheckedBefore($oAddress) === false) {
