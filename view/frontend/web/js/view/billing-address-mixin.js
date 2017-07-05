@@ -37,7 +37,7 @@ define([
             return false;
         },
         updateAddress: function () {
-            if (!(this.selectedAddress() && this.selectedAddress() != this.newAddressOption) && !this.payoneCheckAddress()) {
+            if (!this.payoneCheckAddress() || !(this.selectedAddress() && this.selectedAddress() != this.newAddressOption)) {
                 return this._super();
             }
             
