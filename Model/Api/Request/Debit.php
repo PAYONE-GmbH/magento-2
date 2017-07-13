@@ -81,6 +81,39 @@ class Debit extends Base
     }
 
     /**
+     * Generate position list for invoice data transmission
+     *
+     * @param Order $oOrder
+     * @return array|false
+     */
+    protected function getInvoiceList(Order $oOrder)
+    {
+        $aCreditmemo = $this->shopHelper->getRequestParameter('creditmemo');
+
+        $aPositions = [];
+        $blFull = true;
+        if ($aCreditmemo && array_key_exists('items', $aCreditmemo) !== false) {
+            foreach ($oOrder->getAllItems() as $oItem) {
+                if (isset($aCreditmemo['items'][$oItem->getItemId()]) && $aCreditmemo['items'][$oItem->getItemId()]['qty'] > 0) {
+                    $aPositions[$oItem->getProductId()] = $aCreditmemo['items'][$oItem->getItemId()]['qty'];
+                    if ($aCreditmemo['items'][$oItem->getItemId()]['qty'] != $oItem->getQtyOrdered()) {
+                        $blFull = false;
+                    }
+                } else {
+                    $blFull = false;
+                }
+            }
+        }
+        if (isset($aCreditmemo['shipping_amount']) && $aCreditmemo['shipping_amount'] != 0) {
+            $aPositions['delcost'] = $aCreditmemo['shipping_amount'];
+        }
+        if ($blFull === true && (!isset($aCreditmemo['shipping_amount']) || $aCreditmemo['shipping_amount'] == $oOrder->getBaseShippingInclTax())) {
+            $aPositions = false; // false = full debit
+        }
+        return $aPositions;
+    }
+
+    /**
      * Send request "debit" to PAYONE server API
      *
      * @param  PayoneMethod  $oPayment
@@ -90,15 +123,10 @@ class Debit extends Base
      */
     public function sendRequest(PayoneMethod $oPayment, InfoInterface $oPaymentInfo, $dAmount)
     {
-        $aCreditmemo = $this->shopHelper->getRequestParameter('creditmemo');
-        ob_start();
-        print_r($aCreditmemo);
-        error_log(ob_get_contents());
-        ob_end_clean();
-
-        return false;
-
         $oOrder = $oPaymentInfo->getOrder();
+
+        $aPositions = $this->getInvoiceList($oOrder);
+
         $iTxid = $oPaymentInfo->getParentTransactionId();
         if (strpos($iTxid, '-') !== false) {
             $iTxid = substr($iTxid, 0, strpos($iTxid, '-')); // clean the txid from the magento-suffixes
@@ -122,15 +150,12 @@ class Debit extends Base
         }
 
         if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
-            $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
+            $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
         // Add debit bank data given - see oxid integration
-        // Add invoice data if needed - see oxid integration
 
         $aResponse = $this->send();
-
-        // Save which positions have been debited - see oxid integration
 
         return $aResponse;
     }

@@ -82,6 +82,7 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
         $item->method('getPriceInclTax')->willReturn('100');
         $item->method('getName')->willReturn('Test product');
         $item->method('getTaxPercent')->willReturn('19');
+        $item->method('getOrigData')->willReturn('1');
         return $item;
     }
 
@@ -110,7 +111,7 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
 
         $items = [$this->getItemMock()];
 
-        $expected = 100;
+        $expected = 110;
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getAllItems')->willReturn($items);
@@ -119,9 +120,9 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
 
-        $positions = ['12345' => ['amount' => '1']];
+        $positions = ['12345' => '1', 'delcost' => '10'];
 
-        $result = $this->classToTest->addProductInfo($authorization, $order, $positions);
+        $result = $this->classToTest->addProductInfo($authorization, $order, $positions, true);
         $this->assertEquals($expected, $result);
     }
 
@@ -140,7 +141,7 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
 
-        $positions = ['12345' => ['amount' => 1.7]];
+        $positions = ['12345' => 1.7];
 
         $this->setExpectedException(\InvalidArgumentException::class);
         $result = $this->classToTest->addProductInfo($authorization, $order, $positions);

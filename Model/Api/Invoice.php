@@ -126,13 +126,19 @@ class Invoice
             $this->oRequest->addParameter('invoiceappendix', $sInvoiceAppendix); // add appendix to request
         }
 
+        $iQtyInvoiced = 0;
         foreach ($oOrder->getAllItems() as $oItem) { // add invoice items for all order items
             if ($oItem->isDummy() === false) { // prevent variant-products of adding 2 items
                 $this->addProductItem($oItem, $aPositions); // add product invoice params to request
             }
+            $iQtyInvoiced += $oItem->getOrigData('qty_invoiced'); // get data pre-capture
         }
 
         $blFirstCapture = true; // Is first capture?
+        if ($iQtyInvoiced > 0) {
+            $blFirstCapture = false;
+        }
+
         if ($aPositions === false || $blFirstCapture === true || $blDebit === true) {
             $this->addShippingItem($oOrder, $aPositions, $blDebit); // add shipping invoice params to request
             $this->addDiscountItem($oOrder, $aPositions, $blDebit); // add discount invoice params to request
@@ -152,7 +158,7 @@ class Invoice
         if ($aPositions === false || array_key_exists($oItem->getProductId(), $aPositions) !== false) { // full or single-invoice?
             $dItemAmount = $oItem->getQtyOrdered(); // get ordered item amount
             if ($aPositions !== false && array_key_exists($oItem->getProductId(), $aPositions) !== false) { // product existing in single-invoice?
-                $dItemAmount = $aPositions[$oItem->getProductId()]['amount']; // use amount from single-invoice
+                $dItemAmount = $aPositions[$oItem->getProductId()]; // use amount from single-invoice
             }
             $iAmount = $this->convertItemAmount($dItemAmount);
             $this->addInvoicePosition($oItem->getSku(), $oItem->getPriceInclTax(), 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
@@ -173,13 +179,17 @@ class Invoice
     protected function addShippingItem(Order $oOrder, $aPositions, $blDebit)
     {
         // shipping costs existing or given for partial captures/debits?
-        if ($oOrder->getBaseShippingInclTax() != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('oxdelcost', $aPositions) !== false))) {
+        if ($oOrder->getBaseShippingInclTax() != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('delcost', $aPositions) !== false))) {
+            $dPrice = $oOrder->getBaseShippingInclTax();
+            if ($aPositions !== false && array_key_exists('delcost', $aPositions) !== false) { // product existing in single-invoice?
+                $dPrice = $aPositions['delcost'];
+            }
             $sDelDesc = __('Surcharge').' '.__('Shipping Costs'); // default description
-            if ($oOrder->getBaseShippingInclTax() < 0) { // negative shipping cost
+            if ($dPrice < 0) { // negative shipping cost
                 $sDelDesc = __('Deduction').' '.__('Shipping Costs'); // change item description to deduction
             }
             $sShippingSku = $this->toolkitHelper->getConfigParam('sku', 'costs', 'payone_misc'); // get configured shipping SKU
-            $this->addInvoicePosition($sShippingSku, $oOrder->getBaseShippingInclTax(), 'shipment', 1, $sDelDesc, $this->dTax); // add invoice params to request
+            $this->addInvoicePosition($sShippingSku, $dPrice, 'shipment', 1, $sDelDesc, $this->dTax); // add invoice params to request
         }
     }
 

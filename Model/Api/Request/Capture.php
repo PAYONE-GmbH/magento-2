@@ -29,6 +29,7 @@ namespace Payone\Core\Model\Api\Request;
 use Locale;
 use Magento\Payment\Model\InfoInterface;
 use Payone\Core\Model\Methods\PayoneMethod;
+use Magento\Sales\Model\Order;
 
 /**
  * Class for the PAYONE Server API request "capture"
@@ -71,6 +72,36 @@ class Capture extends Base
     }
 
     /**
+     * Generate position list for invoice data transmission
+     *
+     * @param Order $oOrder
+     * @return array|false
+     */
+    protected function getInvoiceList(Order $oOrder)
+    {
+        $aInvoice = $this->shopHelper->getRequestParameter('invoice');
+
+        $aPositions = [];
+        $blFull = true;
+        if ($aInvoice && array_key_exists('items', $aInvoice) !== false) {
+            foreach ($oOrder->getAllItems() as $oItem) {
+                if (isset($aInvoice['items'][$oItem->getItemId()]) && $aInvoice['items'][$oItem->getItemId()] > 0) {
+                    $aPositions[$oItem->getProductId()] = $aInvoice['items'][$oItem->getItemId()];
+                    if ($aInvoice['items'][$oItem->getItemId()] != $oItem->getQtyOrdered()) {
+                        $blFull = false;
+                    }
+                } else {
+                    $blFull = false;
+                }
+            }
+        }
+        if ($blFull === true) {
+            $aPositions = false;
+        }
+        return $aPositions;
+    }
+
+    /**
      * Send request "capture" to PAYONE server API
      *
      * @param  PayoneMethod  $oPayment
@@ -80,10 +111,10 @@ class Capture extends Base
      */
     public function sendRequest(PayoneMethod $oPayment, InfoInterface $oPaymentInfo, $dAmount)
     {
-        ///@TODO: Develop partial capture here
-        $aInvoice = $this->shopHelper->getRequestParameter('invoice');
-
         $oOrder = $oPaymentInfo->getOrder();
+
+        $aPositions = $this->getInvoiceList($oOrder);
+
         $iTxid = $oPaymentInfo->getParentTransactionId();
 
         $this->setOrderId($oOrder->getRealOrderId());
@@ -102,12 +133,10 @@ class Capture extends Base
         $this->addParameter('settleaccount', 'auto');
 
         if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
-            $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
+            $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions); // add invoice parameters
         }
 
         $aResponse = $this->send();
-
-        // partial capture still missing - see other PAYONE modules when implementing
 
         return $aResponse;
     }
