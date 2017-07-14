@@ -41,6 +41,51 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
+
+        <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
+            <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
+                <!-- ko if: requestBirthday() -->
+                <div class="field number required">
+                    <label data-bind="attr: {for: getCode() + '_birthday'}" class="label">
+                        <span><!-- ko i18n: 'Birthday'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[birthday]" class="input-text" value=""
+                               style="width:auto;margin-right:10px;"
+                               size="3" maxlength="2"
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_birthday',
+                                    title: $t('Day of birth'),
+                                    'data-container': getCode() + '-birthday'},
+                              value: birthday,
+                              valueUpdate: 'keyup' "/>
+                        <input type="text" name="payment[birthmonth]" class="input-text" value=""
+                               style="width:auto;margin-right:10px;"
+                               size="3" maxlength="2"
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_birthmonth',
+                                    title: $t('Month of birth'),
+                                    'data-container': getCode() + '-birthmonth'},
+                              value: birthmonth,
+                              valueUpdate: 'keyup' "/>
+                        <input type="text" name="payment[birthyear]" class="input-text" value=""
+                               style="width:auto;margin-right:10px;"
+                               size="8" maxlength="4"
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_birthyear',
+                                    title: $t('Year of birth'),
+                                    'data-container': getCode() + '-birthyear'},
+                              value: birthyear,
+                              valueUpdate: 'keyup' "/> <!-- ko i18n: '(DD.MM.YYYY)'--><!-- /ko -->
+                    </div>
+                </div>
+                <!--/ko-->
+            </fieldset>
+        </form>
+
         <p data-bind="html: getInstructions()"></p>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->

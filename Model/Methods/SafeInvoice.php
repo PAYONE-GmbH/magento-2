@@ -28,6 +28,7 @@ namespace Payone\Core\Model\Methods;
 
 use Payone\Core\Model\PayoneConfig;
 use Magento\Sales\Model\Order;
+use Magento\Framework\DataObject;
 
 /**
  * Model for safe invoice payment method
@@ -56,6 +57,54 @@ class SafeInvoice extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        return ['clearingsubtype' => 'POV'];
+        $aParams = ['clearingsubtype' => 'POV'];
+
+        $sDob = $this->getInfoInstance()->getAdditionalInformation('dob');
+        if ($sDob) {
+            $aParams['birthday'] = $sDob;
+        }
+        return $aParams;
+    }
+
+    /**
+     * Returns formatted birthday if possible
+     *
+     * @param  DataObject $data
+     * @return string|false
+     */
+    protected function getFormattedBirthday(DataObject $data)
+    {
+        $sFormattedDob = false;
+
+        $sBirthday = $this->toolkitHelper->getAdditionalDataEntry($data, 'birthday');
+        $sBirthmonth = $this->toolkitHelper->getAdditionalDataEntry($data, 'birthmonth');
+        $sBirthyear = $this->toolkitHelper->getAdditionalDataEntry($data, 'birthyear');
+        if ($sBirthday && $sBirthmonth && $sBirthyear) {
+            $sDob = $sBirthyear.'-'.$sBirthmonth.'-'.$sBirthday;
+            $iDobTime = strtotime($sDob);
+            if ($iDobTime !== false) {
+                $sFormattedDob = date('Ymd', $iDobTime);
+            }
+        }
+        return $sFormattedDob;
+    }
+
+    /**
+     * Add the checkout-form-data to the checkout session
+     *
+     * @param  DataObject $data
+     * @return $this
+     */
+    public function assignData(DataObject $data)
+    {
+        parent::assignData($data);
+
+        $sFormattedDob = $this->getFormattedBirthday($data);
+        if ($sFormattedDob !== false) {
+            $oInfoInstance = $this->getInfoInstance();
+            $oInfoInstance->setAdditionalInformation('dob', $sFormattedDob);
+        }
+
+        return $this;
     }
 }

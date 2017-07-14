@@ -29,6 +29,9 @@ namespace Payone\Core\Test\Unit\Model\Methods;
 use Payone\Core\Model\Methods\SafeInvoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
+use Magento\Payment\Model\InfoInterface;
+use Magento\Framework\DataObject;
+use Payone\Core\Helper\Toolkit;
 
 class SafeInvoiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,7 +49,16 @@ class SafeInvoiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $info = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
+        $info->method('getAdditionalInformation')->willReturn('19010101');
+
+        $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
+        $toolkitHelper->method('getAdditionalDataEntry')->willReturn('12');
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'toolkitHelper' => $toolkitHelper
+        ]);
+        $this->classToTest->setInfoInstance($info);
     }
 
     public function testGetPaymentSpecificParameters()
@@ -54,7 +66,15 @@ class SafeInvoiceTest extends \PHPUnit_Framework_TestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
-        $expected = ['clearingsubtype' => 'POV'];
+        $expected = ['clearingsubtype' => 'POV', 'birthday' => '19010101'];
         $this->assertEquals($expected, $result);
+    }
+
+    public function testAssignData()
+    {
+        $data = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->assignData($data);
+        $this->assertInstanceOf(ClassToTest::class, $result);
     }
 }

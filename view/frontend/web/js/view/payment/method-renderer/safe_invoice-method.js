@@ -23,15 +23,59 @@
  */
 define(
     [
-        'Magento_Checkout/js/view/payment/default'
+        'Magento_Checkout/js/view/payment/default',
+        'mage/translate'
     ],
-    function (Component) {
+    function (Component, $t) {
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Payone_Core/payment/safe_invoice'
+                template: 'Payone_Core/payment/safe_invoice',
+                birthday: '',
+                birthmonth: '',
+                birthyear: ''
             },
-
+            initObservable: function () {
+                this._super()
+                    .observe([
+                        'birthday',
+                        'birthmonth',
+                        'birthyear'
+                    ]);
+                return this;
+            },
+            requestBirthday: function () {
+                if (window.checkoutConfig.payment.payone.customerHasGivenBirthday == false) {
+                    return true;
+                }
+                return false;
+            },
+            isCustomerTooYoung: function () {
+                var sBirthDate = this.birthyear() + "-" + this.birthmonth() + "-" + this.birthday();
+                var oBirthDate = new Date(sBirthDate);
+                var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
+                if(oBirthDate < oMinDate) {
+                    return false;
+                }
+                return true;
+            },
+            validate: function () {
+                if (this.isCustomerTooYoung()) {
+                    this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
+                    return false;
+                }
+                return true;
+            },
+            getData: function () {
+                var parentReturn = this._super();
+                if (parentReturn.additional_data === null) {
+                    parentReturn.additional_data = {};
+                }
+                parentReturn.additional_data.birthday = this.birthday();
+                parentReturn.additional_data.birthmonth = this.birthmonth();
+                parentReturn.additional_data.birthyear = this.birthyear();
+                return parentReturn;
+            },
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
