@@ -34,7 +34,7 @@ use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Invoice;
 
-class AddPaypalExpressButtonTest extends \PHPUnit_Framework_TestCase
+class PaidTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ClassToTest
@@ -70,6 +70,15 @@ class AddPaypalExpressButtonTest extends \PHPUnit_Framework_TestCase
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
+
+        $result = $this->classToTest->execute($observer);
+        $this->assertNull($result);
+    }
+
+    public function testExecuteNoOrder()
+    {
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $observer->method('getOrder')->willReturn(null);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);

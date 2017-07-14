@@ -37,13 +37,17 @@ define([
             return false;
         },
         updateAddress: function () {
-            if (!(this.selectedAddress() && this.selectedAddress() != this.newAddressOption) && !this.payoneCheckAddress()) {
+            if (!this.payoneCheckAddress() || !(this.selectedAddress() && this.selectedAddress() != this.newAddressOption)) {
                 return this._super();
             }
             
             var addressChecked = this.source.get('payone_address_checked');
             if (!addressChecked) {
-                addresscheck(this.source.get(this.dataScopePrefix), true, this, 'saveNewAddress');
+                var address = this.source.get(this.dataScopePrefix);
+                if (!this.isAddressFormVisible()) {
+                    address = this.selectedAddress()
+                }
+                addresscheck(address, true, this, 'saveNewAddress');
             } else {
                 this.source.set('payone_address_checked', false);
                 return this._super();

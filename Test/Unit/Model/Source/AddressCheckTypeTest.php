@@ -45,6 +45,6 @@ class AddressCheckTypeTest extends \PHPUnit_Framework_TestCase
     public function testToOptionArray()
     {
         $result = $this->classToTest->toOptionArray();
-        $this->assertCount(3, $result);
+        $this->assertCount(5, $result);
     }
 }

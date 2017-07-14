@@ -68,6 +68,10 @@ class AddPaypalExpressButtons implements ObserverInterface
         /** @var \Magento\Catalog\Block\ShortcutButtons $shortcutButtons */
         $shortcutButtons = $observer->getEvent()->getContainer();
 
+        if ($shortcutButtons->getNameInLayout() === 'addtocart.shortcut.buttons') {
+            return;
+        }
+
         /** @var Shortcut $shortcut */
         $shortcut = $shortcutButtons->getLayout()->createBlock(
             'Payone\Core\Block\Paypal\ExpressButton',

@@ -191,7 +191,7 @@ class ReturnHandler
         $aResponse = $this->genericRequest->sendRequest($oQuote, $this->paypalPayment, $sWorkorderId);
 
         $oQuote = $this->handleQuote($oQuote, $aResponse);
-        $this->cartManagement->placeOrder($oQuote->getId());
-        $oQuote->setIsActive(false)->save();
+        #$this->cartManagement->placeOrder($oQuote->getId());
+        #$oQuote->setIsActive(false)->save();
     }
 }

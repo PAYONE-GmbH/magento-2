@@ -69,7 +69,10 @@ class IndexTest extends \PHPUnit_Framework_TestCase
 
         $raw = $this->getMockBuilder(Raw::class)->disableOriginalConstructor()->getMock();
 
-        $resultRawFactory = $this->getMockBuilder(RawFactory::class)->disableOriginalConstructor()->getMock();
+        $resultRawFactory = $this->getMockBuilder(RawFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $resultRawFactory->method('create')->willReturn($raw);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
