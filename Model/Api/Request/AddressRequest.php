@@ -28,7 +28,6 @@ namespace Payone\Core\Model\Api\Request;
 
 use Payone\Core\Helper\Country as CountryHelper;
 use Payone\Core\Model\PayoneConfig;
-use Locale;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Quote\Model\Quote\Address as QuoteAddress;
 use Magento\Sales\Model\Order\Address as OrderAddress;
@@ -129,7 +128,7 @@ abstract class AddressRequest extends Base
             $this->addParameter('birthday', str_replace('-', '', date('Ymd', strtotime($sDob)), $blIsUpdateUser));
         }
 
-        $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
+        $this->addParameter('language', $this->shopHelper->getLocale());
         if ($blIsUpdateUser || $oBilling->getVatId() != '') {
             $this->addParameter('vatid', $oBilling->getVatId(), $blIsUpdateUser);
         }

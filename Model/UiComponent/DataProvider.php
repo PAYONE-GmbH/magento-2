@@ -91,6 +91,10 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
             if ('*' == $paramValue) {
                 $paramValue = $this->request->getParam($paramName);
             }
+            if (substr($paramValue, 0, 1) == '0') { // already an increment_id
+                parent::prepareUpdateUrl();
+                return;
+            }
             if ($paramValue) {
                 $sIncrementId = $this->databaseHelper->getIncrementIdByOrderId($paramValue);
                 if ($sIncrementId) {

@@ -32,6 +32,19 @@ namespace Payone\Core\Helper\Connection;
 class Fsockopen
 {
     /**
+     * Determine if this connection type can be used on the given server
+     *
+     * @return bool
+     */
+    public function isApplicable()
+    {
+        if (function_exists("fsockopen")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get request header for fsockopen request
      *
      * @param  array $aParsedRequestUrl
@@ -80,6 +93,10 @@ class Fsockopen
      */
     public function sendSocketRequest($aParsedRequestUrl)
     {
+        if (!$this->isApplicable()) {
+            return ["errormessage" => "Cli-Curl is not applicable on this server."];
+        }
+
         $iErrorNumber = '';
         $sErrorString = '';
 

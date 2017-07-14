@@ -162,11 +162,7 @@ class Addresscheck implements AddresscheckInterface
      * @param  bool                 $blIsBillingAddress
      * @return AddresscheckResponse
      */
-    protected function handleAddresscheck(
-        AddresscheckResponse $oResponse,
-        AddressInterface $oAddress,
-        $blIsBillingAddress
-    ) {
+    protected function handleAddresscheck(AddresscheckResponse $oResponse, AddressInterface $oAddress, $blIsBillingAddress) {
         $aResponse = $this->addresscheck->getResponse($oAddress, $blIsBillingAddress);
         if (is_array($aResponse)) { // is a real response existing?
             $this->addScoreToSession($oAddress, $blIsBillingAddress);

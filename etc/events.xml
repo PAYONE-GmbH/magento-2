@@ -37,4 +37,10 @@
     <event name="controller_action_predispatch_checkout_index_index">
         <observer name="paypal_predispatch_checkout_index" instance="Payone\Core\Observer\PredispatchCheckoutIndex" />
     </event>
+    <event name="payone_core_transactionstatus_paid">
+        <observer name="payone_transactionstatus_paid" instance="Payone\Core\Observer\Transactionstatus\Paid" />
+    </event>
+    <event name="payone_core_transactionstatus_appointed">
+        <observer name="payone_transactionstatus_appointed" instance="Payone\Core\Observer\Transactionstatus\Appointed" />
+    </event>
 </config>

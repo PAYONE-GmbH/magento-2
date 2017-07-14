@@ -26,6 +26,8 @@
 
 namespace Payone\Core\Helper;
 
+use Locale;
+
 /**
  * Helper class for everything that has to do with the magento shop
  */
@@ -71,7 +73,7 @@ class Shop extends \Payone\Core\Helper\Base
      */
     public function getMagentoEdition()
     {
-        return "CE";
+        return $this->productMetadata->getEdition();
     }
 
     /**
@@ -82,5 +84,15 @@ class Shop extends \Payone\Core\Helper\Base
     public function getStoreId()
     {
         return $this->storeManager->getStore()->getId();
+    }
+
+    /**
+     * Return locale config of current store
+     *
+     * @return string
+     */
+    public function getLocale()
+    {
+        return Locale::getPrimaryLanguage($this->getConfigParam('code', 'locale', 'general'));
     }
 }

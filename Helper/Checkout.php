@@ -27,6 +27,7 @@
 namespace Payone\Core\Helper;
 
 use Magento\Quote\Model\Quote;
+use Magento\Checkout\Model\Type\Onepage;
 
 /**
  * Helper class for everything that has to do with the checkout
@@ -73,13 +74,13 @@ class Checkout extends \Payone\Core\Helper\Base
     public function getCurrentCheckoutMethod(Quote $oQuote)
     {
         if ($this->customerSession->isLoggedIn()) {
-            return \Magento\Checkout\Model\Type\Onepage::METHOD_CUSTOMER;
+            return Onepage::METHOD_CUSTOMER;
         }
         if (!$oQuote->getCheckoutMethod()) {
             if ($this->checkoutData->isAllowedGuestCheckout($oQuote)) {
-                $oQuote->setCheckoutMethod(\Magento\Checkout\Model\Type\Onepage::METHOD_GUEST);
+                $oQuote->setCheckoutMethod(Onepage::METHOD_GUEST);
             } else {
-                $oQuote->setCheckoutMethod(\Magento\Checkout\Model\Type\Onepage::METHOD_REGISTER);
+                $oQuote->setCheckoutMethod(Onepage::METHOD_REGISTER);
             }
         }
         return $oQuote->getCheckoutMethod();

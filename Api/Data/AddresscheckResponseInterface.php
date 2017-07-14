@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+
 namespace Payone\Core\Api\Data;
 
 interface AddresscheckResponseInterface

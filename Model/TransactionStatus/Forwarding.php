@@ -39,33 +39,21 @@ class Forwarding
     protected $configHelper;
 
     /**
+     * Magento 2 Curl library
+     *
+     * @var \Magento\Framework\HTTP\Client\Curl
+     */
+    protected $curl;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Config $configHelper
      */
-    public function __construct(\Payone\Core\Helper\Config $configHelper)
+    public function __construct(\Payone\Core\Helper\Config $configHelper, \Magento\Framework\HTTP\Client\Curl $curl)
     {
         $this->configHelper = $configHelper;
-    }
-
-    /**
-     * Add a parameter to a GET-request-string
-     *
-     * @param  string       $sKey
-     * @param  string|array $mValue
-     * @return string
-     */
-    protected function addParam($sKey, $mValue)
-    {
-        $sParams = '';
-        if (is_array($mValue)) {
-            foreach ($mValue as $sSubKey => $mSubValue) {
-                $sParams .= $this->addParam($sKey.'['.$sSubKey.']', $mSubValue);
-            }
-        } else {
-            $sParams .= "&".$sKey."=".urlencode($mValue);
-        }
-        return $sParams;
+        $this->curl = $curl;
     }
 
     /**
@@ -82,24 +70,10 @@ class Forwarding
             $iTimeout = 45;
         }
 
-        $sParams = '';
-        foreach ($aPostArray as $sKey => $mValue) {
-            $sParams .= $this->addParam($sKey, $mValue);
-        }
-
-        $sParams = substr($sParams, 1);
-
-        $oCurl = curl_init($sUrl);
-        curl_setopt($oCurl, CURLOPT_POST, 1);
-        curl_setopt($oCurl, CURLOPT_POSTFIELDS, $sParams);
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($oCurl, CURLOPT_TIMEOUT, $iTimeout);
-
-        curl_exec($oCurl);
-
-        curl_close($oCurl);
+        $this->curl->setTimeout($iTimeout);
+        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
+        $this->curl->post($sUrl, $aPostArray);
     }
 
     /**

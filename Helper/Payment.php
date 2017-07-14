@@ -140,7 +140,7 @@ class Payment extends \Payone\Core\Helper\Base
      */
     public function isMandateManagementActive()
     {
-        return $this->getConfigParam('sepa_mandate_enabled', PayoneConfig::METHOD_DEBIT, 'payone_payment');
+        return (bool)$this->getConfigParam('sepa_mandate_enabled', PayoneConfig::METHOD_DEBIT, 'payone_payment');
     }
 
     /**
@@ -150,7 +150,7 @@ class Payment extends \Payone\Core\Helper\Base
      */
     public function isMandateManagementDownloadActive()
     {
-        return $this->getConfigParam('sepa_mandate_download_enabled', PayoneConfig::METHOD_DEBIT, 'payone_payment');
+        return (bool)$this->getConfigParam('sepa_mandate_download_enabled', PayoneConfig::METHOD_DEBIT, 'payone_payment');
     }
 
     /**

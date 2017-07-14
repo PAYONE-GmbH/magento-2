@@ -122,9 +122,9 @@ class Toolkit extends \Payone\Core\Helper\Base
     /**
      * Replace substitutes in a given text with the given replacements
      *
-     * @param  string $sText
-     * @param  string $aSubstitutionArray
-     * @param  int    $iMaxLength
+     * @param  string   $sText
+     * @param  string   $aSubstitutionArray
+     * @param  int|bool $iMaxLength
      * @return string
      */
     public function handleSubstituteReplacement($sText, $aSubstitutionArray, $iMaxLength = false)
@@ -191,7 +191,7 @@ class Toolkit extends \Payone\Core\Helper\Base
      * @param  string $sString
      * @return bool
      */
-    public static function isUTF8($sString)
+    public function isUTF8($sString)
     {
         return $sString === mb_convert_encoding(mb_convert_encoding($sString, "UTF-32", "UTF-8"), "UTF-8", "UTF-32");
     }

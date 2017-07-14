@@ -32,6 +32,19 @@ namespace Payone\Core\Helper\Connection;
 class CurlCli
 {
     /**
+     * Determine if this connection type can be used on the given server
+     *
+     * @return bool
+     */
+    public function isApplicable()
+    {
+        if (file_exists("/usr/local/bin/curl") || file_exists("/usr/bin/curl")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Send cli Curl request
      *
      * @param  array $aParsedRequestUrl
@@ -39,6 +52,10 @@ class CurlCli
      */
     public function sendCurlCliRequest($aParsedRequestUrl)
     {
+        if (!$this->isApplicable()) {
+            return ["errormessage" => "Cli-Curl is not applicable on this server."];
+        }
+
         $sCurlPath = file_exists("/usr/local/bin/curl") ? "/usr/local/bin/curl" : "/usr/bin/curl";
 
         $aResponse = [];

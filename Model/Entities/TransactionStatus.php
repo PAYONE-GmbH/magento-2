@@ -35,6 +35,35 @@ use Payone\Core\Helper\Toolkit;
 class TransactionStatus extends AbstractModel
 {
     /**
+     * Toolkit helper object
+     *
+     * @var Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\Model\Context                        $context
+     * @param \Magento\Framework\Registry                             $registry
+     * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
+     * @param array                                                   $data
+     */
+    public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        $this->toolkitHelper = $toolkitHelper;
+    }
+
+    /**
      * Initialize resource model
      *
      * @return void
@@ -55,7 +84,7 @@ class TransactionStatus extends AbstractModel
         foreach ($aArray as $sKey => $mValue) {
             if (is_array($mValue)) {
                 $aArray[$sKey] = $this->formatArray($mValue);
-            } elseif (!Toolkit::isUTF8($mValue)) {
+            } elseif (!$this->toolkitHelper->isUTF8($mValue)) {
                 $aArray[$sKey] = utf8_encode($mValue);
             }
         }
@@ -74,7 +103,7 @@ class TransactionStatus extends AbstractModel
         $aReturn = [];
         $sRequest = $this->getData($sKey);
         if ($sRequest) {
-            if (Toolkit::isUTF8($sRequest)) {
+            if ($this->toolkitHelper->isUTF8($sRequest)) {
                 $sRequest = utf8_decode($sRequest); // needed for unserializing the array
             }
             $aRequest = unserialize($sRequest);

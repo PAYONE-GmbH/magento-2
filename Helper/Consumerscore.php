@@ -91,7 +91,7 @@ class Consumerscore extends \Payone\Core\Helper\Base
      * Store new value for creditrating sample counter in config
      *
      * @param  $iCount
-     * @return void
+     * @return true
      */
     public function setConsumerscoreSampleCounter($iCount)
     {
@@ -101,6 +101,7 @@ class Consumerscore extends \Payone\Core\Helper\Base
             ScopeInterface::SCOPE_STORE,
             $this->storeManager->getStore()->getId()
         );
+        return true;
     }
 
     /**
@@ -111,9 +112,6 @@ class Consumerscore extends \Payone\Core\Helper\Base
     public function incrementConsumerscoreSampleCounter()
     {
         $iCounter = $this->getConsumerscoreSampleCounter(); // get current sample counter
-        if (empty($iCounter) || !is_numeric($iCounter)) {
-            $iCounter = 0;
-        }
 
         $iCounter++;
         $this->setConsumerscoreSampleCounter($iCounter); // set current sample counter

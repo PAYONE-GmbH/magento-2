@@ -28,6 +28,7 @@ namespace Payone\Core\Controller\Paypal;
 
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Quote\Model\Quote;
+use Payone\Core\Model\PayoneConfig;
 
 /**
  * Controller for PayPal Express initiation
@@ -144,16 +145,18 @@ class Express extends \Magento\Framework\App\Action\Action
             }
 
             $this->paypalPayment->setIsPayPalExpress(true);
-            $aResponse = $this->genericRequest->sendRequest(
-                $oQuote,
-                $this->paypalPayment
-            );
+            $aResponse = $this->genericRequest->sendRequest($oQuote, $this->paypalPayment);
             if ($aResponse['status'] == 'ERROR') {
                 $this->messageManager->addError(__($aResponse['customermessage']));
 
                 $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
                 return $resultRedirect->setPath('checkout/cart');
             } elseif ($aResponse['status'] == 'REDIRECT') {
+                $oPayment = $oQuote->getPayment();
+                $oPayment->setMethod(PayoneConfig::METHOD_PAYPAL);
+                $oQuote->setPayment($oPayment);
+                $oQuote->save();
+
                 $this->checkoutSession->setPayoneWorkorderId($aResponse['workorderid']);
                 $this->_redirect($aResponse['redirecturl']);
             }

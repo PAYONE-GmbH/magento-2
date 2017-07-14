@@ -27,7 +27,6 @@
 namespace Payone\Core\Helper;
 
 use Payone\Core\Model\PayoneConfig;
-use Locale;
 
 /**
  * Helper class for everything that has to do with request
@@ -83,7 +82,7 @@ class Request extends \Payone\Core\Helper\Base
                 'aid' => $this->getConfigParam('aid'), // your AID
                 'portalid' => $this->getConfigParam('portalid'), // your PortalId
                 'encoding' => $this->environmentHelper->getEncoding(), // desired encoding
-                'language' => Locale::getPrimaryLanguage(Locale::getDefault()),
+                'language' => $this->shopHelper->getLocale(),
                 'checktype' => $this->getConfigParam('bankaccountcheck_type', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
                 'hash' => $this->getBankaccountCheckRequestHash(),
                 'integrator_name' => 'Magento2',
@@ -101,7 +100,7 @@ class Request extends \Payone\Core\Helper\Base
      *
      * @return string
      */
-    protected function getHostedIframeRequestCCHash()
+    public function getHostedIframeRequestCCHash()
     {
         $sHash = md5(
             $this->getConfigParam('aid').
@@ -122,7 +121,7 @@ class Request extends \Payone\Core\Helper\Base
      *
      * @return string
      */
-    protected function getBankaccountCheckRequestHash()
+    public function getBankaccountCheckRequestHash()
     {
         $sHash = md5(
             $this->getConfigParam('aid').

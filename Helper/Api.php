@@ -98,10 +98,10 @@ class Api extends \Payone\Core\Helper\Base
             return ["errormessage" => "Payone API request URL could not be parsed."];
         }
 
-        if (function_exists("curl_init")) {
+        if ($this->connCurlPhp->isApplicable()) {
             // php native curl exists so we gonna use it for requesting
             $aResponse = $this->connCurlPhp->sendCurlPhpRequest($aParsedRequestUrl);
-        } elseif (file_exists("/usr/local/bin/curl") || file_exists("/usr/bin/curl")) {
+        } elseif ($this->connCurlCli->isApplicable()) {
             // cli version of curl exists on server
             $aResponse = $this->connCurlCli->sendCurlCliRequest($aParsedRequestUrl);
         } else {
@@ -201,9 +201,8 @@ class Api extends \Payone\Core\Helper\Base
      */
     public function isInvoiceDataNeeded(PayoneMethod $oPayment)
     {
-        $sType = $this->getConfigParam('request_type'); // auth or preauth?
         $blInvoiceEnabled = (bool)$this->getConfigParam('transmit_enabled', 'invoicing'); // invoicing enabled?
-        if ($oPayment->needsProductInfo() || ($sType == PayoneConfig::REQUEST_TYPE_AUTHORIZATION && $blInvoiceEnabled)) {
+        if ($blInvoiceEnabled || $oPayment->needsProductInfo()) {
             return true; // invoice data needed
         }
         return false; // invoice data not needed

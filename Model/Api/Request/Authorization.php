@@ -136,7 +136,7 @@ class Authorization extends AddressRequest
         $oShipping = $oOrder->getShippingAddress(); // get shipping address from order
         if ($oShipping) {// shipping address existing?
             $this->addAddress($oShipping, true); // add regular shipping address
-        } elseif ($oPayment->getCode() == PayoneConfig::METHOD_PAYPAL && $this->shopHelper->getConfigParam('bill_as_del_address', PayoneConfig::METHOD_PAYPAL, 'payone_payment')) {
+        } elseif ($oPayment->getCode() == PayoneConfig::METHOD_PAYDIREKT || ($oPayment->getCode() == PayoneConfig::METHOD_PAYPAL && $this->shopHelper->getConfigParam('bill_as_del_address', PayoneConfig::METHOD_PAYPAL, 'payone_payment'))) {
             $this->addAddress($oOrder->getBillingAddress(), true); // add billing address as shipping address
         }
     }

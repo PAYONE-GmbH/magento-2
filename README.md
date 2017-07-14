@@ -1,76 +1,39 @@
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/PAYONE-GmbH/magento-2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/PAYONE-GmbH/magento-2/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/PAYONE-GmbH/magento-2/badges/build.png?b=master)](https://scrutinizer-ci.com/g/PAYONE-GmbH/magento-2/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/PAYONE-GmbH/magento-2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/PAYONE-GmbH/magento-2/?branch=master) [![Build Status](https://travis-ci.org/PAYONE-GmbH/magento-2.svg?branch=master)](https://travis-ci.org/PAYONE-GmbH/magento-2)
 
-##Installation
+# PAYMENT FOR YOUR MAGENTO 2-SHOP
+The PAYONE payment extension for MAGENTO 2 is massively reworked since the first version. The Github-Community was important for this development. Take a look at our last released version and send us commits or other feedback to take care for the best possible solution. Your feedback is very important to us to ensure a flawless code and rapid development.
 
-Go to your installation directory of Magento 2 and perform the following commands
-```
-composer require payone-gmbh/magento-2
-php bin/magento setup:upgrade
-php bin/magento setup:di:compile
-php bin/magento cache:clean
-```
+## Important functions for Magento 2
+*	Seamless integration of Magento's OnePage Checkout
+*	Very wide range of functions, simple and comprehensible supported by detailed online help
+*	Central configuration and management options on the Magento Admin Panel
+*	Export function of the configuration in XML format to facilitate the technical support
+*	Optional multi-partial capture for partial deliveries
+*	Supports simplified PCI DSS conformity in accordance with SAQ A
+*	Payment methods can be automatically hidden depending on the amount of the order and the credit rating of the customer
+*	Find all currently supported payment methods on www.payone.com/magento
 
-##Payment for your Magento Shop
+## Installation
+*	Go to your installation directory of Magento 2 and perform the following commands
+*	composer require payone-gmbh/magento-2
+*	php bin/magento setup:upgrade
+*	php bin/magento setup:di:compile
+*	php bin/magento cache:clean
 
-Are you looking for the ideal payment solution for your online shop?
-With PAYONE, you process all of your payment transactions through a single partner - even international payments. From the acceptance of new payment methods through risk management to payment flow control, you get payment processing and all financial services with just one contract. At the same time, you benefit from the highest security standards since PAYONE, as a PCI DSS certified and BaFin regulated payment institution, processes all payment services via insolvency-proof escrow accounts. One solution. All the possibilities.
+## More information
+*	More information about Magento on https://www.payone.de/magento
 
-##Payment with PAYONE convinces
+## Contact
+PAYONE GmbH<br>
+Fraunhoferstraße 2-4<br>
+24118 Kiel, Germany<br>
+Phone +49 431 25968-400 Fax +49 431 25968-1400<br>
+magento@payone.com<br>
+www.payone.com/magento
 
-
-###Simple & efficient
-One Partner. One contract. One payment.
-
-* All payment methods: 
-All relevant payment methods through a central plattform. National and international.
-
-* Integrated risk management: 
-Minimise your payment defaults and prevent fraud. For more profitability.
-
-* Automation of all payment processes: 
-Automation of the entire payment process chain from payment processing through to all financial services.
-
-* Genuine plug'n pay: 
-Quick and seamless integration into your e-commerce system thanks to software as a service solution.
-
-* Modular solutions: 
-Thanks to the modular structure, the payment solution can be flexibly tailored to your business model.
-
-* Proficient customer service: 
-Our experts are there for you and support you with your e-commerce project.
-
-* Payment competence: 
-More than 12 years of know-how. More than 3,000 customers. More than 100 dedicated employees. 
-
-
-
-##Important functions for Magento
-
-* Seamless integration into Magento's checkout, Credit Card details queried directly
-* Very wide range of functions, simple and comprehensible supported by detailed online help
-* Central configuration and management options on the Magento Admin Panel
-* Optional multi-partial capture for partial deliveries
-* Supports simplified PCI DSS conformity in accordance with SAQ A
-
-
-##Contact
-
-PAYONE GmbH
-Fraunhoferstraße 2-4
-24118 Kiel, Germany
-
-Phone +49 431 25968-400
-Fax +49 431 25968-1400
-
-magento@payone.de
-www.payone.de/magento
-
-##License
-
+## License
 See our License Agreement at: https://www.payone.de/fileadmin/downloads/sonstiges/PAYONE_Haftungs_und_Lizenzvereinbarung_Extensions.pdf
 
-##About PAYONE
-
-PAYONE, with headquarters in Kiel, is one of the leading payment services providers in Europe and ranks among the 50 fastest-growing technology companies in Germany. With its modular platform, PAYONE offers a software-as-a-service solution (SaaS) to companies for fully automated and comprehensive processing of all payments in e-commerce. The range of services includes the processing of payments from over 30 national and international payment methods with integrated risk management to minimise defaults in payment and fraud. Additional product modules make it possible to outsource the management of accounts receivable, the issuing of invoices as well as the processing of subscriptions. Standardised interfaces allow for a straightforward integration into existing IT and mobile system environments. Extensions can also be easily integrated into e-commerce systems.
-
-PAYONE is a company of the Saving Banks Finance Group and ist registered as a Payment Institute. Its clients include over 3,000 e-commerce companies from a variety of sectors and countries, including well-known companies such as Immonet, Globetrotter Ausr�stung, HD PLUS, Fujitsu, Zalando, Hawesko, Sony Music and Hallhuber. PAYONE has more than 100 employees.
+## About PAYONE
+PAYONE provides business solutions for comprehensive automated processing of all payments in e-commerce. The payment service provider is part of the Sparkassen-Finanzgruppe and authorised as a credit institution by the German Federal Financial Supervisory Authority. PAYONE's service portfolio includes acceptance and processing for national and international payment methods, plus all payment services. Standardised interfaces and extensions allow simple integration into existing e-commerce and IT-systems whilst maintaining strict security standards.<br>
+PAYONE ranks amongst the 50 fastest-growing technology companies in Germany and serves over 4.000 e-commerce clients from a variety of sectors and countries, including well-known companies such as Immonet, Globetrotter Ausrüstung, HD PLUS, Fujitsu, Zalando, Hawesko, Sony Music and Hallhuber. PAYONE employs a workforce of over 150.

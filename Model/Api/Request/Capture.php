@@ -26,7 +26,6 @@
 
 namespace Payone\Core\Model\Api\Request;
 
-use Locale;
 use Magento\Payment\Model\InfoInterface;
 use Payone\Core\Model\Methods\PayoneMethod;
 
@@ -79,7 +78,7 @@ class Capture extends Base
 
         $this->addParameter('request', 'capture'); // Request method
         $this->addParameter('mode', $oPayment->getOperationMode()); // PayOne Portal Operation Mode (live or test)
-        $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
+        $this->addParameter('language', $this->shopHelper->getLocale());
 
         // Total order sum in smallest currency unit
         $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);

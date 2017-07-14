@@ -1,0 +1,116 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2017 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+/**
+ * @var \Payone\Core\Block\Onepage\Review $block
+ */
+?>
+<div class="paypal-review view">
+    <div class="block block-order-details-view">
+        <div class="block-content">
+            <?php if ($block->getShippingAddress()): ?>
+                <div class="box box-order-shipping-method">
+                    <strong class="box-title"><span><?php echo $block->escapeHtml(__('Shipping Method')) ?></span></strong>
+                    <div class="box-content">
+                        <form method="post" id="shipping-method-form" action="<?php echo $block->escapeUrl($block->getShippingMethodSubmitUrl()); ?>" class="form">
+                            <?php if ($groups = $block->getShippingRateGroups()): ?>
+                                <?php $currentRate = $block->getCurrentShippingRate(); ?>
+                                <div class="field shipping required">
+                                    <select name="shipping_method" id="shipping-method" class="select">
+                                        <?php if (!$currentRate): ?>
+                                            <option value=""><?php echo $block->escapeHtml(__('Please select a shipping method...')); ?></option>
+                                        <?php endif; ?>
+                                        <?php foreach ($groups as $code => $rates): ?>
+                                            <optgroup label="<?php echo $block->escapeHtml($block->getCarrierName($code)); ?>">
+                                                <?php foreach ($rates as $rate): ?>
+                                                    <option value="<?php echo $block->escapeHtml($block->renderShippingRateValue($rate)); ?>"
+                                                        <?php echo($currentRate === $rate) ? ' selected="selected"' : ''; ?>>
+                                                        <?php /* @noEscape */ echo $block->renderShippingRateOption($rate); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </optgroup>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="actions-toolbar">
+                                    <div class="primary">
+                                        <button id="update-shipping-method-submit" type="submit" class="action update primary">
+                                            <span><?php echo $block->escapeHtml(__('Update Shipping Method')); ?></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <p><?php echo $block->escapeHtml(__('Sorry, no quotes are available for this order right now.')); ?></p>
+                            <?php endif; ?>
+                        </form>
+                    </div>
+                </div>
+                <div class="box box-order-shipping-address">
+                    <strong class="box-title"><span><?php echo $block->escapeHtml(__('Shipping Address')); ?></span></strong>
+                    <div class="box-content">
+                        <address><?php echo $block->escapeHtml($block->renderAddress($block->getShippingAddress()), ['br']);?></address>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <div class="box box-order-billing-address">
+                <strong class="box-title"><span><?php echo $block->escapeHtml(__('Payment Method')); ?></span></strong>
+                <div class="box-content">
+                    <?php echo $block->escapeHtml($block->getPaymentMethodTitle()); ?><br>
+                    <?php echo $block->escapeHtml($block->getEmail()); ?> <br>
+                    <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" alt="<?php echo $block->escapeHtml(__('Buy now with PayPal')); ?>"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="paypal-review-discount">
+        <?php echo $block->getChildHtml('paypal.additional.actions') ?>
+    </div>
+
+    <div class="paypal-review-items">
+        <div class="paypal-review-title">
+            <strong><?php echo $block->escapeHtml(__('Items in Your Shopping Cart')); ?></strong>
+            <a href="<?php echo $block->escapeUrl($block->getUrl('checkout/cart')); ?>" class="action edit">
+                <span><?php echo $block->escapeHtml(__('Edit Shopping Cart')); ?></span>
+            </a>
+        </div>
+
+        <?php echo $block->getChildHtml('details') ?>
+
+        <form method="post" id="order-review-form" action="<?php echo $block->escapeUrl($block->getPlaceOrderUrl()); ?>"
+              class="form order-review-form">
+            <?php echo $block->getChildHtml('agreements'); ?>
+            <div class="actions-toolbar" id="review-buttons-container">
+                <div class="primary">
+                    <input type="submit" id="review-button" class="action checkout primary" value="<?php echo $block->escapeHtml(__('Place Order')); ?>">
+                </div>
+                <span class="please-wait load indicator" id="review-please-wait" style="display: none;"
+                      data-text="<?php echo $block->escapeHtml(__('Submitting order information...')); ?>">
+                   <span><?php echo $block->escapeHtml(__('Submitting order information...')); ?></span>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>

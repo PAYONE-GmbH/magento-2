@@ -82,15 +82,17 @@ class Index extends Action
     public function execute()
     {
         $oResultRaw = $this->resultRawFactory->create();
-        try {
-            $sXml = $this->configExport->generateConfigExportXml();
-            if ($sXml !== false) {
-                $oResultRaw->setHeader("Content-Type", "text/xml; charset=\"utf8\"", true);
-                $oResultRaw->setHeader("Content-Disposition", "attachment; filename=\"payone_config_export".date('Y-m-d H-i-s')."_".md5($sXml).".xml\"", true);
-                $oResultRaw->setContents($sXml);
+        if ($this->_isAllowed()) {
+            try {
+                $sXml = $this->configExport->generateConfigExportXml();
+                if ($sXml !== false) {
+                    $oResultRaw->setHeader("Content-Type", "text/xml; charset=\"utf8\"", true);
+                    $oResultRaw->setHeader("Content-Disposition", "attachment; filename=\"payone_config_export" . date('Y-m-d H-i-s') . "_" . md5($sXml) . ".xml\"", true);
+                    $oResultRaw->setContents($sXml);
+                }
+            } catch (\Exception $e) {
+                $oResultRaw->setContents($e->getMessage());
             }
-        } catch (\Exception $e) {
-            $oResultRaw->setContents($e->getMessage());
         }
         return $oResultRaw;
     }

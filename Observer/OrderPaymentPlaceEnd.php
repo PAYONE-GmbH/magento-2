@@ -30,6 +30,7 @@ use Magento\Sales\Model\Order;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Payone\Core\Helper\Consumerscore;
+use Magento\Sales\Model\Order\Payment;
 
 /**
  * Event class to set the orderstatus to new and pending
@@ -61,6 +62,7 @@ class OrderPaymentPlaceEnd implements ObserverInterface
      */
     protected function handleOrderStatus(Observer $observer)
     {
+        /** @var Payment $oPayment */
         $oPayment = $observer->getEvent()->getPayment();
         $oPaymentInstance = $oPayment->getMethodInstance();
         if (stripos($oPaymentInstance->getCode(), 'payone') !== false) {

@@ -48,12 +48,14 @@ class Index extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $this->_view->loadLayout();
-        $this->_setActiveMenu('Payone_Core::payone_information');
-        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Payone information'));
-        $this->_addContent(
-            $this->_view->getLayout()->createBlock('Payone\Core\Block\Adminhtml\Information')
-        );
-        $this->_view->renderLayout();
+        if ($this->_isAllowed()) {
+            $this->_view->loadLayout();
+            $this->_setActiveMenu('Payone_Core::payone_information');
+            $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Payone information'));
+            $this->_addContent(
+                $this->_view->getLayout()->createBlock('Payone\Core\Block\Adminhtml\Information')
+            );
+            $this->_view->renderLayout();
+        }
     }
 }

@@ -62,7 +62,6 @@ abstract class Base
      */
     protected $sApiUrl = 'https://api.pay1.de/post-gateway/';
 
-
     /**
      * Map for custom parameters to be added $sParamName => $sConfigName
      *
@@ -269,33 +268,19 @@ abstract class Base
 
     /**
      * Send the previously prepared request, log request and response into the database and return the response
-     *
-     * @param  bool $blOnlyGetUrl
-     * @return array|string
+
+     * @return array
      */
-    protected function send($blOnlyGetUrl = false)
+    protected function send()
     {
         if (!$this->validateParameters()) {// all base parameters existing?
             return ["errormessage" => "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)"];
         }
-
-        ob_start();
-        print_r($this->getParameters());
-        error_log(ob_get_contents());
-        ob_end_clean();
-
+        
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
-        if ($blOnlyGetUrl === true) {// sometimes you only need the request url
-            return $sRequestUrl;
-        }
 
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
         $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
-
-        ob_start();
-        print_r($aResponse);
-        error_log(ob_get_contents());
-        ob_end_clean();
         
         return $aResponse;
     }
