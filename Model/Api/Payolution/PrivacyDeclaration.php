@@ -112,7 +112,7 @@ class PrivacyDeclaration
     protected function getRequestUrl($sCompany)
     {
         $sUrl  = $this->sAcceptanceBaseUrl.'?mId='.base64_encode($sCompany);
-        $sUrl .= '&lang='.Locale::getPrimaryLanguage(Locale::getDefault());
+        $sUrl .= '&lang='.$this->shopHelper->getLocale();
         // $sUrl .= '&territory='; territory is not known at the time of generation
         return $sUrl;
     }

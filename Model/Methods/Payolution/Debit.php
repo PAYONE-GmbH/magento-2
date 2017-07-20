@@ -27,6 +27,8 @@
 namespace Payone\Core\Model\Methods\Payolution;
 
 use Payone\Core\Model\PayoneConfig;
+use Magento\Sales\Model\Order;
+use Magento\Framework\DataObject;
 
 /**
  * Model for Payolution debit payment method
@@ -53,4 +55,39 @@ class Debit extends PayolutionBase
      * @var string|bool
      */
     protected $sLongSubType = 'Payolution-Debit';
+
+    /**
+     * Return parameters specific to this payment sub type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getSubTypeSpecificParameters(Order $oOrder)
+    {
+        $oInfoInstance = $this->getInfoInstance();
+
+        $aParams = [
+            'iban' => $oInfoInstance->getAdditionalInformation('iban'),
+            'bic' => $oInfoInstance->getAdditionalInformation('bic'),
+        ];
+
+        return $aParams;
+    }
+
+    /**
+     * Add the checkout-form-data to the checkout session
+     *
+     * @param  DataObject $data
+     * @return $this
+     */
+    public function assignData(DataObject $data)
+    {
+        parent::assignData($data);
+
+        $oInfoInstance = $this->getInfoInstance();
+        $oInfoInstance->setAdditionalInformation('iban', $this->toolkitHelper->getAdditionalDataEntry($data, 'iban'));
+        $oInfoInstance->setAdditionalInformation('bic', $this->toolkitHelper->getAdditionalDataEntry($data, 'bic'));
+
+        return $this;
+    }
 }

@@ -36,6 +36,7 @@ define(
                 birthday: '',
                 birthmonth: '',
                 birthyear: '',
+                tradeRegistryNumber: '',
                 agreement: false
             },
             initObservable: function () {
@@ -44,6 +45,7 @@ define(
                         'birthday',
                         'birthmonth',
                         'birthyear',
+                        'tradeRegistryNumber',
                         'agreement'
                     ]);
                 return this;
@@ -53,7 +55,13 @@ define(
                 if (parentReturn.additional_data === null) {
                     parentReturn.additional_data = {};
                 }
-                parentReturn.additional_data.dateofbirth = this.birthyear() + this.birthmonth() + this.birthday();
+                if (this.requestBirthday()) {
+                    parentReturn.additional_data.dateofbirth = this.birthyear() + this.birthmonth() + this.birthday();
+                }
+                if (this.isB2bMode()) {
+                    parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
+                    parentReturn.additional_data.b2bmode = true;
+                }
                 return parentReturn;
             },
 
@@ -70,18 +78,19 @@ define(
             getPrivacyDeclaration: function () {
                 return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.invoice;
             },
-
-            requestBirthday: function () {
+            isB2bMode: function () {
                 if (window.checkoutConfig.payment.payone.payolution.b2bMode.invoice == true &&
                     quote.billingAddress() != null &&
                     typeof quote.billingAddress().company != 'undefined' &&
                     quote.billingAddress().company != ''
                 ) {
-                    return false;
+                    return true;
                 }
-                return true;
+                return false;
             },
-
+            requestBirthday: function () {
+                return !this.isB2bMode();
+            },
             validate: function () {
                 if (this.agreement() == false) {
                     this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to payolution!')});

@@ -71,6 +71,7 @@ class PayolutionBase extends PayoneMethod
      */
     protected $aAssignKeys = [
         'telephone',
+        'b2bmode',
         'trade_registry_number',
         'dateofbirth'
     ];
@@ -81,6 +82,13 @@ class PayolutionBase extends PayoneMethod
      * @var \Payone\Core\Model\Api\Request\Genericpayment\PreCheck
      */
     protected $precheckRequest;
+
+    /**
+     * Info instructions block path
+     *
+     * @var string
+     */
+    protected $_infoBlockType = 'Payone\Core\Block\Info\ClearingReference';
 
     /**
      * Constructor
@@ -141,6 +149,18 @@ class PayolutionBase extends PayoneMethod
             'api_version' => '3.10',
             'workorderid' => $this->getInfoInstance()->getAdditionalInformation('workorderid'),
         ];
+
+        $sBirthday = $this->getInfoInstance()->getAdditionalInformation('dateofbirth');
+        if ($sBirthday) {
+            $aBaseParams['birthday'] = $sBirthday;
+        }
+
+        $blB2b = $this->getInfoInstance()->getAdditionalInformation('b2bmode');
+        if ($blB2b == '1') {
+            $aBaseParams['add_paydata[b2b]'] = 'yes';
+            $aBaseParams['add_paydata[company_trade_registry_number]'] = $this->getInfoInstance()->getAdditionalInformation('trade_registry_number');
+        }
+
         $aSubTypeParams = $this->getSubTypeSpecificParameters($oOrder);
         $aParams = array_merge($aBaseParams, $aSubTypeParams);
         return $aParams;
@@ -208,5 +228,16 @@ class PayolutionBase extends PayoneMethod
         }
 
         return $this;
+    }
+
+    /**
+     * Returns authorization-mode
+     * Barzahlen only supports preauthorization
+     *
+     * @return string
+     */
+    public function getAuthorizationMode()
+    {
+        return PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
     }
 }

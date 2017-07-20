@@ -23,29 +23,112 @@
  */
 define(
     [
-        'Payone_Core/js/view/payment/method-renderer/base'
+        'Payone_Core/js/view/payment/method-renderer/base',
+        'jquery',
+        'mage/translate',
+        'Magento_Checkout/js/model/quote'
     ],
-    function (Component) {
+    function (Component, $, $t, quote) {
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Payone_Core/payment/payolution_debit'
+                template: 'Payone_Core/payment/payolution_debit',
+                birthday: '',
+                birthmonth: '',
+                birthyear: '',
+                iban: '',
+                bic: '',
+                tradeRegistryNumber: '',
+                agreement: false,
+                mandate: false
             },
+            initObservable: function () {
+                this._super()
+                    .observe([
+                        'birthday',
+                        'birthmonth',
+                        'birthyear',
+                        'iban',
+                        'bic',
+                        'tradeRegistryNumber',
+                        'agreement',
+                        'mandate'
+                    ]);
+                return this;
+            },
+            getData: function () {
+                document.getElementById(this.getCode() + '_iban').value = this.getCleanedNumber(this.iban());
+                document.getElementById(this.getCode() + '_bic').value = this.getCleanedNumber(this.bic());
 
+                var parentReturn = this._super();
+                if (parentReturn.additional_data === null) {
+                    parentReturn.additional_data = {};
+                }
+                if (this.requestBirthday()) {
+                    parentReturn.additional_data.dateofbirth = this.birthyear() + this.birthmonth() + this.birthday();
+                }
+                if (this.isB2bMode()) {
+                    parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
+                    parentReturn.additional_data.b2bmode = true;
+                }
+                parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
+                parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
+                return parentReturn;
+            },
+            getCleanedNumber: function (sDirtyNumber) {
+                var sCleanedNumber = '';
+                var sTmpChar;
+                for (var i = 0; i < sDirtyNumber.length; i++) {
+                    sTmpChar = sDirtyNumber.charAt(i);
+                    if (sTmpChar != ' ' && (!isNaN(sTmpChar) || /^[A-Za-z]/.test(sTmpChar))) {
+                        if (/^[a-z]/.test(sTmpChar)) {
+                            sTmpChar = sTmpChar.toUpperCase();
+                        }
+                        sCleanedNumber = sCleanedNumber + sTmpChar;
+                    }
+                }
+                return sCleanedNumber;
+            },
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
-
-            requestBirthday: function () {
-                if (window.checkoutConfig.payment.payone.payolution.b2bMode.debit == true &&
+            displayPayolutionOverlay: function () {
+                $('#' + this.getCode() + '_overlay').show();
+            },
+            removePayolutionOverlay: function () {
+                $('#' + this.getCode() + '_overlay').hide();
+            },
+            getPrivacyDeclaration: function () {
+                return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.invoice;
+            },
+            isB2bMode: function () {
+                if (window.checkoutConfig.payment.payone.payolution.b2bMode.invoice == true &&
                     quote.billingAddress() != null &&
                     typeof quote.billingAddress().company != 'undefined' &&
-                    quote.billingAddress().company == ''
+                    quote.billingAddress().company != ''
                 ) {
                     return true;
                 }
                 return false;
+            },
+            requestBirthday: function () {
+                return !this.isB2bMode();
+            },
+            validate: function () {
+                if (this.agreement() == false) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to payolution!')});
+                    return false;
+                }
+                if (this.mandate() == false) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the SEPA mandate!')});
+                    return false;
+                }
+                if (this.requestBirthday() == true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
+                    this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
+                    return false;
+                }
+                return true;
             }
         });
     }

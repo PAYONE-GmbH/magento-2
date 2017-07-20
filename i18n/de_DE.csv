@@ -1035,5 +1035,9 @@
 "acceptance","Einwilligung"
 "PAYONE_PAYOLUTION_API_ERRORMESSAGE","Diese Zahlung konnte nicht durchgeführt werden. Dies kann unterschiedliche Gruende haben, wie etwa fehlerhafte Eingabedaten, eine unbekannte Adresse, oder ein vorübergehendes technisches Problem. Bitte überprüfen Sie die angegebenen Daten, oder wählen Sie ein anderes Zahlungsmittel."
 "Please confirm the transmission of the necessary data to payolution!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an payolution!"
+"Please confirm the SEPA mandate!","Bitte bestätigen Sie das SEPA-Mandat!"
 
+"Hereby I grant the","Hiermit erteile ich das"
+"SEPA-Mandate","SEPA-Lastschriftmandat"
 "Close window","Fenster schließen"
+"Company trade registry number","Handelsregisternummer"

@@ -60,7 +60,11 @@ class PreCheck extends Base
         $this->addParameter('currency', $oOrder->getOrderCurrencyCode());
 
         $this->addParameter('email', $oOrder->getCustomerEmail());
-        $this->addParameter('birthday', $oPayment->getInfoInstance()->getAdditionalInformation('dateofbirth'));
+
+        $sBirthday = $oPayment->getInfoInstance()->getAdditionalInformation('dateofbirth');
+        if ($sBirthday) {
+            $this->addParameter('birthday', $oPayment->getInfoInstance()->getAdditionalInformation('dateofbirth'));
+        }
 
         $oBilling = $oOrder->getBillingAddress();
         $this->addAddress($oBilling);
