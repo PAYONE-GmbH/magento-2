@@ -28,12 +28,18 @@ namespace Payone\Core\Model\Api\Request;
 
 use Magento\Payment\Model\InfoInterface;
 use Payone\Core\Model\Methods\PayoneMethod;
+use Magento\Sales\Model\Order;
 
 /**
  * Class for the PAYONE Server API request "capture"
  */
 class Capture extends Base
 {
+    /**
+     * @var \Payone\Core\Model\Api\Invoice $invoiceGenerator
+     */
+    protected $invoiceGenerator;
+
     /**
      * PAYONE database helper
      *
@@ -48,6 +54,7 @@ class Capture extends Base
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
      */
     public function __construct(
@@ -55,10 +62,42 @@ class Capture extends Base
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+        \Payone\Core\Model\Api\Invoice $invoiceGenerator,
         \Payone\Core\Helper\Database $databaseHelper
     ) {
         parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
+    }
+
+    /**
+     * Generate position list for invoice data transmission
+     *
+     * @param Order $oOrder
+     * @return array|false
+     */
+    protected function getInvoiceList(Order $oOrder)
+    {
+        $aInvoice = $this->shopHelper->getRequestParameter('invoice');
+
+        $aPositions = [];
+        $blFull = true;
+        if ($aInvoice && array_key_exists('items', $aInvoice) !== false) {
+            foreach ($oOrder->getAllItems() as $oItem) {
+                if (isset($aInvoice['items'][$oItem->getItemId()]) && $aInvoice['items'][$oItem->getItemId()] > 0) {
+                    $aPositions[$oItem->getProductId()] = $aInvoice['items'][$oItem->getItemId()];
+                    if ($aInvoice['items'][$oItem->getItemId()] != $oItem->getQtyOrdered()) {
+                        $blFull = false;
+                    }
+                } else {
+                    $blFull = false;
+                }
+            }
+        }
+        if ($blFull === true) {
+            $aPositions = false;
+        }
+        return $aPositions;
     }
 
     /**
@@ -72,6 +111,9 @@ class Capture extends Base
     public function sendRequest(PayoneMethod $oPayment, InfoInterface $oPaymentInfo, $dAmount)
     {
         $oOrder = $oPaymentInfo->getOrder();
+
+        $aPositions = $this->getInvoiceList($oOrder);
+
         $iTxid = $oPaymentInfo->getParentTransactionId();
 
         $this->setOrderId($oOrder->getRealOrderId());
@@ -89,9 +131,11 @@ class Capture extends Base
 
         $this->addParameter('settleaccount', 'auto');
 
-        $aResponse = $this->send();
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
+            $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions); // add invoice parameters
+        }
 
-        // partial capture still missing - see other PAYONE modules when implementing
+        $aResponse = $this->send();
 
         return $aResponse;
     }

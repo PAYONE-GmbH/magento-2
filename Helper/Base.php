@@ -93,4 +93,15 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return $aValues;
     }
+
+    /**
+     * Get parameter from the request
+     *
+     * @param  string $sParameter
+     * @return mixed
+     */
+    public function getRequestParameter($sParameter)
+    {
+        return $this->_getRequest()->getParam($sParameter);
+    }
 }
