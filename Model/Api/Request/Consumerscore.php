@@ -115,7 +115,7 @@ class Consumerscore extends AddressRequest
         $this->addAddress($oAddress);
         if ($this->addressesChecked->wasAddressCheckedBefore($oAddress, true) === false) {
             $aResponse = $this->send();
-            if ($aResponse['score'] === 'U') {
+            if (isset($aResponse['score']) && $aResponse['score'] === 'U') {
                 $unknownDefault = $this->shopHelper->getConfigParam('unknown_value', 'creditrating', 'payone_protect');
                 $aResponse['score'] = empty($unknownDefault) ? 'G' : $unknownDefault;
             }
