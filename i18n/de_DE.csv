@@ -1013,6 +1013,9 @@
 
 "SEPA debit note","SEPA-Lastschrift"
 
+"Send invoice email","Rechnungs-Email senden"
+"For authorization only, where the invoice is created automatically when the PAID status arrives.","Nur für Authorisierungs-Modus, wo die Rechnung automatisch generiert wird, wenn der PAID Status eintrifft."
+
 "NONE","Keine Prüfung der Adressdaten durchgeführt (NONE)"
 "PPB","Vor- & Nachname bekannt (PPB)"
 "PHB","Nachname bekannt (PHB)"

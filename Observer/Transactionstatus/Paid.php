@@ -28,8 +28,11 @@ namespace Payone\Core\Observer\Transactionstatus;
 
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
+use Payone\Core\Helper\Base;
 
 /**
  * Event observer for Transactionstatus paid
@@ -39,18 +42,36 @@ class Paid implements ObserverInterface
     /**
      * InvoiceService object
      *
-     * @var \Magento\Sales\Model\Service\InvoiceService
+     * @var InvoiceService
      */
     protected $invoiceService;
 
     /**
+     * InvoiceSender object
+     *
+     * @var InvoiceSender
+     */
+    protected $invoiceSender;
+
+    /**
+     * Payone base helper
+     *
+     * @var Base
+     */
+    protected $baseHelper;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Sales\Model\Service\InvoiceService $invoiceService
+     * @param InvoiceService $invoiceService
+     * @param InvoiceSender  $invoiceSender
+     * @param Base           $baseHelper
      */
-    public function __construct(\Magento\Sales\Model\Service\InvoiceService $invoiceService)
+    public function __construct(InvoiceService $invoiceService, InvoiceSender $invoiceSender, Base $baseHelper)
     {
         $this->invoiceService = $invoiceService;
+        $this->invoiceSender = $invoiceSender;
+        $this->baseHelper = $baseHelper;
     }
 
     /**
@@ -76,5 +97,9 @@ class Paid implements ObserverInterface
         $oInvoice->save();
 
         $oOrder->save();
+
+        if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
+            $this->invoiceSender->send($oInvoice);
+        }
     }
 }

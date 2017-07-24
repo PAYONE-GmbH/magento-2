@@ -26,7 +26,6 @@
 
 namespace Payone\Core\Helper;
 
-use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Sales\Model\Order as SalesOrder;
 
@@ -40,7 +39,7 @@ use Magento\Sales\Model\Order as SalesOrder;
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-class Api extends \Payone\Core\Helper\Base
+class Api extends Base
 {
     /**
      * PAYONE connection curl php
