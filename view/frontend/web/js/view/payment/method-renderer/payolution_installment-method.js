@@ -23,29 +23,97 @@
  */
 define(
     [
-        'Payone_Core/js/view/payment/method-renderer/base'
+        'Payone_Core/js/view/payment/method-renderer/base',
+        'jquery',
+        'mage/translate',
+        'Magento_Checkout/js/model/quote'
     ],
-    function (Component) {
+    function (Component, $, $t, quote) {
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Payone_Core/payment/payolution_installment'
+                template: 'Payone_Core/payment/payolution_installment',
+                birthday: '',
+                birthmonth: '',
+                birthyear: '',
+                tradeRegistryNumber: '',
+                agreement: false
+            },
+            initObservable: function () {
+                this._super()
+                    .observe([
+                        'birthday',
+                        'birthmonth',
+                        'birthyear',
+                        'tradeRegistryNumber',
+                        'agreement'
+                    ]);
+                return this;
+            },
+            getData: function () {
+                var parentReturn = this._super();
+                if (parentReturn.additional_data === null) {
+                    parentReturn.additional_data = {};
+                }
+                if (this.requestBirthday()) {
+                    parentReturn.additional_data.dateofbirth = this.birthyear() + this.birthmonth() + this.birthday();
+                }
+                if (this.isB2bMode()) {
+                    parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
+                    parentReturn.additional_data.b2bmode = true;
+                }
+                return parentReturn;
             },
 
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
-
-            requestBirthday: function () {
-                if (window.checkoutConfig.payment.payone.payolution.b2bMode.installment == true &&
+            displayPayolutionOverlay: function () {
+                $('#' + this.getCode() + '_overlay').show();
+            },
+            removePayolutionOverlay: function () {
+                $('#' + this.getCode() + '_overlay').hide();
+            },
+            getPrivacyDeclaration: function () {
+                return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.invoice;
+            },
+            isB2bMode: function () {
+                if (window.checkoutConfig.payment.payone.payolution.b2bMode.invoice == true &&
                     quote.billingAddress() != null &&
                     typeof quote.billingAddress().company != 'undefined' &&
-                    quote.billingAddress().company == ''
+                    quote.billingAddress().company != ''
                 ) {
                     return true;
                 }
                 return false;
+            },
+            requestBirthday: function () {
+                return !this.isB2bMode();
+            },
+            validate: function () {
+                if (this.agreement() == false) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to payolution!')});
+                    return false;
+                }
+                if (this.requestBirthday() == true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
+                    this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
+                    return false;
+                }
+                return true;
+            },
+            handleInstallment: function () {
+                var self = this;
+                var param = "a=b";
+                $.ajax({
+                    showLoader: true,
+                    url: "http://192.168.2.194/json.php",
+                    data: param,
+                    type: "POST",
+                    dataType: 'json'
+                }).done(function (data) {
+                    $('#' + self.getCode() + '_installmentplan').html(data.body);
+                });
             }
         });
     }

@@ -39,7 +39,3 @@
 "PUG","Postal address details correct but building unknown (PUG)"
 "PUZ","Person has moved, address not corrected (PUZ)"
 "UKN","Unknown return values are mapped to UKN (UKN)"
-
-"PAYOLUTION_ACCEPTANCE_1","I agree with the transmission of the necessary data to payolution which is needed for processing the purchase, the identity-check and the credit rating."
-"PAYOLUTION_ACCEPTANCE_2","My"
-"PAYOLUTION_ACCEPTANCE_3"," can be revoked for the future any time."
