@@ -26,9 +26,13 @@ define(
         'Payone_Core/js/view/payment/method-renderer/base',
         'jquery',
         'mage/translate',
-        'Magento_Checkout/js/model/quote'
+        'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/model/url-builder',
+        'Payone_Core/js/action/installmentplan',
+        'Magento_Checkout/js/model/payment/additional-validators',
+        'prototype'
     ],
-    function (Component, $, $t, quote) {
+    function (Component, $, $t, quote, urlBuilder, installmentplan, additionalValidators) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -37,6 +41,8 @@ define(
                 birthmonth: '',
                 birthyear: '',
                 tradeRegistryNumber: '',
+                iban: '',
+                bic: '',
                 agreement: false
             },
             initObservable: function () {
@@ -46,11 +52,16 @@ define(
                         'birthmonth',
                         'birthyear',
                         'tradeRegistryNumber',
+                        'iban',
+                        'bic',
                         'agreement'
                     ]);
                 return this;
             },
             getData: function () {
+                document.getElementById(this.getCode() + '_iban').value = this.getCleanedNumber(this.iban());
+                document.getElementById(this.getCode() + '_bic').value = this.getCleanedNumber(this.bic());
+
                 var parentReturn = this._super();
                 if (parentReturn.additional_data === null) {
                     parentReturn.additional_data = {};
@@ -62,9 +73,25 @@ define(
                     parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
                     parentReturn.additional_data.b2bmode = true;
                 }
+                parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
+                parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
+                parentReturn.additional_data.duration = $('#' + this.getCode() + '_duration').val();
                 return parentReturn;
             },
-
+            getCleanedNumber: function (sDirtyNumber) {
+                var sCleanedNumber = '';
+                var sTmpChar;
+                for (var i = 0; i < sDirtyNumber.length; i++) {
+                    sTmpChar = sDirtyNumber.charAt(i);
+                    if (sTmpChar != ' ' && (!isNaN(sTmpChar) || /^[A-Za-z]/.test(sTmpChar))) {
+                        if (/^[a-z]/.test(sTmpChar)) {
+                            sTmpChar = sTmpChar.toUpperCase();
+                        }
+                        sCleanedNumber = sCleanedNumber + sTmpChar;
+                    }
+                }
+                return sCleanedNumber;
+            },
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
@@ -100,21 +127,43 @@ define(
                     this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
                     return false;
                 }
+                if ($('#' + this.getCode() + '_duration').val() != '' && this.iban() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
+                    return false;
+                }
+                if ($('#' + this.getCode() + '_duration').val() != '' &&this.bic() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid BIC.')});
+                    return false;
+                }
                 return true;
             },
             handleInstallment: function () {
-                var self = this;
-                var param = "a=b";
-                $.ajax({
-                    showLoader: true,
-                    url: "http://192.168.2.194/json.php",
-                    data: param,
-                    type: "POST",
-                    dataType: 'json'
-                }).done(function (data) {
-                    $('#' + self.getCode() + '_installmentplan').html(data.body);
-                });
+                if (this.validate() && additionalValidators.validate()) {
+                    window.payolution_installment = this;
+                    installmentplan(this, '19601212');
+                }
+            },
+            switchInstallmentPlan: function (sKey, sCode, iInstallments) {
+                $$('.payolution_installmentplans').each(
+                    function (e) {
+                        e.hide();
+                    }
+                );
+                $$('.payolution_installment_overview').each(
+                    function (e) {
+                        e.hide();
+                    }
+                );
+
+                $('#payolution_installmentplan_' + sKey).show();
+                $('#payolution_installment_overview_' + sKey).show();
+                $('#' + sCode + '_duration').val(iInstallments);
             }
         });
     }
 );
+
+function switchInstallmentPlan(sKey, sCode, iInstallments)
+{
+    window.payolution_installment.switchInstallmentPlan(sKey, sCode, iInstallments);
+}

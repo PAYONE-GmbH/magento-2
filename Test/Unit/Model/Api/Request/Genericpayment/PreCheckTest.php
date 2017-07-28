@@ -27,13 +27,16 @@
 namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Magento\Quote\Model\Quote;
-use Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress as ClassToTest;
+use Payone\Core\Model\Api\Request\Genericpayment\PreCheck as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
+use Magento\Quote\Model\Quote\Address;
+use Magento\Payment\Model\Info;
+use Payone\Core\Helper\Environment;
 
-class CaptureTest extends \PHPUnit_Framework_TestCase
+class PreCheckTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ClassToTest
@@ -57,51 +60,53 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
 
+        $environmentHelper = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
+        $environmentHelper->method('getRemoteIp')->willReturn('127.0.0.1');
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'shopHelper' => $this->shopHelper,
-            'apiHelper' => $this->apiHelper
+            'apiHelper' => $this->apiHelper,
+            'environmentHelper' => $environmentHelper
         ]);
     }
 
     public function testSendRequest()
     {
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getCountryId')->willReturn('NL');
+        $address->method('getFirstname')->willReturn('Paul');
+        $address->method('getLastname')->willReturn('Payer');
+        $address->method('getTelephone')->willReturn(false);
+        $address->method('getCompany')->willReturn('Testcompany Ltd.');
+        $address->method('getStreet')->willReturn(['Teststr. 5', '1st floor']);
+        $address->method('getPostcode')->willReturn('12345');
+        $address->method('getCity')->willReturn('Berlin');
+        $address->method('getRegionCode')->willReturn('Berlin');
+
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('getGrandTotal')->willReturn(123);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->method('getBillingAddress')->willReturn($address);
+
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->getMock();
+        $paymentInfo->method('getAdditionalInformation')->willReturn('value');
 
         $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
-        $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
-        $payment->method('errorurl')->willReturn('http://testdomain.com');
-        $payment->method('backurl')->willReturn('http://testdomain.com');
+        $payment->method('getClearingtype')->willReturn('fnc');
+        $payment->method('getSubType')->willReturn('PYD');
+        $payment->method('getLongSubType')->willReturn('Payolution-Debit');
+        $payment->method('getData')->willReturn(true);
+        $payment->method('getInfoInstance')->willReturn($paymentInfo);
+        $payment->method('hasCustomConfig')->willReturn(true);
+        $payment->method('getCustomConfigParam')->willReturn(false);
 
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
+        $this->shopHelper->method('getLocale')->willReturn('de');
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($quote, $payment, 100);
-        $this->assertEquals($response, $result);
-    }
-
-    public function testSendRequestNoWorkorderId()
-    {
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('getGrandTotal')->willReturn(123);
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
-
-        $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getOperationMode')->willReturn('test');
-        $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
-        $payment->method('errorurl')->willReturn('http://testdomain.com');
-        $payment->method('backurl')->willReturn('http://testdomain.com');
-
-        $this->shopHelper->method('getConfigParam')->willReturn('12345');
-
-        $response = ['status' => 'APPROVED'];
-        $this->apiHelper->method('sendApiRequest')->willReturn($response);
-
-        $result = $this->classToTest->sendRequest($quote, $payment);
+        $result = $this->classToTest->sendRequest($payment, $quote, 100, 'birthday');
         $this->assertEquals($response, $result);
     }
 }

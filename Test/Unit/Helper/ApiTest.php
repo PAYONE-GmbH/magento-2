@@ -160,8 +160,14 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             'request' => $request,
             'mode' => $mode,
             'mandate_identification' => $mandate,
+            'add_paydata[installment_duration]' => '5'
         ];
-        $aResponse = ['txid' => $txid];
+        $aResponse = [
+            'txid' => $txid,
+            'clearing_reference' => 'REFERENCE',
+            'add_paydata[clearing_reference]' => 'REFERENCE',
+            'add_paydata[workorderid]' => 'WORKORDER'
+        ];
 
         $this->api->addPayoneOrderData($oOrder, $aRequest, $aResponse);
         $this->assertEquals($reference, $oOrder->getPayoneRefnr());
@@ -180,6 +186,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             'reference' => 'ref123',
             'request' => 'authorization',
             'mode' => 'live',
+            'workorderid' => 'WORKORDER',
         ];
         $aResponse = ['mandate_identification' => $mandate];
 

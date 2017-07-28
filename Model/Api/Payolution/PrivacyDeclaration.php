@@ -94,27 +94,25 @@ class PrivacyDeclaration
     protected $shopHelper;
 
     /**
+     * Magento curl object
+     *
+     * @var \Magento\Framework\HTTP\Client\Curl
+     */
+    protected $curl;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop $shopHelper
      */
-    public function __construct(\Payone\Core\Helper\Shop $shopHelper)
-    {
+    public function __construct(
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\HTTP\Client\Curl $curl
+    ) {
         $this->shopHelper = $shopHelper;
-    }
-
-    /**
-     * Generate request url
-     *
-     * @param  string $sCompany
-     * @return string
-     */
-    protected function getRequestUrl($sCompany)
-    {
-        $sUrl  = $this->sAcceptanceBaseUrl.'?mId='.base64_encode($sCompany);
-        $sUrl .= '&lang='.$this->shopHelper->getLocale();
-        // $sUrl .= '&territory='; territory is not known at the time of generation
-        return $sUrl;
+        $this->curl = $curl;
+        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
     }
 
     /**
@@ -125,8 +123,9 @@ class PrivacyDeclaration
      */
     protected function getAcceptanceTextFromPayolution($sCompany)
     {
-        $sUrl = $this->getRequestUrl($sCompany);
-        $sContent = file_get_contents($sUrl);
+        $sUrl = $this->sAcceptanceBaseUrl.'?mId='.base64_encode($sCompany).'&lang='.$this->shopHelper->getLocale();
+        $this->curl->get($sUrl);
+        $sContent = $this->curl->getBody();
         $sPage = false;
         if (!empty($sContent) && stripos($sContent, 'payolution') !== false && stripos($sContent, '<header>') !== false) {
             //Parse content from HTML-body-tag from the given page
@@ -134,7 +133,7 @@ class PrivacyDeclaration
             preg_match($sRegex, $sContent, $aMatches);
             if (is_array($aMatches) && count($aMatches) > 1) {
                 $sPage = $aMatches[1];
-                //remove everything bevore the <header> tag ( a window.close link which wouldn't work in the given context )
+                //remove everything before the <header> tag ( a window.close link which wouldn't work in the given context )
                 $sPage = substr($sPage, stripos($sPage, '<header>'));
             }
         }

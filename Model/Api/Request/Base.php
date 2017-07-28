@@ -277,24 +277,10 @@ abstract class Base
             return ["errormessage" => "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)"];
         }
 
-        $aParams = $this->getParameters();
-        ksort($aParams);
-        ob_start();
-        print_r($aParams);
-        error_log(ob_get_contents());
-        ob_end_clean();
-        
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
-
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
         $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
 
-        ksort($aResponse);
-        ob_start();
-        print_r($aResponse);
-        error_log(ob_get_contents());
-        ob_end_clean();
-        
         return $aResponse;
     }
 }

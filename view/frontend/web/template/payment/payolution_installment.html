@@ -43,8 +43,8 @@
         </div>
 
         <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
+            <input type="hidden" name="payment[duration]" value="" data-bind="attr: {id: getCode() + '_duration'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
-                <div class="field" data-bind="attr: {id: getCode() + '_installmentplan'}"></div>
                 <!-- ko if: isB2bMode() -->
                 <div class="field number required">
                     <label data-bind="attr: {for: getCode() + '_tradeRegistryNumber'}" class="label">
@@ -63,7 +63,7 @@
                 </div>
                 <!--/ko-->
                 <!-- ko if: requestBirthday() -->
-                <div class="field number required">
+                <div class="field number required" data-bind="attr: {id: getCode() + '_birthday_field'}">
                     <label data-bind="attr: {for: getCode() + '_birthday'}" class="label">
                         <span><!-- ko i18n: 'Birthday'--><!-- /ko --></span>
                     </label>
@@ -102,6 +102,31 @@
                 </div>
                 <!--/ko-->
 
+                <div class="field" data-bind="attr: {id: getCode() + '_installmentplan'}" style="display:none;"></div>
+
+                <div class="field number required" style="display:none;" data-bind="attr: {id: getCode() + '_iban_field'}">
+                    <label data-bind="attr: {for: getCode() + '_iban'}" class="label">
+                        <span><!-- ko i18n: 'IBAN'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[iban]" class="input-text" value=""
+                               data-bind="attr: {autocomplete: off, id: getCode() + '_iban', title: $t('IBAN'), 'data-container': getCode() + '-iban'},
+                                          value: iban,
+                                          valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <div class="field number required" style="display:none;" data-bind="attr: {id: getCode() + '_bic_field'}">
+                    <label data-bind="attr: {for: getCode() + '_bic'}" class="label">
+                        <span><!-- ko i18n: 'BIC'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[bic]" class="input-text" value=""
+                               data-bind="attr: {autocomplete: off, id: getCode() + '_bic', title: $t('BIC'), 'data-container': getCode() + '-bic'},
+                                          value: bic,
+                                          valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+
                 <input type="checkbox" data-bind="attr: {id: getCode() + '_additional_fields_agreement_checkbox'}, checked: agreement" />
                 <label data-bind="attr: {for: getCode() + '_additional_fields_agreement_checkbox'}" class="required" style="float:none;">
                     <!-- ko i18n: 'I agree with the transmission of the necessary data to payolution which is needed for processing the purchase, the identity-check and the credit rating.'--><!-- /ko --><br>
@@ -119,7 +144,7 @@
         </form>
 
         <p data-bind="html: getInstructions()"></p>
-        <div class="checkout-agreements-block">
+        <div class="checkout-agreements-block" data-bind="attr: {id: getCode() + '_agreements'}">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->

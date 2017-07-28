@@ -92,7 +92,10 @@ class ReviewTest extends \PHPUnit_Framework_TestCase
         $assignment = $this->getMockBuilder(ShippingAssignment::class)->disableOriginalConstructor()->getMock();
         $assignment->method('getShipping')->willReturn($shipping);
 
-        $cartExtension = $this->getMockBuilder(CartExtension::class)->disableOriginalConstructor()->getMock();
+        $cartExtension = $this->getMockBuilder(CartExtension::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getShippingAssignments'])
+            ->getMock();
         $cartExtension->method('getShippingAssignments')->willReturn([$assignment]);
 
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();

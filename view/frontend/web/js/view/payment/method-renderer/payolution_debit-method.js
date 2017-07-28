@@ -128,6 +128,14 @@ define(
                     this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
                     return false;
                 }
+                if (this.iban() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
+                    return false;
+                }
+                if (this.bic() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid BIC.')});
+                    return false;
+                }
                 return true;
             }
         });

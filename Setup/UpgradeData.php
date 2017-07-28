@@ -79,6 +79,14 @@ class UpgradeData implements UpgradeDataInterface
                 ['type' => 'varchar', 'length' => 64, 'default' => '']
             );
         }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_installment_duration')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_installment_duration',
+                ['type' => 'integer', 'length' => null]
+            );
+        }
         $setup->endSetup();
     }
 

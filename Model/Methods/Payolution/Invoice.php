@@ -27,6 +27,7 @@
 namespace Payone\Core\Model\Methods\Payolution;
 
 use Payone\Core\Model\PayoneConfig;
+use Magento\Payment\Model\InfoInterface;
 
 /**
  * Model for Payolution invoice payment method
@@ -53,4 +54,28 @@ class Invoice extends PayolutionBase
      * @var string|bool
      */
     protected $sLongSubType = 'Payolution-Invoicing';
+
+    /**
+     * Returns authorization-mode
+     * Barzahlen only supports preauthorization
+     *
+     * @return string
+     */
+    public function getAuthorizationMode()
+    {
+        return PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
+    }
+
+    /**
+     * Authorize payment abstract method
+     *
+     * @param  InfoInterface $payment
+     * @param  float         $amount
+     * @return $this
+     */
+    public function authorize(InfoInterface $payment, $amount)
+    {
+        $this->sendPayonePreCheck($amount);
+        return parent::authorize($payment, $amount);
+    }
 }

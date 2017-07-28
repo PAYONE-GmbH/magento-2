@@ -27,13 +27,14 @@
 namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Magento\Quote\Model\Quote;
-use Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress as ClassToTest;
+use Payone\Core\Model\Api\Request\Genericpayment\Calculation as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
+use Magento\Quote\Model\Quote\Address;
 
-class CaptureTest extends \PHPUnit_Framework_TestCase
+class CalculationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ClassToTest
@@ -65,43 +66,25 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
 
     public function testSendRequest()
     {
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getCountryId')->willReturn('DE');
+        $address->method('getLastname')->willReturn('Payer');
+
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('getGrandTotal')->willReturn(123);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+        $quote->method('getBillingAddress')->willReturn($address);
 
         $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
-        $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
-        $payment->method('errorurl')->willReturn('http://testdomain.com');
-        $payment->method('backurl')->willReturn('http://testdomain.com');
+        $payment->method('getClearingtype')->willReturn('fnc');
+        $payment->method('getSubType')->willReturn('PYD');
 
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($quote, $payment, 100);
-        $this->assertEquals($response, $result);
-    }
-
-    public function testSendRequestNoWorkorderId()
-    {
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('getGrandTotal')->willReturn(123);
-        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
-
-        $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getOperationMode')->willReturn('test');
-        $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
-        $payment->method('errorurl')->willReturn('http://testdomain.com');
-        $payment->method('backurl')->willReturn('http://testdomain.com');
-
-        $this->shopHelper->method('getConfigParam')->willReturn('12345');
-
-        $response = ['status' => 'APPROVED'];
-        $this->apiHelper->method('sendApiRequest')->willReturn($response);
-
-        $result = $this->classToTest->sendRequest($quote, $payment);
+        $result = $this->classToTest->sendRequest($payment, $quote, 100);
         $this->assertEquals($response, $result);
     }
 }

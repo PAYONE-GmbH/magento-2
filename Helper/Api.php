@@ -189,6 +189,11 @@ class Api extends Base
         }
         if (isset($aResponse['add_paydata[workorderid]'])) {
             $oOrder->setPayoneWorkorderId($aResponse['add_paydata[workorderid]']);
+        } elseif (isset($aRequest['workorderid'])) {
+            $oOrder->setPayoneWorkorderId($aRequest['workorderid']);
+        }
+        if (isset($aRequest['add_paydata[installment_duration]'])) {
+            $oOrder->setPayoneInstallmentDuration($aRequest['add_paydata[installment_duration]']);
         }
     }
 

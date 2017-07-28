@@ -107,29 +107,20 @@
                     </label>
                     <div class="control">
                         <input type="text" name="payment[iban]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_iban',
-                                    title: $t('IBAN'),
-                                    'data-container': getCode() + '-iban'},
-                              value: iban,
-                              valueUpdate: 'keyup' "/>
+                               data-bind="attr: {autocomplete: off, id: getCode() + '_iban', title: $t('IBAN'), 'data-container': getCode() + '-iban'},
+                                          value: iban,
+                                          valueUpdate: 'keyup' "/>
                     </div>
                 </div>
-
                 <div class="field number required">
                     <label data-bind="attr: {for: getCode() + '_bic'}" class="label">
                         <span><!-- ko i18n: 'BIC'--><!-- /ko --></span>
                     </label>
                     <div class="control">
                         <input type="text" name="payment[bic]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_bic',
-                                    title: $t('BIC'),
-                                    'data-container': getCode() + '-bic'},
-                              value: bic,
-                              valueUpdate: 'keyup' "/>
+                               data-bind="attr: {autocomplete: off, id: getCode() + '_bic', title: $t('BIC'), 'data-container': getCode() + '-bic'},
+                                          value: bic,
+                                          valueUpdate: 'keyup' "/>
                     </div>
                 </div>
 

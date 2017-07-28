@@ -27,8 +27,7 @@
 namespace Payone\Core\Model\Api\Request\Genericpayment;
 
 use Payone\Core\Model\Methods\PayoneMethod;
-use Magento\Sales\Model\Order;
-use Locale;
+use Magento\Quote\Model\Quote;
 
 /**
  * Class for the PAYONE Server API request genericpayment - "pre_check"
@@ -39,11 +38,12 @@ class PreCheck extends Base
      * Send request to PAYONE Server-API with request-type "genericpayment" and action "pre_check"
      *
      * @param  PayoneMethod $oPayment payment object
-     * @param  Order        $oOrder   order object
+     * @param  Quote        $oQuote   order object
      * @param  float        $dAmount  order sum amount
+     * @param  string|bool  $sBirthday
      * @return array
      */
-    public function sendRequest(PayoneMethod $oPayment, Order $oOrder, $dAmount)
+    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote, $dAmount, $sBirthday = false)
     {
         $this->addParameter('request', 'genericpayment');
         $this->addParameter('add_paydata[action]', 'pre_check');
@@ -57,16 +57,19 @@ class PreCheck extends Base
         $this->addParameter('add_paydata[payment_type]', $oPayment->getLongSubType());
 
         $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
-        $this->addParameter('currency', $oOrder->getOrderCurrencyCode());
+        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
 
-        $this->addParameter('email', $oOrder->getCustomerEmail());
+        $this->addParameter('email', $oQuote->getCustomerEmail());
 
-        $sBirthday = $oPayment->getInfoInstance()->getAdditionalInformation('dateofbirth');
+        #if ($sBirthday === false && $oPayment->getData('info_instance')) {
+        if ($oPayment->getData('info_instance')) {
+            $sBirthday = $oPayment->getInfoInstance()->getAdditionalInformation('dateofbirth');
+        }
         if ($sBirthday) {
-            $this->addParameter('birthday', $oPayment->getInfoInstance()->getAdditionalInformation('dateofbirth'));
+            $this->addParameter('birthday', $sBirthday);
         }
 
-        $oBilling = $oOrder->getBillingAddress();
+        $oBilling = $oQuote->getBillingAddress();
         $this->addAddress($oBilling);
 
         if ($oBilling->getCountryId() == 'NL') {
@@ -77,17 +80,19 @@ class PreCheck extends Base
             $this->addParameter('telephone', $sTelephone);
         }
 
-        $this->addParameter('language', Locale::getPrimaryLanguage(Locale::getDefault()));
+        $this->addParameter('language', $this->shopHelper->getLocale());
 
         $sIp = $this->environmentHelper->getRemoteIp(); // get remote IP
         if ($sIp != '') {// is IP not empty
             $this->addParameter('ip', $sIp); // add IP address to the request
         }
 
-        $sTradeRegistryNumber = $oPayment->getInfoInstance()->getAdditionalInformation('trade_registry_number');
-        if ($sTradeRegistryNumber) {
-            $this->addParameter('add_paydata[b2b]', 'yes');
-            $this->addParameter('add_paydata[company_trade_registry_number]', $sTradeRegistryNumber);
+        if ($oPayment->getData('info_instance')) {
+            $sTradeRegistryNumber = $oPayment->getInfoInstance()->getAdditionalInformation('trade_registry_number');
+            if ($sTradeRegistryNumber) {
+                $this->addParameter('add_paydata[b2b]', 'yes');
+                $this->addParameter('add_paydata[company_trade_registry_number]', $sTradeRegistryNumber);
+            }
         }
 
         if ($oPayment->hasCustomConfig()) {// if payment type doesnt use the global settings

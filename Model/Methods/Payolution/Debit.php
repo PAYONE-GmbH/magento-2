@@ -29,6 +29,7 @@ namespace Payone\Core\Model\Methods\Payolution;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Sales\Model\Order;
 use Magento\Framework\DataObject;
+use Magento\Payment\Model\InfoInterface;
 
 /**
  * Model for Payolution debit payment method
@@ -89,5 +90,29 @@ class Debit extends PayolutionBase
         $oInfoInstance->setAdditionalInformation('bic', $this->toolkitHelper->getAdditionalDataEntry($data, 'bic'));
 
         return $this;
+    }
+
+    /**
+     * Returns authorization-mode
+     * Barzahlen only supports preauthorization
+     *
+     * @return string
+     */
+    public function getAuthorizationMode()
+    {
+        return PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
+    }
+
+    /**
+     * Authorize payment abstract method
+     *
+     * @param  InfoInterface $payment
+     * @param  float         $amount
+     * @return $this
+     */
+    public function authorize(InfoInterface $payment, $amount)
+    {
+        $this->sendPayonePreCheck($amount);
+        return parent::authorize($payment, $amount);
     }
 }

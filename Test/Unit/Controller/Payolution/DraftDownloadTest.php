@@ -26,16 +26,17 @@
 
 namespace Payone\Core\Test\Unit\Controller\Mandate;
 
-use Payone\Core\Controller\Mandate\Download as ClassToTest;
+use Payone\Core\Controller\Payolution\DraftDownload as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Checkout\Model\Session;
-use Payone\Core\Model\Api\Request\Getfile;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\Controller\Result\Raw;
-use Magento\Sales\Model\Order;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\HTTP\Client\Curl;
 
-class DownloadTest extends \PHPUnit_Framework_TestCase
+class DraftDownloadTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ClassToTest
@@ -47,21 +48,21 @@ class DownloadTest extends \PHPUnit_Framework_TestCase
      */
     private $objectManager;
 
+    /**
+     * @var Payment|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $paymentHelper;
+
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
 
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
-        $order->method('getPayoneMandateId')->willReturn('12345');
+        $aLinks = ['5' => 'http://drafturl.com'];
 
-        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
-        $checkoutSession->method('getLastRealOrder')->willReturn($order);
+        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->setMethods(['getInstallmentDraftLinks'])->getMock();
+        $checkoutSession->method('getInstallmentDraftLinks')->willReturn($aLinks);
 
-        $getfileRequest = $this->getMockBuilder(Getfile::class)->disableOriginalConstructor()->getMock();
-        $getfileRequest->method('sendRequest')->willReturn('Mandate Test Text');
-
-        $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
-        $paymentHelper->method('isMandateManagementDownloadActive')->willReturn(true);
+        $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
 
         $rawResponse = $this->getMockBuilder(Raw::class)->disableOriginalConstructor()->getMock();
         $resultRawFactory = $this->getMockBuilder(RawFactory::class)
@@ -70,16 +71,36 @@ class DownloadTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $resultRawFactory->method('create')->willReturn($rawResponse);
 
+        $request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
+        $request->method('getParam')->willReturn('5');
+
+        $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $context->method('getRequest')->willReturn($request);
+
+        $curl = $this->getMockBuilder(Curl::class)->disableOriginalConstructor()->getMock();
+        $curl->method('getBody')->willReturn('Pdf Data');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'context' => $context,
             'checkoutSession' => $checkoutSession,
-            'getfileRequest' => $getfileRequest,
-            'paymentHelper' => $paymentHelper,
-            'resultRawFactory' => $resultRawFactory
+            'paymentHelper' => $this->paymentHelper,
+            'resultRawFactory' => $resultRawFactory,
+            'curl' => $curl
         ]);
     }
 
     public function testExecute()
     {
+        $this->paymentHelper->method('getConfigParam')->willReturn('value');
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Raw::class, $result);
+    }
+
+    public function testExecuteNoDraft()
+    {
+        $this->paymentHelper->method('getConfigParam')->willReturn(false);
+
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Raw::class, $result);
     }

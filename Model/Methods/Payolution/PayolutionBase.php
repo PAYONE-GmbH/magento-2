@@ -167,36 +167,24 @@ class PayolutionBase extends PayoneMethod
     }
 
     /**
-     * Authorize payment abstract method
+     * Method to trigger the Payone genericpayment request pre-check
      *
-     * @param  InfoInterface $payment
-     * @param  float         $amount
-     * @return void
+     * @param  float       $dAmount
+     * @param  string|bool $sBirthday
+     * @return array
      * @throws LocalizedException
      */
-    protected function sendPayonePreCheck(InfoInterface $payment, $amount)
+    public function sendPayonePreCheck($dAmount)
     {
-        $oOrder = $payment->getOrder();
-        $aResponse = $this->precheckRequest->sendRequest($this, $oOrder, $amount);
+        $oQuote = $this->checkoutSession->getQuote();
+        $aResponse = $this->precheckRequest->sendRequest($this, $oQuote, $dAmount);
 
         if ($aResponse['status'] == 'ERROR') {// request returned an error
             throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
         } elseif ($aResponse['status'] == 'OK') {
             $this->getInfoInstance()->setAdditionalInformation('workorderid', $aResponse['workorderid']);
         }
-    }
-
-    /**
-     * Authorize payment abstract method
-     *
-     * @param  InfoInterface $payment
-     * @param  float         $amount
-     * @return $this
-     */
-    public function authorize(InfoInterface $payment, $amount)
-    {
-        $this->sendPayonePreCheck($payment, $amount);
-        return parent::authorize($payment, $amount);
+        return $aResponse;
     }
 
     /**
@@ -228,16 +216,5 @@ class PayolutionBase extends PayoneMethod
         }
 
         return $this;
-    }
-
-    /**
-     * Returns authorization-mode
-     * Barzahlen only supports preauthorization
-     *
-     * @return string
-     */
-    public function getAuthorizationMode()
-    {
-        return PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
     }
 }

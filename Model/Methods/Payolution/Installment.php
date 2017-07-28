@@ -27,6 +27,8 @@
 namespace Payone\Core\Model\Methods\Payolution;
 
 use Payone\Core\Model\PayoneConfig;
+use Magento\Sales\Model\Order;
+use Magento\Framework\DataObject;
 
 /**
  * Model for Payolution installment payment method
@@ -53,4 +55,53 @@ class Installment extends PayolutionBase
      * @var string|bool
      */
     protected $sLongSubType = 'Payolution-Installment';
+
+    /**
+     * Returns authorization-mode
+     * Barzahlen only supports preauthorization
+     *
+     * @return string
+     */
+    public function getAuthorizationMode()
+    {
+        return PayoneConfig::REQUEST_TYPE_AUTHORIZATION;
+    }
+
+    /**
+     * Return parameters specific to this payment sub type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getSubTypeSpecificParameters(Order $oOrder)
+    {
+        $oInfoInstance = $this->getInfoInstance();
+
+        $aParams = [
+            'iban' => $oInfoInstance->getAdditionalInformation('iban'),
+            'bic' => $oInfoInstance->getAdditionalInformation('bic'),
+            'add_paydata[installment_duration]' => $oInfoInstance->getAdditionalInformation('duration'),
+            'workorderid' => $this->checkoutSession->getInstallmentWorkorderId()
+        ];
+
+        return $aParams;
+    }
+
+    /**
+     * Add the checkout-form-data to the checkout session
+     *
+     * @param  DataObject $data
+     * @return $this
+     */
+    public function assignData(DataObject $data)
+    {
+        parent::assignData($data);
+
+        $oInfoInstance = $this->getInfoInstance();
+        $oInfoInstance->setAdditionalInformation('iban', $this->toolkitHelper->getAdditionalDataEntry($data, 'iban'));
+        $oInfoInstance->setAdditionalInformation('bic', $this->toolkitHelper->getAdditionalDataEntry($data, 'bic'));
+        $oInfoInstance->setAdditionalInformation('duration', $this->toolkitHelper->getAdditionalDataEntry($data, 'duration'));
+
+        return $this;
+    }
 }
