@@ -1030,7 +1030,7 @@
 
 "Show IBAN/BIC fields","IBAN/BIC Felder anzeigen"
 
-"You have to be at least 18 years old to use this payment type!","Sie müssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu k&ouml;nnen!"
+"You have to be at least 18 years old to use this payment type!","Sie müssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu können!"
 
 "I agree with the transmission of the necessary data to payolution which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an payolution bin ich einverstanden."
 "My","Meine"
@@ -1043,7 +1043,7 @@
 "Birthday","Geburtstag"
 "Accountholder","Kontoinhaber"
 "Check installment availability","Ratenkauf Verfügbarkeit prüfen"
-"Please select your desired number of installments","Bitte w&auml;hlen Sie Ihre gew&uuml;nschte Anzahl von Raten"
+"Please select your desired number of installments","Bitte wählen Sie Ihre gewünschte Anzahl von Raten"
 "Overview","&Uuml;bersicht"
 "No. of installments:","Anzahl von Raten:"
 "Financingamount:","Finanzierungsbetrag:"

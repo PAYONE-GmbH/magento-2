@@ -153,16 +153,17 @@ class InstallmentPlan implements InstallmentPlanInterface
      * cant handle this with its fake type system!
      *
      * @param  string $birthday
+     * @param  string $email
      * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
      */
-    public function getInstallmentPlan($birthday)
+    public function getInstallmentPlan($birthday, $email = false)
     {
         $oResponse = $this->responseFactory->create();
         $oResponse->setData('success', false); // set success to false as default, set to true later if true
 
         $oQuote = $this->checkoutSession->getQuote();
 
-        $aResponsePreCheck = $this->precheck->sendRequest($this->payment, $oQuote, $oQuote->getBaseGrandTotal(), $birthday);
+        $aResponsePreCheck = $this->precheck->sendRequest($this->payment, $oQuote, $oQuote->getBaseGrandTotal(), $birthday, $email);
         $aResponseCalculation = false;
         if (isset($aResponsePreCheck['status']) && $aResponsePreCheck['status'] == 'OK') {
             $aResponseCalculation = $this->calculation->sendRequest($this->payment, $oQuote, $oQuote->getBaseGrandTotal());

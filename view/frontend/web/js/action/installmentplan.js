@@ -37,16 +37,17 @@ define([
     return function (baseView, birthday) {
         var serviceUrl;
 
+        var request = {
+            birthday: birthday
+        };
         if (!customer.isLoggedIn()) {
             serviceUrl = urlBuilder.createUrl('/guest-carts/:quoteId/payone-installmentPlan', {
                 quoteId: quote.getQuoteId()
             });
+            request.email = quote.guestEmail;
         } else {
             serviceUrl = urlBuilder.createUrl('/carts/mine/payone-installmentPlan', {});
         }
-        var request = {
-            birthday: birthday
-        };
 
         fullScreenLoader.startLoader();
 

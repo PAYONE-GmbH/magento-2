@@ -119,12 +119,16 @@ define(
                 return !this.isB2bMode();
             },
             validate: function () {
+                if (this.requestBirthday() == true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
+                    this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
+                    return false;
+                }
                 if (this.agreement() == false) {
                     this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to payolution!')});
                     return false;
                 }
-                if (this.requestBirthday() == true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
-                    this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
+                if ($('#' + this.getCode() + '_installmentplan').html() != '' && $('#' + this.getCode() + '_duration').val() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please select your desired number of installments')});
                     return false;
                 }
                 if ($('#' + this.getCode() + '_duration').val() != '' && this.iban() == '') {

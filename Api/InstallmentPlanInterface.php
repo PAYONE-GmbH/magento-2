@@ -34,7 +34,8 @@ interface InstallmentPlanInterface
      * cant handle this with its fake type system!
      *
      * @param  string $birthday
+     * @param  string $email
      * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
      */
-    public function getInstallmentPlan($birthday);
+    public function getInstallmentPlan($birthday, $email = false);
 }
