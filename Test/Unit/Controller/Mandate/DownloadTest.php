@@ -35,7 +35,7 @@ use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\Controller\Result\Raw;
 use Magento\Sales\Model\Order;
 
-class OrderPaymentPlaceEndTest extends \PHPUnit_Framework_TestCase
+class DownloadTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ClassToTest

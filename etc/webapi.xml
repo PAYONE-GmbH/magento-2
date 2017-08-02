@@ -31,9 +31,26 @@
             <resource ref="anonymous" />
         </resources>
     </route>
-    
+
     <route url="/V1/carts/mine/payone-addresscheck" method="POST">
         <service class="Payone\Core\Api\AddresscheckInterface" method="checkAddress"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <route url="/V1/guest-carts/:cartId/payone-installmentPlan" method="POST">
+        <service class="Payone\Core\Api\InstallmentPlanInterface" method="getInstallmentPlan"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <route url="/V1/carts/mine/payone-installmentPlan" method="POST">
+        <service class="Payone\Core\Api\InstallmentPlanInterface" method="getInstallmentPlan"/>
         <resources>
             <resource ref="self" />
         </resources>

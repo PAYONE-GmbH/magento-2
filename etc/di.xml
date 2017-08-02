@@ -27,6 +27,8 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Payone\Core\Api\AddresscheckInterface" type="Payone\Core\Service\V1\Addresscheck" />
     <preference for="Payone\Core\Api\Data\AddresscheckResponseInterface" type="Payone\Core\Service\V1\Data\AddresscheckResponse" />
+    <preference for="Payone\Core\Api\InstallmentPlanInterface" type="Payone\Core\Service\V1\InstallmentPlan" />
+    <preference for="Payone\Core\Api\Data\InstallmentPlanResponseInterface" type="Payone\Core\Service\V1\Data\InstallmentPlanResponse" />
     <virtualType name="Payone\Core\Model\ResourceModel\ApiLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">payone_protocol_api</argument>

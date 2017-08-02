@@ -56,6 +56,9 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_PRZELEWY,
         PayoneConfig::METHOD_BARZAHLEN,
         PayoneConfig::METHOD_PAYDIREKT,
+        PayoneConfig::METHOD_PAYOLUTION_INVOICE,
+        PayoneConfig::METHOD_PAYOLUTION_DEBIT,
+        PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT,
     ];
 
     /**
@@ -81,6 +84,9 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_BILLSAFE => 'fnc',
         PayoneConfig::METHOD_KLARNA => 'fnc',
         PayoneConfig::METHOD_BARZAHLEN => 'csh',
+        PayoneConfig::METHOD_PAYOLUTION_INVOICE => 'fnc',
+        PayoneConfig::METHOD_PAYOLUTION_DEBIT => 'fnc',
+        PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT => 'fnc',
     ];
 
     /**
@@ -158,9 +164,11 @@ class Payment extends \Payone\Core\Helper\Base
         $sStatusMapping = $this->getConfigParam($sPaymentCode, 'statusmapping');
         $aStatusMapping = unserialize($sStatusMapping);
         $aCleanMapping = [];
-        foreach ($aStatusMapping as $aMap) {
-            if (isset($aMap['txaction']) && isset($aMap['state_status'])) {
-                $aCleanMapping[$aMap['txaction']] = $aMap['state_status'];
+        if ($aStatusMapping) {
+            foreach ($aStatusMapping as $aMap) {
+                if (isset($aMap['txaction']) && isset($aMap['state_status'])) {
+                    $aCleanMapping[$aMap['txaction']] = $aMap['state_status'];
+                }
             }
         }
         return $aCleanMapping;

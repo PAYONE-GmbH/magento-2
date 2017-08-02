@@ -79,7 +79,11 @@ abstract class PayoneConfig
     const METHOD_KLARNA = 'payone_klarna';
     const METHOD_BARZAHLEN = 'payone_barzahlen';
     const METHOD_PAYDIREKT = 'payone_paydirekt';
+    const METHOD_PAYOLUTION_INVOICE = 'payone_payolution_invoice';
+    const METHOD_PAYOLUTION_DEBIT = 'payone_payolution_debit';
+    const METHOD_PAYOLUTION_INSTALLMENT = 'payone_payolution_installment';
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
+    const METHOD_GROUP_PAYOLUTION = 'payone_payolution';
 }
