@@ -37,6 +37,7 @@ use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Helper\Shop;
+use Magento\Sales\Model\Order\Item;
 
 class DebitTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,6 +51,11 @@ class DebitTest extends \PHPUnit_Framework_TestCase
      */
     private $apiHelper;
 
+    /**
+     * @var Shop|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $shopHelper;
+
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
@@ -62,14 +68,14 @@ class DebitTest extends \PHPUnit_Framework_TestCase
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('handleSubstituteReplacement')->willReturn('test text');
 
-        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
-        $shopHelper->method('getConfigParam')->willReturn('test');
+        $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $this->shopHelper->method('getConfigParam')->willReturn('test');
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'databaseHelper' => $databaseHelper,
             'apiHelper' => $this->apiHelper,
             'toolkitHelper' => $toolkitHelper,
-            'shopHelper' => $shopHelper
+            'shopHelper' => $this->shopHelper
         ]);
     }
 
@@ -109,6 +115,61 @@ class DebitTest extends \PHPUnit_Framework_TestCase
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('isInvoiceDataNeeded')->willReturn(true);
+
+        $result = $this->classToTest->sendRequest($payment, $paymentInfo, 100);
+        $this->assertEquals($response, $result);
+    }
+
+    public function testSendRequestPositions()
+    {
+        $requestparam = ['items' => ['id' => ['qty' => 1]], 'shipping_amount' => 5];
+        $this->shopHelper->method('getRequestParameter')->willReturn($requestparam);
+
+        $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
+        $invoice->method('getIncrementId')->willReturn('12345');
+        $invoice->method('getId')->willReturn('12345');
+
+        $creditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
+        $creditmemo->method('getInvoice')->willReturn($invoice);
+        $creditmemo->method('getIncrementId')->willReturn('12345');
+
+        $payment = $this->getMockBuilder(PayoneMethod::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getOperationMode', 'getCreditmemo'])
+            ->getMock();
+        $payment->method('getOperationMode')->willReturn('test');
+        $payment->method('getCreditmemo')->willReturn($creditmemo);
+
+        $item = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
+        $item->method('getItemId')->willReturn('id');
+        $item->method('getProductId()')->willReturn('sku');
+        $item->method('getQtyOrdered')->willReturn(2);
+
+        $item_missing = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
+        $item_missing->method('getItemId')->willReturn('missing');
+
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getIncrementId', 'getId', 'getCustomerId', 'getAllItems'])
+            ->getMock();
+        $order->method('getRealOrderId')->willReturn('54321');
+        $order->method('getOrderCurrencyCode')->willReturn('EUR');
+        $order->method('getIncrementId')->willReturn('12345');
+        $order->method('getId')->willReturn('12345');
+        $order->method('getCustomerId')->willReturn('12345');
+        $order->method('getAllItems')->willReturn([$item, $item_missing]);
+
+        $paymentInfo = $this->getMockBuilder(Info::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getOrder', 'getParentTransactionId'])
+            ->getMock();
+        $paymentInfo->method('getOrder')->willReturn($order);
+        $paymentInfo->method('getParentTransactionId')->willReturn('12-345');
+
+        $response = ['status' => 'VALID'];
+        $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('isInvoiceDataNeeded')->willReturn(true);
 
         $result = $this->classToTest->sendRequest($payment, $paymentInfo, 100);
         $this->assertEquals($response, $result);

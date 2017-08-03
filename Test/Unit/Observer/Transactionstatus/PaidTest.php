@@ -33,6 +33,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Invoice;
+use Payone\Core\Helper\Base;
 
 class PaidTest extends \PHPUnit_Framework_TestCase
 {
@@ -55,8 +56,12 @@ class PaidTest extends \PHPUnit_Framework_TestCase
         $invoiceService = $this->getMockBuilder(InvoiceService::class)->disableOriginalConstructor()->getMock();
         $invoiceService->method('prepareInvoice')->willReturn($invoice);
 
+        $baseHelper = $this->getMockBuilder(Base::class)->disableOriginalConstructor()->getMock();
+        $baseHelper->method('getConfigParam')->willReturn('1');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'invoiceService' => $invoiceService
+            'invoiceService' => $invoiceService,
+            'baseHelper' => $baseHelper
         ]);
     }
 

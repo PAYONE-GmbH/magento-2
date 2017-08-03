@@ -26,7 +26,6 @@
 
 namespace Payone\Core\Helper;
 
-use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Sales\Model\Order as SalesOrder;
 
@@ -40,7 +39,7 @@ use Magento\Sales\Model\Order as SalesOrder;
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-class Api extends \Payone\Core\Helper\Base
+class Api extends Base
 {
     /**
      * PAYONE connection curl php
@@ -181,6 +180,20 @@ class Api extends \Payone\Core\Helper\Base
             $oOrder->setPayoneMandateId($aRequest['mandate_identification']);
         } elseif (isset($aResponse['mandate_identification'])) {// mandate id existing in response?
             $oOrder->setPayoneMandateId($aResponse['mandate_identification']);
+        }
+        if (isset($aResponse['clearing_reference'])) {
+            $oOrder->setPayoneClearingReference($aResponse['clearing_reference']);
+        }
+        if (isset($aResponse['add_paydata[clearing_reference]'])) {
+            $oOrder->setPayoneClearingReference($aResponse['add_paydata[clearing_reference]']);
+        }
+        if (isset($aResponse['add_paydata[workorderid]'])) {
+            $oOrder->setPayoneWorkorderId($aResponse['add_paydata[workorderid]']);
+        } elseif (isset($aRequest['workorderid'])) {
+            $oOrder->setPayoneWorkorderId($aRequest['workorderid']);
+        }
+        if (isset($aRequest['add_paydata[installment_duration]'])) {
+            $oOrder->setPayoneInstallmentDuration($aRequest['add_paydata[installment_duration]']);
         }
     }
 

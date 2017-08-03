@@ -28,11 +28,13 @@ namespace Payone\Core\Test\Unit\Model\Api\Request;
 
 use Magento\Sales\Model\Order;
 use Payone\Core\Helper\Database;
+use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Api\Request\Capture as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Api;
+use Magento\Sales\Model\Order\Item;
 
 class CaptureTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,9 +48,16 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
      */
     private $apiHelper;
 
+    /**
+     * @var Shop|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $shopHelper;
+
     protected function setUp()
     {
         $objectManager = new ObjectManager($this);
+
+        $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
 
         $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
         $databaseHelper->method('getSequenceNumber')->willReturn('0');
@@ -56,6 +65,7 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
+            'shopHelper' => $this->shopHelper,
             'databaseHelper' => $databaseHelper,
             'apiHelper' => $this->apiHelper
         ]);
@@ -63,15 +73,27 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
 
     public function testSendRequest()
     {
+        $invoice = ['items' => ['id' => 1]];
+        $this->shopHelper->method('getRequestParameter')->willReturn($invoice);
+
         $payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
 
+        $item = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
+        $item->method('getItemId')->willReturn('id');
+        $item->method('getProductId()')->willReturn('sku');
+        $item->method('getQtyOrdered')->willReturn(2);
+
+        $item_missing = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
+        $item_missing->method('getItemId')->willReturn('missing');
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode'])
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getAllItems'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
+        $order->method('getAllItems')->willReturn([$item, $item_missing]);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
@@ -82,6 +104,7 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('isInvoiceDataNeeded')->willReturn(true);
 
         $result = $this->classToTest->sendRequest($payment, $paymentInfo, 100);
         $this->assertArrayHasKey('status', $result);

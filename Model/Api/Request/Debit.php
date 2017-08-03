@@ -36,6 +36,11 @@ use Magento\Payment\Model\InfoInterface;
 class Debit extends Base
 {
     /**
+     * @var \Payone\Core\Model\Api\Invoice $invoiceGenerator
+     */
+    protected $invoiceGenerator;
+
+    /**
      * PAYONE database helper
      *
      * @var \Payone\Core\Helper\Database
@@ -56,6 +61,7 @@ class Debit extends Base
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
      * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
@@ -64,12 +70,47 @@ class Debit extends Base
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+        \Payone\Core\Model\Api\Invoice $invoiceGenerator,
         \Payone\Core\Helper\Database $databaseHelper,
         \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
         $this->toolkitHelper = $toolkitHelper;
+    }
+
+    /**
+     * Generate position list for invoice data transmission
+     *
+     * @param Order $oOrder
+     * @return array|false
+     */
+    protected function getInvoiceList(Order $oOrder)
+    {
+        $aCreditmemo = $this->shopHelper->getRequestParameter('creditmemo');
+
+        $aPositions = [];
+        $blFull = true;
+        if ($aCreditmemo && array_key_exists('items', $aCreditmemo) !== false) {
+            foreach ($oOrder->getAllItems() as $oItem) {
+                if (isset($aCreditmemo['items'][$oItem->getItemId()]) && $aCreditmemo['items'][$oItem->getItemId()]['qty'] > 0) {
+                    $aPositions[$oItem->getProductId()] = $aCreditmemo['items'][$oItem->getItemId()]['qty'];
+                    if ($aCreditmemo['items'][$oItem->getItemId()]['qty'] != $oItem->getQtyOrdered()) {
+                        $blFull = false;
+                    }
+                } else {
+                    $blFull = false;
+                }
+            }
+        }
+        if (isset($aCreditmemo['shipping_amount']) && $aCreditmemo['shipping_amount'] != 0) {
+            $aPositions['delcost'] = $aCreditmemo['shipping_amount'];
+        }
+        if ($blFull === true && (!isset($aCreditmemo['shipping_amount']) || $aCreditmemo['shipping_amount'] == $oOrder->getBaseShippingInclTax())) {
+            $aPositions = false; // false = full debit
+        }
+        return $aPositions;
     }
 
     /**
@@ -83,6 +124,9 @@ class Debit extends Base
     public function sendRequest(PayoneMethod $oPayment, InfoInterface $oPaymentInfo, $dAmount)
     {
         $oOrder = $oPaymentInfo->getOrder();
+
+        $aPositions = $this->getInvoiceList($oOrder);
+
         $iTxid = $oPaymentInfo->getParentTransactionId();
         if (strpos($iTxid, '-') !== false) {
             $iTxid = substr($iTxid, 0, strpos($iTxid, '-')); // clean the txid from the magento-suffixes
@@ -105,12 +149,13 @@ class Debit extends Base
             $this->addParameter('invoiceappendix', $sRefundAppendix);
         }
 
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
+            $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
+        }
+
         // Add debit bank data given - see oxid integration
-        // Add invoice data if needed - see oxid integration
 
         $aResponse = $this->send();
-
-        // Save which positions have been debited - see oxid integration
 
         return $aResponse;
     }

@@ -64,19 +64,6 @@ class Authorization extends AddressRequest
     protected $toolkitHelper;
 
     /**
-     * Map for custom parameters to be added $sParamName => $sConfigName
-     *
-     * @var array
-     */
-    protected $aCustomParamMap = [
-        'mid' => 'mid',
-        'portalid' => 'portalid',
-        'aid' => 'aid',
-        'key' => 'key',
-        'request' => 'request',
-    ];
-
-    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
@@ -178,7 +165,7 @@ class Authorization extends AddressRequest
         $this->setUserParameters($oPayment, $oOrder); // add user data - addresses etc.
         $this->setPaymentParameters($oPayment, $oOrder); // add payment specific parameters
 
-        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {//
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
             $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
         }
     }
@@ -201,26 +188,6 @@ class Authorization extends AddressRequest
         $this->aParameters = array_merge($this->aParameters, $aPaymentParams); // merge payment params with other params
         if ($oPayment->needsRedirectUrls() === true) {// does the used payment type need redirect urls?
             $this->addRedirectUrls($oPayment); // add needed redirect urls
-        }
-    }
-
-    /**
-     * Add non-global parameters specifically configured in the payment type
-     *
-     * @param  PayoneMethod $oPayment
-     * @return void
-     */
-    protected function addCustomParameters(PayoneMethod $oPayment)
-    {
-        foreach ($this->aCustomParamMap as $sParamName => $sConfigName) {// add all custom parameters
-            $sCustomConfig = $oPayment->getCustomConfigParam($sConfigName); // get custom config param
-            if (!empty($sCustomConfig)) { // only add if the param is configured
-                if ($sConfigName == 'key') {
-                    $this->addParameter($sParamName, md5($sCustomConfig)); // key isn't hashed in db
-                } else {
-                    $this->addParameter($sParamName, $sCustomConfig); // add custom param to request
-                }
-            }
         }
     }
 }

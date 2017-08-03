@@ -189,6 +189,33 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_safe_invoice>
+            <payone_payolution_invoice translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Payolution\Invoice</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Payolution Invoice</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_payolution_invoice>
+            <payone_payolution_debit translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Payolution\Debit</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Payolution Debit</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_payolution_debit>
+            <payone_payolution_installment translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\Payolution\Installment</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Payolution Installment</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_payolution_installment>
         </payment>
         <payone_general>
             <global>
@@ -219,11 +246,17 @@
                 <payone_paydirekt>a:1:{s:18:"_1343118466182_183";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_paydirekt>
                 <payone_billsafe>a:1:{s:23:"_payone_status_mapping4";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_billsafe>
                 <payone_klarna>a:1:{s:23:"_payone_status_mapping2";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_klarna>
-                <payone_safe_invoice>a:1:{s:23:"_payone_status_mapping7";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_safe_invoice>
+                <payone_safe_invoice>a:1:{s:22:"_payone_status_invoice";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_safe_invoice>
+                <payone_payolution_invoice>a:1:{s:23:"_payone_status_mapping7";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_invoice>
+                <payone_payolution_debit>a:1:{s:23:"_payone_status_mapping8";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_debit>
+                <payone_payolution_installment>a:1:{s:23:"_payone_status_mapping9";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_installment>
             </statusmapping>
             <creditcard>
                 <cc_template>a:30:{s:11:"Number_type";s:3:"tel";s:12:"Number_count";s:2:"30";s:10:"Number_max";s:2:"16";s:13:"Number_iframe";s:8:"standard";s:12:"Number_style";s:8:"standard";s:8:"CVC_type";s:3:"tel";s:9:"CVC_count";s:2:"30";s:7:"CVC_max";s:1:"4";s:10:"CVC_iframe";s:8:"standard";s:9:"CVC_style";s:8:"standard";s:10:"Month_type";s:6:"select";s:11:"Month_count";s:1:"3";s:9:"Month_max";s:1:"2";s:12:"Month_iframe";s:6:"custom";s:11:"Month_width";s:5:"120px";s:12:"Month_height";s:4:"20px";s:11:"Month_style";s:8:"standard";s:9:"Year_type";s:6:"select";s:10:"Year_count";s:1:"5";s:8:"Year_max";s:1:"4";s:11:"Year_iframe";s:6:"custom";s:10:"Year_width";s:5:"120px";s:11:"Year_height";s:4:"20px";s:10:"Year_style";s:8:"standard";s:14:"Standard_input";s:108:"width:223px;height:30px;padding: 0 9px;font-size:14px;font-family:'Helvetica Neue',Verdana,Arial,sans-serif;";s:18:"Standard_selection";s:12:"width:100px;";s:12:"Iframe_width";s:5:"365px";s:13:"Iframe_height";s:4:"30px";s:13:"Errors_active";s:5:"false";s:11:"Errors_lang";s:2:"de";}</cc_template>
             </creditcard>
+            <emails>
+                <send_invoice_email>0</send_invoice_email>
+            </emails>
         </payone_general>
         <payone_protect>
             <address_check>
@@ -325,6 +358,15 @@
             <payone_safe_invoice>
                 <use_global>1</use_global>
             </payone_safe_invoice>
+            <payone_payolution_invoice>
+                <use_global>1</use_global>
+            </payone_payolution_invoice>
+            <payone_payolution_debit>
+                <use_global>1</use_global>
+            </payone_payolution_debit>
+            <payone_payolution_installment>
+                <use_global>1</use_global>
+            </payone_payolution_installment>
         </payone_payment>
         <payone_misc>
             <processing>

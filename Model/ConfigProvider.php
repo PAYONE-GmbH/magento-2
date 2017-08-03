@@ -93,17 +93,25 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $consumerscoreHelper;
 
     /**
+     * Privacy declaration object
+     *
+     * @var \Payone\Core\Model\Api\Payolution\PrivacyDeclaration
+     */
+    protected $privacyDeclaration;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Payment\Model\CcConfig   $ccConfig
-     * @param \Magento\Payment\Helper\Data      $dataHelper
-     * @param \Payone\Core\Helper\Country       $countryHelper
-     * @param \Payone\Core\Helper\Customer      $customerHelper
-     * @param \Payone\Core\Helper\Payment       $paymentHelper
-     * @param \Payone\Core\Helper\HostedIframe  $hostedIframeHelper
-     * @param \Payone\Core\Helper\Request       $requestHelper
-     * @param \Magento\Framework\Escaper        $escaper
-     * @param \Payone\Core\Helper\Consumerscore $consumerscoreHelper
+     * @param \Magento\Payment\Model\CcConfig                      $ccConfig
+     * @param \Magento\Payment\Helper\Data                         $dataHelper
+     * @param \Payone\Core\Helper\Country                          $countryHelper
+     * @param \Payone\Core\Helper\Customer                         $customerHelper
+     * @param \Payone\Core\Helper\Payment                          $paymentHelper
+     * @param \Payone\Core\Helper\HostedIframe                     $hostedIframeHelper
+     * @param \Payone\Core\Helper\Request                          $requestHelper
+     * @param \Magento\Framework\Escaper                           $escaper
+     * @param \Payone\Core\Helper\Consumerscore                    $consumerscoreHelper
+     * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -114,7 +122,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Payone\Core\Helper\HostedIframe $hostedIframeHelper,
         \Payone\Core\Helper\Request $requestHelper,
         \Magento\Framework\Escaper $escaper,
-        \Payone\Core\Helper\Consumerscore $consumerscoreHelper
+        \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
+        \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -125,6 +134,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->requestHelper = $requestHelper;
         $this->escaper = $escaper;
         $this->consumerscoreHelper = $consumerscoreHelper;
+        $this->privacyDeclaration = $privacyDeclaration;
     }
 
     /**
@@ -143,6 +153,63 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     }
 
     /**
+     * Add payolution parameters to the config array
+     *
+     * @return array
+     */
+    protected function getPayolutionConfig()
+    {
+        return [
+            'b2bMode' => [
+                'invoice' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_INVOICE, 'payone_payment'),
+                'debit' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_DEBIT, 'payone_payment'),
+                'installment' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT, 'payone_payment'),
+            ],
+            'privacyDeclaration' => [
+                'invoice' => $this->privacyDeclaration->getPayolutionAcceptanceText(PayoneConfig::METHOD_PAYOLUTION_INVOICE),
+                'debit' => $this->privacyDeclaration->getPayolutionAcceptanceText(PayoneConfig::METHOD_PAYOLUTION_DEBIT),
+                'installment' => $this->privacyDeclaration->getPayolutionAcceptanceText(PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT),
+            ],
+        ];
+    }
+
+    /**
+     * Add payone parameters to the config array
+     *
+     * @return array
+     */
+    protected function getPayoneConfig()
+    {
+        return [
+            'availableCardTypes' => $this->paymentHelper->getAvailableCreditcardTypes(),
+            'fieldConfig' => $this->hostedIframeHelper->getHostedFieldConfig(),
+            'sepaCountries' => $this->countryHelper->getDebitSepaCountries(),
+            'hostedRequest' => $this->requestHelper->getHostedIframeRequest(),
+            'mandateManagementActive' => $this->paymentHelper->isMandateManagementActive(),
+            'checkCvc' => (bool)$this->paymentHelper->isCheckCvcActive(),
+            'requestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
+            'requestIbanBicSofortUeberweisung' => (bool)$this->requestHelper->getConfigParam('show_iban', PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG, 'payone_payment'),
+            'validateBankCode' => (bool)$this->requestHelper->getConfigParam('check_bankaccount', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
+            'bankaccountcheckRequest' => $this->requestHelper->getBankaccountCheckRequest(),
+            'bankCodeValidatedAndValid' => false,
+            'blockedMessage' => $this->paymentHelper->getBankaccountCheckBlockedMessage(),
+            'epsBankGroups' => Eps::getBankGroups(),
+            'idealBankGroups' => Ideal::getBankGroups(),
+            'customerHasGivenGender' => $this->customerHelper->customerHasGivenGender(),
+            'customerHasGivenBirthday' => $this->customerHelper->customerHasGivenBirthday(),
+            'addresscheckEnabled' => (int)$this->requestHelper->getConfigParam('enabled', 'address_check', 'payone_protect'),
+            'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
+            'addresscheckShippingEnabled' => $this->requestHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
+            'addresscheckConfirmCorrection' => (int)$this->requestHelper->getConfigParam('confirm_address_correction', 'address_check', 'payone_protect'),
+            'canShowPaymentHintText' => $this->consumerscoreHelper->canShowPaymentHintText(),
+            'paymentHintText' => $this->requestHelper->getConfigParam('payment_hint_text', 'creditrating', 'payone_protect'),
+            'canShowAgreementMessage' => $this->consumerscoreHelper->canShowAgreementMessage(),
+            'agreementMessage' => $this->requestHelper->getConfigParam('agreement_message', 'creditrating', 'payone_protect'),
+            'payolution' => $this->getPayolutionConfig(),
+        ];
+    }
+
+    /**
      * Returns the extended checkout-data array
      *
      * @return array
@@ -152,32 +219,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $config = parent::getConfig();
         $config = array_merge_recursive($config, [
             'payment' => [
-                'payone' => [
-                    'availableCardTypes' => $this->paymentHelper->getAvailableCreditcardTypes(),
-                    'fieldConfig' => $this->hostedIframeHelper->getHostedFieldConfig(),
-                    'sepaCountries' => $this->countryHelper->getDebitSepaCountries(),
-                    'hostedRequest' => $this->requestHelper->getHostedIframeRequest(),
-                    'mandateManagementActive' => $this->paymentHelper->isMandateManagementActive(),
-                    'checkCvc' => (bool)$this->paymentHelper->isCheckCvcActive(),
-                    'requestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
-                    'requestIbanBicSofortUeberweisung' => (bool)$this->requestHelper->getConfigParam('show_iban', PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG, 'payone_payment'),
-                    'validateBankCode' => (bool)$this->requestHelper->getConfigParam('check_bankaccount', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
-                    'bankaccountcheckRequest' => $this->requestHelper->getBankaccountCheckRequest(),
-                    'bankCodeValidatedAndValid' => false,
-                    'blockedMessage' => $this->paymentHelper->getBankaccountCheckBlockedMessage(),
-                    'epsBankGroups' => Eps::getBankGroups(),
-                    'idealBankGroups' => Ideal::getBankGroups(),
-                    'customerHasGivenGender' => $this->customerHelper->customerHasGivenGender(),
-                    'customerHasGivenBirthday' => $this->customerHelper->customerHasGivenBirthday(),
-                    'addresscheckEnabled' => (int)$this->requestHelper->getConfigParam('enabled', 'address_check', 'payone_protect'),
-                    'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
-                    'addresscheckShippingEnabled' => $this->requestHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
-                    'addresscheckConfirmCorrection' => (int)$this->requestHelper->getConfigParam('confirm_address_correction', 'address_check', 'payone_protect'),
-                    'canShowPaymentHintText' => $this->consumerscoreHelper->canShowPaymentHintText(),
-                    'paymentHintText' => $this->requestHelper->getConfigParam('payment_hint_text', 'creditrating', 'payone_protect'),
-                    'canShowAgreementMessage' => $this->consumerscoreHelper->canShowAgreementMessage(),
-                    'agreementMessage' => $this->requestHelper->getConfigParam('agreement_message', 'creditrating', 'payone_protect'),
-                ],
+                'payone' => $this->getPayoneConfig(),
             ],
         ]);
         foreach ($this->paymentHelper->getAvailablePaymentTypes() as $sCode) {

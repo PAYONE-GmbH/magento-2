@@ -1013,6 +1013,9 @@
 
 "SEPA debit note","SEPA-Lastschrift"
 
+"Send invoice email","Rechnungs-Email senden"
+"For authorization only, where the invoice is created automatically when the PAID status arrives.","Nur für Authorisierungs-Modus, wo die Rechnung automatisch generiert wird, wenn der PAID Status eintrifft."
+
 "NONE","Keine Prüfung der Adressdaten durchgeführt (NONE)"
 "PPB","Vor- & Nachname bekannt (PPB)"
 "PHB","Nachname bekannt (PHB)"
@@ -1027,4 +1030,41 @@
 
 "Show IBAN/BIC fields","IBAN/BIC Felder anzeigen"
 
-"You have to be at least 18 years old to use this payment type!","Sie m&uuml;ssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu k&ouml;nnen!"
+"You have to be at least 18 years old to use this payment type!","Sie müssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu können!"
+
+"I agree with the transmission of the necessary data to payolution which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an payolution bin ich einverstanden."
+"My","Meine"
+"can be revoked for the future any time.","kann ich jederzeit mit Wirkung für die Zukunft widerrufen."
+"acceptance","Einwilligung"
+"PAYONE_PAYOLUTION_API_ERRORMESSAGE","Diese Zahlung konnte nicht durchgeführt werden. Dies kann unterschiedliche Gruende haben, wie etwa fehlerhafte Eingabedaten, eine unbekannte Adresse, oder ein vorübergehendes technisches Problem. Bitte überprüfen Sie die angegebenen Daten, oder wählen Sie ein anderes Zahlungsmittel."
+"Please confirm the transmission of the necessary data to payolution!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an payolution!"
+"Please confirm the SEPA mandate!","Bitte bestätigen Sie das SEPA-Mandat!"
+
+"Birthday","Geburtstag"
+"Accountholder","Kontoinhaber"
+"Check installment availability","Ratenkauf Verfügbarkeit prüfen"
+"Please select your desired number of installments","Bitte wählen Sie Ihre gewünschte Anzahl von Raten"
+"Overview","&Uuml;bersicht"
+"No. of installments:","Anzahl von Raten:"
+"Financingamount:","Finanzierungsbetrag:"
+"Total:","Gesamt:"
+"Interest rate:","Zinssatz:"
+"Effective interest rate:","Effektivzinssatz:"
+"Monthly installment:","Monatliche Rate:"
+"Download Installment-Contract-Draft","Ratenkauf Mustervertrag herunterladen"
+"per month","pro Monat"
+"installments","Raten"
+"Installment","Rate"
+"due","f&auml;llig"
+
+"Installment Draft Username","Ratenkauf Muster Benutzername"
+"Installment Draft Password","Ratenkauf Muster Passwort"
+
+"terms-of-payment","zahlungskonditionen"
+"Installments are not yet supported for backend orders.","Ratenkauf wird f&uuml;r Backend Bestellungen noch nicht unterst&uuml;tzt."
+"The installment calculation failed. Please choose another payment type.","Die Ratenberechnung ist fehlgeschlagen. Bitte waehlen Sie eine andere Zahlart."
+
+"Hereby I grant the","Hiermit erteile ich das"
+"SEPA-Mandate","SEPA-Lastschriftmandat"
+"Close window","Fenster schließen"
+"Company trade registry number","Handelsregisternummer"
