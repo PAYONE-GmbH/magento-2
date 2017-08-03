@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<!--
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,14 +17,25 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2017 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="shortcut_buttons_container">
-        <observer name="payone_paypalexpress_shortcuts" instance="Payone\Core\Observer\AddPaypalExpressButtons" />
-        <observer name="payone_amazonpay_shortcuts" instance="Payone\Core\Observer\AddAmazonPayButton" />
-    </event>
-</config>
+define(
+    [
+        'Magento_Checkout/js/view/payment/default'
+    ],
+    function (Component) {
+        'use strict';
+        return Component.extend({
+            defaults: {
+                template: 'Payone_Core/payment/amazonpay'
+            },
+
+            /** Returns payment method instructions */
+            getInstructions: function () {
+                return window.checkoutConfig.payment.instructions[this.item.method];
+            }
+        });
+    }
+);

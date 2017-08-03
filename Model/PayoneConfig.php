@@ -79,6 +79,7 @@ abstract class PayoneConfig
     const METHOD_KLARNA = 'payone_klarna';
     const METHOD_BARZAHLEN = 'payone_barzahlen';
     const METHOD_PAYDIREKT = 'payone_paydirekt';
+    const METHOD_AMAZONPAY = 'payone_amazonpay';
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';

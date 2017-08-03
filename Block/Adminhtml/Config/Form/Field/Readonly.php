@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<!--
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,14 +19,27 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2017 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="shortcut_buttons_container">
-        <observer name="payone_paypalexpress_shortcuts" instance="Payone\Core\Observer\AddPaypalExpressButtons" />
-        <observer name="payone_amazonpay_shortcuts" instance="Payone\Core\Observer\AddAmazonPayButton" />
-    </event>
-</config>
+
+namespace Payone\Core\Block\Adminhtml\Config\Form\Field;
+
+/**
+ * Admin-block for readonly fields
+ */
+class Readonly extends \Magento\Config\Block\System\Config\Form\Field
+{
+    /**
+     * Unset some non-related element parameters
+     *
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @return string
+     */
+    public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
+    {
+        $element->setReadonly(true);
+        return parent::render($element);
+    }
+}
