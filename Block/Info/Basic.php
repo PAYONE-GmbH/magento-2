@@ -46,15 +46,15 @@ class Basic extends Base
         if ($sTransId == '') {
             $data[(string)__('Payment has not been processed yet.')] = '';
         } else {
-            $oStatus = $this->getAppointedStatus();
-            if ($oStatus->getClearingBankcode()) {
+            $oOrder = $this->getInfo()->getOrder();
+            if ($oOrder && $oOrder->getPayoneClearingBankcode()) {
                 $data[(string)__('Please transfer the order amount to this bank account:')] = '';
-                $data[(string)__('Accountholder:')] = $oStatus->getClearingBankaccountholder();
-                $data[(string)__('Accountnumber:')] = $oStatus->getClearingBankaccount();
-                $data[(string)__('Bank code:')] = $oStatus->getClearingBankcode();
-                $data[(string)__('IBAN:')] = $oStatus->getClearingBankiban();
-                $data[(string)__('BIC:')] = $oStatus->getClearingBankbic();
-                $data[(string)__('Bank:')] = $oStatus->getClearingBankname();
+                $data[(string)__('Accountholder:')] = $oOrder->getPayoneClearingBankaccountholder();
+                $data[(string)__('Accountnumber:')] = $oOrder->getPayoneClearingBankaccount();
+                $data[(string)__('Bank code:')] = $oOrder->getPayoneClearingBankcode();
+                $data[(string)__('IBAN:')] = $oOrder->getPayoneClearingBankiban();
+                $data[(string)__('BIC:')] = $oOrder->getPayoneClearingBankbic();
+                $data[(string)__('Bank:')] = $oOrder->getPayoneClearingBankname();
             }
             $data[(string)__('Payment reference:')] = $sTransId;
         }

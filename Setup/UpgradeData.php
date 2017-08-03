@@ -87,6 +87,70 @@ class UpgradeData implements UpgradeDataInterface
                 ['type' => 'integer', 'length' => null]
             );
         }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_clearing_bankaccountholder')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_clearing_bankaccountholder',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_clearing_bankcountry')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_clearing_bankcountry',
+                ['type' => 'varchar', 'length' => 2, 'default' => '']
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_clearing_bankaccount')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_clearing_bankaccount',
+                ['type' => 'varchar', 'length' => 32, 'default' => '']
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_clearing_bankcode')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_clearing_bankcode',
+                ['type' => 'varchar', 'length' => 32, 'default' => '']
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_clearing_bankiban')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_clearing_bankiban',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_clearing_bankbic')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_clearing_bankbic',
+                ['type' => 'varchar', 'length' => 32, 'default' => '']
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_clearing_bankcity')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_clearing_bankcity',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_clearing_bankname')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_clearing_bankname',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
         $setup->endSetup();
     }
 
