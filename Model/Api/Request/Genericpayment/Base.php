@@ -26,10 +26,12 @@
 
 namespace Payone\Core\Model\Api\Request\Genericpayment;
 
+use Payone\Core\Model\Api\Request\AddressRequest;
+
 /**
  * Base class for all PAYONE API genericpayment requests
  */
-class Base extends \Payone\Core\Model\Api\Request\Base
+class Base extends AddressRequest
 {
 
 }

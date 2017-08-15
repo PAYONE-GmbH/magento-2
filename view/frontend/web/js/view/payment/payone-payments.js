@@ -101,6 +101,18 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
             },
             {
+                type: 'payone_payolution_invoice',
+                component: 'Payone_Core/js/view/payment/method-renderer/payolution_invoice-method'
+            },
+            {
+                type: 'payone_payolution_debit',
+                component: 'Payone_Core/js/view/payment/method-renderer/payolution_debit-method'
+            },
+            {
+                type: 'payone_payolution_installment',
+                component: 'Payone_Core/js/view/payment/method-renderer/payolution_installment-method'
+            },
+            {
                 type: 'payone_amazonpay',
                 component: 'Payone_Core/js/view/payment/method-renderer/amazonpay-method'
             }

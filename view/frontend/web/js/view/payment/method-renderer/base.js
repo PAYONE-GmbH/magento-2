@@ -108,6 +108,21 @@ define(
                         return false;
                     }
                 }
+            },
+
+            isBirthdayValid: function (iYear, iMonth, iDay) {
+                if (!$.isNumeric(iYear) || !$.isNumeric(iMonth) || !$.isNumeric(iDay)) {
+                    return false;
+                }
+
+                var sBirthDate = iYear + "-" + iMonth + "-" + iDay;
+                var oBirthDate = new Date(sBirthDate);
+                var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
+                if (oBirthDate > oMinDate) {
+                    return false;
+                }
+
+                return true;
             }
         });
     }

@@ -27,12 +27,8 @@
 namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
 use Magento\Quote\Model\Quote;
-use Magento\Sales\Model\Order;
-use Payone\Core\Helper\Database;
 use Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Model\Methods\PayoneMethod;
-use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;

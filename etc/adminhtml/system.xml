@@ -175,6 +175,21 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
+                <field id="payone_payolution_invoice" translate="label" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payolution Invoice</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_payolution_debit" translate="label" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payolution Debit</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="payone_payolution_installment" translate="label" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payolution Installment</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
                 <field id="payone_amazonpay" translate="label" sortOrder="270" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Creditcard</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -219,6 +234,9 @@
             <include path="Payone_Core::system/payone_paydirekt.xml"/>
             <include path="Payone_Core::system/payone_billsafe.xml"/>
             <include path="Payone_Core::system/payone_klarna.xml"/>
+            <include path="Payone_Core::system/payone_payolution_invoice.xml"/>
+            <include path="Payone_Core::system/payone_payolution_debit.xml"/>
+            <include path="Payone_Core::system/payone_payolution_installment.xml"/>
             <include path="Payone_Core::system/payone_amazonpay.xml"/>
         </section>
         <section id="payone_protect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">

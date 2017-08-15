@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2017 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+$aInstallmentData = array_reverse($this->getInstallmentData());
+
+?>
+
+<label class="label" style="display:block;">
+    <span><?php echo __('Please select your desired number of installments'); ?></span>
+</label><br>
+<div style="float:left;">
+    <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>
+        <a href="#" onclick="switchInstallmentPlan('<?php echo $sKey; ?>', '<?php echo $this->getCode(); ?>', '<?php echo $aInstallment['duration']; ?>');return false;">
+            <?php echo $this->getSelectLinkText($aInstallment) ?>
+        </a><br>
+    <?php endforeach; ?>
+
+    <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>
+        <div id="payolution_installment_overview_<?php echo $sKey; ?>" class="payolution_installment_overview" style="display:none;">
+            <br>
+            <strong><?php echo __('Overview'); ?></strong><br>
+            <table>
+                <tr>
+                    <td><?php echo __('No. of installments:'); ?></td>
+                    <td class="value"><?php echo $aInstallment['duration']; ?></td>
+                </tr>
+                <tr>
+                    <td><?php echo __('Financingamount:'); ?></td>
+                    <td class="value"><?php echo $this->formatPrice($aInstallment['originalamount']).' '.$aInstallment['currency']; ?></td>
+                </tr>
+                <tr>
+                    <td><?php echo __('Total:'); ?></td>
+                    <td class="value"><?php echo $this->formatPrice($aInstallment['totalamount']).' '.$aInstallment['currency']; ?></td>
+                </tr>
+                <tr>
+                    <td><?php echo __('Interest rate:'); ?></td>
+                    <td class="value"><?php echo $aInstallment['interestrate']; ?>%</td>
+                </tr>
+                <tr>
+                    <td><?php echo __('Effective interest rate:'); ?></td>
+                    <td class="value"><?php echo $aInstallment['effectiveinterestrate']; ?>%</td>
+                </tr>
+                <tr class="final">
+                    <td><?php echo __('Monthly installment:'); ?></td>
+                    <td class="value"><?php echo $this->formatPrice($aInstallment['installment'][1]['amount']).' '.$aInstallment['currency']; ?></td>
+                </tr>
+            </table>
+        </div>
+    <?php endforeach; ?>
+</div>
+<?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>
+    <?php $aSingleInstallments = ksort($aInstallment['installment'], SORT_NUMERIC); ?>
+    <div id="payolution_installmentplan_<?php echo $sKey; ?>" class="payolution_installmentplans" style="float:right;display:none;">
+        <?php foreach ($aInstallment['installment'] as $sSingleKey => $aPayment): ?>
+            <span><?php echo $this->getPaymentInfoText($sSingleKey, $aInstallment, $aPayment); ?></span><br>
+        <?php endforeach; ?>
+        <br>
+        <a href="<?php echo $this->getDraftDownloadLink($aInstallment['duration']); ?>" target="_blank"><?php echo __('Download Installment-Contract-Draft'); ?></a>
+    </div>
+<?php endforeach; ?>
+<div style="clear:both;"></div>
