@@ -210,6 +210,7 @@
         </payment>
         <payone_general>
             <global>
+                <request_type>preauthorization</request_type>
                 <mid></mid>
                 <portalid></portalid>
                 <aid></aid>
