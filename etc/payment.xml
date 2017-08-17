@@ -82,6 +82,9 @@
         <method name="payone_klarna">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="payone_safe_invoice">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
         <method name="payone_payolution_invoice">
             <allow_multiple_address>0</allow_multiple_address>
         </method>

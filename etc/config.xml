@@ -180,6 +180,15 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_klarna>
+            <payone_safe_invoice translate="title" module="Payone_Core">
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\SafeInvoice</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - Safe Invoice</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_safe_invoice>
             <payone_payolution_invoice translate="title" module="Payone_Core">
                 <active>0</active>
                 <payment_action>Authorization</payment_action>
@@ -238,6 +247,7 @@
                 <payone_paydirekt>a:1:{s:18:"_1343118466182_183";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_paydirekt>
                 <payone_billsafe>a:1:{s:23:"_payone_status_mapping4";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_billsafe>
                 <payone_klarna>a:1:{s:23:"_payone_status_mapping2";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_klarna>
+                <payone_safe_invoice>a:1:{s:22:"_payone_status_invoice";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_safe_invoice>
                 <payone_payolution_invoice>a:1:{s:23:"_payone_status_mapping7";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_invoice>
                 <payone_payolution_debit>a:1:{s:23:"_payone_status_mapping8";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_debit>
                 <payone_payolution_installment>a:1:{s:23:"_payone_status_mapping9";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_installment>
@@ -346,6 +356,9 @@
             <payone_klarna>
                 <use_global>1</use_global>
             </payone_klarna>
+            <payone_safe_invoice>
+                <use_global>1</use_global>
+            </payone_safe_invoice>
             <payone_payolution_invoice>
                 <use_global>1</use_global>
             </payone_payolution_invoice>

@@ -79,6 +79,7 @@ abstract class PayoneConfig
     const METHOD_KLARNA = 'payone_klarna';
     const METHOD_BARZAHLEN = 'payone_barzahlen';
     const METHOD_PAYDIREKT = 'payone_paydirekt';
+    const METHOD_SAFE_INVOICE = 'payone_safe_invoice';
     const METHOD_PAYOLUTION_INVOICE = 'payone_payolution_invoice';
     const METHOD_PAYOLUTION_DEBIT = 'payone_payolution_debit';
     const METHOD_PAYOLUTION_INSTALLMENT = 'payone_payolution_installment';
