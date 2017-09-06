@@ -24,22 +24,22 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Block\Amazon;
+namespace Payone\Core\Block\Onepage;
 
 use Magento\Framework\View\Element\Template;
 use Payone\Core\Model\PayoneConfig;
 
 /**
- * Block class for the PayPal Express button
+ * Block class for Amazon Pay checkout
  */
-class Button extends Template implements \Magento\Catalog\Block\ShortcutInterface
+class Amazon extends Template
 {
     /**
-     * Shortcut alias
+     * Checkout session object
      *
-     * @var string
+     * @var \Magento\Checkout\Model\Session
      */
-    protected $alias = 'payone.block.amazon.button';
+    protected $checkoutSession;
 
     /**
      * @var \Payone\Core\Helper\Base
@@ -49,28 +49,20 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
     /**
      * Constructor
      *
+     * @param \Magento\Checkout\Model\Session                  $checkoutSession
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Payone\Core\Helper\Base                         $baseHelper
      * @param array                                            $data
      */
     public function __construct(
+        \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\View\Element\Template\Context $context,
         \Payone\Core\Helper\Base $baseHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
+        $this->checkoutSession = $checkoutSession;
         $this->baseHelper = $baseHelper;
-        $this->setTemplate('amazon/button.phtml');
-    }
-
-    /**
-     * Get shortcut alias
-     *
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
     }
 
     /**
@@ -91,45 +83,5 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
     public function getSellerId()
     {
         return $this->baseHelper->getConfigParam('seller_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
-    }
-
-    /**
-     * Get Amazon button type from config
-     *
-     * @return string
-     */
-    public function getButtonType()
-    {
-        return $this->baseHelper->getConfigParam('button_type', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
-    }
-
-    /**
-     * Get Amazon button color from config
-     *
-     * @return string
-     */
-    public function getButtonColor()
-    {
-        return $this->baseHelper->getConfigParam('button_color', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
-    }
-
-    /**
-     * Get Amazon button language from config
-     *
-     * @return string
-     */
-    public function getButtonLanguage()
-    {
-        return $this->baseHelper->getConfigParam('button_language', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
-    }
-
-    /**
-     * Get redirect url of the checkout controller
-     *
-     * @return string
-     */
-    public function getRedirectUrl()
-    {
-        return $this->getUrl("payone/onepage/amazon", ['_secure' => true]);
     }
 }

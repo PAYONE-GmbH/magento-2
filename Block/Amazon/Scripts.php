@@ -19,28 +19,21 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2016 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
 namespace Payone\Core\Block\Amazon;
 
-use Magento\Framework\View\Element\Template;
 use Payone\Core\Model\PayoneConfig;
 
 /**
- * Block class for the PayPal Express button
+ * Empty Block-class
+ * Needed for adding a certain template to the checkout
  */
-class Button extends Template implements \Magento\Catalog\Block\ShortcutInterface
+class Scripts extends \Magento\Framework\View\Element\Template
 {
-    /**
-     * Shortcut alias
-     *
-     * @var string
-     */
-    protected $alias = 'payone.block.amazon.button';
-
     /**
      * @var \Payone\Core\Helper\Base
      */
@@ -60,17 +53,6 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
     ) {
         parent::__construct($context, $data);
         $this->baseHelper = $baseHelper;
-        $this->setTemplate('amazon/button.phtml');
-    }
-
-    /**
-     * Get shortcut alias
-     *
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
     }
 
     /**

@@ -30,6 +30,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\Event\Observer;
 use Magento\Paypal\Block\Express\Shortcut;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Event class to add the Amazon Pay buttons to the frontend
@@ -44,13 +45,21 @@ class AddAmazonPayButton implements ObserverInterface
     protected $paymentHelper;
 
     /**
+     * Store manager object
+     *
+     * @var StoreManagerInterface\
+     */
+    protected $storeManager;
+
+    /**
      * Constructor
      *
      * @param Payment $paymentHelper
      */
-    public function __construct(Payment $paymentHelper)
+    public function __construct(Payment $paymentHelper, StoreManagerInterface $storeManager)
     {
         $this->paymentHelper = $paymentHelper;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -68,7 +77,8 @@ class AddAmazonPayButton implements ObserverInterface
         /** @var \Magento\Catalog\Block\ShortcutButtons $shortcutButtons */
         $shortcutButtons = $observer->getEvent()->getContainer();
 
-        if ($shortcutButtons->getNameInLayout() === 'addtocart.shortcut.buttons') {
+        $blIsSsl = $this->storeManager->getStore()->isCurrentlySecure();
+        if (!$blIsSsl || $shortcutButtons->getNameInLayout() === 'addtocart.shortcut.buttons') {
             return;
         }
 

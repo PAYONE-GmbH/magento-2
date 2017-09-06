@@ -1,0 +1,101 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2017 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+/**
+ * @var \Payone\Core\Block\Onepage\Amazon $block
+ */
+?>
+
+<!-- Place this code in your HTML where you would like the address widget to appear. -->
+<div id="addressBookWidgetDiv"> </div>
+
+<!-- Place this code in your HTML where you would like the wallet widget to appear. -->
+<div id="walletWidgetDiv"> </div>
+
+<script>
+    window.onAmazonLoginReady = function() {amazon.Login.setClientId('<?php echo $this->getClientId(); ?>'); };
+    window.onAmazonPaymentsReady = function() {
+        new OffAmazonPayments.Widgets.AddressBook({
+            sellerId: '<?php echo $this->getSellerId(); ?>',
+            scope: 'profile payments:widget payments:shipping_address payments:billing_address',
+            onOrderReferenceCreate: function(orderReference) {
+                // Here is where you can grab the Order Reference ID.
+                orderReference.getAmazonOrderReferenceId();
+            },
+            onAddressSelect: function(orderReference) {
+                // Replace the following code with the action that you want
+                // to perform after the address is selected. The
+                // amazonOrderReferenceId can be used to retrieve the address
+                // details by calling the GetOrderReferenceDetails operation.
+
+                // If rendering the AddressBook and Wallet widgets
+                // on the same page, you do not have to provide any additional
+                // logic to load the Wallet widget after the AddressBook widget.
+                // The Wallet widget will re-render itself on all subsequent
+                // onAddressSelect events, without any action from you.
+                // It is not recommended that you explicitly refresh it.
+            },
+            design: {
+                designMode: 'responsive'
+            },
+            onReady: function(orderReference) {
+                // Enter code here you want to be executed
+                // when the address widget has been rendered.
+            },
+            onError: function(error) {
+                // Your error handling code.
+                // During development you can use the following
+                // code to view error messages:
+                // console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
+                // See "Handling Errors" for more information.
+            }
+        }).bind("addressBookWidgetDiv");
+
+        new OffAmazonPayments.Widgets.Wallet({
+            sellerId: '<?php echo $this->getSellerId(); ?>',
+            scope: 'profile payments:widget payments:shipping_address payments:billing_address',
+            onPaymentSelect: function(orderReference) {
+                // Replace this code with the action that you want to perform
+                // after the payment method is selected.
+
+                // Ideally this would enable the next action for the buyer
+                // including either a "Continue" or "Place Order" button.
+            },
+            design: {
+                designMode: 'responsive'
+            },
+            onError: function(error) {
+                // Your error handling code.
+                // During development you can use the following
+                // code to view error messages:
+                // console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
+                // See "Handling Errors" for more information.
+            }
+        }).bind("walletWidgetDiv");
+    };
+</script>
+
+<script src="https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js" async="async">
+</script>
