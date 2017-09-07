@@ -135,7 +135,7 @@ class Capture extends Base
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions); // add invoice parameters
         }
 
-        $aResponse = $this->send();
+        $aResponse = $this->send($oPayment);
 
         return $aResponse;
     }

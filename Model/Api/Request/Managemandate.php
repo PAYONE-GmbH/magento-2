@@ -104,7 +104,7 @@ class Managemandate extends AddressRequest
         }
         $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
 
-        $aResponse = $this->send();
+        $aResponse = $this->send($oPayment);
         if (is_array($aResponse)) {
             $aResponse['mode'] = $oPayment->getOperationMode();
         }

@@ -50,6 +50,14 @@ class SafeInvoice extends PayoneMethod
     protected $sClearingtype = 'rec';
 
     /**
+     * Determines if the invoice information has to be added
+     * to the authorization-request
+     *
+     * @var bool
+     */
+    protected $blNeedsProductInfo = true;
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder

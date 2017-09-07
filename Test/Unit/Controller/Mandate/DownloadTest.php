@@ -34,6 +34,9 @@ use Payone\Core\Helper\Payment;
 use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\Controller\Result\Raw;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment AS OrderPayment;
+use Payone\Core\Model\Methods\Debit;
+use Payone\Core\Model\Methods\PayoneMethod;
 
 class DownloadTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,8 +54,14 @@ class DownloadTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager = new ObjectManager($this);
 
+        $payonePayment = $this->getMockBuilder(Debit::class)->disableOriginalConstructor()->getMock();
+
+        $payment = $this->getMockBuilder(OrderPayment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getMethodInstance')->willReturn($payonePayment);
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getPayoneMandateId')->willReturn('12345');
+        $order->method('getPayment')->willReturn($payment);
 
         $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
         $checkoutSession->method('getLastRealOrder')->willReturn($order);
