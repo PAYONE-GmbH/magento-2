@@ -61,6 +61,6 @@ class Calculation extends Base
         $this->addParameter('country', $oBilling->getCountryId());
         $this->addParameter('lastname', $oBilling->getLastname());
 
-        return $this->send();
+        return $this->send($oPayment);
     }
 }

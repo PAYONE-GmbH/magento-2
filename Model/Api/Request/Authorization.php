@@ -109,11 +109,8 @@ class Authorization extends AddressRequest
         $this->addParameter('customerid', $oOrder->getCustomerId()); // add customer id
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // add sub account id
         $this->setAuthorizationParameters($oPayment, $oOrder, $dAmount); // set authorization params
-        if ($oPayment->hasCustomConfig()) {// if payment type doesnt use the global settings
-            $this->addCustomParameters($oPayment); // add custom connection settings
-        }
 
-        $aResponse = $this->send(); // send request to PAYONE Server API
+        $aResponse = $this->send($oPayment); // send request to PAYONE Server API
 
         $this->apiHelper->addPayoneOrderData($oOrder, $this->getParameters(), $aResponse); // add payone data to order
 

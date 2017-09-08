@@ -29,6 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Api\Request;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Api\Request\Getfile as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Model\Methods\PayoneMethod;
 
 class GetfileTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,11 +54,18 @@ class GetfileTest extends \PHPUnit_Framework_TestCase
         $order->method('getPayoneMandateId')->willReturn('12345');
         $order->method('getPayoneMode')->willReturn('test');
 
+        $payment = $this->getMockBuilder(PayoneMethod::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['hasCustomConfig', 'getCustomConfigParam'])
+            ->getMock();
+        $payment->method('hasCustomConfig')->willReturn(true);
+        $payment->method('getCustomConfigParam')->willReturn('getfile');
+
         $result = $this->classToTest->getOrderId();
         $expected = '';
         $this->assertEquals($expected, $result);
 
         $this->setExpectedException(\Exception::class); // script wont be able to successfully contact payone-server
-        $this->classToTest->sendRequest($order);
+        $this->classToTest->sendRequest($order, $payment);
     }
 }

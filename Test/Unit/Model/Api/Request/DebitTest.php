@@ -91,10 +91,12 @@ class DebitTest extends \PHPUnit_Framework_TestCase
 
         $payment = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOperationMode', 'getCreditmemo'])
+            ->setMethods(['getOperationMode', 'getCreditmemo', 'hasCustomConfig', 'getCustomConfigParam'])
             ->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getCreditmemo')->willReturn($creditmemo);
+        $payment->method('hasCustomConfig')->willReturn(true);
+        $payment->method('getCustomConfigParam')->willReturn('test');
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
@@ -136,10 +138,12 @@ class DebitTest extends \PHPUnit_Framework_TestCase
 
         $payment = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOperationMode', 'getCreditmemo'])
+            ->setMethods(['getOperationMode', 'getCreditmemo', 'hasCustomConfig', 'getCustomConfigParam'])
             ->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getCreditmemo')->willReturn($creditmemo);
+        $payment->method('hasCustomConfig')->willReturn(true);
+        $payment->method('getCustomConfigParam')->willReturn('test');
 
         $item = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
         $item->method('getItemId')->willReturn('id');

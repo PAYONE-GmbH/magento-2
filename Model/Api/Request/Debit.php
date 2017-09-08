@@ -155,7 +155,7 @@ class Debit extends Base
 
         // Add debit bank data given - see oxid integration
 
-        $aResponse = $this->send();
+        $aResponse = $this->send($oPayment);
 
         return $aResponse;
     }

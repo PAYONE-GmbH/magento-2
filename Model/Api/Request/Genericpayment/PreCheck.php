@@ -99,10 +99,6 @@ class PreCheck extends Base
             }
         }
 
-        if ($oPayment->hasCustomConfig()) {// if payment type doesnt use the global settings
-            $this->addCustomParameters($oPayment); // add custom connection settings
-        }
-
-        return $this->send();
+        return $this->send($oPayment);
     }
 }
