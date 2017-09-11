@@ -144,6 +144,9 @@ define(
             handleInstallment: function () {
                 if (this.validate() && additionalValidators.validate()) {
                     window.payolution_installment = this;
+                    window.switchInstallmentPlan = window.switchInstallmentPlan || function (sKey, sCode, iInstallments) {
+                            window.payolution_installment.switchInstallmentPlan(sKey, sCode, iInstallments);
+                        }
                     installmentplan(this, '19601212');
                 }
             },
@@ -166,8 +169,3 @@ define(
         });
     }
 );
-
-function switchInstallmentPlan(sKey, sCode, iInstallments)
-{
-    window.payolution_installment.switchInstallmentPlan(sKey, sCode, iInstallments);
-}
