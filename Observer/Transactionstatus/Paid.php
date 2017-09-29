@@ -33,6 +33,7 @@ use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Payone\Core\Helper\Base;
+use Payone\Core\Model\PayoneConfig;
 
 /**
  * Event observer for Transactionstatus paid
@@ -86,7 +87,8 @@ class Paid implements ObserverInterface
         $oOrder = $observer->getOrder();
 
         // order is not guaranteed to exist if using transaction status forwarding
-        if (null === $oOrder){
+        // advance payment should not create an invoice
+        if (null === $oOrder || $oOrder->getPayment()->getMethodInstance()->getCode() == PayoneConfig::METHOD_ADVANCE_PAYMENT){
             return;
         }
 

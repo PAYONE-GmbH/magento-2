@@ -26,14 +26,16 @@
 
 namespace Payone\Core\Test\Unit\Observer\Transactionstatus;
 
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Observer\Transactionstatus\Paid as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Helper\Base;
+use Payone\Core\Model\Methods\Creditcard;
 
 class PaidTest extends \PHPUnit_Framework_TestCase
 {
@@ -67,8 +69,12 @@ class PaidTest extends \PHPUnit_Framework_TestCase
 
     public function testExecute()
     {
-        $payment = $this->getMockBuilder(OrderPaymentInterface::class)->disableOriginalConstructor()->getMock();
+        $method = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
+        $method->method('getCode')->willReturn(PayoneConfig::METHOD_CREDITCARD);
+
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $payment->method('getLastTransId')->willReturn('123');
+        $payment->method('getMethodInstance')->willReturn($method);
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getPayment')->willReturn($payment);
