@@ -979,6 +979,10 @@
 "Firstname","Vorname"
 "Lastname","Nachname"
 "What is this?","Was ist das?"
+"Please enter complete data.","Bitte geben Sie die Kreditkartendaten vollstaendig ein."
+"Expiry date invalid. Please verify your card data.","Ablauf-Datum ungueltig. Bitte pruefen Sie ihre Kartendaten."
+"Invalid card number. Please verify your card data.","Ungueltige Kreditkartennummer. Bitte pruefen Sie ihre Kartendaten."
+"Invalid Card Verification Value. Please verify your card data.","Ungueltiger Pruefcode. Bitte pruefen Sie ihre Kartendaten."
 
 "Always","Immer"
 "Only on first order with this card","Bei erster Bestellung mit der Karte"
