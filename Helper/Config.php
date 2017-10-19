@@ -41,7 +41,7 @@ class Config extends \Payone\Core\Helper\Base
     {
         $sForwarding = $this->getConfigParam('config', 'forwarding', 'payone_misc', $sStoreCode);
         if ($sForwarding) {
-            $aForwarding = unserialize($sForwarding);
+            $aForwarding = $this->unserialize($sForwarding);
             if (is_array($aForwarding) && !empty($aForwarding)) {
                 return $aForwarding;
             }

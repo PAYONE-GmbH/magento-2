@@ -41,17 +41,27 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
     protected $storeManager;
 
     /**
+     * PAYONE shop helper
+     *
+     * @var \Payone\Core\Helper\Shop
+     */
+    protected $shopHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context      $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Payone\Core\Helper\Shop                   $shopHelper
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Payone\Core\Helper\Shop $shopHelper
     ) {
         parent::__construct($context);
         $this->storeManager = $storeManager;
+        $this->shopHelper = $shopHelper;
     }
 
     /**
@@ -103,5 +113,29 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
     public function getRequestParameter($sParameter)
     {
         return $this->_getRequest()->getParam($sParameter);
+    }
+
+    /**
+     * Handle the serialization of strings depending on the Magento version
+     *
+     * @param  mixed $mValue
+     * @return string
+     */
+    public function serialize($mValue) {
+        if (version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) { // Magento 2.2.0 and above
+            return json_encode($mValue);
+        }
+        return serialize($mValue);
+    }
+
+    /**
+     * @param  string $sValue
+     * @return mixed
+     */
+    public function unserialize($sValue) {
+        if (version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) { // Magento 2.2.0 and above
+            return json_decode($sValue, true);
+        }
+        return unserialize($sValue);
     }
 }

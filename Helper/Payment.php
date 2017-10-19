@@ -164,7 +164,7 @@ class Payment extends \Payone\Core\Helper\Base
     public function getStatusMappingByCode($sPaymentCode)
     {
         $sStatusMapping = $this->getConfigParam($sPaymentCode, 'statusmapping');
-        $aStatusMapping = unserialize($sStatusMapping);
+        $aStatusMapping = $this->unserialize($sStatusMapping);
         $aCleanMapping = [];
         if ($aStatusMapping) {
             foreach ($aStatusMapping as $aMap) {

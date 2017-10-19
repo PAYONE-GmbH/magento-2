@@ -35,8 +35,10 @@ use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\PreCheck;
 use Payone\Core\Model\Api\Request\Genericpayment\Calculation;
 use Payone\Core\Block\Payolution\InstallmentPlan;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class InstallmentPlanTest extends \PHPUnit_Framework_TestCase
+class InstallmentPlanTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -60,7 +62,7 @@ class InstallmentPlanTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->response = $objectManager->getObject(InstallmentPlanResponse::class);
         #$responseFactory = $objectManager->getObject(InstallmentPlanResponseFactory::class);
@@ -70,7 +72,10 @@ class InstallmentPlanTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseGrandTotal'])
+            ->getMock();
         $quote->method('getBaseGrandTotal')->willReturn(100);
 
         $checkoutSession = $this->getMockBuilder(Session::class)

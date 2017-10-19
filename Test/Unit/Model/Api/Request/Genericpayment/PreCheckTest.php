@@ -35,8 +35,10 @@ use Payone\Core\Model\Methods\Paypal;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Environment;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PreCheckTest extends \PHPUnit_Framework_TestCase
+class PreCheckTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -55,7 +57,7 @@ class PreCheckTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
@@ -83,14 +85,20 @@ class PreCheckTest extends \PHPUnit_Framework_TestCase
         $address->method('getCity')->willReturn('Berlin');
         $address->method('getRegionCode')->willReturn('Berlin');
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getQuoteCurrencyCode', 'getBillingAddress'])
+            ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getBillingAddress')->willReturn($address);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->getMock();
         $paymentInfo->method('getAdditionalInformation')->willReturn('value');
 
-        $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
+        $payment = $this->getMockBuilder(Paypal::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getOperationMode', 'getClearingtype', 'getSubType', 'getLongSubType', 'getData', 'getInfoInstance', 'hasCustomConfig', 'getCustomConfigParam'])
+            ->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getClearingtype')->willReturn('fnc');
         $payment->method('getSubType')->willReturn('PYD');

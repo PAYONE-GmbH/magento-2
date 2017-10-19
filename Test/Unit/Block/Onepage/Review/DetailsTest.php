@@ -30,8 +30,10 @@ use Payone\Core\Block\Onepage\Review\Details as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order\Address;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class DetailsTest extends \PHPUnit_Framework_TestCase
+class DetailsTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -39,7 +41,7 @@ class DetailsTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -50,7 +52,7 @@ class DetailsTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
 

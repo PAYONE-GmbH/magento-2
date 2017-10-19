@@ -230,30 +230,30 @@
                 <transmit_enabled>1</transmit_enabled>
             </invoicing>
             <statusmapping>
-                <payone_creditcard>a:1:{s:18:"_1343137391927_927";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_creditcard>
-                <payone_debit>a:1:{s:18:"_1338893616379_379";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_debit>
-                <payone_paypal>a:1:{s:18:"_1343137411652_652";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_paypal>
-                <payone_cash_on_delivery>a:1:{s:18:"_1338893625332_332";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_cash_on_delivery>
-                <payone_invoice>a:1:{s:18:"_1338893611948_948";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_invoice>
-                <payone_advance_payment>a:2:{s:18:"_1338893618715_715";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:7:"pending";}s:18:"_1458214328719_719";a:2:{s:8:"txaction";s:4:"paid";s:12:"state_status";s:10:"processing";}}</payone_advance_payment>
-                <payone_obt_sofortueberweisung>a:1:{s:18:"_1343137411652_152";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_sofortueberweisung>
-                <payone_obt_giropay>a:1:{s:18:"_1343137411652_252";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_giropay>
-                <payone_obt_eps>a:1:{s:18:"_1343137411652_352";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_eps>
-                <payone_obt_postfinance_efinance>a:1:{s:18:"_1343137411652_452";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_postfinance_efinance>
-                <payone_obt_postfinance_card>a:1:{s:18:"_1343137411652_552";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_postfinance_card>
-                <payone_obt_ideal>a:1:{s:18:"_1343137411652_752";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_ideal>
-                <payone_obt_przelewy>a:1:{s:18:"_1343137411652_852";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_obt_przelewy>
-                <payone_barzahlen>a:1:{s:23:"_payone_status_mapping6";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_barzahlen>
-                <payone_paydirekt>a:1:{s:18:"_1343118466182_183";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_paydirekt>
-                <payone_billsafe>a:1:{s:23:"_payone_status_mapping4";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_billsafe>
-                <payone_klarna>a:1:{s:23:"_payone_status_mapping2";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_klarna>
-                <payone_safe_invoice>a:1:{s:22:"_payone_status_invoice";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_safe_invoice>
-                <payone_payolution_invoice>a:1:{s:23:"_payone_status_mapping7";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_invoice>
-                <payone_payolution_debit>a:1:{s:23:"_payone_status_mapping8";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_debit>
-                <payone_payolution_installment>a:1:{s:23:"_payone_status_mapping9";a:2:{s:8:"txaction";s:9:"appointed";s:12:"state_status";s:10:"processing";}}</payone_payolution_installment>
+                <payone_creditcard>{"_1343137391927_927":{"txaction":"appointed","state_status":"processing"}}</payone_creditcard>
+                <payone_debit>{"_1338893616379_379":{"txaction":"appointed","state_status":"processing"}}</payone_debit>
+                <payone_paypal>{"_1343137411652_652":{"txaction":"appointed","state_status":"processing"}}</payone_paypal>
+                <payone_cash_on_delivery>{"_1338893625332_332":{"txaction":"appointed","state_status":"processing"}}</payone_cash_on_delivery>
+                <payone_invoice>{"_1338893611948_948":{"txaction":"appointed","state_status":"processing"}}</payone_invoice>
+                <payone_advance_payment>{"_1338893618715_715":{"txaction":"appointed","state_status":"pending"},"_1458214328719_719":{"txaction":"paid","state_status":"processing"}}</payone_advance_payment>
+                <payone_obt_sofortueberweisung>{"_1343137411652_152":{"txaction":"appointed","state_status":"processing"}}</payone_obt_sofortueberweisung>
+                <payone_obt_giropay>{"_1343137411652_252":{"txaction":"appointed","state_status":"processing"}}</payone_obt_giropay>
+                <payone_obt_eps>{"_1343137411652_352":{"txaction":"appointed","state_status":"processing"}}</payone_obt_eps>
+                <payone_obt_postfinance_efinance>{"_1343137411652_452":{"txaction":"appointed","state_status":"processing"}}</payone_obt_postfinance_efinance>
+                <payone_obt_postfinance_card>{"_1343137411652_552":{"txaction":"appointed","state_status":"processing"}}</payone_obt_postfinance_card>
+                <payone_obt_ideal>{"_1343137411652_752":{"txaction":"appointed","state_status":"processing"}}</payone_obt_ideal>
+                <payone_obt_przelewy>{"_1343137411652_852":{"txaction":"appointed","state_status":"processing"}}</payone_obt_przelewy>
+                <payone_barzahlen>{"_payone_status_mapping6":{"txaction":"appointed","state_status":"processing"}}</payone_barzahlen>
+                <payone_paydirekt>{"_1343118466182_183":{"txaction":"appointed","state_status":"processing"}}</payone_paydirekt>
+                <payone_billsafe>{"_payone_status_mapping4":{"txaction":"appointed","state_status":"processing"}}</payone_billsafe>
+                <payone_klarna>{"_payone_status_mapping2":{"txaction":"appointed","state_status":"processing"}}</payone_klarna>
+                <payone_safe_invoice>{"_payone_status_invoice":{"txaction":"appointed","state_status":"processing"}}</payone_safe_invoice>
+                <payone_payolution_invoice>{"_payone_status_mapping7":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_invoice>
+                <payone_payolution_debit>{"_payone_status_mapping8":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_debit>
+                <payone_payolution_installment>{"_payone_status_mapping9":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_installment>
             </statusmapping>
             <creditcard>
-                <cc_template>a:30:{s:11:"Number_type";s:3:"tel";s:12:"Number_count";s:2:"30";s:10:"Number_max";s:2:"16";s:13:"Number_iframe";s:8:"standard";s:12:"Number_style";s:8:"standard";s:8:"CVC_type";s:3:"tel";s:9:"CVC_count";s:2:"30";s:7:"CVC_max";s:1:"4";s:10:"CVC_iframe";s:8:"standard";s:9:"CVC_style";s:8:"standard";s:10:"Month_type";s:6:"select";s:11:"Month_count";s:1:"3";s:9:"Month_max";s:1:"2";s:12:"Month_iframe";s:6:"custom";s:11:"Month_width";s:5:"120px";s:12:"Month_height";s:4:"20px";s:11:"Month_style";s:8:"standard";s:9:"Year_type";s:6:"select";s:10:"Year_count";s:1:"5";s:8:"Year_max";s:1:"4";s:11:"Year_iframe";s:6:"custom";s:10:"Year_width";s:5:"120px";s:11:"Year_height";s:4:"20px";s:10:"Year_style";s:8:"standard";s:14:"Standard_input";s:108:"width:223px;height:30px;padding: 0 9px;font-size:14px;font-family:'Helvetica Neue',Verdana,Arial,sans-serif;";s:18:"Standard_selection";s:12:"width:100px;";s:12:"Iframe_width";s:5:"365px";s:13:"Iframe_height";s:4:"30px";s:13:"Errors_active";s:5:"false";s:11:"Errors_lang";s:2:"de";}</cc_template>
+                <cc_template>{"Number_type":"tel","Number_count":"30","Number_max":"16","Number_iframe":"standard","Number_style":"standard","CVC_type":"tel","CVC_count":"30","CVC_max":"4","CVC_iframe":"standard","CVC_style":"standard","Month_type":"select","Month_count":"3","Month_max":"2","Month_iframe":"custom","Month_width":"120px","Month_height":"20px","Month_style":"standard","Year_type":"select","Year_count":"5","Year_max":"4","Year_iframe":"custom","Year_width":"120px","Year_height":"20px","Year_style":"standard","Standard_input":"width:223px;height:30px;padding: 0 9px;font-size:14px;font-family:'Helvetica Neue',Verdana,Arial,sans-serif;","Standard_selection":"width:100px;","Iframe_width":"365px","Iframe_height":"30px","Errors_active":"false","Errors_lang":"de"}</cc_template>
             </creditcard>
             <emails>
                 <send_invoice_email>0</send_invoice_email>

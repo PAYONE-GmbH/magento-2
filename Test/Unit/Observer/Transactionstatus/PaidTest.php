@@ -36,8 +36,10 @@ use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Helper\Base;
 use Payone\Core\Model\Methods\Creditcard;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PaidTest extends \PHPUnit_Framework_TestCase
+class PaidTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -45,13 +47,13 @@ class PaidTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
 

@@ -31,8 +31,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\ResourceModel\TransactionStatus as ResourceModel;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class TransactionStatusRepositoryTest extends \PHPUnit_Framework_TestCase
+class TransactionStatusRepositoryTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -40,13 +42,13 @@ class TransactionStatusRepositoryTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $resourceModel = $this->getMockBuilder(ResourceModel::class)->disableOriginalConstructor()->getMock();
         $resourceModel->method('getAppointedIdByTxid')->willReturn('12345');

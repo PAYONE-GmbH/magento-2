@@ -38,8 +38,10 @@ use Magento\Framework\Escaper;
 use Payone\Core\Helper\Consumerscore;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Payment\Model\Method\AbstractMethod;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ConfigProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigProviderTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -47,7 +49,7 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -58,7 +60,7 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->dataHelper = $this->getMockBuilder(Data::class)->disableOriginalConstructor()->getMock();
         $countryHelper = $this->getMockBuilder(Country::class)->disableOriginalConstructor()->getMock();

@@ -34,8 +34,10 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\ShippingAddressManagement;
 use Magento\Framework\App\Request\Http;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ShippingAddressManagementTest extends \PHPUnit_Framework_TestCase
+class ShippingAddressManagementTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -43,13 +45,13 @@ class ShippingAddressManagementTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
 

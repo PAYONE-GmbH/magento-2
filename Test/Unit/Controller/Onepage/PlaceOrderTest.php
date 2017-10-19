@@ -39,8 +39,10 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Quote\Model\Quote\Address;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PlaceOrderTest extends \PHPUnit_Framework_TestCase
+class PlaceOrderTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -48,7 +50,7 @@ class PlaceOrderTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -74,7 +76,7 @@ class PlaceOrderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $redirectResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
 

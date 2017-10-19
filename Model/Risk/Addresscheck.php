@@ -226,7 +226,7 @@ class Addresscheck
         $aReturnMappings = [];
 
         $sMappings = $this->getConfigParam('mapping_personstatus');
-        $aMappings = unserialize($sMappings);
+        $aMappings = $this->toolkitHelper->unserialize($sMappings);
         if (!is_array($aMappings)) {
             $aMappings = [];
         }

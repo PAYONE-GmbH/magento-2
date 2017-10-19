@@ -28,8 +28,10 @@ namespace Payone\Core\Test\Unit\Service\V1\Data;
 
 use Payone\Core\Service\V1\Data\InstallmentPlanResponse as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class InstallmentPlanResponseTest extends \PHPUnit_Framework_TestCase
+class InstallmentPlanResponseTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -38,7 +40,7 @@ class InstallmentPlanResponseTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $data = [
             'success' => 'success',

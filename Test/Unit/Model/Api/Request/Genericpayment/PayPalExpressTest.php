@@ -32,8 +32,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class CaptureTest extends \PHPUnit_Framework_TestCase
+class CaptureTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -52,7 +54,7 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
@@ -65,15 +67,18 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
 
     public function testSendRequest()
     {
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getGrandTotal', 'getQuoteCurrencyCode'])
+            ->getMock();
         $quote->method('getGrandTotal')->willReturn(123);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
 
         $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
-        $payment->method('errorurl')->willReturn('http://testdomain.com');
-        $payment->method('backurl')->willReturn('http://testdomain.com');
+        $payment->method('getErrorUrl')->willReturn('http://testdomain.com');
+        $payment->method('getCancelUrl')->willReturn('http://testdomain.com');
 
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
 
@@ -86,15 +91,18 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
 
     public function testSendRequestNoWorkorderId()
     {
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getGrandTotal', 'getQuoteCurrencyCode'])
+            ->getMock();
         $quote->method('getGrandTotal')->willReturn(123);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
 
         $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
-        $payment->method('errorurl')->willReturn('http://testdomain.com');
-        $payment->method('backurl')->willReturn('http://testdomain.com');
+        $payment->method('getErrorUrl')->willReturn('http://testdomain.com');
+        $payment->method('getCancelUrl')->willReturn('http://testdomain.com');
 
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
 

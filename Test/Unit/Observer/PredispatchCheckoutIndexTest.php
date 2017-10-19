@@ -33,8 +33,10 @@ use Magento\Checkout\Model\Session;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PredispatchCheckoutIndexTest extends \PHPUnit_Framework_TestCase
+class PredispatchCheckoutIndexTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -42,7 +44,7 @@ class PredispatchCheckoutIndexTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -53,7 +55,7 @@ class PredispatchCheckoutIndexTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()

@@ -35,8 +35,10 @@ use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\HTTP\Client\Curl;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class DraftDownloadTest extends \PHPUnit_Framework_TestCase
+class DraftDownloadTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,7 +46,7 @@ class DraftDownloadTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -55,7 +57,7 @@ class DraftDownloadTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $aLinks = ['5' => 'http://drafturl.com'];
 

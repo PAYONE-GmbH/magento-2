@@ -24,29 +24,25 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Model\Source;
+namespace Payone\Core\Model\Test;
 
-use Payone\Core\Model\Source\CreditScore as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Model\Test\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use PHPUnit\Framework\TestCase;
 
-class CreditScoreTest extends BaseTestCase
+class BaseTestCase extends TestCase
 {
     /**
-     * @var ClassToTest
+     * Return ObjectManager object based on the current Magento 2 version
+     *
+     * @return ObjectManager|PayoneObjectManager
      */
-    private $classToTest;
-
-    protected function setUp()
+    public function getObjectManager()
     {
-        $objectManager = $this->getObjectManager();
-        $this->classToTest = $objectManager->getObject(ClassToTest::class);
-    }
-
-    public function testToOptionArray()
-    {
-        $result = $this->classToTest->toOptionArray();
-        $this->assertCount(3, $result);
+        // This is a version-switch -> class was added with Magento 2.2.0
+        // Couldnt find a direct way to obtain the version using only the Unittest-Objectmanager
+        if (class_exists('\Magento\Framework\Serialize\Serializer\Json') === false) {
+            return new PayoneObjectManager($this);
+        }
+        return new ObjectManager($this);
     }
 }

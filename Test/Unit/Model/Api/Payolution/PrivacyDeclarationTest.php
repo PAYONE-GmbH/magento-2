@@ -30,8 +30,10 @@ use Payone\Core\Model\Api\Payolution\PrivacyDeclaration as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Shop;
 use Magento\Framework\HTTP\Client\Curl;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PrivacyDeclarationTest extends \PHPUnit_Framework_TestCase
+class PrivacyDeclarationTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -50,7 +52,7 @@ class PrivacyDeclarationTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper->method('getLocale')->willReturn('de');

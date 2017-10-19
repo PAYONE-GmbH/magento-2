@@ -37,8 +37,10 @@ use Payone\Core\Model\Api\Request\Genericpayment\PreCheck;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Framework\DataObject;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class InstallmentTest extends \PHPUnit_Framework_TestCase
+class InstallmentTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -46,7 +48,7 @@ class InstallmentTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -57,7 +59,7 @@ class InstallmentTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $info = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->getMock();
         $info->method('getAdditionalInformation')->willReturn('value');

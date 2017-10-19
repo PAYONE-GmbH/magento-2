@@ -38,11 +38,13 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Helper\Connection\CurlPhp;
 use Payone\Core\Helper\Connection\CurlCli;
 use Payone\Core\Helper\Connection\Fsockopen;
+use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ApiTest extends \PHPUnit_Framework_TestCase
+class ApiTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -78,7 +80,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
