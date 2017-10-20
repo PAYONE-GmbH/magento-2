@@ -28,7 +28,7 @@ namespace Payone\Core\Test\Unit\Helper\Connection;
 
 use Payone\Core\Helper\Connection\CurlCli;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class CurlCliTest extends BaseTestCase

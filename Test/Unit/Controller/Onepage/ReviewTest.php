@@ -40,7 +40,7 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Quote\Api\Data\CartExtension;
 use Magento\Quote\Model\ShippingAssignment;
 use Magento\Quote\Model\Shipping;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 

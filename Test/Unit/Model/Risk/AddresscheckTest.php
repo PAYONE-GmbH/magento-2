@@ -35,7 +35,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\Exception\LocalizedException;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class AddresscheckTest extends BaseTestCase

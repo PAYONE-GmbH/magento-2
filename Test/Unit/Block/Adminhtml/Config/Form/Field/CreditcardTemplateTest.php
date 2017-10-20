@@ -29,7 +29,7 @@ namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 use Payone\Core\Block\Adminhtml\Config\Form\Field\CreditcardTemplate as ClassToTest;
 use Magento\Framework\Data\Form\Element\Multiselect;
 use Magento\Framework\Data\Form\AbstractForm;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 
 class CreditcardTemplateTest extends BaseTestCase
 {

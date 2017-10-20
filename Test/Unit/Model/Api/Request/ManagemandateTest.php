@@ -36,7 +36,7 @@ use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Api;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Quote\Model\Quote\Address;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ManagemandateTest extends BaseTestCase

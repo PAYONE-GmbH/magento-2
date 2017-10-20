@@ -35,7 +35,7 @@ use Magento\Framework\UrlInterface;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class InstallmentPlanTest extends BaseTestCase

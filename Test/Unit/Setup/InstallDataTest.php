@@ -32,7 +32,7 @@ use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Sales\Setup\SalesSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class InstallDataTest extends BaseTestCase

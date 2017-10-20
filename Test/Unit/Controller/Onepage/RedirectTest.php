@@ -35,7 +35,7 @@ use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Store\App\Response\Redirect as RedirectResponse;
 use Magento\Framework\App\Console\Response;
 use Magento\Framework\UrlInterface;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class RedirectTest extends BaseTestCase

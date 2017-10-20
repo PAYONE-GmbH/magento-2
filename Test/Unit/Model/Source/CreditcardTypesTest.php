@@ -29,7 +29,7 @@ namespace Payone\Core\Test\Unit\Model\Source;
 use Payone\Core\Model\Source\CreditcardTypes as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Source\CreditcardTypes;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class CreditcardTypesTest extends BaseTestCase

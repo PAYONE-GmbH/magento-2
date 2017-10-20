@@ -32,7 +32,7 @@ use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Payone\Core\Service\V1\Data\AddresscheckResponseFactory;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class AddresscheckTest extends BaseTestCase

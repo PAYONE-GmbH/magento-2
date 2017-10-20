@@ -39,7 +39,7 @@ use Payone\Core\Model\Api\Request\Authorization;
 use Payone\Core\Model\Api\Request\Debit;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Model\Api\Request\Capture;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class BaseMethodTest extends BaseTestCase

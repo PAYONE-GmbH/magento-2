@@ -38,7 +38,7 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Helper\Connection\CurlPhp;
 use Payone\Core\Helper\Connection\CurlCli;
 use Payone\Core\Helper\Connection\Fsockopen;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ApiTest extends BaseTestCase

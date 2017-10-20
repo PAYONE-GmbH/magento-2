@@ -31,7 +31,7 @@ use Payone\Core\Model\Api\Request\Getfile as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Methods\PayoneMethod;
 use PHPUnit\Framework\Exception;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class GetfileTest extends BaseTestCase

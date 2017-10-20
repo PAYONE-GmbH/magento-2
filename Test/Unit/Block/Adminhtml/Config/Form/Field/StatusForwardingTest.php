@@ -33,7 +33,7 @@ use Payone\Core\Model\Source\TransactionStatus;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Multiselect;
 use Magento\Framework\Data\Form\AbstractForm;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class StatusForwardingTest extends BaseTestCase

@@ -31,7 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\ResourceModel\TransactionStatus as ResourceModel;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class TransactionStatusRepositoryTest extends BaseTestCase

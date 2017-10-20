@@ -30,7 +30,7 @@ use Payone\Core\Model\TransactionStatus\Forwarding as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Config;
 use Magento\Framework\HTTP\Client\Curl;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ForwardingTest extends BaseTestCase

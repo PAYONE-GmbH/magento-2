@@ -44,7 +44,7 @@ use Magento\Store\App\Response\Redirect as RedirectResponse;
 use Magento\Framework\App\Console\Response;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Quote\Model\Quote\Payment as CorePayment;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ExpressTest extends BaseTestCase

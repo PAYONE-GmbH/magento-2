@@ -32,7 +32,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\TransactionStatusRepository;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class BasicTest extends BaseTestCase

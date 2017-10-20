@@ -36,7 +36,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class HostedIframeTest extends BaseTestCase

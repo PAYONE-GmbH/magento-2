@@ -36,7 +36,7 @@ use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Helper\Base;
 use Payone\Core\Model\Methods\Creditcard;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class PaidTest extends BaseTestCase

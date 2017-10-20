@@ -37,7 +37,7 @@ use Payone\Core\Helper\Environment;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\PayoneConfig;
 use Locale;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class RequestTest extends BaseTestCase

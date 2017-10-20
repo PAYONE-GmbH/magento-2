@@ -35,7 +35,7 @@ use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\PreCheck;
 use Payone\Core\Model\Api\Request\Genericpayment\Calculation;
 use Payone\Core\Block\Payolution\InstallmentPlan;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class InstallmentPlanTest extends BaseTestCase

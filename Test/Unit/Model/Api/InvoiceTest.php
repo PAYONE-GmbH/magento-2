@@ -32,7 +32,7 @@ use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Item;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class InvoiceTest extends BaseTestCase

@@ -37,7 +37,7 @@ use Payone\Core\Helper\Database;
 use Payone\Core\Helper\Config;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\Toolkit;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ConfigExportTest extends BaseTestCase

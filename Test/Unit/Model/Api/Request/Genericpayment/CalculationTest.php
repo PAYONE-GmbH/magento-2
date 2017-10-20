@@ -33,7 +33,7 @@ use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
 use Magento\Quote\Model\Quote\Address;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class CalculationTest extends BaseTestCase

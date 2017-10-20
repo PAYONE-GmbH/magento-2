@@ -35,7 +35,7 @@ use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\HTTP\Client\Curl;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class DraftDownloadTest extends BaseTestCase

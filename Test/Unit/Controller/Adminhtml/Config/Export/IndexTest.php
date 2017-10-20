@@ -37,7 +37,7 @@ use Magento\Framework\AuthorizationInterface;
 use Payone\Core\Model\Config\Export;
 use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\Controller\Result\Raw;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class IndexTest extends BaseTestCase

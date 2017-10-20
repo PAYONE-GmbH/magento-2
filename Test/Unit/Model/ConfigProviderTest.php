@@ -38,7 +38,7 @@ use Magento\Framework\Escaper;
 use Payone\Core\Helper\Consumerscore;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Payment\Model\Method\AbstractMethod;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ConfigProviderTest extends BaseTestCase

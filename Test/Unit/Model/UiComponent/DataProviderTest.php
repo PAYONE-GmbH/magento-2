@@ -32,7 +32,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Filter;
 use Payone\Core\Helper\Database;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class DataProviderTest extends BaseTestCase

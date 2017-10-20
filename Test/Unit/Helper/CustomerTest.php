@@ -38,7 +38,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order\Address;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\Region;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class CustomerTest extends BaseTestCase

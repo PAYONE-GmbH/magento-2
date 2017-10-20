@@ -28,7 +28,7 @@ namespace Payone\Core\Test\Unit\Block\Adminhtml\Order\View\Tab;
 
 use Payone\Core\Block\Adminhtml\Order\View\Tab\TransactionStatus as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class TransactionStatusTest extends BaseTestCase

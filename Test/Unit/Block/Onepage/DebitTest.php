@@ -31,7 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\UrlInterface;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class DebitTest extends BaseTestCase

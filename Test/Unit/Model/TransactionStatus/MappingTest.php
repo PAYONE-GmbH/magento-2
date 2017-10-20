@@ -33,7 +33,7 @@ use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\Database;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class MappingTest extends BaseTestCase

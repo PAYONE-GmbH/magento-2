@@ -36,7 +36,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Payment\Model\MethodInterface;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class MethodListTest extends BaseTestCase

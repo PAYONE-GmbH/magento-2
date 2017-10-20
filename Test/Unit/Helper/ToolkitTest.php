@@ -39,7 +39,7 @@ use Payone\Core\Model\PayoneConfig;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Framework\DataObject;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ToolkitTest extends BaseTestCase

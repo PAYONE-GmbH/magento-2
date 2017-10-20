@@ -37,7 +37,7 @@ use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\App\Request\Http;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Framework\Event\ManagerInterface;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class IndexTest extends BaseTestCase

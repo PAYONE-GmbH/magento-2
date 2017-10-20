@@ -28,7 +28,7 @@ namespace Payone\Core\Test\Unit\Block\Adminhtml;
 
 use Payone\Core\Block\Adminhtml\Information as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class InformationTest extends BaseTestCase

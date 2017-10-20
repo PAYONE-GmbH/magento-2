@@ -33,7 +33,7 @@ use Payone\Core\Model\Api\Request\Base;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ApiLogTest extends BaseTestCase

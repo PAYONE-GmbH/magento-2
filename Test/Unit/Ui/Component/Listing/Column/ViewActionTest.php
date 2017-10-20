@@ -31,7 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\UiComponent\Context;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class ViewActionTest extends BaseTestCase

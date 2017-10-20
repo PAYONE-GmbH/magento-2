@@ -38,7 +38,7 @@ use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\AuthorizationInterface;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class IndexTest extends BaseTestCase

@@ -34,7 +34,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Directory\Model\Country as CoreCountry;
-use Payone\Core\Model\Test\BaseTestCase;
+use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Model\Test\PayoneObjectManager;
 
 class CountryTest extends BaseTestCase
