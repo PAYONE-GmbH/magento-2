@@ -3,12 +3,16 @@ language: php
 sudo: required
 php:
 - '7.0'
+env:
+- MAGEVER=2.1
+- MAGEVER=2.2
 services:
 - mysql
 before_script:
+- echo Building for Magento Version $MAGEVER
 - phpenv config-rm xdebug.ini
 - mysql -e 'CREATE DATABASE IF NOT EXISTS magentotravis;'
-- git clone --depth=10 -b 2.2 https://github.com/magento/magento2 /tmp/build
+- git clone --depth=10 -b $MAGEVER https://github.com/magento/magento2 /tmp/build
 - cd /tmp/build
 - composer update
 - php bin/magento setup:install --base-url=http://magebuild.integrations.p1-test.de/build/
