@@ -8,14 +8,14 @@ services:
 before_script:
 - phpenv config-rm xdebug.ini
 - mysql -e 'CREATE DATABASE IF NOT EXISTS magentotravis;'
-- git clone --depth=10 -b 2.1 https://github.com/magento/magento2 /tmp/build
+- git clone --depth=10 -b 2.2 https://github.com/magento/magento2 /tmp/build
 - cd /tmp/build
 - composer update
 - php bin/magento setup:install --base-url=http://magebuild.integrations.p1-test.de/build/
   --db-host=localhost --db-name=magentotravis --db-user=root --admin-firstname=Dieter
   --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo
   --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin
-- composer require payone-gmbh/magento-2
+- composer require payone-gmbh/magento-2 dev-master
 - cp -R /home/travis/build/PAYONE-GmbH/magento-2/* /tmp/build/vendor/payone-gmbh/magento-2
 - php bin/magento setup:upgrade
 - php bin/magento setup:di:compile
