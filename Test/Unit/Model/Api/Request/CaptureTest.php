@@ -35,8 +35,10 @@ use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Api;
 use Magento\Sales\Model\Order\Item;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class CaptureTest extends \PHPUnit_Framework_TestCase
+class CaptureTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -55,7 +57,7 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
 
@@ -79,9 +81,12 @@ class CaptureTest extends \PHPUnit_Framework_TestCase
         $payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
 
-        $item = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
+        $item = $this->getMockBuilder(Item::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered'])
+            ->getMock();
         $item->method('getItemId')->willReturn('id');
-        $item->method('getProductId()')->willReturn('sku');
+        $item->method('getProductId')->willReturn('sku');
         $item->method('getQtyOrdered')->willReturn(2);
 
         $item_missing = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();

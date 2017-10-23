@@ -39,11 +39,13 @@ use Payone\Core\Model\PayoneConfig;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Framework\DataObject;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ToolkitTest extends \PHPUnit_Framework_TestCase
+class ToolkitTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -64,7 +66,7 @@ class ToolkitTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
         $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);

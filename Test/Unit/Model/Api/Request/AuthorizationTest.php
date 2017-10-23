@@ -40,8 +40,10 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Payone\Core\Helper\Environment;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class AuthorizationTest extends \PHPUnit_Framework_TestCase
+class AuthorizationTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -60,7 +62,7 @@ class AuthorizationTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
         $databaseHelper->method('getSequenceNumber')->willReturn('0');

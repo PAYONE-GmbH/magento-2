@@ -52,16 +52,16 @@ class Request extends \Payone\Core\Helper\Base
      *
      * @param \Magento\Framework\App\Helper\Context      $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Payone\Core\Helper\Environment            $environmentHelper
      * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Payone\Core\Helper\Environment            $environmentHelper
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Payone\Core\Helper\Environment $environmentHelper,
-        \Payone\Core\Helper\Shop $shopHelper
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Helper\Environment $environmentHelper
     ) {
-        parent::__construct($context, $storeManager);
+        parent::__construct($context, $storeManager, $shopHelper);
         $this->environmentHelper = $environmentHelper;
         $this->shopHelper = $shopHelper;
     }

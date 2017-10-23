@@ -34,8 +34,10 @@ use Payone\Core\Model\Source\CreditScore;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Multiselect;
 use Magento\Framework\Data\Form\AbstractForm;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PersonStatusMappingTest extends \PHPUnit_Framework_TestCase
+class PersonStatusMappingTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -43,13 +45,13 @@ class PersonStatusMappingTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $form = $this->getMockBuilder(AbstractForm::class)->disableOriginalConstructor()->getMock();
 

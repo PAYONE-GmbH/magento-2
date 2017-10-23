@@ -36,8 +36,10 @@ use Magento\Quote\Model\Quote;
 use Magento\Checkout\Model\Type\Onepage;
 use Magento\Quote\Model\Quote\Payment;
 use Magento\Quote\Model\Quote\Address;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ReturnHandlerTest extends \PHPUnit_Framework_TestCase
+class ReturnHandlerTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -45,13 +47,13 @@ class ReturnHandlerTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $address = $this->getMockBuilder(Address::class)

@@ -36,8 +36,10 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Payment\Model\MethodInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class MethodListTest extends \PHPUnit_Framework_TestCase
+class MethodListTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -45,7 +47,7 @@ class MethodListTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -61,7 +63,7 @@ class MethodListTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->consumerscore = $this->getMockBuilder(Consumerscore::class)->disableOriginalConstructor()->getMock();
         $this->consumerscoreHelper = $this->getMockBuilder(ConsumerscoreHelper::class)->disableOriginalConstructor()->getMock();
@@ -84,7 +86,10 @@ class MethodListTest extends \PHPUnit_Framework_TestCase
         $address->method('setPayoneProtectScore')->willReturn($address);
         $address->method('save')->willReturn($address);
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getShippingAddress', 'getGrandTotal'])
+            ->getMock();
         $quote->method('getShippingAddress')->willReturn($address);
         $quote->method('getGrandTotal')->willReturn(100.00);
 

@@ -28,8 +28,10 @@ namespace Payone\Core\Test\Unit\Block\Adminhtml;
 
 use Payone\Core\Block\Adminhtml\Information as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class InformationTest extends \PHPUnit_Framework_TestCase
+class InformationTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -37,13 +39,13 @@ class InformationTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
     }

@@ -29,8 +29,10 @@ namespace Payone\Core\Test\Unit\Model\Methods;
 use Payone\Core\Model\Methods\Paydirekt as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PaydirektTest extends \PHPUnit_Framework_TestCase
+class PaydirektTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -38,13 +40,13 @@ class PaydirektTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
     }

@@ -34,8 +34,10 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Backend\Block\Widget\Context;
 use Magento\Backend\Block\Widget\Button\ButtonList;
 use Magento\Framework\UrlInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ViewTest extends \PHPUnit_Framework_TestCase
+class ViewTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -43,13 +45,13 @@ class ViewTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $apiLog = $this->getMockBuilder(ApiLog::class)->disableOriginalConstructor()->getMock();
         $apiLog->method('load')->willReturn($apiLog);

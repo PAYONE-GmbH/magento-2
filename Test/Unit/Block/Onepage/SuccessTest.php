@@ -35,8 +35,10 @@ use Magento\Framework\UrlInterface;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class SuccessTest extends \PHPUnit_Framework_TestCase
+class SuccessTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,7 +46,7 @@ class SuccessTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -65,7 +67,7 @@ class SuccessTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
 

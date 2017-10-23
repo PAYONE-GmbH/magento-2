@@ -32,8 +32,10 @@ use Magento\Sales\Model\Order;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\DataObject;
 use Payone\Core\Helper\Toolkit;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class SafeInvoiceTest extends \PHPUnit_Framework_TestCase
+class SafeInvoiceTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -41,13 +43,13 @@ class SafeInvoiceTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $info = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
         $info->method('getAdditionalInformation')->willReturn('19010101');

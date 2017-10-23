@@ -33,11 +33,14 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Payone\Core\Helper\Toolkit;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -51,9 +54,14 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      */
     private $scopeConfig;
 
+    /**
+     * @var Toolkit
+     */
+    private $toolkitHelper;
+
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
         $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);
@@ -64,9 +72,12 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+
         $this->config = $this->objectManager->getObject(Config::class, [
             'context' => $context,
-            'storeManager' => $storeManager
+            'storeManager' => $storeManager,
+            'toolkitHelper' => $this->toolkitHelper
         ]);
     }
 
@@ -90,7 +101,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORE, null, serialize('string')]
+                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize('string')]
                 ]
             );
         $result = $this->config->getForwardingUrls();
@@ -106,7 +117,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORE, null, serialize($expected)]
+                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($expected)]
                 ]
             );
         $result = $this->config->getForwardingUrls();

@@ -32,8 +32,10 @@ use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Payone\Core\Service\V1\Data\AddresscheckResponseFactory;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class AddresscheckTest extends \PHPUnit_Framework_TestCase
+class AddresscheckTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -52,7 +54,7 @@ class AddresscheckTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $this->response = $objectManager->getObject(AddresscheckResponse::class);

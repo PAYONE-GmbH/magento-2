@@ -37,8 +37,10 @@ use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\App\Request\Http;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Framework\Event\ManagerInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class IndexTest extends \PHPUnit_Framework_TestCase
+class IndexTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -46,7 +48,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -62,7 +64,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $post = $this->getMockBuilder(self::class)->disableOriginalConstructor()->setMethods(['toArray'])->getMock();
         $post->method('toArray')->willReturn(['test' => 'array']);

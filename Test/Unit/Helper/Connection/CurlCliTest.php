@@ -28,11 +28,13 @@ namespace Payone\Core\Test\Unit\Helper\Connection;
 
 use Payone\Core\Helper\Connection\CurlCli;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class CurlCliTest extends \PHPUnit_Framework_TestCase
+class CurlCliTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -43,7 +45,7 @@ class CurlCliTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->curlCli = $this->objectManager->getObject(CurlCli::class);
     }

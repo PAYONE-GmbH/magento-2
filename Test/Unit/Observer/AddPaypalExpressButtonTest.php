@@ -34,8 +34,10 @@ use Magento\Framework\View\LayoutInterface;
 use Magento\Paypal\Block\Express\Shortcut;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Observer\AddPaypalExpressButtons as ClassToTest;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class AddPaypalExpressButtonTest extends \PHPUnit_Framework_TestCase
+class AddPaypalExpressButtonTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -43,7 +45,7 @@ class AddPaypalExpressButtonTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -54,7 +56,7 @@ class AddPaypalExpressButtonTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
 
@@ -93,8 +95,12 @@ class AddPaypalExpressButtonTest extends \PHPUnit_Framework_TestCase
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);
 
+        $executed = false;
+
         /** @var Observer $observer */
         $this->classToTest->execute($observer);
+        $executed = true;
+        $this->assertTrue($executed);
     }
 
     public function testExecutePaypalActiveAddToCart()
@@ -119,7 +125,11 @@ class AddPaypalExpressButtonTest extends \PHPUnit_Framework_TestCase
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);
 
+        $executed = false;
+
         /** @var Observer $observer */
         $this->classToTest->execute($observer);
+        $executed = true;
+        $this->assertTrue($executed);
     }
 }

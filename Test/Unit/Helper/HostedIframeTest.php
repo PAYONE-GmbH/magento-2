@@ -34,11 +34,15 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Payment;
+use Payone\Core\Helper\Shop;
+use Payone\Core\Helper\Toolkit;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class HostedIframeTest extends \PHPUnit_Framework_TestCase
+class HostedIframeTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -52,9 +56,14 @@ class HostedIframeTest extends \PHPUnit_Framework_TestCase
      */
     private $scopeConfig;
 
+    /**
+     * @var Toolkit
+     */
+    private $toolkitHelper;
+
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
         $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);
@@ -68,10 +77,15 @@ class HostedIframeTest extends \PHPUnit_Framework_TestCase
         $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $paymentHelper->method('isCheckCvcActive')->willReturn(true);
 
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, [
+            'shopHelper' => $this->objectManager->getObject(Shop::class)
+        ]);
+
         $this->hostedIframe = $this->objectManager->getObject(HostedIframe::class, [
             'context' => $context,
             'storeManager' => $storeManager,
-            'paymentHelper' => $paymentHelper
+            'paymentHelper' => $paymentHelper,
+            'toolkitHelper' => $this->toolkitHelper
         ]);
     }
 
@@ -81,7 +95,7 @@ class HostedIframeTest extends \PHPUnit_Framework_TestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORE, null, serialize('string')]
+                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize('string')]
                 ]
             );
         $result = $this->hostedIframe->getHostedFieldConfig();
@@ -91,13 +105,46 @@ class HostedIframeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetHostedFieldConfig()
     {
-        $sHostedConfig = 'a:32:{s:11:"Number_type";s:3:"tel";s:12:"Number_count";s:2:"30";s:10:"Number_max";s:2:"16";s:13:"Number_iframe";s:8:"standard";s:12:"Number_style";s:6:"custom";s:10:"Number_css";s:0:"";s:8:"CVC_type";s:3:"tel";s:9:"CVC_count";s:2:"30";s:7:"CVC_max";s:1:"4";s:10:"CVC_iframe";s:8:"standard";s:9:"CVC_style";s:6:"custom";s:7:"CVC_css";s:0:"";s:10:"Month_type";s:6:"select";s:11:"Month_count";s:1:"3";s:9:"Month_max";s:1:"2";s:12:"Month_iframe";s:6:"custom";s:11:"Month_width";s:5:"120px";s:12:"Month_height";s:4:"20px";s:11:"Month_style";s:8:"standard";s:9:"Year_type";s:6:"select";s:10:"Year_count";s:1:"5";s:8:"Year_max";s:1:"4";s:11:"Year_iframe";s:6:"custom";s:10:"Year_width";s:5:"120px";s:11:"Year_height";s:4:"20px";s:10:"Year_style";s:8:"standard";s:14:"Standard_input";s:0:"";s:18:"Standard_selection";s:12:"width:100px;";s:12:"Iframe_width";s:5:"365px";s:13:"Iframe_height";s:4:"30px";s:13:"Errors_active";s:4:"true";s:11:"Errors_lang";s:2:"de";}';
+        $aHostedConfig = [
+            "Number_type" => "tel",
+            "Number_count" => "30",
+            "Number_max" => "16",
+            "Number_iframe" => "standard",
+            "Number_style" => "custom",
+            "Number_css" => "",
+            "CVC_type" => "tel",
+            "CVC_count" => "30",
+            "CVC_max" => "4",
+            "CVC_iframe" => "standard",
+            "CVC_style" => "custom",
+            "CVC_css" => "",
+            "Month_type" => "select",
+            "Month_count" => "3",
+            "Month_max" => "2",
+            "Month_iframe" => "custom",
+            "Month_width" => "120px",
+            "Month_height" => "20px",
+            "Month_style" => "standard",
+            "Year_type" => "select",
+            "Year_count" => "5",
+            "Year_max" => "4",
+            "Year_iframe" => "custom",
+            "Year_width" => "120px",
+            "Year_height" => "20px",
+            "Year_style" => "standard",
+            "Standard_input" => "",
+            "Standard_selection" => "width:100px;",
+            "Iframe_width" => "365px",
+            "Iframe_height" => "30px",
+            "Errors_active" => "true",
+            "Errors_lang" => "de"
+        ];
 
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORE, null, $sHostedConfig]
+                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($aHostedConfig)]
                 ]
             );
         $result = $this->hostedIframe->getHostedFieldConfig();

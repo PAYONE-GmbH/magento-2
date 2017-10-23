@@ -36,11 +36,14 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Database;
 use Payone\Core\Helper\Config;
 use Payone\Core\Helper\Payment;
+use Payone\Core\Helper\Toolkit;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ConfigExportTest extends \PHPUnit_Framework_TestCase
+class ConfigExportTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -54,9 +57,14 @@ class ConfigExportTest extends \PHPUnit_Framework_TestCase
      */
     private $scopeConfig;
 
+    /**
+     * @var Toolkit
+     */
+    private $toolkitHelper;
+
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
         $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);
@@ -81,12 +89,15 @@ class ConfigExportTest extends \PHPUnit_Framework_TestCase
 
         $paymentHelper = $this->objectManager->getObject(Payment::class);
 
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+
         $this->configExport = $this->objectManager->getObject(ConfigExport::class, [
             'context' => $context,
             'storeManager' => $storeManager,
             'paymentHelper' => $paymentHelper,
             'databaseHelper' => $databaseHelper,
-            'configHelper' => $configHelper
+            'configHelper' => $configHelper,
+            'toolkitHelper' => $this->toolkitHelper
         ]);
     }
 
@@ -182,7 +193,7 @@ class ConfigExportTest extends \PHPUnit_Framework_TestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/statusmapping/payone_creditcard', ScopeInterface::SCOPE_STORE, null, serialize($config)]
+                    ['payone_general/statusmapping/payone_creditcard', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($config)]
                 ]
             );
 

@@ -33,8 +33,10 @@ use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class CheckedAddressesTest extends \PHPUnit_Framework_TestCase
+class CheckedAddressesTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -42,7 +44,7 @@ class CheckedAddressesTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -63,7 +65,7 @@ class CheckedAddressesTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->address = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
         $this->address->method('getFirstname')->willReturn('Paul');

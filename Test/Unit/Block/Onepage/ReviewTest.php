@@ -44,8 +44,10 @@ use Magento\Quote\Model\Quote\Payment;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\Event\ManagerInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ReviewTest extends \PHPUnit_Framework_TestCase
+class ReviewTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -53,7 +55,7 @@ class ReviewTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -89,7 +91,7 @@ class ReviewTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
 

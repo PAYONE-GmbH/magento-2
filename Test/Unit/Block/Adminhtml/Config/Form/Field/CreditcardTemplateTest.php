@@ -27,11 +27,11 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\CreditcardTemplate as ClassToTest;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\Multiselect;
 use Magento\Framework\Data\Form\AbstractForm;
+use Payone\Core\Test\Unit\BaseTestCase;
 
-class CreditcardTemplateTest extends \PHPUnit_Framework_TestCase
+class CreditcardTemplateTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -45,7 +45,7 @@ class CreditcardTemplateTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
 

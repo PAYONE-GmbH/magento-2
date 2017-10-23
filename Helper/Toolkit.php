@@ -43,13 +43,6 @@ class Toolkit extends \Payone\Core\Helper\Base
     protected $paymentHelper;
 
     /**
-     * PAYONE shop helper
-     *
-     * @var \Payone\Core\Helper\Shop
-     */
-    protected $shopHelper;
-
-    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context      $context
@@ -63,9 +56,8 @@ class Toolkit extends \Payone\Core\Helper\Base
         \Payone\Core\Helper\Payment $paymentHelper,
         \Payone\Core\Helper\Shop $shopHelper
     ) {
-        parent::__construct($context, $storeManager);
+        parent::__construct($context, $storeManager, $shopHelper);
         $this->paymentHelper = $paymentHelper;
-        $this->shopHelper = $shopHelper;
     }
 
     /**

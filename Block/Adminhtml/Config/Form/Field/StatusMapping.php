@@ -55,11 +55,11 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
     /**
      * Constructor
      *
-     * @param \Magento\Backend\Block\Template\Context         $context
-     * @param \Magento\Framework\Data\Form\Element\Factory    $elementFactory
-     * @param \Magento\Sales\Model\Config\Source\Order\Status $orderStatus
-     * @param \Payone\Core\Model\Source\TransactionStatus     $transactionStatus
-     * @param array                                           $data
+     * @param \Magento\Backend\Block\Template\Context                    $context
+     * @param \Magento\Framework\Data\Form\Element\Factory               $elementFactory
+     * @param \Magento\Sales\Model\ResourceModel\Order\Status\Collection $orderStatus
+     * @param \Payone\Core\Model\Source\TransactionStatus                $transactionStatus
+     * @param array                                                      $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -125,8 +125,8 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
         /** @var \Magento\Framework\Data\Form\Element\AbstractElement */
         $element = $this->getElement();
         $aValue = $element->getValue(); // get values
-        if (!is_array($aValue)) { // values given as array?
-            $aValue = unserialize($aValue); // convert string to array
+        if (is_array($aValue) === false) { // no array given? -> value from config.xml
+            $aValue = json_decode($aValue, true); // convert string to array
         }
         if ($aValue && is_array($aValue)) {
             foreach ($aValue as $rowId => $row) {

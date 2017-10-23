@@ -30,8 +30,11 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Model\Api\Request\Getfile as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Methods\PayoneMethod;
+use PHPUnit\Framework\Exception;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class GetfileTest extends \PHPUnit_Framework_TestCase
+class GetfileTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -40,7 +43,7 @@ class GetfileTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class);
     }
@@ -65,7 +68,7 @@ class GetfileTest extends \PHPUnit_Framework_TestCase
         $expected = '';
         $this->assertEquals($expected, $result);
 
-        $this->setExpectedException(\Exception::class); // script wont be able to successfully contact payone-server
+        $this->expectException(Exception::class); // script wont be able to successfully contact payone-server
         $this->classToTest->sendRequest($order, $payment);
     }
 }

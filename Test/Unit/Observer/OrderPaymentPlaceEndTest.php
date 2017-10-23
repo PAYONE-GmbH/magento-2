@@ -35,8 +35,10 @@ use Magento\Sales\Model\Order\Payment;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\PayoneConfig;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class OrderPaymentPlaceEndTest extends \PHPUnit_Framework_TestCase
+class OrderPaymentPlaceEndTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,16 +46,21 @@ class OrderPaymentPlaceEndTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
-        $consumerscoreHelper = $this->getMockBuilder(Consumerscore::class)->disableOriginalConstructor()->getMock();
+        $consumerscoreHelper = $this->getMockBuilder(Consumerscore::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAdditionalDataEntry', 'getConsumerscoreSampleCounter', 'incrementConsumerscoreSampleCounter'])
+            ->getMock();
         $consumerscoreHelper->method('getAdditionalDataEntry')->willReturn(true);
+        $consumerscoreHelper->method('getConsumerscoreSampleCounter')->willReturn(0);
+        $consumerscoreHelper->method('incrementConsumerscoreSampleCounter')->willReturn(1);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'consumerscoreHelper' => $consumerscoreHelper

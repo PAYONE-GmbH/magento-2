@@ -39,8 +39,10 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Exception\LocalizedException;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class CancelTest extends \PHPUnit_Framework_TestCase
+class CancelTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -48,7 +50,7 @@ class CancelTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -64,7 +66,7 @@ class CancelTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $resultRedirect = $this->getMockBuilder(Redirect::class)->disableOriginalConstructor()->getMock();
         $resultRedirect->method('setPath')->willReturn($resultRedirect);

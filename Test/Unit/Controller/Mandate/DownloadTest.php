@@ -37,8 +37,10 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment AS OrderPayment;
 use Payone\Core\Model\Methods\Debit;
 use Payone\Core\Model\Methods\PayoneMethod;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class DownloadTest extends \PHPUnit_Framework_TestCase
+class DownloadTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -46,20 +48,23 @@ class DownloadTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $payonePayment = $this->getMockBuilder(Debit::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(OrderPayment::class)->disableOriginalConstructor()->getMock();
         $payment->method('getMethodInstance')->willReturn($payonePayment);
 
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayoneMandateId', 'getPayment'])
+            ->getMock();
         $order->method('getPayoneMandateId')->willReturn('12345');
         $order->method('getPayment')->willReturn($payment);
 

@@ -38,8 +38,10 @@ use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Helper\Shop;
 use Magento\Sales\Model\Order\Item;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class DebitTest extends \PHPUnit_Framework_TestCase
+class DebitTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -58,7 +60,7 @@ class DebitTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
         $databaseHelper->method('getSequenceNumber')->willReturn('0');
@@ -145,9 +147,12 @@ class DebitTest extends \PHPUnit_Framework_TestCase
         $payment->method('hasCustomConfig')->willReturn(true);
         $payment->method('getCustomConfigParam')->willReturn('test');
 
-        $item = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
+        $item = $this->getMockBuilder(Item::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered'])
+            ->getMock();
         $item->method('getItemId')->willReturn('id');
-        $item->method('getProductId()')->willReturn('sku');
+        $item->method('getProductId')->willReturn('sku');
         $item->method('getQtyOrdered')->willReturn(2);
 
         $item_missing = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();

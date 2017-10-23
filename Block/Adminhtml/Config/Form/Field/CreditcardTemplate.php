@@ -152,6 +152,10 @@ class CreditcardTemplate extends \Magento\Config\Block\System\Config\Form\Field\
         $sReturn = '';
 
         $aValues = $this->getElement()->getValue();
+        if (is_array($aValues) === false) { // no array given? -> value from config.xml
+            $aValues = json_decode($aValues, true); // convert string to array
+        }
+
         if (isset($aValues[$sIdent])) {
             $sReturn = $aValues[$sIdent];
         } elseif (isset($this->aDefaultConfig[$sIdent])) {

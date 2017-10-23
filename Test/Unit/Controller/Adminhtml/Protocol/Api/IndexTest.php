@@ -34,8 +34,10 @@ use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\AuthorizationInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class IndexTest extends \PHPUnit_Framework_TestCase
+class IndexTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -43,13 +45,13 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $authorization = $this->getMockBuilder(AuthorizationInterface::class)->disableOriginalConstructor()->getMock();
         $authorization->method('isAllowed')->willReturn(true);

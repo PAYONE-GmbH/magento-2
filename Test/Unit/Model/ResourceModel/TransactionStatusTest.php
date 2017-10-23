@@ -39,8 +39,10 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Action\Context as ActionContext;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\DB\Select;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class TransactionStatusTest extends \PHPUnit_Framework_TestCase
+class TransactionStatusTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -48,7 +50,7 @@ class TransactionStatusTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -69,7 +71,7 @@ class TransactionStatusTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
         $store->method('getId')->willReturn('15');

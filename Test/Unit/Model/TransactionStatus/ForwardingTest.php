@@ -30,8 +30,10 @@ use Payone\Core\Model\TransactionStatus\Forwarding as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Config;
 use Magento\Framework\HTTP\Client\Curl;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ForwardingTest extends \PHPUnit_Framework_TestCase
+class ForwardingTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -39,13 +41,13 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $forwarding = [['txaction' => ['appointed', 'paid'], 'url' => 'http://testdomain.com', 'timeout' => 0]];
 

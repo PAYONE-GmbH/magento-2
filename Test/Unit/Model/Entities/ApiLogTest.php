@@ -28,8 +28,10 @@ namespace Payone\Core\Test\Unit\Model\Entities;
 
 use Payone\Core\Model\Entities\ApiLog as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ApiLogTest extends \PHPUnit_Framework_TestCase
+class ApiLogTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -37,13 +39,13 @@ class ApiLogTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $data = [
             'raw_request' => serialize(['request' => 'authorization']),

@@ -38,11 +38,13 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\ResourceModel\Quote\Address\Rate;
 use Magento\Directory\Model\Region;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class OrderTestTest extends \PHPUnit_Framework_TestCase
+class OrderTestTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -68,7 +70,7 @@ class OrderTestTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
         $databaseHelper->method('getOrderIncrementIdByTxid')->willReturn('000000001');
@@ -171,7 +173,7 @@ class OrderTestTest extends \PHPUnit_Framework_TestCase
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
         $address->method('getGroupedAllShippingRates')->willReturn([]);
 
-        $this->setExpectedException(LocalizedException::class);
+        $this->expectException(LocalizedException::class);
         $this->order->setShippingMethod($address, $quote);
     }
 
