@@ -20,6 +20,9 @@ The PAYONE payment extension for MAGENTO 2 is massively reworked since the first
 *	php bin/magento setup:di:compile
 *	php bin/magento cache:clean
 
+## Compatibility issues
+To make this extension Magento 2.2 compatible, all Unit Tests have been modified to work with PHPUnit 6, which breaks compatibility towards older versions of PHPUnit. Please run all Unit Tests in PHPUnit 6, regardless of your Magento version.
+
 ## More information
 *	More information about Magento on https://www.payone.de/magento
 
