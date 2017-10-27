@@ -56,7 +56,7 @@ define(
                 }
                 parentReturn.additional_data.firstname = this.firstname();
                 parentReturn.additional_data.lastname = this.lastname();
-                parentReturn.additional_data.pseudocardpan = document.getElementById(this.getCode() + '_pseudocardpan').value;
+                parentReturn.additional_data.pseudocardpan = $('#' + this.getCode() + '_pseudocardpan').val();
                 return parentReturn;
             },
             
