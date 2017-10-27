@@ -60,6 +60,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INVOICE,
         PayoneConfig::METHOD_PAYOLUTION_DEBIT,
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT,
+        PayoneConfig::METHOD_ALIPAY
     ];
 
     /**
@@ -89,6 +90,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INVOICE => 'fnc',
         PayoneConfig::METHOD_PAYOLUTION_DEBIT => 'fnc',
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT => 'fnc',
+        PayoneConfig::METHOD_ALIPAY => 'wlt',
     ];
 
     /**
