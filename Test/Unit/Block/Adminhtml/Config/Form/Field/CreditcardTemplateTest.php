@@ -27,9 +27,11 @@
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
 use Payone\Core\Block\Adminhtml\Config\Form\Field\CreditcardTemplate as ClassToTest;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\Multiselect;
 use Magento\Framework\Data\Form\AbstractForm;
 use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
 class CreditcardTemplateTest extends BaseTestCase
 {
@@ -39,9 +41,14 @@ class CreditcardTemplateTest extends BaseTestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var Multiselect
+     */
+    private $element;
 
     protected function setUp()
     {
@@ -51,11 +58,11 @@ class CreditcardTemplateTest extends BaseTestCase
 
         $form = $this->objectManager->getObject(AbstractForm::class);
 
-        $element = $this->objectManager->getObject(Multiselect::class);
-        $element->setValue(['Number_height' => '20px']);
-        $element->setForm($form);
+        $this->element = $this->objectManager->getObject(Multiselect::class);
+        $this->element->setValue(['Number_height' => '20px']);
+        $this->element->setForm($form);
 
-        $this->classToTest->setElement($element);
+        $this->classToTest->setElement($this->element);
         $this->classToTest->addColumn('dummy', ['label' => __('Dummy')]);
         $this->classToTest->setForm($form);
     }
@@ -89,6 +96,14 @@ class CreditcardTemplateTest extends BaseTestCase
 
         $result = $this->classToTest->fcpoGetValue('CVC_iframe');
         $expected = 'standard';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testFcpoGetValueNoArray()
+    {
+        $this->element->setValue(json_encode(['Number_height' => '40px']));
+        $result = $this->classToTest->fcpoGetValue('Number_height');
+        $expected = '40px';
         $this->assertEquals($expected, $result);
     }
 }

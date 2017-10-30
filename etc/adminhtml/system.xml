@@ -195,6 +195,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
+                <field id="payone_alipay" translate="label" sortOrder="260" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>AliPay</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
             </group>
             <group id="creditcard" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Payment Creditcard</label>
@@ -238,6 +243,7 @@
             <include path="Payone_Core::system/payone_payolution_invoice.xml"/>
             <include path="Payone_Core::system/payone_payolution_debit.xml"/>
             <include path="Payone_Core::system/payone_payolution_installment.xml"/>
+            <include path="Payone_Core::system/payone_alipay.xml"/>
         </section>
         <section id="payone_protect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>PROTECT</label>

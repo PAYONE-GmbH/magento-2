@@ -101,9 +101,20 @@ class PredispatchCheckoutIndexTest extends BaseTestCase
         $this->assertNull($result);
     }
 
-    public function testExecuteException()
+    public function testExecuteLocalizedException()
     {
         $exception = $this->objectManager->getObject(NoSuchEntityException::class);
+        $this->checkoutSession->expects($this->once())->method('restoreQuote')->willThrowException($exception);
+
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->execute($observer);
+        $this->assertNull($result);
+    }
+
+    public function testExecuteException()
+    {
+        $exception = $this->objectManager->getObject(\Exception::class);
         $this->checkoutSession->expects($this->once())->method('restoreQuote')->willThrowException($exception);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();

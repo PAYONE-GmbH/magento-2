@@ -294,6 +294,15 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $this->assertNull($result);
     }
 
+    public function testExecuteNoQuote()
+    {
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getQuote'])->getMock();
+        $observer->method('getQuote')->willReturn(null);
+
+        $result = $this->classToTest->execute($observer);
+        $this->assertNull($result);
+    }
+
     public function testExecuteException()
     {
         $this->consumerscore->method('sendRequest')->willReturn(['status' => 'VALID', 'score' => 'G']);
