@@ -57,6 +57,11 @@ define(
                 parentReturn.additional_data.firstname = this.firstname();
                 parentReturn.additional_data.lastname = this.lastname();
                 parentReturn.additional_data.pseudocardpan = $('#' + this.getCode() + '_pseudocardpan').val();
+                if (typeof window.checkoutConfig.payment.payone.ccCheckResponse !== "undefined") {
+                    parentReturn.additional_data.truncatedcardpan = window.checkoutConfig.payment.payone.ccCheckResponse.truncatedcardpan;
+                    parentReturn.additional_data.cardtype = window.checkoutConfig.payment.payone.ccCheckResponse.cardtype;
+                    parentReturn.additional_data.cardexpiredate = window.checkoutConfig.payment.payone.ccCheckResponse.cardexpiredate;
+                }
                 return parentReturn;
             },
             
@@ -152,6 +157,7 @@ define(
                     if (document.getElementById(this.getCode() + '_pseudocardpan')) {
                         document.getElementById(this.getCode() + '_pseudocardpan').value = response.pseudocardpan;
                     }
+                    window.checkoutConfig.payment.payone.ccCheckResponse = response;
 
                     this.handleRedirectAction('payone/onepage/redirect/');
                 } else if (response.status === "INVALID") {

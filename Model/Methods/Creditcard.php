@@ -65,6 +65,18 @@ class Creditcard extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
+     * Keys that need to be assigned to the additionalinformation fields
+     *
+     * @var array
+     */
+    protected $aAssignKeys = [
+        'pseudocardpan',
+        'truncatedcardpan',
+        'cardtype',
+        'cardexpiredate'
+    ];
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder
@@ -87,8 +99,13 @@ class Creditcard extends PayoneMethod
     {
         parent::assignData($data);
 
-        $sPseudoCardPan = $this->toolkitHelper->getAdditionalDataEntry($data, 'pseudocardpan');
-        $this->getInfoInstance()->setAdditionalInformation('pseudocardpan', $sPseudoCardPan);
+        $oInfoInstance = $this->getInfoInstance();
+        foreach ($this->aAssignKeys as $sKey) {
+            $sData = $this->toolkitHelper->getAdditionalDataEntry($data, $sKey);
+            if ($sData) {
+                $oInfoInstance->setAdditionalInformation($sKey, $sData);
+            }
+        }
 
         return $this;
     }

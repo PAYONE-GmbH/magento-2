@@ -26,8 +26,6 @@
 
 namespace Payone\Core\Block\Info;
 
-use Payone\Core\Model\Source\CreditcardTypes;
-
 class Debit extends Base
 {
     /**
@@ -44,12 +42,18 @@ class Debit extends Base
         $transport = parent::_prepareSpecificInformation($transport);
         $data = [];
 
+        $oInfo = $this->getInfo();
         $oStatus = $this->getAppointedStatus();
         $aRaw = $oStatus->getRawStatusArray();
-        if (isset($aRaw['iban'])) {
+
+        if (!empty($oInfo->getAdditionalInformation('iban'))) {
+            $data[(string)__('IBAN:')] = $oInfo->getAdditionalInformation('iban');
+        } elseif (isset($aRaw['iban'])) {
             $data[(string)__('IBAN:')] = $aRaw['iban'];
         }
-        if (isset($aRaw['bic'])) {
+        if (!empty($oInfo->getAdditionalInformation('bic'))) {
+            $data[(string)__('BIC:')] = $oInfo->getAdditionalInformation('bic');
+        } elseif (isset($aRaw['bic'])) {
             $data[(string)__('BIC:')] = $aRaw['bic'];
         }
         if (isset($aRaw['bankaccount'])) {
@@ -59,7 +63,7 @@ class Debit extends Base
             $data[(string)__('Bank code:')] = $aRaw['bankcode'];
         }
 
-        $sTransId = $this->getInfo()->getLastTransId();
+        $sTransId = $oInfo->getLastTransId();
         if ($sTransId == '') {
             $data[(string)__('Payment has not been processed yet.')] = '';
         } else {
