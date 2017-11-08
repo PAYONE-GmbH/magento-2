@@ -205,6 +205,17 @@ abstract class PayoneMethod extends BaseMethod
         return $this->blNeedsProductInfo;
     }
 
+
+    /**
+     * Return if bank data has to be added to the debit request
+     *
+     * @return bool
+     */
+    public function needsBankdataOnDebit()
+    {
+        return $this->blNeedsBankdataOnDebit;
+    }
+
     /**
      * Get config parameter for this payment type
      *

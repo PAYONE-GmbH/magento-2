@@ -81,6 +81,16 @@ class Debit extends Base
     }
 
     /**
+     * Get creditmemo array from request parameters
+     *
+     * @return mixed
+     */
+    protected function getCreditmemoRequestParams()
+    {
+        return $this->shopHelper->getRequestParameter('creditmemo');
+    }
+
+    /**
      * Generate position list for invoice data transmission
      *
      * @param Order $oOrder
@@ -88,7 +98,7 @@ class Debit extends Base
      */
     protected function getInvoiceList(Order $oOrder)
     {
-        $aCreditmemo = $this->shopHelper->getRequestParameter('creditmemo');
+        $aCreditmemo = $this->getCreditmemoRequestParams();
 
         $aPositions = [];
         $blFull = true;
@@ -153,7 +163,11 @@ class Debit extends Base
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
-        // Add debit bank data given - see oxid integration
+        $aCreditmemo = $this->getCreditmemoRequestParams();
+        if (isset($aCreditmemo['payone_iban']) && isset($aCreditmemo['payone_bic'])) {
+            $this->addParameter('iban', $aCreditmemo['payone_iban']);
+            $this->addParameter('bic', $aCreditmemo['payone_bic']);
+        }
 
         $aResponse = $this->send($oPayment);
 

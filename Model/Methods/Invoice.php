@@ -46,4 +46,11 @@ class Invoice extends PayoneMethod
      * @var string
      */
     protected $sClearingtype = 'rec';
+
+    /**
+     * Determines if the bank data has to be added to the debit-request
+     *
+     * @var bool
+     */
+    protected $blNeedsBankdataOnDebit = true;
 }
