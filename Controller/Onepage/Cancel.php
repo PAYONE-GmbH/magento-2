@@ -50,20 +50,30 @@ class Cancel extends Action
     protected $orderFactory;
 
     /**
+     * Url builder object
+     *
+     * @var \Magento\Framework\Url
+     */
+    protected $urlBuilder;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Checkout\Model\Session       $checkoutSession
      * @param \Magento\Sales\Model\OrderFactory     $orderFactory
+     * @param \Magento\Framework\Url                $urlBuilder
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Sales\Model\OrderFactory $orderFactory
+        \Magento\Sales\Model\OrderFactory $orderFactory,
+        \Magento\Framework\Url $urlBuilder
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
         $this->orderFactory = $orderFactory;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -75,6 +85,15 @@ class Cancel extends Action
     {
         try {
             $this->checkoutSession->setIsPayoneRedirectCancellation(true);
+
+            $sPaymentMethod = $this->checkoutSession->getPayoneRedirectedPaymentMethod();
+            if ($sPaymentMethod) {
+                $this->checkoutSession->setPayoneCanceledPaymentMethod($sPaymentMethod);
+            }
+
+            if ($this->getRequest()->getParam('error')) {
+                $this->checkoutSession->setPayoneIsError(true);
+            }
 
             $orderId = $this->checkoutSession->getLastOrderId();
             $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
@@ -103,6 +122,6 @@ class Cancel extends Action
 
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        return $resultRedirect->setPath('checkout');
+        return $resultRedirect->setUrl($this->urlBuilder->getUrl('checkout').'#payment');
     }
 }

@@ -38,11 +38,13 @@ use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order\Address;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\Region;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class CustomerTest extends \PHPUnit_Framework_TestCase
+class CustomerTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -68,7 +70,7 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
         $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);

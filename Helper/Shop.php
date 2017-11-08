@@ -36,7 +36,7 @@ class Shop extends \Payone\Core\Helper\Base
     /**
      * Product metadata object
      *
-     * @var \Magento\Framework\App\ResourceConnection
+     * @var \Magento\Framework\App\ProductMetadata
      */
     protected $productMetadata;
 
@@ -52,7 +52,7 @@ class Shop extends \Payone\Core\Helper\Base
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\ProductMetadata $productMetadata
     ) {
-        parent::__construct($context, $storeManager);
+        parent::__construct($context, $storeManager, $this);
         $this->productMetadata = $productMetadata;
     }
 

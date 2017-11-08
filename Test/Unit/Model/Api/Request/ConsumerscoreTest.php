@@ -36,8 +36,10 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Model\ResourceModel\CheckedAddresses;
 use Payone\Core\Model\Source\AddressCheckType;
 use Payone\Core\Model\Source\CreditratingCheckType;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ConsumerscoreTest extends \PHPUnit_Framework_TestCase
+class ConsumerscoreTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -61,7 +63,7 @@ class ConsumerscoreTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
         $databaseHelper->method('getSequenceNumber')->willReturn('0');

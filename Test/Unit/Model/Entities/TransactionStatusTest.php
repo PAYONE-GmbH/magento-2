@@ -29,8 +29,10 @@ namespace Payone\Core\Test\Unit\Model\Entities;
 use Payone\Core\Model\Entities\TransactionStatus as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Toolkit;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class TransactionStatusTest extends \PHPUnit_Framework_TestCase
+class TransactionStatusTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -38,7 +40,7 @@ class TransactionStatusTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -49,7 +51,7 @@ class TransactionStatusTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $data = ['raw_status' => serialize(['status' => 'status', 'array' => ['key' => 'value'], 'number' => 15])];
         $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();

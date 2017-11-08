@@ -56,7 +56,7 @@ define(
                 }
                 parentReturn.additional_data.firstname = this.firstname();
                 parentReturn.additional_data.lastname = this.lastname();
-                parentReturn.additional_data.pseudocardpan = document.getElementById(this.getCode() + '_pseudocardpan').value;
+                parentReturn.additional_data.pseudocardpan = $('#' + this.getCode() + '_pseudocardpan').val();
                 return parentReturn;
             },
             
@@ -135,6 +135,9 @@ define(
                 // PayOne Request if the data is valid
                 if (window.iframes.isComplete()) {
                     window.ccjs = this;
+                    window.processPayoneResponseCCHosted = window.processPayoneResponseCCHosted || function (response) {
+                            window.ccjs.processPayoneResponseCCHosted(response);
+                        };
                     window.iframes.creditCardCheck('processPayoneResponseCCHosted'); // Perform "CreditCardCheck" to create and get a
                     // PseudoCardPan; then call your function "payCallback"
                     fullScreenLoader.startLoader();
@@ -161,8 +164,3 @@ define(
     
     }
 );
-
-function processPayoneResponseCCHosted(response)
-{
-    window.ccjs.processPayoneResponseCCHosted(response);
-}

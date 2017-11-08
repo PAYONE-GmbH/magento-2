@@ -32,8 +32,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\DataObject;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class OnlineBankTransferBaseTest extends \PHPUnit_Framework_TestCase
+class OnlineBankTransferBaseTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -41,13 +43,13 @@ class OnlineBankTransferBaseTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
     }

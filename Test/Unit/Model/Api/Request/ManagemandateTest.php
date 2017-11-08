@@ -36,8 +36,10 @@ use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Api;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Quote\Model\Quote\Address;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ManagemandateTest extends \PHPUnit_Framework_TestCase
+class ManagemandateTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -56,7 +58,7 @@ class ManagemandateTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
         $databaseHelper->method('getPayoneUserIdByCustNr')->willReturn('15');
@@ -98,7 +100,10 @@ class ManagemandateTest extends \PHPUnit_Framework_TestCase
         $address->method('getTelephone')->willReturn('0301234567');
         $address->method('getVatId')->willReturn('12345');
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getCustomer', 'getQuoteCurrencyCode', 'getBillingAddress'])
+            ->getMock();
         $quote->method('getCustomer')->willReturn($customer);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getBillingAddress')->willReturn($address);

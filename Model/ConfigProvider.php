@@ -100,6 +100,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $privacyDeclaration;
 
     /**
+     * Checkout session
+     *
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
      * Constructor
      *
      * @param \Magento\Payment\Model\CcConfig                      $ccConfig
@@ -112,6 +119,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @param \Magento\Framework\Escaper                           $escaper
      * @param \Payone\Core\Helper\Consumerscore                    $consumerscoreHelper
      * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
+     * @param \Magento\Checkout\Model\Session                      $checkoutSession
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -123,7 +131,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Payone\Core\Helper\Request $requestHelper,
         \Magento\Framework\Escaper $escaper,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
-        \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
+        \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration,
+        \Magento\Checkout\Model\Session $checkoutSession
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -135,6 +144,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->escaper = $escaper;
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->privacyDeclaration = $privacyDeclaration;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -206,6 +216,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'canShowAgreementMessage' => $this->consumerscoreHelper->canShowAgreementMessage(),
             'agreementMessage' => $this->requestHelper->getConfigParam('agreement_message', 'creditrating', 'payone_protect'),
             'payolution' => $this->getPayolutionConfig(),
+            'canceledPaymentMethod' => $this->getCanceledPaymentMethod(),
+            'isError' => $this->checkoutSession->getPayoneIsError()
         ];
     }
 
@@ -226,5 +238,20 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             $config['payment']['instructions'][$sCode] = $this->getInstructionByCode($sCode);
         }
         return $config;
+    }
+
+    /**
+     * Get canceled payment method from session
+     *
+     * @return string|bool
+     */
+    protected function getCanceledPaymentMethod()
+    {
+        $sPaymentMethod = $this->checkoutSession->getPayoneCanceledPaymentMethod();
+        $this->checkoutSession->unsPayoneCanceledPaymentMethod();
+        if ($sPaymentMethod) {
+            return $sPaymentMethod;
+        }
+        return false;
     }
 }

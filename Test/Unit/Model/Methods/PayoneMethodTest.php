@@ -30,8 +30,10 @@ use Payone\Core\Model\Methods\Paydirekt as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\PayoneConfig;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PayoneMethodTest extends \PHPUnit_Framework_TestCase
+class PayoneMethodTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -39,7 +41,7 @@ class PayoneMethodTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -50,7 +52,7 @@ class PayoneMethodTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
 

@@ -111,7 +111,9 @@ class Download extends \Magento\Framework\App\Action\Action
      */
     protected function getMandate()
     {
-        $sMandate = $this->getfileRequest->sendRequest($this->getOrder());
+        $oOrder = $this->getOrder();
+        $oPayment = $oOrder->getPayment()->getMethodInstance();
+        $sMandate = $this->getfileRequest->sendRequest($oOrder, $oPayment);
         return $sMandate;
     }
 

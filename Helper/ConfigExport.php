@@ -57,6 +57,7 @@ class ConfigExport extends \Payone\Core\Helper\Base
      *
      * @param \Magento\Framework\App\Helper\Context      $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Payone\Core\Helper\Shop                   $shopHelper
      * @param \Payone\Core\Helper\Payment                $paymentHelper
      * @param \Payone\Core\Helper\Database               $databaseHelper
      * @param \Payone\Core\Helper\Config                 $configHelper
@@ -64,11 +65,12 @@ class ConfigExport extends \Payone\Core\Helper\Base
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Payment $paymentHelper,
         \Payone\Core\Helper\Database $databaseHelper,
         \Payone\Core\Helper\Config $configHelper
     ) {
-        parent::__construct($context, $storeManager);
+        parent::__construct($context, $storeManager, $shopHelper);
         $this->paymentHelper = $paymentHelper;
         $this->databaseHelper = $databaseHelper;
         $this->configHelper = $configHelper;
@@ -106,7 +108,10 @@ class ConfigExport extends \Payone\Core\Helper\Base
         $aPaymentTypes = $this->paymentHelper->getAvailablePaymentTypes();
         foreach ($aPaymentTypes as $sPaymentCode) {
             $sPaymentMapping = $this->getConfigParam($sPaymentCode, 'statusmapping', 'payone_general', $sStoreCode);
-            $aPaymentMapping = unserialize($sPaymentMapping);
+            $aPaymentMapping = false;
+            if (!empty($sPaymentMapping)) {
+                $aPaymentMapping = $this->unserialize($sPaymentMapping);
+            }
             if (is_array($aPaymentMapping) && !empty($aPaymentMapping)) {
                 $aMap = [];
                 foreach ($aPaymentMapping as $aPayMap) {

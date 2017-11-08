@@ -32,8 +32,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Model\ResourceModel\CheckedAddresses;
 use Payone\Core\Helper\Shop;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class AddresscheckTest extends \PHPUnit_Framework_TestCase
+class AddresscheckTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -57,7 +59,7 @@ class AddresscheckTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
 

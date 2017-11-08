@@ -32,8 +32,10 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Payment;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class RedirectReturnTest extends \PHPUnit_Framework_TestCase
+class RedirectReturnTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -41,7 +43,7 @@ class RedirectReturnTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -52,7 +54,7 @@ class RedirectReturnTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()

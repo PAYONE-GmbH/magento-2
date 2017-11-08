@@ -36,8 +36,11 @@ use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Store\Api\Data\StoreInterface;
 use Payone\Core\Helper\Shop;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ExportTest extends \PHPUnit_Framework_TestCase
+
+class ExportTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -45,7 +48,7 @@ class ExportTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -56,7 +59,7 @@ class ExportTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $configExportHelper = $this->getMockBuilder(ConfigExport::class)->disableOriginalConstructor()->getMock();
         $configExportHelper->method('getModuleInfo')->willReturn(['Test_Module' => '1.2.3']);

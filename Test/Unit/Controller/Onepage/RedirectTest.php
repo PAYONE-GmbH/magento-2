@@ -35,8 +35,10 @@ use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Store\App\Response\Redirect as RedirectResponse;
 use Magento\Framework\App\Console\Response;
 use Magento\Framework\UrlInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class RedirectTest extends \PHPUnit_Framework_TestCase
+class RedirectTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,7 +46,7 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -55,7 +57,7 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $redirectResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
 

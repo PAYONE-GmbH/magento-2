@@ -38,8 +38,10 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\DataObject;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class InvoiceTest extends \PHPUnit_Framework_TestCase
+class InvoiceTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -47,7 +49,7 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -58,7 +60,7 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $info = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->getMock();
         $info->method('getAdditionalInformation')->willReturn('1');
@@ -115,7 +117,7 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
         $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $payment->method('getOrder')->willReturn($order);
 
-        $this->setExpectedException(LocalizedException::class);
+        $this->expectException(LocalizedException::class);
         $this->classToTest->authorize($payment, 100);
     }
 

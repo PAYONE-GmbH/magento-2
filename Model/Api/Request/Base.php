@@ -269,10 +269,15 @@ abstract class Base
     /**
      * Send the previously prepared request, log request and response into the database and return the response
 
+     * @param  PayoneMethod $oPayment
      * @return array
      */
-    protected function send()
+    protected function send(PayoneMethod $oPayment = null)
     {
+        if ($oPayment !== null && $oPayment->hasCustomConfig()) { // if payment type doesnt use the global settings
+            $this->addCustomParameters($oPayment); // add custom connection settings
+        }
+
         if (!$this->validateParameters()) {// all base parameters existing?
             return ["errormessage" => "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)"];
         }

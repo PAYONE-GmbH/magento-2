@@ -28,8 +28,10 @@ namespace Payone\Core\Test\Unit\Model\Source;
 
 use Payone\Core\Model\Source\PersonStatus as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class PersonStatusTest extends \PHPUnit_Framework_TestCase
+class PersonStatusTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -38,7 +40,7 @@ class PersonStatusTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
         $this->classToTest = $objectManager->getObject(ClassToTest::class);
     }
 

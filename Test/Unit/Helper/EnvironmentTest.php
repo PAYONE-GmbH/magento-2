@@ -34,11 +34,13 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class EnvironmentTest extends \PHPUnit_Framework_TestCase
+class EnvironmentTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -54,7 +56,7 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $remoteAddress = $this->getMockBuilder(RemoteAddress::class)->disableOriginalConstructor()->getMock();
         $remoteAddress->method('getRemoteAddress')->willReturn('192.168.1.100');

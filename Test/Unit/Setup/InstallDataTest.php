@@ -32,8 +32,10 @@ use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Sales\Setup\SalesSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class InstallDataTest extends \PHPUnit_Framework_TestCase
+class InstallDataTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -41,13 +43,13 @@ class InstallDataTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $salesSetup = $this->getMockBuilder(SalesSetup::class)->disableOriginalConstructor()->getMock();
         $salesSetupFactory = $this->getMockBuilder(SalesSetupFactory::class)

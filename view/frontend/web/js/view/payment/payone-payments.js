@@ -101,6 +101,10 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
             },
             {
+                type: 'payone_safe_invoice',
+                component: 'Payone_Core/js/view/payment/method-renderer/safe_invoice-method'
+            },
+            {
                 type: 'payone_payolution_invoice',
                 component: 'Payone_Core/js/view/payment/method-renderer/payolution_invoice-method'
             },
@@ -111,6 +115,10 @@ define(
             {
                 type: 'payone_payolution_installment',
                 component: 'Payone_Core/js/view/payment/method-renderer/payolution_installment-method'
+            },
+            {
+                type: 'payone_alipay',
+                component: 'Payone_Core/js/view/payment/method-renderer/alipay-method'
             },
             {
                 type: 'payone_amazonpay',

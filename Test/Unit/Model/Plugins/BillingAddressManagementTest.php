@@ -33,8 +33,10 @@ use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\BillingAddressManagement;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class BillingAddressManagementTest extends \PHPUnit_Framework_TestCase
+class BillingAddressManagementTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -42,13 +44,13 @@ class BillingAddressManagementTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
 

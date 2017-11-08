@@ -35,8 +35,10 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\Exception\LocalizedException;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ForwardingTest extends \PHPUnit_Framework_TestCase
+class AddresscheckTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,7 +46,7 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -58,14 +60,34 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
      */
     private $databaseHelper;
 
+    /**
+     * @var Quote|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $quote;
+
+    /**
+     * @var Toolkit
+     */
+    private $toolkitHelper;
+
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $this->databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
-        $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
-        $toolkitHelper->method('handleSubstituteReplacement')->willReturn('Invalid message');
+
+        $this->quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['isVirtual', 'getSubtotal'])
+            ->getMock();
+        $this->quote->method('isVirtual')->willReturn(false);
+        $this->quote->method('getSubtotal')->willReturn(100);
+
+        #$this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
+        #$this->toolkitHelper->method('handleSubstituteReplacement')->willReturn('Invalid message');
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->setMethods([
@@ -79,7 +101,7 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'addresscheck' => $this->addresscheck,
             'databaseHelper' => $this->databaseHelper,
-            'toolkitHelper' => $toolkitHelper,
+            'toolkitHelper' => $this->toolkitHelper,
             'checkoutSession' => $checkoutSession
         ]);
     }
@@ -141,12 +163,10 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
         $address->method('getStreet')->willReturn(['Teststr. 12', '3rd floor']);
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('isVirtual')->willReturn(false);
-        $quote->method('getSubtotal')->willReturn(100);
+
         $this->addresscheck->method('sendRequest')->willReturn(['status' => 'VALID', 'street' => 'Another str. 7', 'firstname' => 'Patrick']);
 
-        $result = $this->classToTest->handleAddressManagement($address, $quote, false);
+        $result = $this->classToTest->handleAddressManagement($address, $this->quote, false);
         $this->assertInstanceOf(Address::class, $result);
 
         $result = $this->classToTest->isAddressCorrected();
@@ -160,9 +180,7 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('isVirtual')->willReturn(false);
-        $quote->method('getSubtotal')->willReturn(100);
+
         $this->addresscheck->method('sendRequest')->willReturn(['status' => 'ERROR']);
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
@@ -171,8 +189,8 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
                 ['stop_checkout_message', 'address_check', 'payone_protect', null, null]
             ]);
 
-        $this->setExpectedException(LocalizedException::class);
-        $this->classToTest->handleAddressManagement($address, $quote, false);
+        $this->expectException(LocalizedException::class);
+        $this->classToTest->handleAddressManagement($address, $this->quote, false);
     }
 
     public function testHandleAddressManagementExceptionInvalid()
@@ -182,9 +200,7 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('isVirtual')->willReturn(false);
-        $quote->method('getSubtotal')->willReturn(100);
+
         $this->addresscheck->method('sendRequest')->willReturn(['status' => 'INVALID', 'customermessage' => 'Address invalid']);
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
@@ -192,8 +208,8 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
                 ['message_response_invalid', 'address_check', 'payone_protect', null, null]
             ]);
 
-        $this->setExpectedException(LocalizedException::class);
-        $this->classToTest->handleAddressManagement($address, $quote, false);
+        $this->expectException(LocalizedException::class);
+        $this->classToTest->handleAddressManagement($address, $this->quote, false);
     }
 
     public function testHandleAddressManagementExceptionNoStatus()
@@ -203,9 +219,7 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('isVirtual')->willReturn(false);
-        $quote->method('getSubtotal')->willReturn(100);
+
         $this->addresscheck->method('sendRequest')->willReturn([]);
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
@@ -213,8 +227,8 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
                 ['message_response_invalid', 'address_check', 'payone_protect', null, null]
             ]);
 
-        $this->setExpectedException(LocalizedException::class);
-        $this->classToTest->handleAddressManagement($address, $quote, false);
+        $this->expectException(LocalizedException::class);
+        $this->classToTest->handleAddressManagement($address, $this->quote, false);
     }
 
     public function testHandleAddressManagementExceptionInvalidDefault()
@@ -224,9 +238,7 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('isVirtual')->willReturn(false);
-        $quote->method('getSubtotal')->willReturn(100);
+
         $this->addresscheck->method('sendRequest')->willReturn(['status' => 'INVALID', 'customermessage' => 'Address invalid']);
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
@@ -234,8 +246,8 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
                 ['message_response_invalid', 'address_check', 'payone_protect', null, 'Address invalid: {{payone_customermessage}}']
             ]);
 
-        $this->setExpectedException(LocalizedException::class);
-        $this->classToTest->handleAddressManagement($address, $quote, false);
+        $this->expectException(LocalizedException::class);
+        $this->classToTest->handleAddressManagement($address, $this->quote, false);
     }
 
     public function testGetScoreR()
@@ -253,7 +265,7 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
         $status = 'x';
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
-            ->willReturnMap([['mapping_personstatus', 'address_check', 'payone_protect', null, serialize($status)]]);
+            ->willReturnMap([['mapping_personstatus', 'address_check', 'payone_protect', null, $this->toolkitHelper->serialize($status)]]);
 
         $this->addresscheck->method('sendRequest')->willReturn(['personstatus' => 'ABC']);
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
@@ -270,7 +282,7 @@ class ForwardingTest extends \PHPUnit_Framework_TestCase
         ];
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
-            ->willReturnMap([['mapping_personstatus', 'address_check', 'payone_protect', null, serialize($status)]]);
+            ->willReturnMap([['mapping_personstatus', 'address_check', 'payone_protect', null, $this->toolkitHelper->serialize($status)]]);
 
         $this->addresscheck->method('sendRequest')->willReturn(['personstatus' => 'ABC']);
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();

@@ -33,8 +33,10 @@ use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
 use Magento\Quote\Model\Quote\Address;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class CalculationTest extends \PHPUnit_Framework_TestCase
+class CalculationTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -53,7 +55,7 @@ class CalculationTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
@@ -70,7 +72,10 @@ class CalculationTest extends \PHPUnit_Framework_TestCase
         $address->method('getCountryId')->willReturn('DE');
         $address->method('getLastname')->willReturn('Payer');
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getQuoteCurrencyCode', 'getBillingAddress'])
+            ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getBillingAddress')->willReturn($address);
 

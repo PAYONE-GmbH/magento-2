@@ -29,8 +29,10 @@ namespace Payone\Core\Test\Unit\Model\Source;
 use Payone\Core\Model\Source\KlarnaCountry as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Country;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class KlarnaCountryTest extends \PHPUnit_Framework_TestCase
+class KlarnaCountryTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -39,7 +41,7 @@ class KlarnaCountryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $countryHelper = $this->getMockBuilder(Country::class)->disableOriginalConstructor()->getMock();
         $countryHelper->method('getCountryNameByIso2')->willReturn('Country Name');

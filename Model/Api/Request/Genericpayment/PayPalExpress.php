@@ -64,6 +64,6 @@ class PayPalExpress extends Base
 
         $this->addRedirectUrls($oPayment);
 
-        return $this->send();
+        return $this->send($oPayment);
     }
 }

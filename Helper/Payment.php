@@ -56,9 +56,11 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_PRZELEWY,
         PayoneConfig::METHOD_BARZAHLEN,
         PayoneConfig::METHOD_PAYDIREKT,
+        PayoneConfig::METHOD_SAFE_INVOICE,
         PayoneConfig::METHOD_PAYOLUTION_INVOICE,
         PayoneConfig::METHOD_PAYOLUTION_DEBIT,
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT,
+        PayoneConfig::METHOD_ALIPAY,
         PayoneConfig::METHOD_AMAZONPAY,
     ];
 
@@ -85,9 +87,11 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_BILLSAFE => 'fnc',
         PayoneConfig::METHOD_KLARNA => 'fnc',
         PayoneConfig::METHOD_BARZAHLEN => 'csh',
+        PayoneConfig::METHOD_SAFE_INVOICE => 'rec',
         PayoneConfig::METHOD_PAYOLUTION_INVOICE => 'fnc',
         PayoneConfig::METHOD_PAYOLUTION_DEBIT => 'fnc',
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT => 'fnc',
+        PayoneConfig::METHOD_ALIPAY => 'wlt',
         PayoneConfig::METHOD_AMAZONPAY => 'wlt',
     ];
 
@@ -164,7 +168,7 @@ class Payment extends \Payone\Core\Helper\Base
     public function getStatusMappingByCode($sPaymentCode)
     {
         $sStatusMapping = $this->getConfigParam($sPaymentCode, 'statusmapping');
-        $aStatusMapping = unserialize($sStatusMapping);
+        $aStatusMapping = $this->unserialize($sStatusMapping);
         $aCleanMapping = [];
         if ($aStatusMapping) {
             foreach ($aStatusMapping as $aMap) {

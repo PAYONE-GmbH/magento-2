@@ -44,8 +44,10 @@ use Magento\Store\App\Response\Redirect as RedirectResponse;
 use Magento\Framework\App\Console\Response;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Quote\Model\Quote\Payment as CorePayment;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ExpressTest extends \PHPUnit_Framework_TestCase
+class ExpressTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -53,7 +55,7 @@ class ExpressTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -79,7 +81,7 @@ class ExpressTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $resultRedirect = $this->getMockBuilder(Redirect::class)->disableOriginalConstructor()->getMock();
         $resultRedirect->method('setPath')->willReturn($resultRedirect);

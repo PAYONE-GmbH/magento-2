@@ -32,8 +32,10 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\TransactionStatusRepository;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class SafeInvoiceTest extends \PHPUnit_Framework_TestCase
+class SafeInvoiceTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -41,7 +43,7 @@ class SafeInvoiceTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -52,9 +54,12 @@ class SafeInvoiceTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayoneTxid'])
+            ->getMock();
         $order->method('getPayoneTxid')->willReturn('12345');
 
         $this->info = $this->getMockBuilder(Info::class)

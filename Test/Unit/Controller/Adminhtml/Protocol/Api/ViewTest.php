@@ -35,8 +35,10 @@ use Magento\Framework\View\Page\Config;
 use Magento\Framework\View\Page\Title;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\App\RequestInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ViewTest extends \PHPUnit_Framework_TestCase
+class ViewTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,13 +46,13 @@ class ViewTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $authorization = $this->getMockBuilder(AuthorizationInterface::class)->disableOriginalConstructor()->getMock();
         $authorization->method('isAllowed')->willReturn(true);

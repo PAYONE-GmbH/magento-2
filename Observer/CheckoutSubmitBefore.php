@@ -205,6 +205,10 @@ class CheckoutSubmitBefore implements ObserverInterface
     {
         /** @var Quote $oQuote */
         $oQuote = $observer->getQuote();
+        if (!$oQuote) {
+            return;
+        }
+
         $oBilling = $oQuote->getBillingAddress();
         $oShipping = $oQuote->getShippingAddress();
 

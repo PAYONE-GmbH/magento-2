@@ -27,6 +27,7 @@
 namespace Payone\Core\Model\Api\Request;
 
 use Magento\Sales\Model\Order;
+use Payone\Core\Model\Methods\PayoneMethod;
 
 /**
  * Class for the PAYONE Server API request "getfile"
@@ -36,10 +37,11 @@ class Getfile extends Base
     /**
      * Send request "getfile" to PAYONE server API
      *
-     * @param  Order $oOrder
+     * @param  Order        $oOrder
+     * @param  PayoneMethod $oPayment
      * @return string
      */
-    public function sendRequest(Order $oOrder)
+    public function sendRequest(Order $oOrder, PayoneMethod $oPayment)
     {
         $sReturn = false;
         $sStatus = 'ERROR';
@@ -56,6 +58,10 @@ class Getfile extends Base
             $this->removeParameter('integrator_version');
             $this->removeParameter('solution_name');
             $this->removeParameter('solution_version');
+        }
+
+        if ($oPayment->hasCustomConfig()) {// if payment type doesnt use the global settings
+            $this->addCustomParameters($oPayment); // add custom connection settings
         }
 
         $aOptions = [

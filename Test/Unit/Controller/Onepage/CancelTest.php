@@ -39,8 +39,12 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Exception\LocalizedException;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
+use Magento\Framework\Url;
+use Magento\Framework\App\RequestInterface;
 
-class CancelTest extends \PHPUnit_Framework_TestCase
+class CancelTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -48,7 +52,7 @@ class CancelTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -64,19 +68,23 @@ class CancelTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $resultRedirect = $this->getMockBuilder(Redirect::class)->disableOriginalConstructor()->getMock();
-        $resultRedirect->method('setPath')->willReturn($resultRedirect);
+        $resultRedirect->method('setUrl')->willReturn($resultRedirect);
 
         $resultFactory = $this->getMockBuilder(ResultFactory::class)->disableOriginalConstructor()->getMock();
         $resultFactory->method('create')->willReturn($resultRedirect);
 
         $messageManager = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()->getMock();
 
+        $request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
+        $request->method('getParam')->willReturn('1');
+
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->method('getResultFactory')->willReturn($resultFactory);
         $context->method('getMessageManager')->willReturn($messageManager);
+        $context->method('getRequest')->willReturn($request);
 
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
         $quote->method('setIsActive')->willReturn($quote);
@@ -96,6 +104,9 @@ class CancelTest extends \PHPUnit_Framework_TestCase
                 'setLoadInactive',
                 'getQuote',
                 'replaceQuote',
+                'getPayoneRedirectedPaymentMethod',
+                'setPayoneCanceledPaymentMethod',
+                'setPayoneIsError'
             ])
             ->getMock();
         $this->checkoutSession->method('getLastOrderId')->willReturn('12345');
@@ -103,6 +114,7 @@ class CancelTest extends \PHPUnit_Framework_TestCase
         $this->checkoutSession->method('unsLastQuoteId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('unsLastSuccessQuoteId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('unsLastOrderId')->willReturn($this->checkoutSession);
+        $this->checkoutSession->method('getPayoneRedirectedPaymentMethod')->willReturn('payone_creditcard');
 
         $this->order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $this->order->method('load')->willReturn($this->order);
@@ -116,10 +128,14 @@ class CancelTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $orderFactory->method('create')->willReturn($this->order);
 
+        $urlBuilder = $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
+        $urlBuilder->method('getUrl')->willReturn('http://test.com');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $this->checkoutSession,
-            'orderFactory' => $orderFactory
+            'orderFactory' => $orderFactory,
+            'urlBuilder' => $urlBuilder
         ]);
     }
 

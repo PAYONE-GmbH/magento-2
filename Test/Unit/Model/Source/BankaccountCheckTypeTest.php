@@ -28,8 +28,10 @@ namespace Payone\Core\Test\Unit\Model\Source;
 
 use Payone\Core\Model\Source\BankaccountCheckType as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class BankaccountCheckTypeTest extends \PHPUnit_Framework_TestCase
+class BankaccountCheckTypeTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -38,7 +40,7 @@ class BankaccountCheckTypeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
         $this->classToTest = $objectManager->getObject(ClassToTest::class);
     }
 

@@ -34,8 +34,10 @@ use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Customer;
 use Payone\Core\Model\PayoneConfig;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class UpdateuserTest extends \PHPUnit_Framework_TestCase
+class UpdateuserTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -49,7 +51,7 @@ class UpdateuserTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
 

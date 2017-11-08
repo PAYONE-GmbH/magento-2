@@ -38,8 +38,11 @@ use Magento\Framework\Escaper;
 use Payone\Core\Helper\Consumerscore;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Payment\Model\Method\AbstractMethod;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
+use Magento\Checkout\Model\Session;
 
-class ConfigProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigProviderTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -47,7 +50,7 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -56,9 +59,14 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
      */
     private $dataHelper;
 
+    /**
+     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $checkoutSession;
+
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->dataHelper = $this->getMockBuilder(Data::class)->disableOriginalConstructor()->getMock();
         $countryHelper = $this->getMockBuilder(Country::class)->disableOriginalConstructor()->getMock();
@@ -84,6 +92,11 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $consumerscoreHelper->method('canShowPaymentHintText')->willReturn(true);
         $consumerscoreHelper->method('canShowAgreementMessage')->willReturn(true);
 
+        $this->checkoutSession = $this->getMockBuilder(Session::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayoneCanceledPaymentMethod', 'unsPayoneCanceledPaymentMethod', 'getPayoneIsError'])
+            ->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'dataHelper' => $this->dataHelper,
             'countryHelper' => $countryHelper,
@@ -92,7 +105,8 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
             'hostedIframeHelper' => $hostedIframeHelper,
             'requestHelper' => $requestHelper,
             'escaper' => $escaper,
-            'consumerscoreHelper' => $consumerscoreHelper
+            'consumerscoreHelper' => $consumerscoreHelper,
+            'checkoutSession' => $this->checkoutSession
         ]);
     }
 
@@ -105,6 +119,8 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         $method->method('getInstructions')->willReturn('Instruction');
         $this->dataHelper->method('getMethodInstance')->willReturn($method);
 
+        $this->checkoutSession->method('getPayoneCanceledPaymentMethod')->willReturn(null);
+
         $result = $this->classToTest->getConfig();
         $this->assertNotEmpty($result);
     }
@@ -112,6 +128,8 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetConfigNoInstance()
     {
         $this->dataHelper->method('getMethodInstance')->willReturn(null);
+
+        $this->checkoutSession->method('getPayoneCanceledPaymentMethod')->willReturn('payone_creditcard');
 
         $result = $this->classToTest->getConfig();
         $this->assertNotEmpty($result);

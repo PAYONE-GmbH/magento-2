@@ -37,11 +37,13 @@ use Payone\Core\Helper\Environment;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\PayoneConfig;
 use Locale;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class RequestTest extends \PHPUnit_Framework_TestCase
+class RequestTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -67,7 +69,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
         $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);

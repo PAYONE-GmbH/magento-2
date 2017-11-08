@@ -20,11 +20,15 @@ The PAYONE payment extension for MAGENTO 2 is massively reworked since the first
 *	php bin/magento setup:di:compile
 *	php bin/magento cache:clean
 
+## Compatibility issues
+To make this extension Magento 2.2 compatible, all Unit Tests have been modified to work with PHPUnit 6, which breaks compatibility towards older versions of PHPUnit. Please run all Unit Tests in PHPUnit 6, regardless of your Magento version.
+
 ## More information
 *	More information about Magento on https://www.payone.de/magento
 
 ## Contact
 PAYONE GmbH<br>
+Office Kiel<br>
 Fraunhoferstraße 2-4<br>
 24118 Kiel, Germany<br>
 Phone +49 431 25968-400 Fax +49 431 25968-1400<br>
@@ -34,6 +38,6 @@ www.payone.com/magento
 ## License
 See our License Agreement at: https://www.payone.de/fileadmin/downloads/sonstiges/PAYONE_Haftungs_und_Lizenzvereinbarung_Extensions.pdf
 
-## About PAYONE
-PAYONE provides business solutions for comprehensive automated processing of all payments in e-commerce. The payment service provider is part of the Sparkassen-Finanzgruppe and authorised as a credit institution by the German Federal Financial Supervisory Authority. PAYONE's service portfolio includes acceptance and processing for national and international payment methods, plus all payment services. Standardised interfaces and extensions allow simple integration into existing e-commerce and IT-systems whilst maintaining strict security standards.<br>
-PAYONE ranks amongst the 50 fastest-growing technology companies in Germany and serves over 4.000 e-commerce clients from a variety of sectors and countries, including well-known companies such as Immonet, Globetrotter Ausrüstung, HD PLUS, Fujitsu, Zalando, Hawesko, Sony Music and Hallhuber. PAYONE employs a workforce of over 150.
+## About BS PAYONE
+Since the end of August 2017, the two payment specialist companies PAYONE and B+S Card Service merged to become BS PAYONE GmbH. All current partnerships will be maintained the way they are. APIs, interfaces, and other technical parameters will stay the same. Your current contact persons will continue to gladly be at your service.<br>
+BS PAYONE GmbH is headquartered in Frankfurt am Main and is one of the leading omnichannel payment providers in Europe. In addition to providing customer support to numerous Sparkasse banks, the full-service payment service provider also provides cashless payment transactions services to more than 255,000 customers from various branches – whether that be in stationary retail or when completing e-commerce and mobile payment transactions.

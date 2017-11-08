@@ -29,8 +29,10 @@ namespace Payone\Core\Test\Unit\Model\WebApi;
 use Payone\Core\Model\WebApi\AddresscheckResponse as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Api\Data\AddressInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class AddresscheckResponseTest extends \PHPUnit_Framework_TestCase
+class AddresscheckResponseTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -38,13 +40,13 @@ class AddresscheckResponseTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $data = [
             'success' => true,

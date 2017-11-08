@@ -32,8 +32,10 @@ use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Item;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class InvoiceTest extends \PHPUnit_Framework_TestCase
+class InvoiceTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -47,7 +49,7 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
+        $objectManager = $this->getObjectManager();
 
         $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $this->toolkitHelper->method('getInvoiceAppendix')->willReturn('invoice appendix');
@@ -143,7 +145,7 @@ class InvoiceTest extends \PHPUnit_Framework_TestCase
 
         $positions = ['12345' => 1.7];
 
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $result = $this->classToTest->addProductInfo($authorization, $order, $positions);
     }
 }

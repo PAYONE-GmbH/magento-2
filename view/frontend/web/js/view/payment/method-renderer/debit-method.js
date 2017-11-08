@@ -71,6 +71,9 @@ define(
                 }
 
                 window.elvjs = this;
+                window.processPayoneResponseELV = window.processPayoneResponseELV || function (response) {
+                        window.elvjs.processPayoneResponseELV(response);
+                    };
 
                 var options = {
                     return_type : 'object',
@@ -139,8 +142,3 @@ define(
         });
     }
 );
-
-function processPayoneResponseELV(response)
-{
-    window.elvjs.processPayoneResponseELV(response);
-}

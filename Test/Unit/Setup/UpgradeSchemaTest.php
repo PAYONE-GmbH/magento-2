@@ -32,8 +32,10 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class UpgradeSchemaTest extends \PHPUnit_Framework_TestCase
+class UpgradeSchemaTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -41,13 +43,13 @@ class UpgradeSchemaTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
     }

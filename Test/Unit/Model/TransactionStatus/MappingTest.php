@@ -33,8 +33,10 @@ use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\Database;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class MappingTest extends \PHPUnit_Framework_TestCase
+class MappingTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -42,13 +44,13 @@ class MappingTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $paymentHelper->method('getStatusMappingByCode')->willReturn([

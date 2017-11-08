@@ -35,8 +35,10 @@ use Payone\Core\Model\Paypal\ReturnHandler;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Message\ManagerInterface;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class ReturnedTest extends \PHPUnit_Framework_TestCase
+class ReturnedTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,7 +46,7 @@ class ReturnedTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -55,7 +57,7 @@ class ReturnedTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $resultRedirect = $this->getMockBuilder(Redirect::class)->disableOriginalConstructor()->getMock();
         $resultRedirect->method('setPath')->willReturn($resultRedirect);

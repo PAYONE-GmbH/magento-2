@@ -43,8 +43,10 @@ use Magento\Framework\App\Console\Response;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\View\Result\Page;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class DebitTest extends \PHPUnit_Framework_TestCase
+class DebitTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -52,7 +54,7 @@ class DebitTest extends \PHPUnit_Framework_TestCase
     private $classToTest;
 
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -83,7 +85,7 @@ class DebitTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $redirectResponse = $this->getMockBuilder(Response::class)->disableOriginalConstructor()->getMock();
 

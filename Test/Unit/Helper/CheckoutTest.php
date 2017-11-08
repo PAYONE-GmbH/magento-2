@@ -32,11 +32,13 @@ use Magento\Checkout\Model\Type\Onepage;
 use Magento\Quote\Model\Quote;
 use Magento\Customer\Model\Session;
 use Magento\Checkout\Helper\Data;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Model\Test\PayoneObjectManager;
 
-class CheckoutTest extends \PHPUnit_Framework_TestCase
+class CheckoutTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager
+     * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
 
@@ -62,7 +64,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = new ObjectManager($this);
+        $this->objectManager = $this->getObjectManager();
 
         $this->customerSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
         $this->checkoutData = $this->getMockBuilder(Data::class)->disableOriginalConstructor()->getMock();
