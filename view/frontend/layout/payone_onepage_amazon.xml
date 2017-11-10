@@ -27,6 +27,8 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <title>Amazon Pay checkout</title>
+        <css src="Payone_Core::css/amazonpay.css"/>
+        <css src="Payone_Core::css/amazonpay_button.css"/>
     </head>
     <referenceBlock name="content">
         <block class="Payone\Core\Block\Onepage\Amazon" name="payone_onepage_amazon" template="onepage/amazon.phtml" cacheable="false"/>
