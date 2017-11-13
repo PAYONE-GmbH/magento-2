@@ -127,7 +127,7 @@ abstract class BaseMethod extends AbstractMethod
      *
      * @var bool
      */
-    protected $blNeedsBankdataOnDebit = false;
+    protected $blNeedsSepaDataOnDebit = false;
 
     /**
      * Max length for narrative text parameter

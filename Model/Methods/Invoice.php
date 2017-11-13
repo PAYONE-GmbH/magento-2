@@ -52,5 +52,5 @@ class Invoice extends PayoneMethod
      *
      * @var bool
      */
-    protected $blNeedsBankdataOnDebit = true;
+    protected $blNeedsSepaDataOnDebit = true;
 }

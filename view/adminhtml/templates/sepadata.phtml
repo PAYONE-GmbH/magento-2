@@ -1,0 +1,42 @@
+<?php if ($block->showPayoneSepaDataFields() === true) : ?>
+    <br><br>
+    <div class="admin__page-section-item creditmemo-totals">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?php echo __('PAYONE debit') ?></span>
+        </div>
+        <div class="order-totals-actions">
+            <table class="data-table admin__table-secondary">
+                <tr>
+                    <td class="label"><?php echo __('IBAN') ?></td>
+                    <td>
+                        <?php if (!empty($block->getPrefilledIban())) : ?>
+                            <?php echo $block->getPrefilledIban(); ?>
+                        <?php else : ?>
+                            <input id="payone_iban"
+                                   name="creditmemo[payone_iban]"
+                                   value="<?php echo $block->getPrefilledIban(); ?>"
+                                   type="text"
+                                   class="input-text admin__control-text"
+                                   style="width:20rem;" />
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label"><?php echo __('BIC') ?></td>
+                    <td>
+                        <?php if (!empty($block->getPrefilledBic())) : ?>
+                            <?php echo $block->getPrefilledBic(); ?>
+                        <?php else : ?>
+                            <input id="payone_bic"
+                                   name="creditmemo[payone_bic]"
+                                   value="<?php echo $block->getPrefilledBic(); ?>"
+                                   type="text"
+                                   class="input-text admin__control-text"
+                                   style="width:20rem;" />
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+<?php endif; ?>

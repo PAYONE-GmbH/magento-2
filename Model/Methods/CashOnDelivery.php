@@ -53,7 +53,7 @@ class CashOnDelivery extends PayoneMethod
      *
      * @var bool
      */
-    protected $blNeedsBankdataOnDebit = true;
+    protected $blNeedsSepaDataOnDebit = true;
 
     /**
      * Return parameters specific to this payment type

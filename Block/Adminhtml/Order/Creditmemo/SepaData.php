@@ -77,8 +77,28 @@ class SepaData extends \Magento\Backend\Block\Template
      *
      * @return bool
      */
-    public function showPayoneBankdataFields()
+    public function showPayoneSepaDataFields()
     {
-        return $this->getOrder()->getPayment()->getMethodInstance()->needsBankdataOnDebit();
+        return $this->getOrder()->getPayment()->getMethodInstance()->needsSepaDataOnDebit();
+    }
+
+    /**
+     * Get IBAN from order object if existing
+     *
+     * @return string
+     */
+    public function getPrefilledIban()
+    {
+        return $this->getOrder()->getPayoneRefundIban();
+    }
+
+    /**
+     * Get BIC from order object if existing
+     *
+     * @return string
+     */
+    public function getPrefilledBic()
+    {
+        return $this->getOrder()->getPayoneRefundBic();
     }
 }

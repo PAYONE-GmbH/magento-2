@@ -211,9 +211,9 @@ abstract class PayoneMethod extends BaseMethod
      *
      * @return bool
      */
-    public function needsBankdataOnDebit()
+    public function needsSepaDataOnDebit()
     {
-        return $this->blNeedsBankdataOnDebit;
+        return $this->blNeedsSepaDataOnDebit;
     }
 
     /**
