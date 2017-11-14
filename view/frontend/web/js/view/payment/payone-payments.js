@@ -115,6 +115,10 @@ define(
             {
                 type: 'payone_payolution_installment',
                 component: 'Payone_Core/js/view/payment/method-renderer/payolution_installment-method'
+            },
+            {
+                type: 'payone_alipay',
+                component: 'Payone_Core/js/view/payment/method-renderer/alipay-method'
             }
         );
         /** Add view logic here if needed */

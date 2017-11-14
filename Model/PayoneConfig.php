@@ -83,6 +83,7 @@ abstract class PayoneConfig
     const METHOD_PAYOLUTION_INVOICE = 'payone_payolution_invoice';
     const METHOD_PAYOLUTION_DEBIT = 'payone_payolution_debit';
     const METHOD_PAYOLUTION_INSTALLMENT = 'payone_payolution_installment';
+    const METHOD_ALIPAY = 'payone_alipay';
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
