@@ -104,6 +104,12 @@ class PayoneMethodTest extends BaseTestCase
         $this->assertFalse($result);
     }
 
+    public function testNeedsSepaDataOnDebito()
+    {
+        $result = $this->classToTest->needsSepaDataOnDebit();
+        $this->assertFalse($result);
+    }
+
     public function testHasCustomConfig()
     {
         $this->shopHelper->method('getConfigParam')->willReturn('1');

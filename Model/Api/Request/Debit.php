@@ -165,12 +165,19 @@ class Debit extends Base
         }
 
         $aCreditmemo = $this->getCreditmemoRequestParams();
+        $sIban = false;
+        $sBic = false;
         if (!empty($oOrder->getPayoneRefundIban()) && !empty($oOrder->getPayoneRefundBic())) {
-            $this->addParameter('iban', $oOrder->getPayoneRefundIban());
-            $this->addParameter('bic', $oOrder->getPayoneRefundBic());
-        } elseif (isset($aCreditmemo['payone_iban']) && isset($aCreditmemo['payone_bic']) && $this->isSepaDataValid($aCreditmemo)) {
-            $this->addParameter('iban', $aCreditmemo['payone_iban']);
-            $this->addParameter('bic', $aCreditmemo['payone_bic']);
+            $sIban = $oOrder->getPayoneRefundIban();
+            $sBic = $oOrder->getPayoneRefundBic();
+        } elseif (isset($aCreditmemo['payone_iban']) && isset($aCreditmemo['payone_bic'])) {
+            $sIban = $aCreditmemo['payone_iban'];
+            $sBic = $aCreditmemo['payone_bic'];
+        }
+
+        if ($sIban !== false && $sBic !== false && $this->isSepaDataValid($sIban, $sBic)) {
+            $this->addParameter('iban', $sIban);
+            $this->addParameter('bic', $sBic);
         }
 
         $aResponse = $this->send($oPayment);
@@ -257,16 +264,17 @@ class Debit extends Base
     /**
      * Check IBAN and BIC fields
      *
-     * @param  array $aCreditmemo
+     * @param  string $sIban
+     * @param  string $sBic
      * @return bool
      * @throws LocalizedException
      */
-    protected function isSepaDataValid($aCreditmemo)
+    public function isSepaDataValid($sIban, $sBic)
     {
-        if (!$this->isIbanValid($aCreditmemo['payone_iban'])) {
+        if (!$this->isIbanValid($sIban)) {
             throw new LocalizedException(__('The given IBAN is invalid!'));
         }
-        if (!$this->isBicValid($aCreditmemo['payone_bic'])) {
+        if (!$this->isBicValid($sBic)) {
             throw new LocalizedException(__('The given BIC is invalid!'));
         }
         return true;
