@@ -281,11 +281,11 @@ abstract class Base
         if (!$this->validateParameters()) {// all base parameters existing?
             return ["errormessage" => "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)"];
         }
-
+        
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
         $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
-
+        
         return $aResponse;
     }
 }

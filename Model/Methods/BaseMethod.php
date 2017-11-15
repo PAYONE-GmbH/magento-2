@@ -123,6 +123,13 @@ abstract class BaseMethod extends AbstractMethod
     protected $blNeedsProductInfo = false;
 
     /**
+     * Determines if the bank data has to be added to the debit-request
+     *
+     * @var bool
+     */
+    protected $blNeedsSepaDataOnDebit = false;
+
+    /**
      * Max length for narrative text parameter
      *
      * @var int
