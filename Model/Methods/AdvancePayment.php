@@ -46,11 +46,4 @@ class AdvancePayment extends PayoneMethod
      * @var string
      */
     protected $sClearingtype = 'vor';
-
-    /**
-     * Determines if the bank data has to be added to the debit-request
-     *
-     * @var bool
-     */
-    protected $blNeedsSepaDataOnDebit = true;
 }
