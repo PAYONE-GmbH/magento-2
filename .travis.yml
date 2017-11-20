@@ -9,7 +9,7 @@ env:
 - MAGEVER=2.2
 matrix:
   exclude:
-    - php: 7.1
+    - php: '7.1'
       env: MAGEVER=2.1
 services:
 - mysql
