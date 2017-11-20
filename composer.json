@@ -10,7 +10,7 @@
           "email": "tech.support@payone.de"
 	},
     "require": {
-        "php": "~5.5.0|~5.6.0|~7.0.0",
+        "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0",
         "magento/framework": "^100.0.0|^101.0.0"
     },
     "repositories": [
