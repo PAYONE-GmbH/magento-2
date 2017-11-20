@@ -7,6 +7,10 @@ php:
 env:
 - MAGEVER=2.1
 - MAGEVER=2.2
+matrix:
+  exclude:
+    - php: 7.1
+      env: MAGEVER=2.1
 services:
 - mysql
 before_script:
