@@ -30,6 +30,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Sales\Setup\SalesSetupFactory;
+use Payone\Core\Helper\Shop;
 
 /**
  * Class UpgradeData
@@ -44,13 +45,22 @@ class UpgradeData implements UpgradeDataInterface
     protected $salesSetupFactory;
 
     /**
+     * PAYONE shop helper object
+     *
+     * @var Shop
+     */
+    protected $shopHelper;
+
+    /**
      * Constructor
      *
      * @param SalesSetupFactory $salesSetupFactory
+     * @param Shop              $shopHelper
      */
-    public function __construct(SalesSetupFactory $salesSetupFactory)
+    public function __construct(SalesSetupFactory $salesSetupFactory, Shop $shopHelper)
     {
         $this->salesSetupFactory = $salesSetupFactory;
+        $this->shopHelper = $shopHelper;
     }
 
     /**
@@ -167,7 +177,37 @@ class UpgradeData implements UpgradeDataInterface
                 ['type' => 'varchar', 'length' => 64, 'default' => '']
             );
         }
+        if (version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=') &&
+            version_compare($context->getVersion(), '2.0.2', '<')) {
+            $this->convertSerializedDataToJson($setup);
+        }
         $setup->endSetup();
     }
 
+    /**
+     * Convert serialized data to json-encoded data in the core_config_data table
+     *
+     * @param ModuleDataSetupInterface $setup
+     * @return void
+     */
+    private function convertSerializedDataToJson(ModuleDataSetupInterface $setup)
+    {
+        $sTable = $setup->getTable('core_config_data');
+
+        $select = $setup->getConnection()
+            ->select()
+            ->from($sTable, ['config_id', 'value'])
+            ->where('path LIKE "%payone%"')
+            ->where('value LIKE "a:%"');
+
+        $serializedRows = $setup->getConnection()->fetchAssoc($select);
+        foreach ($serializedRows as $id => $serializedRow) {
+            $aValue = unserialize($serializedRow['value']);
+            $sNewValue = json_encode($aValue);
+
+            $data = ['value' => $sNewValue];
+            $where = ['config_id = ?' => $id];
+            $setup->getConnection()->update($sTable, $data, $where);
+        }
+    }
 }
