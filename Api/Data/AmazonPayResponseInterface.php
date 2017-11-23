@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<!--
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,16 +19,19 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2017 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
-    <module name="Payone_Core" setup_version="2.0.1">
-        <sequence>
-            <module name="Magento_Quote" />
-            <module name="Magento_Sales" />
-        </sequence>
-    </module>
-</config>
+
+namespace Payone\Core\Api\Data;
+
+interface AmazonPayResponseInterface
+{
+    /**
+     * Returns the PAYONE workorder id
+     *
+     * @return string
+     */
+    public function getWorkorderId();
+}

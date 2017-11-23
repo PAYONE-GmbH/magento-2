@@ -106,5 +106,37 @@
     </div>
 </div>
 
-<script src="https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js" async="async">
+<br><br>
+<a href="#" class="action create primary" onclick="payoneBlub()">
+    <span>Fortfahren</span>
+</a>
+
+<script src="https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js" async="async"></script>
+
+<script>
+    require([
+        'jquery',
+        'mage/storage',
+    ], function($, storage){
+        var request = {
+            silber: 'fisch'
+        };
+        window.payoneBlub = function() {
+
+            var serviceUrl = 'https://192.168.2.194/magento213/rest/default/V1/carts/mine/payone-amazonPay';
+            return storage.post(
+                serviceUrl,
+                JSON.stringify(request)
+            ).done(
+                function (response) {
+                    alert('Floetenteich');
+                }
+            ).fail(
+                function (response) {
+                    alert('An error occured.');
+                }
+            );
+        }
+
+    });
 </script>
