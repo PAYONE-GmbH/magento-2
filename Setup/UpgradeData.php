@@ -177,37 +177,47 @@ class UpgradeData implements UpgradeDataInterface
                 ['type' => 'varchar', 'length' => 64, 'default' => '']
             );
         }
-        if (version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=') &&
-            version_compare($context->getVersion(), '2.0.2', '<')) {
-            $this->convertSerializedDataToJson($setup);
+
+        $serializedRows = $this->getSerializedConfigRows($setup);
+        if (!empty($serializedRows) && version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) {
+            $this->convertSerializedDataToJson($setup, $serializedRows);
         }
         $setup->endSetup();
+    }
+
+    /**
+     * Fetch all serialized config rows from the payone module from the DB
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @return array
+     */
+    protected function getSerializedConfigRows(ModuleDataSetupInterface $setup)
+    {
+        $select = $setup->getConnection()
+            ->select()
+            ->from($setup->getTable('core_config_data'), ['config_id', 'value'])
+            ->where('path LIKE "%payone%"')
+            ->where('value LIKE "a:%"');
+
+        return $setup->getConnection()->fetchAssoc($select);
     }
 
     /**
      * Convert serialized data to json-encoded data in the core_config_data table
      *
      * @param ModuleDataSetupInterface $setup
+     * @param array                    $serializedRows
      * @return void
      */
-    private function convertSerializedDataToJson(ModuleDataSetupInterface $setup)
+    protected function convertSerializedDataToJson(ModuleDataSetupInterface $setup, $serializedRows)
     {
-        $sTable = $setup->getTable('core_config_data');
-
-        $select = $setup->getConnection()
-            ->select()
-            ->from($sTable, ['config_id', 'value'])
-            ->where('path LIKE "%payone%"')
-            ->where('value LIKE "a:%"');
-
-        $serializedRows = $setup->getConnection()->fetchAssoc($select);
         foreach ($serializedRows as $id => $serializedRow) {
             $aValue = unserialize($serializedRow['value']);
             $sNewValue = json_encode($aValue);
 
             $data = ['value' => $sNewValue];
             $where = ['config_id = ?' => $id];
-            $setup->getConnection()->update($sTable, $data, $where);
+            $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
         }
     }
 }
