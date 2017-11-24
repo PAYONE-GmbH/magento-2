@@ -155,10 +155,11 @@ class Invoice
      */
     protected function addProductItem($oItem, $aPositions)
     {
-        if ($aPositions === false || array_key_exists($oItem->getProductId(), $aPositions) !== false) { // full or single-invoice?
+        $sPositionKey = $oItem->getProductId().$oItem->getSku();
+        if ($aPositions === false || array_key_exists($sPositionKey, $aPositions) !== false) { // full or single-invoice?
             $dItemAmount = $oItem->getQtyOrdered(); // get ordered item amount
-            if ($aPositions !== false && array_key_exists($oItem->getProductId(), $aPositions) !== false) { // product existing in single-invoice?
-                $dItemAmount = $aPositions[$oItem->getProductId()]; // use amount from single-invoice
+            if ($aPositions !== false && array_key_exists($sPositionKey, $aPositions) !== false) { // product existing in single-invoice?
+                $dItemAmount = $aPositions[$sPositionKey]; // use amount from single-invoice
             }
             $iAmount = $this->convertItemAmount($dItemAmount);
             $this->addInvoicePosition($oItem->getSku(), $oItem->getPriceInclTax(), 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request

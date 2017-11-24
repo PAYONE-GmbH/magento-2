@@ -106,7 +106,7 @@ class Debit extends Base
         if ($aCreditmemo && array_key_exists('items', $aCreditmemo) !== false) {
             foreach ($oOrder->getAllItems() as $oItem) {
                 if (isset($aCreditmemo['items'][$oItem->getItemId()]) && $aCreditmemo['items'][$oItem->getItemId()]['qty'] > 0) {
-                    $aPositions[$oItem->getProductId()] = $aCreditmemo['items'][$oItem->getItemId()]['qty'];
+                    $aPositions[$oItem->getProductId().$oItem->getSku()] = $aCreditmemo['items'][$oItem->getItemId()]['qty'];
                     if ($aCreditmemo['items'][$oItem->getItemId()]['qty'] != $oItem->getQtyOrdered()) {
                         $blFull = false;
                     }
