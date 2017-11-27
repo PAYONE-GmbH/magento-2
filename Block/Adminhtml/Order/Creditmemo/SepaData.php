@@ -26,6 +26,8 @@
 
 namespace Payone\Core\Block\Adminhtml\Order\Creditmemo;
 
+use Payone\Core\Model\Methods\PayoneMethod;
+
 /**
  * Class for SEPA bankdata inputs in creditmemo
  */
@@ -79,7 +81,11 @@ class SepaData extends \Magento\Backend\Block\Template
      */
     public function showPayoneSepaDataFields()
     {
-        return $this->getOrder()->getPayment()->getMethodInstance()->needsSepaDataOnDebit();
+        $oMethodInstance = $this->getOrder()->getPayment()->getMethodInstance();
+        if ($oMethodInstance instanceof PayoneMethod && $oMethodInstance->needsSepaDataOnDebit()) {
+            return true;
+        }
+        return false;
     }
 
     /**
