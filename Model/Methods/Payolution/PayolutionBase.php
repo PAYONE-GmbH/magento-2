@@ -169,8 +169,7 @@ class PayolutionBase extends PayoneMethod
     /**
      * Method to trigger the Payone genericpayment request pre-check
      *
-     * @param  float       $dAmount
-     * @param  string|bool $sBirthday
+     * @param  float $dAmount
      * @return array
      * @throws LocalizedException
      */

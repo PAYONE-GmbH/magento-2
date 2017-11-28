@@ -64,7 +64,7 @@ class DebitTest extends BaseTestCase
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getLastTransId', 'getOrder'])
+            ->setMethods(['getLastTransId', 'getOrder', 'getAdditionalInformation'])
             ->getMock();
         $this->info->method('getOrder')->willReturn($order);
 
@@ -103,6 +103,7 @@ class DebitTest extends BaseTestCase
     public function testPrepareSpecificInformationNoLastTransId()
     {
         $this->info->method('getLastTransId')->willReturn('');
+        $this->info->method('getAdditionalInformation')->willReturn('abc');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('Payment has not been processed yet.', $result);
