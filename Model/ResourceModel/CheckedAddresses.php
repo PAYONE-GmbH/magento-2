@@ -159,34 +159,29 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      */
     public function wasAddressCheckedBefore(AddressInterface $oAddress, $blIsBonicheck = false)
     {
-        $sHash = $this->getHashFromAddress($oAddress);
-        $oDb = $this->getConnection();
-        $sQuery = " SELECT
-                        checkdate
-                    FROM
-                        {$this->getMainTable()}
-                    WHERE
-                        address_hash = :hash AND
-                        is_bonicheck = :isBoni";
-        $aParams = [
-            'hash' => $sHash,
-            'isBoni' => $blIsBonicheck
-        ];
-
         $sGroup = 'address_check';
         if ($blIsBonicheck === true) {
             $sGroup = 'creditrating';
         }
 
         $sLifetime = $this->shopHelper->getConfigParam('result_lifetime', $sGroup, 'payone_protect');
-        if (!empty($sLifetime) && is_numeric($sLifetime)) {
-            $sQuery .= " AND checkdate > DATE_SUB(NOW(), INTERVAL :lifetime DAY)";
-            $aParams['lifetime'] = $sLifetime;
-        } else {
+        if (empty($sLifetime) || !is_numeric($sLifetime)) {
             return false; // no lifetime = check every time
         }
 
-        $sDate = $oDb->fetchOne($sQuery, $aParams);
+        $oSelect = $this->getConnection()->select()
+            ->from($this->getMainTable(), ['checkdate'])
+            ->where("address_hash = :hash")
+            ->where("is_bonicheck = :isBoni")
+            ->where('checkdate > DATE_SUB(NOW(), INTERVAL :lifetime DAY)');
+
+        $aParams = [
+            'hash' => $this->getHashFromAddress($oAddress),
+            'isBoni' => $blIsBonicheck,
+            'lifetime' => $sLifetime
+        ];
+
+        $sDate = $this->getConnection()->fetchOne($oSelect, $aParams);
         if ($sDate != false) {
             return true;
         }
