@@ -134,7 +134,7 @@ define(
                 if (storeIds.hasOwnProperty(country)) {
                     return storeIds[country];
                 }
-                return '';
+                return 0;
             },
             getKlarnaUrl: function (sLanguage) {
                 return 'https://cdn.klarna.com/1.0/shared/content/legal/terms/' + this.getKlarnaStoreId() + '/de_' + sLanguage + '/consent';
@@ -151,12 +151,15 @@ define(
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
             loadKlarnaTerms: function () {
-                var terms = new Klarna.Terms.Invoice({
-                    el: document.getElementById('payone_klarna_invoice_terms'),
-                    eid: this.getKlarnaStoreId(),  // Your merchant ID
-                    country: this.getBillingCountry().toLowerCase(),
-                    charge: 0
-                });
+                var oElement = document.getElementById('payone_klarna_invoice_terms');
+                if (oElement.innerHTML.length === 0) {
+                    var terms = new Klarna.Terms.Invoice({
+                        el: oElement,
+                        eid: this.getKlarnaStoreId(),  // Your merchant ID
+                        country: this.getBillingCountry().toLowerCase(),
+                        charge: 0
+                    });
+                }
             }
         });
     }
