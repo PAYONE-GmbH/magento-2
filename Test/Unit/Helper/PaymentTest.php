@@ -175,4 +175,17 @@ class PaymentTest extends BaseTestCase
         $expected = 'unknown';
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetKlarnaStoreIds()
+    {
+        $storeIds = ['key' => ['store_id' => '123', 'countries' => ['DE', 'AT']]];
+
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($storeIds)]]);
+
+        $expected = ['DE' => '123', 'AT' => '123'];
+        $result = $this->payment->getKlarnaStoreIds();
+        $this->assertEquals($expected, $result);
+    }
 }

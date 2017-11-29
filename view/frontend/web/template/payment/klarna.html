@@ -173,6 +173,37 @@
                     </div>
                 </div>
                 <!--/ko-->
+
+                <div id="payone_klarna_invoice_terms_div">
+                    <span id="payone_klarna_invoice_terms"></span>
+                    <span data-bind="html: loadKlarnaTerms()" style="display:none;"></span>
+                </div><br>
+
+                <!-- ko if: requestAgreement() -->
+                <input type="checkbox" data-bind="attr: {id: getCode() + '_additional_fields_agreement_checkbox'}, checked: agreement" />
+                <label data-bind="attr: {for: getCode() + '_additional_fields_agreement_checkbox'}" class="required" style="float:none;">
+                    <!-- ko if: getBillingCountry() == "DE" -->
+                        <!-- ko i18n: 'I agree with the transmission of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.'--><!-- /ko --><br>
+                        <!-- ko i18n: 'My'--><!-- /ko -->
+                        <a data-bind="attr: {'href': getKlarnaUrl('de')}" style="float:none; margin:0;" target="_blank">
+                            <!-- ko i18n: 'acceptance'--><!-- /ko -->
+                        </a>
+                        <!-- ko i18n: 'can be revoked for the future any time.'--><!-- /ko -->
+                        <!-- ko i18n: 'The general terms and conditions of the dealer apply.'--><!-- /ko -->
+                        <em style="float:none; position:relative;">*</em>
+                    <!--/ko-->
+                    <!-- ko if: getBillingCountry() == "AT" -->
+                        <!-- ko i18n: 'I agree with the processing of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.'--><!-- /ko --><br>
+                        <!-- ko i18n: 'My'--><!-- /ko -->
+                        <a data-bind="attr: {'href': getKlarnaUrl('at')}" style="float:none; margin:0;" target="_blank">
+                            <!-- ko i18n: 'acceptance'--><!-- /ko -->
+                        </a>
+                        <!-- ko i18n: 'can be revoked for the future any time.'--><!-- /ko -->
+                        <!-- ko i18n: 'The general terms and conditions of the dealer apply.'--><!-- /ko -->
+                        <em style="float:none; position:relative;">*</em>
+                    <!--/ko-->
+                </label>
+                <!--/ko-->
             </fieldset>
         </form>
         

@@ -217,7 +217,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'agreementMessage' => $this->requestHelper->getConfigParam('agreement_message', 'creditrating', 'payone_protect'),
             'payolution' => $this->getPayolutionConfig(),
             'canceledPaymentMethod' => $this->getCanceledPaymentMethod(),
-            'isError' => $this->checkoutSession->getPayoneIsError()
+            'isError' => $this->checkoutSession->getPayoneIsError(),
+            'klarnaStoreIds' => $this->paymentHelper->getKlarnaStoreIds(),
         ];
     }
 

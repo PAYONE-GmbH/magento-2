@@ -24,9 +24,10 @@
 define(
     [
         'Payone_Core/js/view/payment/method-renderer/base',
-        'Magento_Checkout/js/model/quote'
+        'Magento_Checkout/js/model/quote',
+        'mage/translate'
     ],
-    function (Component, quote) {
+    function (Component, quote, $t) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -38,7 +39,8 @@ define(
                 personalId: '',
                 birthday: '',
                 birthmonth: '',
-                birthyear: ''
+                birthyear: '',
+                agreement: false
             },
             initObservable: function () {
                 this._super()
@@ -50,31 +52,32 @@ define(
                         'personalId',
                         'birthday',
                         'birthmonth',
-                        'birthyear'
+                        'birthyear',
+                        'agreement'
                     ]);
                 return this;
             },
             requestTelephone: function () {
-                if (quote.billingAddress() != null && typeof quote.billingAddress().telephone != 'undefined' && quote.billingAddress().telephone != '') {
+                if (this.getBillingCountry() !== false && this.getBillingCountry() !== '') {
                     return false;
                 }
                 return true;
             },
             requestAddressAddInfo: function () {
-                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && quote.billingAddress().countryId != 'NL') {
+                if (this.getBillingCountry() !== false && this.getBillingCountry() !== 'NL') {
                     return false;
                 }
                 return true;
             },
             requestDelAddressAddInfo: function () {
-                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && quote.billingAddress().countryId != 'NL') {
+                if (this.getBillingCountry() !== false && this.getBillingCountry() !== 'NL') {
                     return false;
                 }
                 return true;
             },
             requestGender: function () {
                 var aTriggerCountries = ['DE', 'NL', 'AT'];
-                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
+                if (this.getBillingCountry() !== false && aTriggerCountries.indexOf(this.getBillingCountry()) !== -1) {
                     if (window.checkoutConfig.payment.payone.customerHasGivenGender == false) {
                         return true;
                     }
@@ -83,21 +86,33 @@ define(
             },
             requestPersonalId: function () {
                 var aTriggerCountries = ['DK', 'FI', 'NO', 'SE'];
-                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
+                if (this.getBillingCountry() !== false && aTriggerCountries.indexOf(this.getBillingCountry()) !== -1) {
                     return true;
                 }
                 return false;
             },
             requestBirthday: function () {
                 var aTriggerCountries = ['DE', 'NL', 'AT'];
-                if (quote.billingAddress() != null && typeof quote.billingAddress().countryId != 'undefined' && aTriggerCountries.indexOf(quote.billingAddress().countryId) != -1) {
+                if (this.getBillingCountry() !== false && aTriggerCountries.indexOf(this.getBillingCountry()) !== -1) {
                     if (window.checkoutConfig.payment.payone.customerHasGivenBirthday == false) {
                         return true;
                     }
                 }
                 return false;
             },
-            
+            requestAgreement: function () {
+                var aTriggerCountries = ['DE', 'AT'];
+                if (this.getBillingCountry() !== false && aTriggerCountries.indexOf(this.getBillingCountry()) !== -1) {
+                    return true;
+                }
+                return false;
+            },
+            getBillingCountry: function () {
+                if (quote.billingAddress() !== null && typeof quote.billingAddress().countryId !== 'undefined') {
+                    return quote.billingAddress().countryId;
+                }
+                return false;
+            },
             getData: function () {
                 var parentReturn = this._super();
                 if (parentReturn.additional_data === null) {
@@ -113,10 +128,38 @@ define(
                 parentReturn.additional_data.birthyear = this.birthyear();
                 return parentReturn;
             },
-
+            getKlarnaStoreId: function () {
+                var storeIds = window.checkoutConfig.payment.payone.klarnaStoreIds;
+                var country = this.getBillingCountry();
+                if (storeIds.hasOwnProperty(country)) {
+                    return storeIds[country];
+                }
+                return 0;
+            },
+            getKlarnaUrl: function (sLanguage) {
+                return 'https://cdn.klarna.com/1.0/shared/content/legal/terms/' + this.getKlarnaStoreId() + '/de_' + sLanguage + '/consent';
+            },
+            validate: function () {
+                if (this.requestAgreement() === true && this.agreement() === false) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Klarna!')});
+                    return false;
+                }
+                return true;
+            },
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
+            },
+            loadKlarnaTerms: function () {
+                var oElement = document.getElementById('payone_klarna_invoice_terms');
+                if (oElement.innerHTML.length === 0) {
+                    var terms = new Klarna.Terms.Invoice({
+                        el: oElement,
+                        eid: this.getKlarnaStoreId(),  // Your merchant ID
+                        country: this.getBillingCountry().toLowerCase(),
+                        charge: 0
+                    });
+                }
             }
         });
     }
