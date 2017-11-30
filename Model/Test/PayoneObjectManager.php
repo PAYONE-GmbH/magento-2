@@ -33,7 +33,7 @@ class PayoneObjectManager extends ObjectManager
     /**
      * Class constructor
      *
-     * @param \PHPUnit_Framework_TestCase $testObject
+     * @param \PHPUnit\Framework\TestCase $testObject
      */
     public function __construct($testObject)
     {
@@ -121,7 +121,7 @@ class PayoneObjectManager extends ObjectManager
      * Get mock without call of original constructor
      *
      * @param string $className
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMockWithoutConstructorCall($className)
     {
@@ -140,7 +140,7 @@ class PayoneObjectManager extends ObjectManager
      *
      * @param string $argClassName
      * @param array $arguments
-     * @return null|object|\PHPUnit_Framework_MockObject_MockObject
+     * @return null|object|\PHPUnit\Framework\MockObject\MockObject
      */
     private function _getMockObject($argClassName, array $arguments)
     {
