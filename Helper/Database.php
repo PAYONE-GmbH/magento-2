@@ -78,15 +78,12 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getStateByStatus($sStatus)
     {
-        $sQuery = " SELECT
-                        state
-                    FROM
-                        ".$this->databaseResource->getTableName('sales_order_status_state')."
-                    WHERE
-                        status = :status
-                    LIMIT 1";
-        $sState = $this->getDb()->fetchOne($sQuery, ['status' => $sStatus]);
-        return $sState;
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('sales_order_status_state'), ['state'])
+            ->where("status = :status")
+            ->limit(1);
+        return $this->getDb()->fetchOne($oSelect, ['status' => $sStatus]);
     }
 
     /**
@@ -97,15 +94,12 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getOrderIncrementIdByTxid($sTxid)
     {
-        $sQuery = " SELECT
-                        order_id
-                    FROM
-                        ".$this->databaseResource->getTableName('payone_protocol_api')."
-                    WHERE
-                        txid = :txid
-                    LIMIT 1";
-        $sIncrementId = $this->getDb()->fetchOne($sQuery, ['txid' => $sTxid]);
-        return $sIncrementId;
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('payone_protocol_api'), ['order_id'])
+            ->where("txid = :txid")
+            ->limit(1);
+        return $this->getDb()->fetchOne($oSelect, ['txid' => $sTxid]);
     }
 
     /**
@@ -115,14 +109,11 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getModuleInfo()
     {
-        $sQuery = " SELECT
-                        module, schema_version
-                    FROM
-                        ".$this->databaseResource->getTableName('setup_module')."
-                    WHERE
-                        module NOT LIKE 'Magento_%'";
-        $aResult = $this->getDb()->fetchAll($sQuery);
-        return $aResult;
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('setup_module'), ['module', 'schema_version'])
+            ->where("module NOT LIKE 'Magento_%'");
+        return $this->getDb()->fetchAll($oSelect);
     }
 
     /**
@@ -133,14 +124,12 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getIncrementIdByOrderId($sOrderId)
     {
-        $sQuery = " SELECT
-                        increment_id
-                    FROM
-                        ".$this->databaseResource->getTableName('sales_order')."
-                    WHERE
-                        entity_id = :entity_id";
-        $sIncrementId = $this->getDb()->fetchOne($sQuery, ['entity_id' => $sOrderId]);
-        return $sIncrementId;
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('sales_order'), ['increment_id'])
+            ->where("entity_id = :entity_id")
+            ->limit(1);
+        return $this->getDb()->fetchOne($oSelect, ['entity_id' => $sOrderId]);
     }
 
     /**
@@ -151,15 +140,12 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getPayoneUserIdByCustNr($sCustNr)
     {
-        $sQuery = " SELECT
-                        userid
-                    FROM
-                        ".$this->databaseResource->getTableName('payone_protocol_transactionstatus')."
-                    WHERE
-                        customerid = :customerid
-                    LIMIT 1";
-        $sUserId = $this->getDb()->fetchOne($sQuery, ['customerid' => $sCustNr]);
-        return $sUserId;
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('payone_protocol_transactionstatus'), ['userid'])
+            ->where("customerid = :customerid")
+            ->limit(1);
+        return $this->getDb()->fetchOne($oSelect, ['customerid' => $sCustNr]);
     }
 
     /**
@@ -170,13 +156,11 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getSequenceNumber($iTxid)
     {
-        $sQuery = " SELECT
-                        MAX(sequencenumber)
-                    FROM
-                        ".$this->databaseResource->getTableName('payone_protocol_transactionstatus')."
-                    WHERE
-                        txid = :txid";
-        $iCount = $this->getDb()->fetchOne($sQuery, ['txid' => $iTxid]);
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('payone_protocol_transactionstatus'), ['MAX(sequencenumber)'])
+            ->where("txid = :txid");
+        $iCount = $this->getDb()->fetchOne($oSelect, ['txid' => $iTxid]);
         if ($iCount === null) {
             return 0;
         }
@@ -194,21 +178,18 @@ class Database extends \Payone\Core\Helper\Base
      */
     public function getConfigParamWithoutCache($sKey, $sGroup = 'global', $sSection = 'payone_general', $sScopeId = null)
     {
-        $sQuery = " SELECT
-                        value
-                    FROM
-                        ".$this->databaseResource->getTableName('core_config_data')."
-                    WHERE
-                        path = :path AND
-                        scope = :scope AND
-                        scope_id = :scope_id";
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('core_config_data'), ['value'])
+            ->where("path = :path")
+            ->where("scope = :scope")
+            ->where("scope_id = :scope_id");
         $sPath = $sSection."/".$sGroup."/".$sKey;
         $sScope = ScopeInterface::SCOPE_STORE;
         if (!$sScopeId) {
             $sScopeId = $this->storeManager->getStore()->getId();
         }
-        $sReturn = $this->getDb()->fetchOne($sQuery, ['path' => $sPath, 'scope' => $sScope, 'scope_id' => $sScopeId]);
-        return $sReturn;
+        return $this->getDb()->fetchOne($oSelect, ['path' => $sPath, 'scope' => $sScope, 'scope_id' => $sScopeId]);
     }
 
     /**
@@ -234,38 +215,33 @@ class Database extends \Payone\Core\Helper\Base
             'postcode' => $oAddress->getPostcode(),
             'country_id' => $oAddress->getCountryId(),
         ];
-        $sQuery = " SELECT
-                        {$sSelectField}
-                    FROM
-                        {$this->databaseResource->getTableName('quote_address')}
-                    WHERE
-                        firstname = :firstname AND
-                        lastname = :lastname AND
-                        street = :street AND
-                        city = :city AND
-                        region = :region AND
-                        postcode = :postcode AND
-                        country_id = :country_id";
+
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('quote_address'), [$sSelectField])
+            ->where("firstname = :firstname")
+            ->where("lastname = :lastname")
+            ->where("street = :street")
+            ->where("city = :city")
+            ->where("region = :region")
+            ->where("postcode = :postcode")
+            ->where("country_id = :country_id")
+            ->where($sSelectField." != ''")
+            ->order('address_id DESC')
+            ->limit(1);
+
         if (!empty($oAddress->getId())) {
-            $sQuery .= " AND address_id != :curr_id";
+            $oSelect->where("address_id != :curr_id");
             $aParams['curr_id'] = $oAddress->getId();
         }
         if (!empty($oAddress->getCustomerId())) {
-            $sQuery .= " AND customer_id = :cust_id";
+            $oSelect->where("customer_id = :cust_id");
             $aParams['cust_id'] = $oAddress->getCustomerId();
         }
         if (!empty($oAddress->getAddressType())) {
-            $sQuery .= " AND address_type = :addr_type";
+            $oSelect->where("address_type = :addr_type");
             $aParams['addr_type'] = $oAddress->getAddressType();
         }
-        if ($blIsCreditrating === true) {
-            $sQuery .= " AND payone_protect_score != ''";
-        } else {
-            $sQuery .= " AND payone_addresscheck_score != ''";
-        }
-        $sQuery .= " ORDER BY address_id DESC LIMIT 1";
-
-        $sReturn = $this->getDb()->fetchOne($sQuery, $aParams);
-        return $sReturn;
+        return $this->getDb()->fetchOne($oSelect, $aParams);
     }
 }
