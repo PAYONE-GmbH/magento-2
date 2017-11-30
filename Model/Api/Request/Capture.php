@@ -85,7 +85,7 @@ class Capture extends Base
         if ($aInvoice && array_key_exists('items', $aInvoice) !== false) {
             foreach ($oOrder->getAllItems() as $oItem) {
                 if (isset($aInvoice['items'][$oItem->getItemId()]) && $aInvoice['items'][$oItem->getItemId()] > 0) {
-                    $aPositions[$oItem->getProductId()] = $aInvoice['items'][$oItem->getItemId()];
+                    $aPositions[$oItem->getProductId().$oItem->getSku()] = $aInvoice['items'][$oItem->getItemId()];
                     if ($aInvoice['items'][$oItem->getItemId()] != $oItem->getQtyOrdered()) {
                         $blFull = false;
                     }

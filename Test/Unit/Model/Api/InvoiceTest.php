@@ -122,7 +122,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
 
-        $positions = ['12345' => '1', 'delcost' => '10'];
+        $positions = ['12345test_123' => '1', 'delcost' => '10'];
 
         $result = $this->classToTest->addProductInfo($authorization, $order, $positions, true);
         $this->assertEquals($expected, $result);
@@ -143,7 +143,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
 
-        $positions = ['12345' => 1.7];
+        $positions = ['12345test_123' => 1.7];
 
         $this->expectException(\InvalidArgumentException::class);
         $result = $this->classToTest->addProductInfo($authorization, $order, $positions);
