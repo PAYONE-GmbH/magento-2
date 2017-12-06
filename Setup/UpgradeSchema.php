@@ -48,7 +48,7 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '1.3.0', '<')) {// pre update version is lower than 1.3.0
             $this->addTable($setup, \Payone\Core\Setup\Tables\CheckedAddresses::getData());
 
-            $setup->getConnection()->addColumn(
+            $setup->getConnection('checkout')->addColumn(
                 $setup->getTable('quote_address'),
                 'payone_addresscheck_score',
                 [
@@ -59,7 +59,7 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                     'comment' => 'AddressCheck Person Status Score (G, Y, R)'
                 ]
             );
-            $setup->getConnection()->addColumn(
+            $setup->getConnection('checkout')->addColumn(
                 $setup->getTable('quote_address'),
                 'payone_protect_score',
                 [
