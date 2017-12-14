@@ -37,7 +37,7 @@ use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Store\Api\Data\StoreInterface;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 
 class ExportTest extends BaseTestCase

@@ -40,7 +40,7 @@ use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Url;
 use Magento\Framework\App\RequestInterface;
 

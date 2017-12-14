@@ -40,7 +40,7 @@ use Magento\Framework\App\Action\Context as ActionContext;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\DB\Select;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class TransactionStatusTest extends BaseTestCase
 {

@@ -36,7 +36,7 @@ use Magento\Framework\View\Page\Title;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\App\RequestInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class ViewTest extends BaseTestCase
 {

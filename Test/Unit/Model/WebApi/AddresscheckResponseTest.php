@@ -30,7 +30,7 @@ use Payone\Core\Model\WebApi\AddresscheckResponse as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class AddresscheckResponseTest extends BaseTestCase
 {

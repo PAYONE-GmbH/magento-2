@@ -36,7 +36,7 @@ use Magento\Quote\Model\Quote\Address;
 use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Environment;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class PreCheckTest extends BaseTestCase
 {

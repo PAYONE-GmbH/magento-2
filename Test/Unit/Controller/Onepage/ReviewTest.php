@@ -41,7 +41,7 @@ use Magento\Quote\Api\Data\CartExtension;
 use Magento\Quote\Model\ShippingAssignment;
 use Magento\Quote\Model\Shipping;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 
 class ReviewTest extends BaseTestCase

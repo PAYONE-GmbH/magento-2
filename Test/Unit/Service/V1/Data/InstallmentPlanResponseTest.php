@@ -29,7 +29,7 @@ namespace Payone\Core\Test\Unit\Service\V1\Data;
 use Payone\Core\Service\V1\Data\InstallmentPlanResponse as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class InstallmentPlanResponseTest extends BaseTestCase
 {

@@ -35,7 +35,7 @@ use Magento\Backend\Block\Widget\Context;
 use Magento\Backend\Block\Widget\Button\ButtonList;
 use Magento\Framework\UrlInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class ViewTest extends BaseTestCase
 {

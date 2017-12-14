@@ -36,7 +36,7 @@ use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class OrderPaymentPlaceEndTest extends BaseTestCase
 {

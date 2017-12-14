@@ -35,7 +35,7 @@ use Magento\Paypal\Block\Express\Shortcut;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Observer\AddPaypalExpressButtons as ClassToTest;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class AddPaypalExpressButtonTest extends BaseTestCase
 {
