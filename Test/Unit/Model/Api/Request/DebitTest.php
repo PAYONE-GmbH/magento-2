@@ -40,7 +40,7 @@ use Payone\Core\Helper\Toolkit;
 use Payone\Core\Helper\Shop;
 use Magento\Sales\Model\Order\Item;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class DebitTest extends BaseTestCase
 {

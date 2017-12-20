@@ -40,7 +40,7 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class PlaceOrderTest extends BaseTestCase
 {

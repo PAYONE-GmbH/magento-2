@@ -45,7 +45,7 @@ use Magento\Payment\Model\MethodInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class ReviewTest extends BaseTestCase
 {

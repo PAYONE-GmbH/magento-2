@@ -33,7 +33,7 @@ use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Payone\Core\Service\V1\Data\AddresscheckResponseFactory;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class AddresscheckTest extends BaseTestCase
 {

@@ -33,7 +33,7 @@ use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Payment\Model\Info;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class BarzahlenTest extends BaseTestCase
 {

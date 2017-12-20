@@ -29,7 +29,7 @@ namespace Payone\Core\Test\Unit\Block\Adminhtml\Order\View\Tab;
 use Payone\Core\Block\Adminhtml\Order\View\Tab\ApiLog as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class ApiLogTest extends BaseTestCase
 {

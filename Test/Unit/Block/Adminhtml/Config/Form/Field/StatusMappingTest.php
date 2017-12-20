@@ -36,7 +36,7 @@ use Magento\Framework\Data\Form\Element\Multiselect;
 use Magento\Framework\Data\Form\AbstractForm;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class StatusMappingTest extends BaseTestCase
 {

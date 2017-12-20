@@ -30,7 +30,7 @@ use Payone\Core\Block\Adminhtml\Order\Creditmemo\SepaData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Methods\Creditcard;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Registry;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order;

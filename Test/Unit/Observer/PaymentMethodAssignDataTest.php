@@ -33,7 +33,7 @@ use Magento\Framework\Event\Observer;
 use Payone\Core\Helper\Toolkit;
 use Magento\Payment\Model\Info;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class PaymentMethodAssignDataTest extends BaseTestCase
 {

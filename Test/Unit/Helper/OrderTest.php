@@ -39,7 +39,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\ResourceModel\Quote\Address\Rate;
 use Magento\Directory\Model\Region;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class OrderTestTest extends BaseTestCase
 {

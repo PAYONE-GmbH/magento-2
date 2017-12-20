@@ -36,7 +36,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Database;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class ConsumerscoreTest extends BaseTestCase
 {
