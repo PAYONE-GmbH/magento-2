@@ -27,10 +27,15 @@
 namespace Payone\Core\Observer\Transactionstatus;
 
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Invoice;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Psr\Log\LoggerInterface;
+use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use Payone\Core\Helper\Base;
+use Payone\Core\Model\PayoneConfig;
 
 /**
  * Event observer for Transactionstatus appointed
@@ -52,15 +57,47 @@ class Appointed implements ObserverInterface
     protected $orderSender = null;
 
     /**
+     * InvoiceService object
+     *
+     * @var InvoiceService
+     */
+    protected $invoiceService;
+
+    /**
+     * InvoiceSender object
+     *
+     * @var InvoiceSender
+     */
+    protected $invoiceSender;
+
+    /**
+     * Payone base helper
+     *
+     * @var Base
+     */
+    protected $baseHelper;
+
+    /**
      * Constructor.
      *
      * @param LoggerInterface $logger
-     * @param OrderSender $orderSender
+     * @param OrderSender     $orderSender
+     * @param InvoiceService  $invoiceService
+     * @param InvoiceSender   $invoiceSender
+     * @param Base            $baseHelper
      */
-    public function __construct(LoggerInterface $logger, OrderSender $orderSender)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        OrderSender $orderSender,
+        InvoiceService $invoiceService,
+        InvoiceSender $invoiceSender,
+        Base $baseHelper
+    ) {
         $this->logger = $logger;
         $this->orderSender = $orderSender;
+        $this->invoiceService = $invoiceService;
+        $this->invoiceSender = $invoiceSender;
+        $this->baseHelper = $baseHelper;
     }
 
     /**
@@ -83,6 +120,23 @@ class Appointed implements ObserverInterface
             $this->orderSender->send($oOrder);
         } catch (\Exception $e) {
             $this->logger->critical($e);
+        }
+
+        // preauthorization-orders and advance payment should not create an invoice
+        if ($oOrder->getPayoneAuthmode() != 'authorization' || $oOrder->getPayment()->getMethodInstance()->getCode() == PayoneConfig::METHOD_ADVANCE_PAYMENT){
+            return;
+        }
+
+        $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
+        $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
+        $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
+        $oInvoice->register();
+        $oInvoice->save();
+
+        $oOrder->save();
+
+        if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
+            $this->invoiceSender->send($oInvoice);
         }
     }
 }
