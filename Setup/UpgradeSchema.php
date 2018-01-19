@@ -30,6 +30,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\DB\Ddl\Table;
+use Payone\Core\Setup\Tables\PaymentBan;
 
 /**
  * Magento script for updating the database after the initial installation
@@ -70,6 +71,9 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                     'comment' => 'Consumerscore Status Score (G, Y, R)'
                 ]
             );
+        }
+        if (!$setup->getConnection()->isTableExists($setup->getTable(PaymentBan::TABLE_PAYMENT_BAN))) {
+            $this->addTable($setup, PaymentBan::getData());
         }
     }
 }
