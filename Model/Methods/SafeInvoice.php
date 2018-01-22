@@ -71,6 +71,13 @@ class SafeInvoice extends PayoneMethod
         if ($sDob) {
             $aParams['birthday'] = $sDob;
         }
+
+        $sBusinessrelation = 'b2c';
+        if (!empty($oOrder->getBillingAddress()->getCompany())) {
+            $sBusinessrelation = 'b2b';
+        }
+        $aParams['businessrelation'] = $sBusinessrelation;
+
         return $aParams;
     }
 

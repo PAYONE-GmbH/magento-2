@@ -34,6 +34,7 @@ use Magento\Framework\DataObject;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Quote\Model\Quote\Address;
 
 class SafeInvoiceTest extends BaseTestCase
 {
@@ -65,10 +66,14 @@ class SafeInvoiceTest extends BaseTestCase
 
     public function testGetPaymentSpecificParameters()
     {
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getCompany')->willReturn('Testcompany Ltd');
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getBillingAddress')->willReturn($address);
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
-        $expected = ['clearingsubtype' => 'POV', 'birthday' => '19010101'];
+        $expected = ['clearingsubtype' => 'POV', 'birthday' => '19010101', 'businessrelation' => 'b2b'];
         $this->assertEquals($expected, $result);
     }
 
