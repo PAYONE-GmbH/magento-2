@@ -226,6 +226,10 @@ class Payment extends \Payone\Core\Helper\Base
     {
         $aStoreIds = [];
         $aKlarnaConfig = $this->unserialize($this->getConfigParam('klarna_config', PayoneConfig::METHOD_KLARNA, 'payone_payment'));
+        if (!is_array($aKlarnaConfig)) {
+            return $aStoreIds;
+        }
+
         foreach ($aKlarnaConfig as $aItem) {
             if (!empty($aItem['store_id']) && isset($aItem['countries'])) {
                 foreach ($aItem['countries'] as $sCountry) {
