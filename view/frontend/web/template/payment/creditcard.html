@@ -151,7 +151,7 @@
                         data-bind="
                         click: handleCreditcardPayment,
                         attr: {title: $t('Place Order')},
-                        enable: (getCode() == isChecked()),
+                        enable: (getCode() == isChecked() && isPlaceOrderActionAllowed()),
                         css: {disabled: !isPlaceOrderActionAllowed()}
                         "
                         disabled>

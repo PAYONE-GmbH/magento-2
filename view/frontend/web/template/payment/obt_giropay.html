@@ -91,7 +91,7 @@
                         data-bind="
                         click: continueToPayone,
                         attr: {title: $t('Place Order')},
-                        enable: (getCode() == isChecked()),
+                        enable: (getCode() == isChecked() && isPlaceOrderActionAllowed()),
                         css: {disabled: !isPlaceOrderActionAllowed()}
                         "
                         disabled>
