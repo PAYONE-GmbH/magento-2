@@ -426,6 +426,11 @@
                     <label>Valid PAYONE IPs</label>
                     <comment>Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use * </comment>
                 </field>
+                <field id="proxy_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Proxy-Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If your shop is behind a Proxy. Enable this option to transmit the HTTP_X_FORWARDED_FOR</comment>
+                </field>
             </group>
             <group id="forwarding" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Transaction-Status Forwarding</label>
