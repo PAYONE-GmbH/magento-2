@@ -84,23 +84,27 @@ class Debit extends Base
     /**
      * Get creditmemo array from request parameters
      *
+     * @param  PayoneMethod $oPayment
      * @return mixed
      */
-    protected function getCreditmemoRequestParams()
+    protected function getCreditmemoRequestParams(PayoneMethod $oPayment)
     {
-        return $this->shopHelper->getRequestParameter('creditmemo');
+        $aCreditmemo = $oPayment->getCreditmemoData();
+        if ($aCreditmemo === null) {
+            $aCreditmemo = $this->shopHelper->getRequestParameter('creditmemo');
+        }
+        return $aCreditmemo;
     }
 
     /**
      * Generate position list for invoice data transmission
      *
      * @param Order $oOrder
+     * @param array $aCreditmemo
      * @return array|false
      */
-    protected function getInvoiceList(Order $oOrder)
+    protected function getInvoiceList(Order $oOrder, $aCreditmemo)
     {
-        $aCreditmemo = $this->getCreditmemoRequestParams();
-
         $aPositions = [];
         $blFull = true;
         if ($aCreditmemo && array_key_exists('items', $aCreditmemo) !== false) {
@@ -135,8 +139,9 @@ class Debit extends Base
     public function sendRequest(PayoneMethod $oPayment, InfoInterface $oPaymentInfo, $dAmount)
     {
         $oOrder = $oPaymentInfo->getOrder();
+        $aCreditmemo = $this->getCreditmemoRequestParams($oPayment);
 
-        $aPositions = $this->getInvoiceList($oOrder);
+        $aPositions = $this->getInvoiceList($oOrder, $aCreditmemo);
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
         if (strpos($iTxid, '-') !== false) {
@@ -164,7 +169,6 @@ class Debit extends Base
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
-        $aCreditmemo = $this->getCreditmemoRequestParams();
         $sIban = false;
         $sBic = false;
         if (!empty($oOrder->getPayoneRefundIban()) && !empty($oOrder->getPayoneRefundBic())) {

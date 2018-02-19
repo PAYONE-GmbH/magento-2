@@ -73,12 +73,16 @@ class Capture extends Base
     /**
      * Generate position list for invoice data transmission
      *
-     * @param Order $oOrder
+     * @param Order        $oOrder
+     * @param PayoneMethod $oPayment
      * @return array|false
      */
-    protected function getInvoiceList(Order $oOrder)
+    protected function getInvoiceList(Order $oOrder, PayoneMethod $oPayment)
     {
-        $aInvoice = $this->shopHelper->getRequestParameter('invoice');
+        $aInvoice = $oPayment->getInvoiceData();
+        if ($aInvoice === null) {
+            $aInvoice = $this->shopHelper->getRequestParameter('invoice');
+        }
 
         $aPositions = [];
         $blFull = true;
@@ -112,7 +116,7 @@ class Capture extends Base
     {
         $oOrder = $oPaymentInfo->getOrder();
 
-        $aPositions = $this->getInvoiceList($oOrder);
+        $aPositions = $this->getInvoiceList($oOrder, $oPayment);
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
 

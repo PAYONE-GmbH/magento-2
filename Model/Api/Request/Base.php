@@ -143,6 +143,18 @@ abstract class Base
     }
 
     /**
+     * Reset the initial state of the request
+     *
+     * @return void
+     */
+    protected function reinitRequest()
+    {
+        $this->sOrderId = null;
+        $this->aParameters = [];
+        $this->initRequest();
+    }
+
+    /**
      * Add parameter to request
      *
      * @param  string $sKey               parameter key
@@ -281,11 +293,14 @@ abstract class Base
         if (!$this->validateParameters()) {// all base parameters existing?
             return ["errormessage" => "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)"];
         }
-        
+
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
         $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
-        
+
+        // reset the request, so that another fresh request can be sent
+        $this->reinitRequest();
+
         return $aResponse;
     }
 }

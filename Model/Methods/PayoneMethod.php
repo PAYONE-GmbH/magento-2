@@ -309,4 +309,46 @@ abstract class PayoneMethod extends BaseMethod
     {
         return $this->iNarrativeTextMax;
     }
+
+    /**
+     * Return invoice data array
+     *
+     * @return array|null
+     */
+    public function getInvoiceData()
+    {
+        return $this->aInvoiceData;
+    }
+
+    /**
+     * Set invoice data array
+     *
+     * @param  array $aInvoiceData
+     * @return void
+     */
+    public function setInvoiceData($aInvoiceData)
+    {
+        $this->aInvoiceData = $aInvoiceData;
+    }
+
+    /**
+     * Return invoice data array
+     *
+     * @return array|null
+     */
+    public function getCreditmemoData()
+    {
+        return $this->aCreditmemoData;
+    }
+
+    /**
+     * Set creditmemo data array
+     *
+     * @param  array $aCreditmemoData
+     * @return void
+     */
+    public function setCreditmemoData($aCreditmemoData)
+    {
+        $this->aCreditmemoData = $aCreditmemoData;
+    }
 }

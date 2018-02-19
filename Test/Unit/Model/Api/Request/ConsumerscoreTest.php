@@ -148,12 +148,8 @@ class ConsumerscoreTest extends BaseTestCase
 
         /** @var AddressInterface $address */
         $result = $this->classToTest->sendRequest($address);
-        ConsumerscoreTest::assertArrayHasKey('status', $result);
-        ConsumerscoreTest::assertEquals(
-            AddressCheckType::BONIVERSUM_PERSON,
-            $this->classToTest->getParameter('addresschecktype'),
-            'Check types do not match!'
-        );
+        $this->assertArrayHasKey('status', $result);
+        $this->assertEquals('VALID', $result['status']);
     }
 
     public function testSendRequestTrue()

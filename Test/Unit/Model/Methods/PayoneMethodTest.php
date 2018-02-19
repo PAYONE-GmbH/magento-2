@@ -135,4 +135,28 @@ class PayoneMethodTest extends BaseTestCase
         $expected = 37;
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetInvoiceData()
+    {
+        $result = $this->classToTest->getInvoiceData();
+        $this->assertNull($result);
+
+        $expected = ['array' => 'test'];
+        $this->classToTest->setInvoiceData($expected);
+
+        $result = $this->classToTest->getInvoiceData();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetCreditmemoData()
+    {
+        $result = $this->classToTest->getCreditmemoData();
+        $this->assertNull($result);
+
+        $expected = ['array' => 'test'];
+        $this->classToTest->setCreditmemoData($expected);
+
+        $result = $this->classToTest->getCreditmemoData();
+        $this->assertEquals($expected, $result);
+    }
 }
