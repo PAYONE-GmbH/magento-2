@@ -128,7 +128,7 @@ define(
                 return true;
             },
             initialize: function () {
-                this._super().initChildren();
+                this._super();
                 if(this.getCode() === window.checkoutConfig.payment.payone.canceledPaymentMethod) {
                     selectPaymentMethodAction({method: this.getCode()});
                     checkoutData.setSelectedPaymentMethod(this.item.method);
