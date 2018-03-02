@@ -120,7 +120,8 @@ class Payment extends \Payone\Core\Helper\Base
             foreach ($aCreditcardTypes as $sType) {
                 $aReturn[] = [
                     'id' => $sType,
-                    'title' => $aAllTypes[$sType],
+                    'title' => $aAllTypes[$sType]['name'],
+                    'cvc_length' => $aAllTypes[$sType]['cvc_length'],
                 ];
             }
         }
