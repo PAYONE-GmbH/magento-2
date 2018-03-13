@@ -40,7 +40,7 @@ class Creditcard extends Base
     {
         $aTypes = CreditcardTypes::getCreditcardTypes();
         if (array_key_exists($sShortType, $aTypes) !== false) {
-            return $aTypes[$sShortType];
+            return $aTypes[$sShortType]['name'];
         }
         return '';
     }

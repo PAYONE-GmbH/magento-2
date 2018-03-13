@@ -162,7 +162,17 @@ class HostedIframeTest extends BaseTestCase
                     'type' => 'tel',
                     'size' => '30',
                     'maxlength' => '4',
-                    'style' => ''
+                    'style' => '',
+                    'length' => [
+                        'V' => 3,
+                        'M' => 3,
+                        'A' => 4,
+                        'D' => 3,
+                        'J' => 3,
+                        'O' => 3,
+                        'C' => 3,
+                        'B' => 3,
+                    ],
                 ],
                 'cardexpiremonth' => [
                     'selector' => 'cardexpiremonth',

@@ -26,6 +26,8 @@
 
 namespace Payone\Core\Helper;
 
+use Payone\Core\Model\Source\CreditcardTypes;
+
 /**
  * Helper class for everything that has to do with hosted Iframe
  */
@@ -131,10 +133,25 @@ class HostedIframe extends \Payone\Core\Helper\Base
         $aFields['cardpan'] = $this->getFieldConfigField('cardpan', 'Number');
         if ($this->paymentHelper->isCheckCvcActive() === true) { // cvc field activated?
             $aFields['cardcvc2'] = $this->getFieldConfigField('cardcvc2', 'CVC');
+            $aFields['cardcvc2']['length'] = $this->getCvcMaxLengths();
         }
         $aFields['cardexpiremonth'] = $this->getFieldConfigField('cardexpiremonth', 'Month');
         $aFields['cardexpireyear'] = $this->getFieldConfigField('cardexpireyear', 'Year');
         return $aFields;
+    }
+
+    /**
+     * Return array with the cvc length of all creditcard types
+     *
+     * @return array
+     */
+    protected function getCvcMaxLengths()
+    {
+        $aLenghts = [];
+        foreach (CreditcardTypes::getCreditcardTypes() as $sType => $aType) {
+            $aLenghts[$sType] = $aType['cvc_length'];
+        }
+        return $aLenghts;
     }
 
     /**
