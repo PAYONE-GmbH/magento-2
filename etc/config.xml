@@ -385,6 +385,7 @@
         <payone_misc>
             <processing>
                 <valid_ips><![CDATA[185.60.20.*]]></valid_ips>
+                <proxy_mode>0</proxy_mode>
             </processing>
             <costs>
                 <sku>delivery</sku>

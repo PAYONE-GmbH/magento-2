@@ -120,7 +120,8 @@ class Payment extends \Payone\Core\Helper\Base
             foreach ($aCreditcardTypes as $sType) {
                 $aReturn[] = [
                     'id' => $sType,
-                    'title' => $aAllTypes[$sType],
+                    'title' => $aAllTypes[$sType]['name'],
+                    'cvc_length' => $aAllTypes[$sType]['cvc_length'],
                 ];
             }
         }
@@ -226,6 +227,10 @@ class Payment extends \Payone\Core\Helper\Base
     {
         $aStoreIds = [];
         $aKlarnaConfig = $this->unserialize($this->getConfigParam('klarna_config', PayoneConfig::METHOD_KLARNA, 'payone_payment'));
+        if (!is_array($aKlarnaConfig)) {
+            return $aStoreIds;
+        }
+
         foreach ($aKlarnaConfig as $aItem) {
             if (!empty($aItem['store_id']) && isset($aItem['countries'])) {
                 foreach ($aItem['countries'] as $sCountry) {

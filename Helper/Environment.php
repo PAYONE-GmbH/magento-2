@@ -32,6 +32,31 @@ namespace Payone\Core\Helper;
 class Environment extends \Payone\Core\Helper\Base
 {
     /**
+     * Extended remote address object
+     *
+     * @var \Payone\Core\Model\Environment\RemoteAddress
+     */
+    protected $remoteAddress;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\App\Helper\Context        $context
+     * @param \Magento\Store\Model\StoreManagerInterface   $storeManager
+     * @param \Payone\Core\Helper\Shop                     $shopHelper
+     * @param \Payone\Core\Model\Environment\RemoteAddress $remoteAddress
+     */
+    public function __construct(
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Model\Environment\RemoteAddress $remoteAddress
+    ) {
+        parent::__construct($context, $storeManager, $shopHelper);
+        $this->remoteAddress = $remoteAddress;
+    }
+
+    /**
      * Get encoding
      *
      * @return string
@@ -44,11 +69,16 @@ class Environment extends \Payone\Core\Helper\Base
     /**
      * Get the IP of the requesting client
      *
+     * @param  bool $blUseHttpXForwarded
      * @return string
      */
-    public function getRemoteIp()
+    public function getRemoteIp($blUseHttpXForwarded = false)
     {
-        return $this->_remoteAddress->getRemoteAddress();
+        $blProxyMode = (bool)$this->getConfigParam('proxy_mode', 'processing', 'payone_misc');
+        if ($blUseHttpXForwarded === true && $blProxyMode === true) {
+            $this->remoteAddress->useHttpXForwarded();
+        }
+        return $this->remoteAddress->getRemoteAddress();
     }
 
     /**
@@ -58,7 +88,7 @@ class Environment extends \Payone\Core\Helper\Base
      */
     public function isRemoteIpValid()
     {
-        $sRemoteIp = $this->getRemoteIp();
+        $sRemoteIp = $this->getRemoteIp(true);
         $sValidIps = $this->getConfigParam('valid_ips', 'processing', 'payone_misc');
         $aWhitelist = explode("\n", $sValidIps);
         $aWhitelist = array_filter(array_map('trim', $aWhitelist));

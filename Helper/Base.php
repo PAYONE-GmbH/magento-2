@@ -116,12 +116,27 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Checks if the given value is json encoded
+     *
+     * @param  $sValue
+     * @return bool
+     */
+    protected function isJson($sValue)
+    {
+        if (is_string($sValue) && is_array(json_decode($sValue, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Handle the serialization of strings depending on the Magento version
      *
      * @param  mixed $mValue
      * @return string
      */
-    public function serialize($mValue) {
+    public function serialize($mValue)
+    {
         if (version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) { // Magento 2.2.0 and above
             return json_encode($mValue);
         }
@@ -132,8 +147,9 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
      * @param  string $sValue
      * @return mixed
      */
-    public function unserialize($sValue) {
-        if (version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) { // Magento 2.2.0 and above
+    public function unserialize($sValue)
+    {
+        if ($this->isJson($sValue)) {
             return json_decode($sValue, true);
         }
         return unserialize($sValue);

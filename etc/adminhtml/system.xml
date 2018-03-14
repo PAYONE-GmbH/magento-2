@@ -47,7 +47,7 @@
                 <field id="key" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Security Key</label>
                 </field>
-                <field id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Referencenumber prefix</label>
                     <comment>optional</comment>
                     <tooltip>A unique referencenumber has to be transferred to PAYONE with every request. This is a consecutive number, normally starting at 1. When operating multiple shops ( e.g. live- and test-shop ) with the same PAYONE account-data there will be problems when the current referencenumber was already used. This can be avoided by using different prefixes on different shops.</tooltip>
@@ -93,112 +93,112 @@
                 <field id="payone_creditcard" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Creditcard</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_debit" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Debit Payment</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_paypal" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>PayPal</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_cash_on_delivery" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cash on Delivery</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_advance_payment" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Advance Payment</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_invoice" translate="label" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_obt_sofortueberweisung" translate="label" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>SOFORT Überweisung</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_obt_giropay" translate="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>giropay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_obt_eps" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>eps - Online-Ueberweisung</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_obt_postfinance_efinance" translate="label" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>PostFinance E-Finance</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_obt_postfinance_card" translate="label" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>PostFinance Card</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_obt_ideal" translate="label" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>iDeal</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_obt_przelewy" translate="label" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Przelewy24</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_barzahlen" translate="label" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Barzahlen</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_paydirekt" translate="label" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Paydirekt</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_billsafe" translate="label" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>BillSAFE</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_klarna" translate="label" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Klarna Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_safe_invoice" translate="label" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Safe Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_invoice" translate="label" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Payolution Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_debit" translate="label" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Payolution Debit</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_installment" translate="label" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Payolution Installment</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_alipay" translate="label" sortOrder="260" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>AliPay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
             </group>
             <group id="creditcard" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -206,7 +206,7 @@
                 <field id="cc_template" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Input-configuration</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\CreditcardTemplate</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
             </group>
             <group id="emails" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -425,6 +425,11 @@
                 <field id="valid_ips" translate="label,comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Valid PAYONE IPs</label>
                     <comment>Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use * </comment>
+                </field>
+                <field id="proxy_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Proxy-Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If your shop is behind a Proxy. Enable this option to transmit the HTTP_X_FORWARDED_FOR</comment>
                 </field>
             </group>
             <group id="forwarding" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">

@@ -92,8 +92,8 @@ class PaymentTest extends BaseTestCase
     {
         $creditcardTypes = 'V,M';
         $expected = [
-            ['id' => 'V', 'title' => 'Visa'],
-            ['id' => 'M', 'title' => 'Mastercard']
+            ['id' => 'V', 'title' => 'Visa', 'cvc_length' => 3],
+            ['id' => 'M', 'title' => 'Mastercard', 'cvc_length' => 3]
         ];
         $this->scopeConfig->expects($this->any())
             ->method('getValue')

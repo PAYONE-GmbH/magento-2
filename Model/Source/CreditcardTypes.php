@@ -39,14 +39,14 @@ class CreditcardTypes implements ArrayInterface
      * @var array
      */
     protected static $aTypes = [
-        'V' => 'Visa',
-        'M' => 'Mastercard',
-        'A' => 'American Express',
-        'D' => 'Diners Club',
-        'J' => 'JCB',
-        'O' => 'Maestro International',
-        'C' => 'Discover',
-        'B' => 'Carte Bleue',
+        'V' => array('name' => 'Visa', 'cvc_length' => 3),
+        'M' => array('name' => 'Mastercard', 'cvc_length' => 3),
+        'A' => array('name' => 'American Express', 'cvc_length' => 4),
+        'D' => array('name' => 'Diners Club', 'cvc_length' => 3),
+        'J' => array('name' => 'JCB', 'cvc_length' => 3),
+        'O' => array('name' => 'Maestro International', 'cvc_length' => 3),
+        'C' => array('name' => 'Discover', 'cvc_length' => 3),
+        'B' => array('name' => 'Carte Bleue', 'cvc_length' => 3),
     ];
 
     /**
@@ -67,10 +67,10 @@ class CreditcardTypes implements ArrayInterface
     public function toOptionArray()
     {
         $aOptions = [];
-        foreach (self::$aTypes as $sId => $sTitle) {
+        foreach (self::$aTypes as $sId => $aType) {
             $aOptions[] = [
                 'value' => $sId,
-                'label' => $sTitle,
+                'label' => $aType['name'],
             ];
         }
         return $aOptions;
