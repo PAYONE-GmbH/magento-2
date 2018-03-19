@@ -26,8 +26,10 @@
 
 namespace Payone\Core\Helper;
 
+use Magento\Directory\Model\CurrencyFactory;
 use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order as SalesOrder;
+use Magento\Store\Model\Store;
 use Payone\Core\Model\Methods\PayoneMethod;
 
 /**
@@ -41,6 +43,10 @@ class Toolkit extends \Payone\Core\Helper\Base
      * @var \Payone\Core\Helper\Payment
      */
     protected $paymentHelper;
+    /**
+     * @var CurrencyFactory
+     */
+    protected $currencyFactory;
 
     /**
      * Constructor
@@ -49,15 +55,18 @@ class Toolkit extends \Payone\Core\Helper\Base
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Payment                $paymentHelper
      * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param CurrencyFactory                            $currencyFactory
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Payment $paymentHelper,
-        \Payone\Core\Helper\Shop $shopHelper
+        \Payone\Core\Helper\Shop $shopHelper,
+        CurrencyFactory $currencyFactory
     ) {
         parent::__construct($context, $storeManager, $shopHelper);
         $this->paymentHelper = $paymentHelper;
+        $this->currencyFactory = $currencyFactory;
     }
 
     /**
@@ -208,5 +217,63 @@ class Toolkit extends \Payone\Core\Helper\Base
         }
         // everything below 2.0.6
         return $oData->getData($sKey);
+    }
+
+    /**
+     * Convert the payment amount to chosen currency for transmission
+     * Payment curreny is (by default) always the base currency!
+     *
+     * @param float $amount
+     * @return float
+     */
+    public function convertToTransmitCurrency($amount) {
+        // get config setting for currency, either 'base' (default) or 'display'
+        $currencyConfig = $this->getConfigParam('currency', 'payone_general');
+
+        // if base currency is chosen, there's nothing to do here, $amount already is in base currency
+        if ($currencyConfig == 'base') {
+            return $amount;
+        }
+
+        // get store object for convenience
+        /** @var Store $store */
+        $store = $this->storeManager->getStore();
+
+        // get display currency code and base currency model
+        $targetCurrencyCode = $store->getDefaultCurrencyCode();
+        $baseCurrency = $store->getBaseCurrency();
+
+        try {
+            return $baseCurrency->convert($amount, $targetCurrencyCode);
+        } catch (\Exception $e) {
+            return $amount; // TODO!
+        }
+    }
+
+    /**
+     * Get the chosen currency code for transmission (matching the currency)
+     *
+     * @return string
+     */
+    public function getTransmitCurrencyCode() {
+        // get config setting for currency, either 'base' (default) or 'display'
+        $currencyConfig = $this->getConfigParam('currency', 'payone_general');
+
+        // get store object for convenience
+        /** @var Store $store */
+        $store = $this->storeManager->getStore();
+
+        // get chosen currency code
+        switch ($currencyConfig) {
+            case 'display':
+                $currencyCode = $store->getDefaultCurrencyCode();
+                break;
+            case 'base':
+            default:
+                $currencyCode = $store->getBaseCurrencyCode();
+                break;
+        }
+
+        return $currencyCode;
     }
 }

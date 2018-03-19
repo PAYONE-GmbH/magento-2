@@ -48,6 +48,13 @@ class Capture extends Base
     protected $databaseHelper;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
@@ -63,7 +70,8 @@ class Capture extends Base
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
-        \Payone\Core\Helper\Database $databaseHelper
+        \Payone\Core\Helper\Database $databaseHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
         $this->invoiceGenerator = $invoiceGenerator;
@@ -123,8 +131,10 @@ class Capture extends Base
         $this->addParameter('language', $this->shopHelper->getLocale());
 
         // Total order sum in smallest currency unit
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
-        $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // Currency
+        $this->addParameter('amount', number_format(
+            $this->toolkitHelper->convertToTransmitCurrency($dAmount), 2, '.', '') * 100
+        );
+        $this->addParameter('currency', $this->toolkitHelper->getTransmitCurrencyCode()); // Currency
 
         $this->addParameter('txid', $iTxid); // PayOne Transaction ID
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));

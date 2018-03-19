@@ -63,6 +63,11 @@
                         <field id="allowspecific">1</field>
                     </depends>
                 </field>
+                <field id="currency" translate="label,comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Currency</label>
+                    <source_model>Payone\Core\Model\Source\Currency</source_model>
+                    <comment>Payment information is transmitted using the selected currency</comment>
+                </field>
                 <field id="request_type" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Authorize-method</label>
                     <source_model>Payone\Core\Model\Source\RequestType</source_model>

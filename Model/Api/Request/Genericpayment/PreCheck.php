@@ -35,6 +35,22 @@ use Magento\Quote\Model\Quote;
 class PreCheck extends Base
 {
     /**
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    public function __construct(\Payone\Core\Helper\Shop $shopHelper,
+                                \Payone\Core\Helper\Environment $environmentHelper,
+                                \Payone\Core\Helper\Api $apiHelper,
+                                \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+                                \Payone\Core\Helper\Customer $customerHelper,
+                                \Payone\Core\Helper\Toolkit $toolkitHelper)
+    {
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
+        $this->toolkitHelper = $toolkitHelper;
+    }
+
+    /**
      * Send request to PAYONE Server-API with request-type "genericpayment" and action "pre_check"
      *
      * @param  PayoneMethod $oPayment payment object
@@ -57,8 +73,10 @@ class PreCheck extends Base
         $this->addParameter('financingtype', $oPayment->getSubType());
         $this->addParameter('add_paydata[payment_type]', $oPayment->getLongSubType());
 
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
+        $this->addParameter('amount', number_format(
+            $this->toolkitHelper->convertToTransmitCurrency($dAmount), 2, '.', '') * 100
+        );
+        $this->addParameter('currency', $this->toolkitHelper->getTransmitCurrencyCode());
 
         if ($sEmail === false) {
             $sEmail = $oQuote->getCustomerEmail();
