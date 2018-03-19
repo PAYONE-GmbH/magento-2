@@ -26,7 +26,6 @@
 
 namespace Payone\Core\Helper;
 
-use Magento\Directory\Model\CurrencyFactory;
 use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order as SalesOrder;
 use Magento\Store\Model\Store;
