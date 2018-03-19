@@ -43,10 +43,6 @@ class Toolkit extends \Payone\Core\Helper\Base
      * @var \Payone\Core\Helper\Payment
      */
     protected $paymentHelper;
-    /**
-     * @var CurrencyFactory
-     */
-    protected $currencyFactory;
 
     /**
      * Constructor
@@ -61,12 +57,10 @@ class Toolkit extends \Payone\Core\Helper\Base
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Payment $paymentHelper,
-        \Payone\Core\Helper\Shop $shopHelper,
-        CurrencyFactory $currencyFactory
+        \Payone\Core\Helper\Shop $shopHelper
     ) {
         parent::__construct($context, $storeManager, $shopHelper);
         $this->paymentHelper = $paymentHelper;
-        $this->currencyFactory = $currencyFactory;
     }
 
     /**
