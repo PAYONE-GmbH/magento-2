@@ -51,7 +51,6 @@ class Toolkit extends \Payone\Core\Helper\Base
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Payment                $paymentHelper
      * @param \Payone\Core\Helper\Shop                   $shopHelper
-     * @param CurrencyFactory                            $currencyFactory
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
