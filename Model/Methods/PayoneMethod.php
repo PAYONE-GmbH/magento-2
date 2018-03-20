@@ -114,7 +114,7 @@ abstract class PayoneMethod extends BaseMethod
         $this->checkoutSession->unsPayoneCanceledPaymentMethod();
         $this->checkoutSession->unsPayoneIsError();
         $aResponse = $this->authorizationRequest->sendRequest($this, $oOrder, $amount);
-        $this->handleResponse($aResponse);
+        $this->handleResponse($aResponse, $oOrder);
         if ($aResponse['status'] == 'ERROR') {// request returned an error
             throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
         } elseif ($aResponse['status'] == 'APPROVED' || $aResponse['status'] == 'REDIRECT') {// request successful
@@ -131,9 +131,10 @@ abstract class PayoneMethod extends BaseMethod
      * Perform certain actions with the response
      *
      * @param  array $aResponse
+     * @param  Order $oOrder
      * @return void
      */
-    protected function handleResponse($aResponse)
+    protected function handleResponse($aResponse, Order $oOrder)
     {
         // hook for certain payment methods
     }

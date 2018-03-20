@@ -58,6 +58,66 @@ class SafeInvoice extends PayoneMethod
     protected $blNeedsProductInfo = true;
 
     /**
+     * Payment ban entity
+     *
+     * @var \Payone\Core\Model\ResourceModel\PaymentBan
+     */
+    protected $paymentBan;
+
+    /**
+     * Payment ban duration in hours
+     *
+     * @var int
+     */
+    protected $iBanDuration = 24;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\Model\Context                        $context
+     * @param \Magento\Framework\Registry                             $registry
+     * @param \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory
+     * @param \Magento\Framework\Api\AttributeValueFactory            $customAttrFactory
+     * @param \Magento\Payment\Helper\Data                            $paymentData
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface      $scopeConfig
+     * @param \Magento\Payment\Model\Method\Logger                    $logger
+     * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
+     * @param \Payone\Core\Helper\Shop                                $shopHelper
+     * @param \Magento\Framework\Url                                  $url
+     * @param \Magento\Checkout\Model\Session                         $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Debit                    $debitRequest
+     * @param \Payone\Core\Model\Api\Request\Capture                  $captureRequest
+     * @param \Payone\Core\Model\Api\Request\Authorization            $authorizationRequest
+     * @param \Payone\Core\Model\ResourceModel\PaymentBan             $paymentBan
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
+     * @param array                                                   $data
+     */
+    public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
+        \Magento\Framework\Api\AttributeValueFactory $customAttrFactory,
+        \Magento\Payment\Helper\Data $paymentData,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Payment\Model\Method\Logger $logger,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\Url $url,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Payone\Core\Model\Api\Request\Debit $debitRequest,
+        \Payone\Core\Model\Api\Request\Capture $captureRequest,
+        \Payone\Core\Model\Api\Request\Authorization $authorizationRequest,
+        \Payone\Core\Model\ResourceModel\PaymentBan $paymentBan,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $resource, $resourceCollection, $data);
+        $this->paymentBan = $paymentBan;
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder
@@ -121,5 +181,30 @@ class SafeInvoice extends PayoneMethod
         }
 
         return $this;
+    }
+
+    /**
+     * Perform certain actions with the response
+     *
+     * @param  array $aResponse
+     * @param  Order $oOrder
+     * @return void
+     */
+    protected function handleResponse($aResponse, Order $oOrder)
+    {
+        if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
+            && isset($aResponse['errorcode']) && $aResponse['errorcode'] == '351'
+        ) {
+            if (!empty($oOrder->getCustomerId())) {
+                $this->paymentBan->addPaymentBan($this->getCode(), $oOrder->getCustomerId(), $this->iBanDuration);
+            } else { // guest checkout
+                $aBans = $this->checkoutSession->getPayonePaymentBans();
+                if (!$aBans) {
+                    $aBans = [];
+                }
+                $aBans[$this->getCode()] = $this->paymentBan->getBanEndDate($this->iBanDuration);
+                $this->checkoutSession->setPayonePaymentBans($aBans);
+            }
+        }
     }
 }

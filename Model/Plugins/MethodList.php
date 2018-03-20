@@ -30,6 +30,7 @@ use Magento\Payment\Model\MethodList as OrigMethodList;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Model\Source\CreditratingIntegrationEvent as Event;
+use Magento\Quote\Model\Quote;
 
 /**
  * Plugin for Magentos MethodList class
@@ -58,20 +59,30 @@ class MethodList
     protected $checkoutSession;
 
     /**
+     * Payment ban entity
+     *
+     * @var \Payone\Core\Model\ResourceModel\PaymentBan
+     */
+    protected $paymentBan;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
      * @param \Payone\Core\Helper\Consumerscore            $consumerscoreHelper
      * @param \Magento\Checkout\Model\Session              $checkoutSession
+     * @param \Payone\Core\Model\ResourceModel\PaymentBan  $paymentBan
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Payone\Core\Model\ResourceModel\PaymentBan $paymentBan
     ) {
         $this->consumerscore = $consumerscore;
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->checkoutSession = $checkoutSession;
+        $this->paymentBan = $paymentBan;
     }
 
     /**
@@ -139,11 +150,53 @@ class MethodList
     /**
      * Get quote object from session
      *
-     * @return \Magento\Quote\Model\Quote
+     * @return Quote
      */
     protected function getQuote()
     {
         return $this->checkoutSession->getQuote();
+    }
+
+    /**
+     * Return banned payment methods for the current user
+     *
+     * @param  Quote $oQuote
+     * @return array
+     */
+    protected function getBannedPaymentMethods(Quote $oQuote)
+    {
+        $aBans = [];
+        if (!empty($oQuote->getCustomerId())) {
+            $aBans = $this->paymentBan->getPaymentBans($oQuote->getCustomerId());
+        } else { // guest checkout
+            $aSessionBans = $this->checkoutSession->getPayonePaymentBans();
+            if (!empty($aSessionBans)) {
+                $aBans = $aSessionBans;
+            }
+        }
+        return $aBans;
+    }
+
+    /**
+     * Remove banned paymenttypes
+     *
+     * @param  array $aPaymentMethods
+     * @param  Quote $oQuote
+     * @return array
+     */
+    protected function removeBannedPaymentMethods($aPaymentMethods, Quote $oQuote)
+    {
+        $aBannedMethos = $this->getBannedPaymentMethods($oQuote);
+        for($i = 0; $i < count($aPaymentMethods); $i++) {
+            $sCode = $aPaymentMethods[$i]->getCode();
+            if (array_key_exists($sCode, $aBannedMethos) !== false) {
+                $iBannedUntil = strtotime($aBannedMethos[$sCode]);
+                if ($iBannedUntil > time()) {
+                    unset($aPaymentMethods[$i]);
+                }
+            }
+        }
+        return $aPaymentMethods;
     }
 
     /**
@@ -162,7 +215,7 @@ class MethodList
             $aScores[] = $oShipping->getPayoneAddresscheckScore();
         }
 
-        $dTotal = $this->getQuote()->getGrandTotal();
+        $dTotal = $oQuote->getGrandTotal();
         if ($this->consumerscoreHelper->isCreditratingNeeded(Event::BEFORE_PAYMENT, $dTotal) === true) {
             $aScores[] = $this->getScoreByCreditrating($oShipping);
         }
@@ -171,6 +224,8 @@ class MethodList
         if ($sScore != 'G') { // no need to filter
             $aPaymentMethods = $this->filterMethodsByScore($aPaymentMethods, $sScore);
         }
+
+        $aPaymentMethods = $this->removeBannedPaymentMethods($aPaymentMethods, $oQuote);
 
         return $aPaymentMethods;
     }

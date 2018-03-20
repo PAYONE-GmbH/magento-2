@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods;
 
+use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Model\Methods\SafeInvoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
@@ -35,6 +36,8 @@ use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Address;
+use Payone\Core\Model\Api\Request\Authorization;
+use Magento\Payment\Model\Info;
 
 class SafeInvoiceTest extends BaseTestCase
 {
@@ -48,6 +51,11 @@ class SafeInvoiceTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var Authorization|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $authorizationRequest;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
@@ -58,8 +66,11 @@ class SafeInvoiceTest extends BaseTestCase
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn('12');
 
+        $this->authorizationRequest = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'toolkitHelper' => $toolkitHelper
+            'toolkitHelper' => $toolkitHelper,
+            'authorizationRequest' => $this->authorizationRequest,
         ]);
         $this->classToTest->setInfoInstance($info);
     }
@@ -83,5 +94,35 @@ class SafeInvoiceTest extends BaseTestCase
 
         $result = $this->classToTest->assignData($data);
         $this->assertInstanceOf(ClassToTest::class, $result);
+    }
+
+    public function testAuthorizeRegistered()
+    {
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getCustomerId')->willReturn('5');
+
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $paymentInfo->method('getOrder')->willReturn($order);
+
+        $aResponse = ['status' => 'ERROR', 'errorcode' => '351', 'customermessage' => 'error'];
+        $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
+
+        $this->expectException(LocalizedException::class);
+        $this->classToTest->authorize($paymentInfo, 100);
+    }
+
+    public function testAuthorizeGuest()
+    {
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getCustomerId')->willReturn(null);
+
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $paymentInfo->method('getOrder')->willReturn($order);
+
+        $aResponse = ['status' => 'ERROR', 'errorcode' => '351', 'customermessage' => 'error'];
+        $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
+
+        $this->expectException(LocalizedException::class);
+        $this->classToTest->authorize($paymentInfo, 100);
     }
 }
