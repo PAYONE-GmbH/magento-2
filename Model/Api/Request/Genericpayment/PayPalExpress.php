@@ -51,9 +51,9 @@ class PayPalExpress extends Base
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // ID of PayOne Sub-Account
         $this->addParameter('clearingtype', 'wlt');
         $this->addParameter('wallettype', 'PPE');
-        $this->addParameter('amount', number_format($oQuote->getGrandTotal(), 2, '.', '') * 100);
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
         $this->addParameter('narrative_text', 'Test');
+
+        $this->addCurrencyAmount($oQuote->getGrandTotal()); // add currency and amount parameter for given config
 
         if ($sWorkorderId !== false) {
             $this->addParameter('workorderid', $sWorkorderId);

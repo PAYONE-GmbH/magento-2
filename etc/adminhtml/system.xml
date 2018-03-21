@@ -63,7 +63,7 @@
                         <field id="allowspecific">1</field>
                     </depends>
                 </field>
-                <field id="currency" translate="label,comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="currency" translate="label,comment" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Currency</label>
                     <source_model>Payone\Core\Model\Source\Currency</source_model>
                     <comment>Payment information is transmitted using the selected currency</comment>

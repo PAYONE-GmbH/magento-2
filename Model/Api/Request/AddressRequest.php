@@ -51,6 +51,7 @@ abstract class AddressRequest extends Base
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Helper\Customer            $customerHelper
      */
     public function __construct(
@@ -58,9 +59,10 @@ abstract class AddressRequest extends Base
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Helper\Customer $customerHelper
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $toolkitHelper);
         $this->customerHelper = $customerHelper;
     }
 

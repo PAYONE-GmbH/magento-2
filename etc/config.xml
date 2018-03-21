@@ -233,6 +233,7 @@
                 <portalid></portalid>
                 <aid></aid>
                 <key></key>
+                <currency>base</currency>
                 <transmit_ip>1</transmit_ip>
             </global>
             <invoicing>

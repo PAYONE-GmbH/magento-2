@@ -30,6 +30,7 @@ use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order as SalesOrder;
 use Magento\Store\Model\Store;
 use Payone\Core\Model\Methods\PayoneMethod;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Toolkit class for methods that dont fit in a certain drawer
@@ -216,11 +217,12 @@ class Toolkit extends \Payone\Core\Helper\Base
      * Payment curreny is (by default) always the base currency!
      *
      * @param float $amount
+     * @throws LocalizedException
      * @return float
      */
     public function convertToTransmitCurrency($amount) {
         // get config setting for currency, either 'base' (default) or 'display'
-        $currencyConfig = $this->getConfigParam('currency', 'payone_general');
+        $currencyConfig = $this->getConfigParam('currency');
 
         // if base currency is chosen, there's nothing to do here, $amount already is in base currency
         if ($currencyConfig == 'base') {
@@ -238,7 +240,9 @@ class Toolkit extends \Payone\Core\Helper\Base
         try {
             return $baseCurrency->convert($amount, $targetCurrencyCode);
         } catch (\Exception $e) {
-            return $amount; // TODO!
+            throw  new LocalizedException(
+                __('The currency configuration of the shop has to be checked.')
+            );
         }
     }
 
@@ -249,7 +253,7 @@ class Toolkit extends \Payone\Core\Helper\Base
      */
     public function getTransmitCurrencyCode() {
         // get config setting for currency, either 'base' (default) or 'display'
-        $currencyConfig = $this->getConfigParam('currency', 'payone_general');
+        $currencyConfig = $this->getConfigParam('currency');
 
         // get store object for convenience
         /** @var Store $store */

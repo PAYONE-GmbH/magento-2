@@ -104,23 +104,33 @@ abstract class Base
     protected $apiLog;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
-        \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+        \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         $this->shopHelper = $shopHelper;
         $this->environmentHelper = $environmentHelper;
         $this->apiHelper = $apiHelper;
         $this->apiLog = $apiLog;
+        $this->toolkitHelper = $toolkitHelper;
         $this->initRequest();
     }
 
@@ -250,6 +260,19 @@ abstract class Base
         $this->addParameter('successurl', $oPayment->getSuccessUrl());
         $this->addParameter('errorurl', $oPayment->getErrorUrl());
         $this->addParameter('backurl', $oPayment->getCancelUrl());
+    }
+
+    /**
+     * Add amount and currency to the request based on the currency configuration
+     *
+     * @param double $dAmount
+     * @return void
+     */
+    protected function addCurrencyAmount($dAmount)
+    {
+        $dAmount = $this->toolkitHelper->convertToTransmitCurrency($dAmount); // convert amount to transmit currency
+        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $this->toolkitHelper->getTransmitCurrencyCode()); // add currency to request
     }
 
     /**

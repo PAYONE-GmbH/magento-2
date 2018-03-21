@@ -54,8 +54,7 @@ class Calculation extends Base
         $this->addParameter('clearingtype', $oPayment->getClearingtype());
         $this->addParameter('financingtype', $oPayment->getSubType());
 
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
+        $this->addCurrencyAmount($dAmount); // add currency and amount parameter for given config
 
         $oBilling = $oQuote->getBillingAddress();
         $this->addParameter('country', $oBilling->getCountryId());

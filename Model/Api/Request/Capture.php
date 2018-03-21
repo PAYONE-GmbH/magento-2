@@ -48,36 +48,28 @@ class Capture extends Base
     protected $databaseHelper;
 
     /**
-     * PAYONE toolkit helper
-     *
-     * @var \Payone\Core\Helper\Toolkit
-     */
-    protected $toolkitHelper;
-
-    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
-     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
-        \Payone\Core\Helper\Database $databaseHelper,
-        \Payone\Core\Helper\Toolkit $toolkitHelper
+        \Payone\Core\Helper\Database $databaseHelper
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $toolkitHelper);
         $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
-        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -132,11 +124,7 @@ class Capture extends Base
         $this->addParameter('mode', $oPayment->getOperationMode()); // PayOne Portal Operation Mode (live or test)
         $this->addParameter('language', $this->shopHelper->getLocale());
 
-        // Total order sum in smallest currency unit
-        $this->addParameter('amount', number_format(
-            $this->toolkitHelper->convertToTransmitCurrency($dAmount), 2, '.', '') * 100
-        );
-        $this->addParameter('currency', $this->toolkitHelper->getTransmitCurrencyCode()); // Currency
+        $this->addCurrencyAmount($dAmount); // add currency and amount parameter for given config
 
         $this->addParameter('txid', $iTxid); // PayOne Transaction ID
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));

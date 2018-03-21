@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -31,16 +31,23 @@ use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Source class for currency to trasmit
+ * Source class for currency to transmit
  */
 class Currency implements ArrayInterface
 {
 
     /**
+     * Store object
+     *
      * @var Store
      */
     private $store;
 
+    /**
+     * Constructor
+     *
+     * @param StoreManagerInterface $storeManager
+     */
     public function __construct(StoreManagerInterface $storeManager)
     {
         $this->store = $storeManager->getStore();

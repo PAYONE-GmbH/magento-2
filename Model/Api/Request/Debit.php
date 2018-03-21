@@ -49,13 +49,6 @@ class Debit extends Base
     protected $databaseHelper;
 
     /**
-     * PAYONE toolkit helper
-     *
-     * @var \Payone\Core\Helper\Toolkit
-     */
-    protected $toolkitHelper;
-
-    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
@@ -71,14 +64,13 @@ class Debit extends Base
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
-        \Payone\Core\Helper\Database $databaseHelper,
-        \Payone\Core\Helper\Toolkit $toolkitHelper
+        \Payone\Core\Helper\Database $databaseHelper
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $toolkitHelper);
         $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
-        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -150,12 +142,8 @@ class Debit extends Base
         $this->addParameter('txid', $iTxid); // PayOne Transaction ID
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));
 
-        // Total order sum in smallest currency unit
-        $this->addParameter('amount', number_format(
-            (-1 * $this->toolkitHelper->convertToTransmitCurrency($dAmount)),
-            2, '.', '') * 100
-        );
-        $this->addParameter('currency', $this->toolkitHelper->getTransmitCurrencyCode()); // Currency
+        $this->addCurrencyAmount($dAmount); // add currency and amount parameter for given config
+
         $this->addParameter('transactiontype', 'GT');
 
         $sRefundAppendix = $this->getRefundAppendix($oOrder, $oPayment);
