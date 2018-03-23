@@ -144,7 +144,8 @@ class Authorization extends AddressRequest
         $sRefNr = $oPayment->formatReferenceNumber($sRefNr); // some payment methods have refnr regulations
         $this->addParameter('reference', $sRefNr); // add ref-nr to request
 
-        $this->addCurrencyAmount($dAmount); // add currency and amount parameter for given config
+        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $this->toolkitHelper->getTransmitCurrencyCode()); // add currency to request
 
         if ($this->shopHelper->getConfigParam('transmit_ip') == '1') {// is IP transmission needed?
             $sIp = $this->environmentHelper->getRemoteIp(); // get remote IP
