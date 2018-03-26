@@ -206,7 +206,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'epsBankGroups' => Eps::getBankGroups(),
             'idealBankGroups' => Ideal::getBankGroups(),
             'customerHasGivenGender' => $this->customerHelper->customerHasGivenGender(),
-            'customerHasGivenBirthday' => $this->customerHelper->customerHasGivenBirthday(),
+            'customerBirthday' => $this->customerHelper->getCustomerBirthday(),
             'addresscheckEnabled' => (int)$this->requestHelper->getConfigParam('enabled', 'address_check', 'payone_protect'),
             'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
             'addresscheckShippingEnabled' => $this->requestHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,

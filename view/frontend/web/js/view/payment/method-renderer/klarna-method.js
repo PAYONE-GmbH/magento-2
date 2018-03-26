@@ -94,7 +94,7 @@ define(
             requestBirthday: function () {
                 var aTriggerCountries = ['DE', 'NL', 'AT'];
                 if (this.getBillingCountry() !== false && aTriggerCountries.indexOf(this.getBillingCountry()) !== -1) {
-                    if (window.checkoutConfig.payment.payone.customerHasGivenBirthday == false) {
+                    if (window.checkoutConfig.payment.payone.customerBirthday === false) {
                         return true;
                     }
                 }
