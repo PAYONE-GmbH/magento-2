@@ -73,7 +73,7 @@ class ConfigProviderTest extends BaseTestCase
         $countryHelper->method('getDebitSepaCountries')->willReturn([['id' => 'DE', 'title' => 'Deutschland']]);
         $customerHelper = $this->getMockBuilder(Customer::class)->disableOriginalConstructor()->getMock();
         $customerHelper->method('customerHasGivenGender')->willReturn(true);
-        $customerHelper->method('customerHasGivenBirthday')->willReturn(true);
+        $customerHelper->method('getCustomerBirthday')->willReturn(false);
         $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $paymentHelper->method('getAvailableCreditcardTypes')->willReturn(['V', 'M']);
         $paymentHelper->method('isMandateManagementActive')->willReturn(true);
