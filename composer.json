@@ -16,7 +16,7 @@
     "repositories": [
         {
             "type": "composer",
-            "url": "http://repo.magento.com/"
+            "url": "https://repo.magento.com/"
         }
     ],
     "autoload": {
