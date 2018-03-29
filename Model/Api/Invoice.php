@@ -162,7 +162,11 @@ class Invoice
                 $dItemAmount = $aPositions[$sPositionKey]; // use amount from single-invoice
             }
             $iAmount = $this->convertItemAmount($dItemAmount);
-            $this->addInvoicePosition($oItem->getSku(), $oItem->getPriceInclTax(), 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
+            $dPrice = $oItem->getBasePriceInclTax();
+            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                $dPrice = $oItem->getPriceInclTax();
+            }
+            $this->addInvoicePosition($oItem->getSku(), $dPrice, 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
             if ($this->dTax === false) { // is dTax not set yet?
                 $this->dTax = $oItem->getTaxPercent(); // set the tax for following entities which dont have the vat attached to it
             }
@@ -182,6 +186,9 @@ class Invoice
         // shipping costs existing or given for partial captures/debits?
         if ($oOrder->getBaseShippingInclTax() != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('delcost', $aPositions) !== false))) {
             $dPrice = $oOrder->getBaseShippingInclTax();
+            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                $dPrice = $oOrder->getShippingInclTax();
+            }
             if ($aPositions !== false && array_key_exists('delcost', $aPositions) !== false) { // product existing in single-invoice?
                 $dPrice = $aPositions['delcost'];
             }
@@ -204,13 +211,21 @@ class Invoice
      */
     protected function addDiscountItem(Order $oOrder, $aPositions, $blDebit)
     {
-        // discount costs existing or given for partial captures/debis?
-        if ($oOrder->getBaseDiscountAmount() != 0 && $oOrder->getCouponCode() && ($aPositions === false || ($blDebit === false || array_key_exists('oxvoucherdiscount', $aPositions) !== false))) {
-            $dDiscount = $this->toolkitHelper->formatNumber($oOrder->getBaseDiscountAmount()); // format discount
+        // discount costs existing or given for partial captures/debit?
+        $dTransmitDiscount = $oOrder->getBaseDiscountAmount();
+        if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+            $dTransmitDiscount = $oOrder->getDiscountAmount();
+        }
+        if ($dTransmitDiscount != 0 && $oOrder->getCouponCode() && ($aPositions === false || ($blDebit === false || array_key_exists('oxvoucherdiscount', $aPositions) !== false))) {
+            $dDiscount = $this->toolkitHelper->formatNumber($dTransmitDiscount); // format discount
             if ($aPositions === false) {// full invoice?
                 // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
                 // the calculated positions don't match, so we compensate for rounding-problems here
-                $dDiff = ($this->dAmount + $oOrder->getBaseDiscountAmount()) - $oOrder->getGrandTotal(); // calc rounding discrepancy
+                $dTotal = $oOrder->getBaseGrandTotal();
+                if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                    $dTotal = $oOrder->getGrandTotal();
+                }
+                $dDiff = ($this->dAmount + $dTransmitDiscount - $dTotal); // calc rounding discrepancy
                 $dDiscount -= $dDiff; // subtract difference from discount
             }
             $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'discount', 'payone_misc'); // get configured discount SKU

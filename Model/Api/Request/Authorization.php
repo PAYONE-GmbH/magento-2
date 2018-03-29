@@ -57,30 +57,38 @@ class Authorization extends AddressRequest
     protected $checkoutSession;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+     protected $toolkitHelper;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
-     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Helper\Customer            $customerHelper
      * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Magento\Checkout\Model\Session         $checkoutSession
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
-        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Helper\Customer $customerHelper,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $toolkitHelper, $customerHelper);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
         $this->invoiceGenerator = $invoiceGenerator;
         $this->checkoutSession = $checkoutSession;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -145,7 +153,7 @@ class Authorization extends AddressRequest
         $this->addParameter('reference', $sRefNr); // add ref-nr to request
 
         $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
-        $this->addParameter('currency', $this->toolkitHelper->getTransmitCurrencyCode()); // add currency to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromOrder($oOrder)); // add currency to request
 
         if ($this->shopHelper->getConfigParam('transmit_ip') == '1') {// is IP transmission needed?
             $sIp = $this->environmentHelper->getRemoteIp(); // get remote IP

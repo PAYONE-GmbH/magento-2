@@ -71,6 +71,9 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneDebit(InfoInterface $payment, $amount)
     {
+        if ($this->shopHelper->getConfigParam('currency') == 'display' && $payment->getCreditmemo()) {
+            $amount = $payment->getCreditmemo()->getGrandTotal(); // send display amount instead of base amount
+        }
         $aResponse = $this->debitRequest->sendRequest($this, $payment, $amount);
         if ($aResponse['status'] == 'ERROR') {
             throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));

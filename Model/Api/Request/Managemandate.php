@@ -48,7 +48,6 @@ class Managemandate extends AddressRequest
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
-     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Helper\Customer            $customerHelper
      * @param \Payone\Core\Helper\Database            $databaseHelper
      */
@@ -57,11 +56,10 @@ class Managemandate extends AddressRequest
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
-        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Helper\Customer $customerHelper,
         \Payone\Core\Helper\Database $databaseHelper
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $toolkitHelper, $customerHelper);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
         $this->databaseHelper = $databaseHelper;
     }
 
@@ -104,7 +102,7 @@ class Managemandate extends AddressRequest
         if ($oInfoInstance->getAdditionalInformation('bic')) {
             $this->addParameter('bic', $oInfoInstance->getAdditionalInformation('bic'));
         }
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote));
 
         $aResponse = $this->send($oPayment);
         if (is_array($aResponse)) {

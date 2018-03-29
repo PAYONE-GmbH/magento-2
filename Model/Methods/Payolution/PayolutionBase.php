@@ -176,6 +176,9 @@ class PayolutionBase extends PayoneMethod
     public function sendPayonePreCheck($dAmount)
     {
         $oQuote = $this->checkoutSession->getQuote();
+        if ($this->shopHelper->getConfigParam('currency') == 'display') {
+            $dAmount = $oQuote->getGrandTotal(); // send display amount instead of base amount
+        }
         $aResponse = $this->precheckRequest->sendRequest($this, $oQuote, $dAmount);
 
         if ($aResponse['status'] == 'ERROR') {// request returned an error

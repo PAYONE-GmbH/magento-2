@@ -67,7 +67,7 @@ class Currency implements ArrayInterface
             ],
             [
                 'value' => 'display',
-                'label' => __('Default Display Currency').' ('.$this->store->getDefaultCurrencyCode().')'
+                'label' => __('Display Currency')
             ]
         ];
     }

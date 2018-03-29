@@ -50,7 +50,6 @@ class Consumerscore extends AddressRequest
      * @param \Payone\Core\Helper\Environment                   $environmentHelper
      * @param \Payone\Core\Helper\Api                           $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog           $apiLog
-     * @param \Payone\Core\Helper\Toolkit                       $toolkitHelper
      * @param \Payone\Core\Helper\Customer                      $customerHelper
      * @param \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
      */
@@ -59,11 +58,10 @@ class Consumerscore extends AddressRequest
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
-        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Helper\Customer $customerHelper,
         \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $toolkitHelper, $customerHelper);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
         $this->addressesChecked = $addressesChecked;
     }
 

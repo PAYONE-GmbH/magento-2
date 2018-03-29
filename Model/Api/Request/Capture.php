@@ -54,7 +54,6 @@ class Capture extends Base
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
-     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
      */
@@ -63,11 +62,10 @@ class Capture extends Base
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
-        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
         \Payone\Core\Helper\Database $databaseHelper
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $toolkitHelper);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
         $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
     }
@@ -124,8 +122,9 @@ class Capture extends Base
         $this->addParameter('mode', $oPayment->getOperationMode()); // PayOne Portal Operation Mode (live or test)
         $this->addParameter('language', $this->shopHelper->getLocale());
 
+        // Total order sum in smallest currency unit
         $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
-        $this->addParameter('currency', $this->toolkitHelper->getTransmitCurrencyCode()); // add currency to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromOrder($oOrder)); // add currency to request
 
         $this->addParameter('txid', $iTxid); // PayOne Transaction ID
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));

@@ -39,10 +39,9 @@ class Calculation extends Base
      *
      * @param  PayoneMethod $oPayment payment object
      * @param  Quote        $oQuote   order object
-     * @param  float        $dAmount  order sum amount
      * @return array
      */
-    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote, $dAmount)
+    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote)
     {
         $this->addParameter('request', 'genericpayment');
         $this->addParameter('add_paydata[action]', 'calculation');
@@ -54,7 +53,8 @@ class Calculation extends Base
         $this->addParameter('clearingtype', $oPayment->getClearingtype());
         $this->addParameter('financingtype', $oPayment->getSubType());
 
-        $this->addCurrencyAmount($dAmount); // add currency and amount parameter for given config
+        $this->addParameter('amount', number_format($this->apiHelper->getQuoteAmount($oQuote), 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote)); // add currency to request
 
         $oBilling = $oQuote->getBillingAddress();
         $this->addParameter('country', $oBilling->getCountryId());
