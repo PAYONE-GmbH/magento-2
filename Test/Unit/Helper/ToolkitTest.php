@@ -26,10 +26,11 @@
 
 namespace Payone\Core\Test\Unit\Helper;
 
+use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Helper\Toolkit;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -41,6 +42,7 @@ use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Framework\DataObject;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Directory\Model\Currency;
 
 class ToolkitTest extends BaseTestCase
 {
@@ -64,6 +66,11 @@ class ToolkitTest extends BaseTestCase
      */
     private $shopHelper;
 
+    /**
+     * @var Currency|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $currency;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
@@ -71,8 +78,16 @@ class ToolkitTest extends BaseTestCase
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
         $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);
 
-        $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
+        $this->currency = $this->getMockBuilder(Currency::class)->disableOriginalConstructor()->getMock();
+
+        $store = $this->getMockBuilder(Store::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getCode', 'getDefaultCurrencyCode', 'getBaseCurrencyCode', 'getBaseCurrency'])
+            ->getMock();
         $store->method('getCode')->willReturn(null);
+        $store->method('getDefaultCurrencyCode')->willReturn('EUR');
+        $store->method('getBaseCurrencyCode')->willReturn('USD');
+        $store->method('getBaseCurrency')->willReturn($this->currency);
 
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);

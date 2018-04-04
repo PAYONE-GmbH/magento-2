@@ -162,11 +162,10 @@ class InstallmentPlan implements InstallmentPlanInterface
         $oResponse->setData('success', false); // set success to false as default, set to true later if true
 
         $oQuote = $this->checkoutSession->getQuote();
-
-        $aResponsePreCheck = $this->precheck->sendRequest($this->payment, $oQuote, $oQuote->getBaseGrandTotal(), $birthday, $email);
+        $aResponsePreCheck = $this->precheck->sendRequest($this->payment, $oQuote, false, $birthday, $email);
         $aResponseCalculation = false;
         if (isset($aResponsePreCheck['status']) && $aResponsePreCheck['status'] == 'OK') {
-            $aResponseCalculation = $this->calculation->sendRequest($this->payment, $oQuote, $oQuote->getBaseGrandTotal());
+            $aResponseCalculation = $this->calculation->sendRequest($this->payment, $oQuote);
             $aInstallmentData = $this->parseResponse($aResponseCalculation);
             if (isset($aResponseCalculation['status']) && $aResponseCalculation['status'] == 'OK' && $aInstallmentData !== false) {
                 $oResponse->setData('success', true); // set success to false as default, set to true later if true

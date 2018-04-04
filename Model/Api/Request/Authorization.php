@@ -61,7 +61,7 @@ class Authorization extends AddressRequest
      *
      * @var \Payone\Core\Helper\Toolkit
      */
-    protected $toolkitHelper;
+     protected $toolkitHelper;
 
     /**
      * Constructor
@@ -151,8 +151,10 @@ class Authorization extends AddressRequest
         $sRefNr = $this->shopHelper->getConfigParam('ref_prefix').$oOrder->getIncrementId(); // ref_prefix to prevent duplicate refnumbers in testing environments
         $sRefNr = $oPayment->formatReferenceNumber($sRefNr); // some payment methods have refnr regulations
         $this->addParameter('reference', $sRefNr); // add ref-nr to request
+
         $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
-        $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // add currency to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromOrder($oOrder)); // add currency to request
+
         if ($this->shopHelper->getConfigParam('transmit_ip') == '1') {// is IP transmission needed?
             $sIp = $this->environmentHelper->getRemoteIp(); // get remote IP
             if ($sIp != '') {// is IP not empty

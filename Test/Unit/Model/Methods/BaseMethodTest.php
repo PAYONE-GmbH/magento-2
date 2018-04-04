@@ -41,6 +41,10 @@ use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Model\Api\Request\Capture;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection;
+use Magento\Sales\Model\Order\Creditmemo;
+use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection as InvoiceCollection;
 
 class BaseMethodTest extends BaseTestCase
 {
@@ -129,7 +133,10 @@ class BaseMethodTest extends BaseTestCase
 
     public function testAuthorize()
     {
+        $this->shopHelper->method('getConfigParam')->willReturn('display');
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getTotalDue')->willReturn(100);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
@@ -157,7 +164,16 @@ class BaseMethodTest extends BaseTestCase
 
     public function testRefund()
     {
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->getMock();
+        $this->shopHelper->method('getConfigParam')->willReturn('display');
+
+        $creditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
+        $creditmemo->method('getGrandTotal')->willReturn(100);
+
+        $paymentInfo = $this->getMockBuilder(Info::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getCreditmemo'])
+            ->getMock();
+        $paymentInfo->method('getCreditmemo')->willReturn($creditmemo);
 
         $aResponse = ['status' => 'APPROVED'];
         $this->debitRequest->method('sendRequest')->willReturn($aResponse);
@@ -189,7 +205,17 @@ class BaseMethodTest extends BaseTestCase
 
     public function testCapture()
     {
+        $this->shopHelper->method('getConfigParam')->willReturn('display');
+
+        $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
+        $invoice->method('getGrandTotal')->willReturn(100);
+
+        $invoiceCollection = $this->getMockBuilder(InvoiceCollection::class)->disableOriginalConstructor()->getMock();
+        $invoiceCollection->method('getLastItem')->willReturn($invoice);
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('hasInvoices')->willReturn(true);
+        $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()

@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Helper;
 
+use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Sales\Model\Order as SalesOrder;
 
@@ -242,5 +243,50 @@ class Api extends Base
             return true; // invoice data needed
         }
         return false; // invoice data not needed
+    }
+
+    /**
+     * Return base or display currency of the order depending on the config
+     *
+     * @param  SalesOrder $oOrder
+     * @return null|string
+     */
+    public function getCurrencyFromOrder(SalesOrder $oOrder)
+    {
+        $sCurrency = $oOrder->getBaseCurrencyCode();
+        if ($this->getConfigParam('currency') == 'display') {
+            $sCurrency = $oOrder->getOrderCurrencyCode();
+        }
+        return $sCurrency;
+    }
+
+    /**
+     * Return base or display currency of the quote depending on the config
+     *
+     * @param  Quote $oQuote
+     * @return string
+     */
+    public function getCurrencyFromQuote(Quote $oQuote)
+    {
+        $sCurrency = $oQuote->getBaseCurrencyCode();
+        if ($this->getConfigParam('currency') == 'display') {
+            $sCurrency = $oQuote->getQuoteCurrencyCode();
+        }
+        return $sCurrency;
+    }
+
+    /**
+     * Return base or display amount of the quote depending on the config
+     *
+     * @param  Quote $oQuote
+     * @return float
+     */
+    public function getQuoteAmount(Quote $oQuote)
+    {
+        $dAmount = $oQuote->getBaseGrandTotal();
+        if ($this->getConfigParam('currency') == 'display') {
+            $dAmount = $oQuote->getGrandTotal(); // send display amount instead of base amount
+        }
+        return $dAmount;
     }
 }

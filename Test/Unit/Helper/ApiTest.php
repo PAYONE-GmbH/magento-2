@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Helper;
 
+use Magento\Quote\Model\Quote;
 use Payone\Core\Helper\Api;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
@@ -259,4 +260,89 @@ class ApiTest extends BaseTestCase
         ];
         $this->assertEquals($expected, $return);
     }
+
+    public function testGetCurrencyFromOrderBase()
+    {
+        $expected = 'EUR';
+
+        $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $oOrder->method('getBaseCurrencyCode')->willReturn($expected);
+
+        $result = $this->api->getCurrencyFromOrder($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetCurrencyFromOrderDisplay()
+    {
+        $this->scopeConfig->method('getValue')->willReturn('display');
+        $expected = 'EUR';
+
+        $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $oOrder->method('getBaseCurrencyCode')->willReturn('USD');
+        $oOrder->method('getOrderCurrencyCode')->willReturn($expected);
+
+        $result = $this->api->getCurrencyFromOrder($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetCurrencyFromQuoteBase()
+    {
+        $expected = 'EUR';
+
+        $oOrder = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseCurrencyCode'])
+            ->getMock();
+        $oOrder->method('getBaseCurrencyCode')->willReturn($expected);
+
+        $result = $this->api->getCurrencyFromQuote($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetCurrencyFromQuoteDisplay()
+    {
+        $this->scopeConfig->method('getValue')->willReturn('display');
+        $expected = 'EUR';
+
+        $oOrder = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
+            ->getMock();
+        $oOrder->method('getBaseCurrencyCode')->willReturn($expected);
+        $oOrder->method('getQuoteCurrencyCode')->willReturn($expected);
+
+        $result = $this->api->getCurrencyFromQuote($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetQuoteAmountBase()
+    {
+        $expected = '100';
+
+        $oOrder = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseGrandTotal'])
+            ->getMock();
+        $oOrder->method('getBaseGrandTotal')->willReturn($expected);
+
+        $result = $this->api->getQuoteAmount($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetQuoteAmountDisplay()
+    {
+        $this->scopeConfig->method('getValue')->willReturn('display');
+        $expected = '100';
+
+        $oOrder = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseGrandTotal', 'getGrandTotal'])
+            ->getMock();
+        $oOrder->method('getBaseGrandTotal')->willReturn(200);
+        $oOrder->method('getGrandTotal')->willReturn($expected);
+
+        $result = $this->api->getQuoteAmount($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
 }
