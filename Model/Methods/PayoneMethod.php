@@ -115,7 +115,7 @@ abstract class PayoneMethod extends BaseMethod
     protected function sendPayoneAuthorization(InfoInterface $payment, $amount)
     {
         $oOrder = $payment->getOrder();
-        $oOrder->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
+        $oOrder->setCanSendNewEmailFlag(true); // dont send email now, will be sent on appointed
 
         if ($this->shopHelper->getConfigParam('currency') == 'display') {
             $amount = $oOrder->getTotalDue(); // send display amount instead of base amount
