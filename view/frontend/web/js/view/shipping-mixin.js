@@ -17,7 +17,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -25,8 +25,12 @@
 /*global alert*/
 define([
     'jquery',
-    'Payone_Core/js/action/addresscheck'
-], function ($, addresscheck) {
+    'Payone_Core/js/action/addresscheck',
+    'Payone_Core/js/action/edit-address',
+    'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/action/select-shipping-address',
+    'Magento_Checkout/js/checkout-data'
+], function ($, addresscheck, editAddress, quote, selectShippingAddressAction, checkoutData) {
     'use strict';
 
     var mixin = {
@@ -40,21 +44,62 @@ define([
             if (!this.payoneCheckAddress()) {
                 return this._super();
             }
-            
-            var addressChecked = this.source.get('payone_address_checked');
-            if (!addressChecked) {
+
+            if (!this.source.get('payone_address_checked')) {
                 addresscheck(this.source.get('shippingAddress'), false, this, 'saveNewAddress');
             } else {
                 this.source.set('payone_address_checked', false);
                 return this._super();
             }
         },
+        payoneReplaceInSelectedShippingAddress: function (sReplace, sReplaceWith) {
+            var oElem = $('.shipping-address-item.selected-item');
+            if (oElem.length > 0) {
+                oElem.html(oElem.html().replace(sReplace, sReplaceWith));
+            }
+        },
+        payoneUpdateField: function(oSourceAddress, oResponseAddress, sField) {
+            if (sField === "street") {
+                if (oSourceAddress[sField][0] !== oResponseAddress[sField][0]) {
+                    this.payoneReplaceInSelectedShippingAddress(oSourceAddress[sField][0], oResponseAddress[sField][0]);
+                    oSourceAddress[sField][0] = oResponseAddress[sField][0];
+                }
+            } else {
+                if (oSourceAddress[sField] !== oResponseAddress[sField]) {
+                    this.payoneReplaceInSelectedShippingAddress(oSourceAddress[sField], oResponseAddress[sField]);
+                    oSourceAddress[sField] = oResponseAddress[sField];
+                }
+            }
+            return oSourceAddress;
+        },
         payoneUpdateAddress: function (addressData) {
+            if (this.isFormInline) {
+                this.payoneUpdateAddressSource(addressData);
+            } else {
+                this.payoneUpdateAddressRegistered(addressData);
+            }
+        },
+        payoneUpdateAddressSource: function (addressData) {
             this.source.set('shippingAddress.postcode', addressData.postcode);
             this.source.set('shippingAddress.firstname', addressData.firstname);
             this.source.set('shippingAddress.lastname', addressData.lastname);
             this.source.set('shippingAddress.street.0', addressData.street[0]);
             this.source.set('shippingAddress.city', addressData.city);
+            this.source.set('shippingAddress.country_id', addressData.country_id);
+        },
+        payoneUpdateAddressRegistered: function (addressData) {
+            var newShippingAddress = quote.shippingAddress();
+            var aUpdateFields = ["postcode", "firstname", "lastname", "street", "city"];
+            for (var i = 0; i < aUpdateFields.length; i++) {
+                newShippingAddress = this.payoneUpdateField(newShippingAddress, addressData, aUpdateFields[i]);
+            }
+
+            this.payoneUpdateAddressSource(addressData);
+
+            editAddress(addressData);
+
+            selectShippingAddressAction(newShippingAddress);
+            checkoutData.setSelectedShippingAddress(newShippingAddress.getKey());
         },
         payoneContinue: function (sType) {
             if (sType == 'saveNewAddress') {
@@ -66,13 +111,17 @@ define([
             }
         },
         setShippingInformation: function () {
-            if (!this.isFormInline || !this.payoneCheckAddress()) {
+            if (!this.payoneCheckAddress()) {
                 return this._super();
             }
-            
+
             if (!this.source.get('payone_guest_address_checked')) {
                 if (this.validateShippingInformation()) {
-                    addresscheck(this.source.get('shippingAddress'), false, this, 'setShippingInformation');
+                    if (!this.isFormInline) {
+                        addresscheck(quote.shippingAddress(), false, this, 'setShippingInformation');
+                    } else {
+                        addresscheck(this.source.get('shippingAddress'), false, this, 'setShippingInformation');
+                    }
                 }
             } else {
                 this.source.set('payone_guest_address_checked', false);
