@@ -25,6 +25,9 @@ To make this extension Magento 2.2 compatible, all Unit Tests have been modified
 
 As of 05/07/2018 this seems, however, broken. For the time being, Unit Tests are carried out on Magento 2.2 alone during the Travis build.
 
+## Magento Version Support
+We follow Magento's version lifetime according to their [Enterprise Agreement](https://magento.com/legal/terms/enterprise-agreement#support). In theory, Magento 2.0 is still supported, but not actively tested.
+
 ## More information
 *	More information about Magento on https://www.payone.de/magento
 
