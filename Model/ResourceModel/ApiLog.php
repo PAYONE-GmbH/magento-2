@@ -41,6 +41,15 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $shopHelper;
 
     /**
+     * Fields that need to be masked before written in to the API log
+     *
+     * @var array
+     */
+    protected $aMaskFields = [
+        'ip',
+    ];
+
+    /**
      * Class constructor
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
@@ -82,6 +91,36 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
+     * Mask a given value with Xs
+     *
+     * @param  string $sValue
+     * @return string
+     */
+    protected function maskValue($sValue)
+    {
+        for ($i = 0; $i < strlen($sValue); $i++) {
+            $sValue[$i] = 'x';
+        }
+        return $sValue;
+    }
+
+    /**
+     * Mask certain fields in the request array
+     *
+     * @param  array $aRequest
+     * @return array
+     */
+    protected function maskParameters($aRequest)
+    {
+        foreach ($this->aMaskFields as $sKey) {
+            if (isset($aRequest[$sKey])) {
+                $aRequest[$sKey] = $this->maskValue($aRequest[$sKey]);
+            }
+        }
+        return $aRequest;
+    }
+
+    /**
      * Save Api-log entry to database
      *
      * @param  Base   $oRequest
@@ -92,6 +131,7 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function addApiLogEntry(Base $oRequest, $aResponse, $sStatus = '')
     {
         $aRequest = $oRequest->getParameters();
+        $aRequest = $this->maskParameters($aRequest);
         $iTxid = '';
         if (isset($aResponse['txid'])) {
             $iTxid = $aResponse['txid'];
