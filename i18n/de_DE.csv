@@ -127,6 +127,7 @@
 "Add Statusmapping","Füge Statusmapping hinzu"
 "Barzahlen","Barzahlen"
 
+"Mapping configuration is used by the addresscheck and the credit rating with combined addresscheck.","Mapping Konfiguration wird von der Adressprüfung und der Bonitätsprüfung mit kombinierter Adressprüfung verwendet"
 "Address checking","Adressprüfung"
 "Enabled","Aktiviert"
 "Disabled","Deaktiviert"
