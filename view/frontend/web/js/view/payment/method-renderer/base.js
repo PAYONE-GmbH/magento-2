@@ -30,9 +30,10 @@ define(
         'mage/url',
         'mage/translate',
         'Magento_Checkout/js/checkout-data',
-        'Magento_Checkout/js/action/select-payment-method'
+        'Magento_Checkout/js/action/select-payment-method',
+        'Magento_Checkout/js/action/place-order'
     ],
-    function (Component, $, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction) {
+    function (Component, $, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction, placeOrderAction) {
         'use strict';
         return Component.extend({
             redirectToPayoneController: function(sUrl) {
@@ -47,15 +48,25 @@ define(
                 this.isPlaceOrderActionAllowed(false);
 
                 this.getPlaceOrderDeferredObject()
-                    .fail(
-                        function () {
-                            self.isPlaceOrderActionAllowed(true);
-                        }
-                    ).done(
+                .fail(
+                    function () {
+                        self.isPlaceOrderActionAllowed(true);
+                    }
+                ).done(
                     function () {
                         self.afterPlaceOrder();
                         self.redirectToPayoneController(sUrl);
                     }
+                );
+            },
+
+            getPlaceOrderDeferredObject: function () {
+                if (window.checkoutConfig.payment.payone.orderDeferredExists === true) {
+                    return this._super();
+                }
+                // fallback for pre 2.1.0 Magentos
+                return $.when(
+                    placeOrderAction(this.getData(), this.redirectAfterPlaceOrder, this.messageContainer)
                 );
             },
 
