@@ -150,10 +150,33 @@ define(
                     this.messageContainer.addErrorMessage({'message': $t("Please enter complete data.")});
                 }
             },
-            
+            isInt: function (value) {
+                if (value.length > 0 && !isNaN(value) && parseInt(Number(value)) == value && !isNaN(parseInt(value, 10))) {
+                    return true;
+                }
+                return false;
+            },
+            isMinValidityCorrect: function (sExpireDate) {
+                if (this.isInt(window.checkoutConfig.payment.payone.ccMinValidity)) {
+                    var oExpireDate = new Date('20' + sExpireDate.substring(0,2), (parseInt(sExpireDate.substring(2,4))), 1, 0, 0, 0);
+                    oExpireDate.setSeconds(oExpireDate.getSeconds() - 1);
+
+                    var oMinValidDate = new Date();
+                    oMinValidDate.setDate((parseInt(oMinValidDate.getDate()) + parseInt(window.checkoutConfig.payment.payone.ccMinValidity)));
+
+                    if (oExpireDate < oMinValidDate) {
+                        return false;
+                    }
+                }
+                return true;
+            },
             processPayoneResponseCCHosted: function (response) {
                 fullScreenLoader.stopLoader();
                 if (response.status === "VALID") {
+                    if (!this.isMinValidityCorrect(response.cardexpiredate)) {
+                        this.messageContainer.addErrorMessage({'message': $t("This transaction could not be performed. Please select another payment method.")});
+                        return;
+                    }
                     if (document.getElementById(this.getCode() + '_pseudocardpan')) {
                         document.getElementById(this.getCode() + '_pseudocardpan').value = response.pseudocardpan;
                     }

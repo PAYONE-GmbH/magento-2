@@ -65,6 +65,10 @@
             <label>Check Card Validation Code</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
+        <field id="min_validity_period" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Minimum Validity Period</label>
+            <comment>Minimum period a CreditCard has to be valid. (in days)</comment>
+        </field>
         <include path="Payone_Core::system/default_fields.xml"/>
     </group>
 </include>
