@@ -271,6 +271,9 @@
             </emails>
         </payone_general>
         <payone_protect>
+            <personstatus>
+                <mapping></mapping>
+            </personstatus>
             <address_check>
                 <enabled>0</enabled>
                 <mode>live</mode>
@@ -278,7 +281,6 @@
                 <check_shipping>NO</check_shipping>
                 <check_billing_for_virtual_order>0</check_billing_for_virtual_order>
                 <confirm_address_correction>0</confirm_address_correction>
-                <mapping_personstatus></mapping_personstatus>
                 <message_response_invalid></message_response_invalid>
                 <handle_response_error>continue_checkout</handle_response_error>
                 <stop_checkout_message></stop_checkout_message>

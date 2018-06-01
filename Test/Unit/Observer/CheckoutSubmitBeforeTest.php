@@ -41,6 +41,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Store\Model\ScopeInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Model\Risk\Addresscheck;
 
 class CheckoutSubmitBeforeTest extends BaseTestCase
 {
@@ -71,9 +72,13 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $this->consumerscore = $this->getMockBuilder(Consumerscore::class)->disableOriginalConstructor()->getMock();
         $this->consumerscoreHelper = $this->getMockBuilder(ConsumerscoreHelper::class)->disableOriginalConstructor()->getMock();
 
+        $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
+        $addresscheck->method('getPersonstatusMapping')->willReturn(['PPV' => 'R']);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'consumerscore' => $this->consumerscore,
-            'consumerscoreHelper' => $this->consumerscoreHelper
+            'consumerscoreHelper' => $this->consumerscoreHelper,
+            'addresscheck' => $addresscheck
         ]);
     }
 
@@ -224,6 +229,24 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
             ->setMethods(['getPayoneProtectScore', 'setPayoneProtectScore', 'save'])
             ->getMock();
         $address->method('getPayoneProtectScore')->willReturn($expected);
+        $address->method('setPayoneProtectScore')->willReturn($address);
+
+        $result = $this->classToTest->getScoreByCreditrating($address);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetScoreByCreditratingScorePersonstatus()
+    {
+        $expected = 'R';
+
+        $this->consumerscore->method('sendRequest')->willReturn(['status' => 'VALID', 'score' => 'G', 'personstatus' => 'PPV']);
+        $this->consumerscoreHelper->method('getWorstScore')->willReturn($expected);
+
+        $address = $this->getMockBuilder(Address::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayoneProtectScore', 'setPayoneProtectScore', 'save'])
+            ->getMock();
+        $address->method('getPayoneProtectScore')->willReturn('G');
         $address->method('setPayoneProtectScore')->willReturn($address);
 
         $result = $this->classToTest->getScoreByCreditrating($address);

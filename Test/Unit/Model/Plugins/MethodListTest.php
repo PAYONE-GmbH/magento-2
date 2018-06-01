@@ -39,6 +39,7 @@ use Magento\Payment\Model\MethodInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\ResourceModel\PaymentBan;
+use Payone\Core\Model\Risk\Addresscheck;
 
 class MethodListTest extends BaseTestCase
 {
@@ -111,13 +112,17 @@ class MethodListTest extends BaseTestCase
         $checkoutSession->method('getQuote')->willReturn($this->quote);
         $checkoutSession->method('getPayonePaymentBans')->willReturn([PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00']);
 
+        $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
+        $addresscheck->method('getPersonstatusMapping')->willReturn(['PPV' => 'R']);
+
         $this->paymentBan = $this->getMockBuilder(PaymentBan::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'consumerscore' => $this->consumerscore,
             'consumerscoreHelper' => $this->consumerscoreHelper,
             'checkoutSession' => $checkoutSession,
-            'paymentBan' => $this->paymentBan
+            'paymentBan' => $this->paymentBan,
+            'addresscheck' => $addresscheck,
         ]);
     }
 
@@ -159,7 +164,7 @@ class MethodListTest extends BaseTestCase
 
     public function testAfterGetAvailableMethodsEmpty()
     {
-        $this->consumerscore->method('sendRequest')->willReturn(['score' => 'Y']);
+        $this->consumerscore->method('sendRequest')->willReturn(['score' => 'Y', 'personstatus' => 'PPV']);
         $this->consumerscoreHelper->method('getWorstScore')->willReturn('R');
 
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
