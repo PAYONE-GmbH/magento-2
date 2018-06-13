@@ -371,6 +371,7 @@
             </payone_klarna>
             <payone_safe_invoice>
                 <use_global>1</use_global>
+                <disable_after_refusal>0</disable_after_refusal>
             </payone_safe_invoice>
             <payone_payolution_invoice>
                 <use_global>1</use_global>

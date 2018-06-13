@@ -57,6 +57,11 @@
             <label>Sort Order</label>
             <config_path>payment/payone_safe_invoice/sort_order</config_path>
         </field>
+        <field id="disable_after_refusal" translate="label,tooltip" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Disable directly after refusal</label>
+            <tooltip>Enables a Javascript-Mixin for the error-processor. This could collide with other extensions of the error-processor. Only activate if needed.</tooltip>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
         <include path="Payone_Core::system/default_fields.xml"/>
     </group>
 </include>
