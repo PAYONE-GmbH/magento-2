@@ -76,6 +76,7 @@ class ApiLogTest extends BaseTestCase
             'request' => 'authorization',
             'mid' => '12345',
             'aid' => '123456',
+            'ip' => '192.168.0.1',
         ];
 
         $request = $this->getMockBuilder(Base::class)->disableOriginalConstructor()->getMock();

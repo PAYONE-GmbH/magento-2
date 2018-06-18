@@ -128,11 +128,12 @@ class Addresscheck
      * Get addresscheck config parameter
      *
      * @param  string $sParam
+     * @param  string $sGroup
      * @return string
      */
-    public function getConfigParam($sParam)
+    public function getConfigParam($sParam, $sGroup = 'address_check')
     {
-        return $this->databaseHelper->getConfigParam($sParam, 'address_check', 'payone_protect');
+        return $this->databaseHelper->getConfigParam($sParam, $sGroup, 'payone_protect');
     }
 
     /**
@@ -225,7 +226,7 @@ class Addresscheck
     {
         $aReturnMappings = [];
 
-        $sMappings = $this->getConfigParam('mapping_personstatus');
+        $sMappings = $this->getConfigParam('mapping', 'personstatus');
         $aMappings = $this->toolkitHelper->unserialize($sMappings);
         if (!is_array($aMappings)) {
             $aMappings = [];

@@ -254,7 +254,16 @@
             <label>PROTECT</label>
             <tab>payone</tab>
             <resource>Payone_Core::payone_configuration_protect</resource>
-            <group id="address_check" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="personstatus" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Personstatus</label>
+                <comment>Mapping configuration is used by the addresscheck and the credit rating with combined addresscheck.</comment>
+                <field id="mapping" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mapping</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\PersonStatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+            </group>
+            <group id="address_check" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Address checking</label>
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enabled</label>
@@ -280,11 +289,6 @@
                     <label>Confirm Address correction</label>
                     <comment>Consumer must confirm corrections to their address</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="mapping_personstatus" translate="label" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Personstatus Mapping</label>
-                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\PersonStatusMapping</frontend_model>
-                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
                 <field id="message_response_invalid" translate="label,comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Message to display for invalid data</label>

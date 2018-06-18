@@ -31,6 +31,7 @@ use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Model\Source\CreditratingIntegrationEvent as Event;
 use Magento\Quote\Model\Quote;
+use Payone\Core\Model\Source\PersonStatus;
 
 /**
  * Plugin for Magentos MethodList class
@@ -66,23 +67,33 @@ class MethodList
     protected $paymentBan;
 
     /**
+     * Addresscheck management object
+     *
+     * @var \Payone\Core\Model\Risk\Addresscheck
+     */
+    protected $addresscheck;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
      * @param \Payone\Core\Helper\Consumerscore            $consumerscoreHelper
      * @param \Magento\Checkout\Model\Session              $checkoutSession
      * @param \Payone\Core\Model\ResourceModel\PaymentBan  $paymentBan
+     * @param \Payone\Core\Model\Risk\Addresscheck         $addresscheck
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Model\ResourceModel\PaymentBan $paymentBan
+        \Payone\Core\Model\ResourceModel\PaymentBan $paymentBan,
+        \Payone\Core\Model\Risk\Addresscheck $addresscheck
     ) {
         $this->consumerscore = $consumerscore;
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->checkoutSession = $checkoutSession;
         $this->paymentBan = $paymentBan;
+        $this->addresscheck = $addresscheck;
     }
 
     /**
@@ -128,6 +139,12 @@ class MethodList
         }
 
         $sScore = $oShipping->getPayoneProtectScore();
+        if (isset($aResponse['personstatus']) && $aResponse['personstatus'] !== PersonStatus::NONE) {
+            $aMapping = $this->addresscheck->getPersonstatusMapping();
+            if (array_key_exists($aResponse['personstatus'], $aMapping)) {
+                $sScore = $this->consumerscoreHelper->getWorstScore([$sScore, $aMapping[$aResponse['personstatus']]]);
+            }
+        }
         return $sScore;
     }
 

@@ -32,6 +32,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Model\Source\CreditratingIntegrationEvent as Event;
+use Payone\Core\Model\Source\PersonStatus;
 
 /**
  * Event class to set the orderstatus to new and pending
@@ -53,17 +54,27 @@ class CheckoutSubmitBefore implements ObserverInterface
     protected $consumerscoreHelper;
 
     /**
+     * Addresscheck management object
+     *
+     * @var \Payone\Core\Model\Risk\Addresscheck
+     */
+    protected $addresscheck;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
      * @param \Payone\Core\Helper\Consumerscore            $consumerscoreHelper
+     * @param \Payone\Core\Model\Risk\Addresscheck         $addresscheck
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
-        \Payone\Core\Helper\Consumerscore $consumerscoreHelper
+        \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
+        \Payone\Core\Model\Risk\Addresscheck $addresscheck
     ) {
         $this->consumerscore = $consumerscore;
         $this->consumerscoreHelper = $consumerscoreHelper;
+        $this->addresscheck = $addresscheck;
     }
 
     /**
@@ -177,6 +188,12 @@ class CheckoutSubmitBefore implements ObserverInterface
         }
 
         $sScore = $oBilling->getPayoneProtectScore();
+        if (isset($aResponse['personstatus']) && $aResponse['personstatus'] !== PersonStatus::NONE) {
+            $aMapping = $this->addresscheck->getPersonstatusMapping();
+            if (array_key_exists($aResponse['personstatus'], $aMapping)) {
+                $sScore = $this->consumerscoreHelper->getWorstScore([$sScore, $aMapping[$aResponse['personstatus']]]);
+            }
+        }
         return $sScore;
     }
 

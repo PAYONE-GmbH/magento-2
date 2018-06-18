@@ -11,6 +11,8 @@ matrix:
   exclude:
     - php: '7.1'
       env: MAGEVER=2.1
+  allow_failures:
+    - env: MAGEVER=2.1
 services:
 - mysql
 before_script:

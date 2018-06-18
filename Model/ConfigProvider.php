@@ -107,6 +107,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $checkoutSession;
 
     /**
+     * PAYONE shop helper
+     *
+     * @var \Payone\Core\Helper\Shop
+     */
+    protected $shopHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Payment\Model\CcConfig                      $ccConfig
@@ -120,6 +127,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @param \Payone\Core\Helper\Consumerscore                    $consumerscoreHelper
      * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
      * @param \Magento\Checkout\Model\Session                      $checkoutSession
+     * @param \Payone\Core\Helper\Shop                             $shopHelper
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -132,7 +140,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Magento\Framework\Escaper $escaper,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Payone\Core\Helper\Shop $shopHelper
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -145,6 +154,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->privacyDeclaration = $privacyDeclaration;
         $this->checkoutSession = $checkoutSession;
+        $this->shopHelper = $shopHelper;
     }
 
     /**
@@ -197,6 +207,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'hostedRequest' => $this->requestHelper->getHostedIframeRequest(),
             'mandateManagementActive' => $this->paymentHelper->isMandateManagementActive(),
             'checkCvc' => (bool)$this->paymentHelper->isCheckCvcActive(),
+            'ccMinValidity' => $this->requestHelper->getConfigParam('min_validity_period', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'requestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
             'requestIbanBicSofortUeberweisung' => (bool)$this->requestHelper->getConfigParam('show_iban', PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG, 'payone_payment'),
             'validateBankCode' => (bool)$this->requestHelper->getConfigParam('check_bankaccount', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
@@ -219,6 +230,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'canceledPaymentMethod' => $this->getCanceledPaymentMethod(),
             'isError' => $this->checkoutSession->getPayoneIsError(),
             'klarnaStoreIds' => $this->paymentHelper->getKlarnaStoreIds(),
+            'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>=')
         ];
     }
 
