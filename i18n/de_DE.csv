@@ -114,6 +114,8 @@
 "Wallet Type","Walletart"
 "Financing Type", "Finanzierungs-Art"
 "Safe Invoice Type", "Sicherer Rechnungskauf: Typ"
+"Disable directly after refusal","Nach Ablehnung deaktivieren"
+"Enables a Javascript-Mixin for the error-processor. This could collide with other extensions of the error-processor. Only activate if needed.","Aktiviert ein Javascript-Mixin für den error-processor. Dies könnte mit anderen Erweiterungen für den error-processor kollidieren. Nur aktivieren wenn Sie dieses Feature brauchen."
 
 "Creditcard","Kreditkarte"
 "Invoice","Rechnung"

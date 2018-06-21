@@ -34,6 +34,9 @@ var config = {
             },
             'Magento_Checkout/js/view/payment/default': {
                 'Payone_Core/js/view/payment/default-mixin': true
+            },
+            'Magento_Checkout/js/model/error-processor': {
+                'Payone_Core/js/model/error-processor-mixin': true
             }
         }
     }

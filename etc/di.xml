@@ -68,4 +68,10 @@
     <type name="Magento\Quote\Model\BillingAddressManagement">
         <plugin name="Payone_Core_Plugin_BillingAddressManagement" type="Payone\Core\Model\Plugins\BillingAddressManagement" sortOrder="1" />
     </type>
+    <type name="Magento\Checkout\Model\PaymentInformationManagement">
+        <plugin name="Payone_Core_Plugin_PaymentInformationManagement" type="Payone\Core\Model\Plugins\PaymentInformationManagement" sortOrder="1" />
+    </type>
+    <type name="Magento\Checkout\Model\GuestPaymentInformationManagement">
+        <plugin name="Payone_Core_Plugin_GuestPaymentInformationManagement" type="Payone\Core\Model\Plugins\GuestPaymentInformationManagement" sortOrder="1" />
+    </type>
 </config>
