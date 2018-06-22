@@ -219,9 +219,9 @@ class Api extends Base
     /**
      * Add PAYONE information to the order object to be saved in the DB
      *
-     * @param  SalesOrder $oOrder
-     * @param  array      $aRequest
-     * @param  array      $aResponse
+     * @param  SalesOrder  $oOrder
+     * @param  array|false $aRequest
+     * @param  array       $aResponse
      * @return void
      */
     public function addPayoneOrderData(SalesOrder $oOrder, $aRequest, $aResponse)

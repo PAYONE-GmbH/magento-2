@@ -56,7 +56,7 @@ class Basic extends Base
                 $data[(string)__('BIC:')] = $oOrder->getPayoneClearingBankbic();
                 $data[(string)__('Bank:')] = $oOrder->getPayoneClearingBankname();
             }
-            $data[(string)__('Payment reference:')] = $sTransId;
+            $data[(string)__('Payment reference:')] = $oOrder->getPayoneTxid();
         }
         return $transport->setData(array_merge($data, $transport->getData()));
     }

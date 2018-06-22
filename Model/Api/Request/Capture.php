@@ -137,6 +137,8 @@ class Capture extends Base
 
         $aResponse = $this->send($oPayment);
 
+        $this->apiHelper->addPayoneOrderData($oOrder, false, $aResponse); // add payone data to order
+
         return $aResponse;
     }
 }
