@@ -29,6 +29,8 @@
     <preference for="Payone\Core\Api\Data\AddresscheckResponseInterface" type="Payone\Core\Service\V1\Data\AddresscheckResponse" />
     <preference for="Payone\Core\Api\InstallmentPlanInterface" type="Payone\Core\Service\V1\InstallmentPlan" />
     <preference for="Payone\Core\Api\Data\InstallmentPlanResponseInterface" type="Payone\Core\Service\V1\Data\InstallmentPlanResponse" />
+    <preference for="Payone\Core\Api\EditAddressInterface" type="Payone\Core\Service\V1\EditAddress" />
+    <preference for="Payone\Core\Api\Data\EditAddressInterface" type="Payone\Core\Service\V1\Data\EditAddressResponse" />
     <virtualType name="Payone\Core\Model\ResourceModel\ApiLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">payone_protocol_api</argument>
