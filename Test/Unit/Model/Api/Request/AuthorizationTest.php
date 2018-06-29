@@ -175,6 +175,7 @@ class AuthorizationTest extends BaseTestCase
         $result = $this->classToTest->sendRequest($payment, $order, 100);
         $this->assertEquals($response, $result);
 
+        $this->classToTest->setOrderId($expectedOrderId);
         $orderId = $this->classToTest->getOrderId();
         $this->assertEquals($expectedOrderId, $orderId);
     }

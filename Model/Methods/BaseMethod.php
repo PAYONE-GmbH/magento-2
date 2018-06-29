@@ -200,6 +200,20 @@ abstract class BaseMethod extends AbstractMethod
     protected $authorizationRequest;
 
     /**
+     * Invoice data array - can be used for invoices outside of a request-context
+     *
+     * @var array|null
+     */
+    protected $aInvoiceData = null;
+
+    /**
+     * Creditmemo data array - can be used for creditmemos outside of a request-context
+     *
+     * @var array|null
+     */
+    protected $aCreditmemoData = null;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\Model\Context                        $context

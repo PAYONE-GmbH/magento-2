@@ -87,6 +87,18 @@ class Invoice
     }
 
     /**
+     * Put the object in it's initial state
+     *
+     * @return void
+     */
+    protected function initialize()
+    {
+        $this->iIndex = 1;
+        $this->dAmount = 0;
+        $this->dTax = false;
+    }
+
+    /**
      * Add parameters for a invoice position
      *
      * @param  string $sId       item identification
@@ -120,6 +132,7 @@ class Invoice
      */
     public function addProductInfo(Base $oRequest, Order $oOrder, $aPositions = false, $blDebit = false)
     {
+        $this->initialize();
         $this->oRequest = $oRequest; // write request to property for manipulation of the object
         $sInvoiceAppendix = $this->toolkitHelper->getInvoiceAppendix($oOrder); // get invoice appendix
         if (!empty($sInvoiceAppendix)) {// invoice appendix existing?
