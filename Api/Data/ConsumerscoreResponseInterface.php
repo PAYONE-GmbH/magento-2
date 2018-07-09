@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,27 +19,40 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-/*jshint browser:true jquery:true*/
-/*global alert*/
-var config = {
-    config: {
-        mixins: {
-            'Magento_Checkout/js/view/shipping': {
-                'Payone_Core/js/view/shipping-mixin': true
-            },
-            'Magento_Checkout/js/view/billing-address': {
-                'Payone_Core/js/view/billing-address-mixin': true
-            },
-            'Magento_Checkout/js/view/payment/default': {
-                'Payone_Core/js/view/payment/default-mixin': true
-            },
-            'Magento_Checkout/js/action/place-order': {
-                'Payone_Core/js/action/place-order-mixin': true
-            }
-        }
-    }
-};
+
+namespace Payone\Core\Api\Data;
+
+interface ConsumerscoreResponseInterface
+{
+    /**
+     * Returns the shipping carrier title.
+     *
+     * @return bool
+     */
+    public function getSuccess();
+
+    /**
+     * Returns the corrected address
+     *
+     * @return \Magento\Quote\Api\Data\AddressInterface
+     */
+    public function getCorrectedAddress();
+
+    /**
+     * Returns errormessage
+     *
+     * @return string
+     */
+    public function getErrormessage();
+
+    /**
+     * Return confirm message
+     *
+     * @return string
+     */
+    public function getConfirmMessage();
+}

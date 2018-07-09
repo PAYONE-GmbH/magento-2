@@ -26,16 +26,23 @@
 define([
     'jquery',
     'Payone_Core/js/action/addresscheck',
+    'Payone_Core/js/action/consumerscore',
     'Payone_Core/js/action/edit-address',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/action/select-shipping-address',
     'Magento_Checkout/js/checkout-data'
-], function ($, addresscheck, editAddress, quote, selectShippingAddressAction, checkoutData) {
+], function ($, addresscheck, consumerscore, editAddress, quote, selectShippingAddressAction, checkoutData) {
     'use strict';
 
     var mixin = {
         payoneCheckAddress: function () {
             if (window.checkoutConfig.payment.payone.addresscheckEnabled && window.checkoutConfig.payment.payone.addresscheckShippingEnabled) {
+                return true;
+            }
+            return false;
+        },
+        payoneBonicheckAddress: function () {
+            if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled) {
                 return true;
             }
             return false;
@@ -111,15 +118,20 @@ define([
             }
         },
         setShippingInformation: function () {
-            if (!this.payoneCheckAddress()) {
+            if (!this.payoneCheckAddress() && !this.payoneBonicheckAddress()) {
                 return this._super();
             }
 
             if (!this.source.get('payone_guest_address_checked')) {
                 if (this.validateShippingInformation()) {
                     if (!this.isFormInline) {
-                        addresscheck(quote.shippingAddress(), false, this, 'setShippingInformation');
+                        if (this.payoneCheckAddress()) {
+                            addresscheck(quote.shippingAddress(), false, this, 'setShippingInformation');
+                        } else if(this.payoneBonicheckAddress()) {
+                            consumerscore(quote.shippingAddress(), false, this, 'setShippingInformation');
+                        }
                     } else {
+                        ///@TODO: Bonicheck+Addresscheck für Gäste
                         addresscheck(this.source.get('shippingAddress'), false, this, 'setShippingInformation');
                     }
                 }

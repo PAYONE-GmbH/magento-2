@@ -29,6 +29,8 @@ namespace Payone\Core\Model;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Eps;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Ideal;
+use Payone\Core\Model\Source\AddressCheckType;
+use Payone\Core\Model\Source\CreditratingIntegrationEvent;
 
 /**
  * Extension for config provider to extend the javascript
@@ -222,6 +224,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
             'addresscheckShippingEnabled' => $this->requestHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
             'addresscheckConfirmCorrection' => (int)$this->requestHelper->getConfigParam('confirm_address_correction', 'address_check', 'payone_protect'),
+            'bonicheckAddressEnabled' => $this->isAddressBonicheckEnabled(),
             'canShowPaymentHintText' => $this->consumerscoreHelper->canShowPaymentHintText(),
             'paymentHintText' => $this->requestHelper->getConfigParam('payment_hint_text', 'creditrating', 'payone_protect'),
             'canShowAgreementMessage' => $this->consumerscoreHelper->canShowAgreementMessage(),
@@ -264,6 +267,21 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->checkoutSession->unsPayoneCanceledPaymentMethod();
         if ($sPaymentMethod) {
             return $sPaymentMethod;
+        }
+        return false;
+    }
+
+    /**
+     * Return if bonicheck with addresscheck is enabled
+     *
+     * @return bool
+     */
+    protected function isAddressBonicheckEnabled()
+    {
+        if ($this->requestHelper->getConfigParam('integration_event', 'creditrating', 'payone_protect') == CreditratingIntegrationEvent::BEFORE_PAYMENT
+            && $this->requestHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect') != AddressCheckType::NONE
+        ) {
+            return true;
         }
         return false;
     }
