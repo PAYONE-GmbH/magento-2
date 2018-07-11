@@ -112,14 +112,18 @@ class Appointed implements ObserverInterface
         $oOrder = $observer->getOrder();
 
         // order is not guaranteed to exist if using transaction status forwarding
-        if (null === $oOrder || $oOrder->getEmailSent()) {
+        if (null === $oOrder) {
             return;
         }
 
-        try {
-            $this->orderSender->send($oOrder);
-        } catch (\Exception $e) {
-            $this->logger->critical($e);
+        if (!$oOrder->getEmailSent()) {
+            // the email should not have been sent at this given moment,
+            // but some custom modules may have changed this behaviour
+            try {
+                $this->orderSender->send($oOrder);
+            } catch (\Exception $e) {
+                $this->logger->critical($e);
+            }
         }
 
         // preauthorization-orders and advance payment should not create an invoice
