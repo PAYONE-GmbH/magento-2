@@ -43,8 +43,14 @@ define([
                 parentReturn.additional_data.payone_boni_agreement = blAgreed;
             }
             return parentReturn;
+        },
+        afterPlaceOrder: function () {
+            this.redirectAfterPlaceOrder = false;
+
+            alert('Krawallkind!');
+            return this._super();
         }
-    }
+    };
 
     return function (payment) {
         return payment.extend(mixin);

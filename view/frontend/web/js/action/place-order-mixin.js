@@ -32,8 +32,9 @@ define([
     'Magento_Customer/js/model/customer',
     'Magento_Checkout/js/model/url-builder',
     'Magento_Checkout/js/model/full-screen-loader',
-    'Magento_Checkout/js/view/billing-address'
-], function ($, storage, wrapper, consumerscore, quote, customer, urlBuilder, fullScreenLoader, billing) {
+    'Magento_Checkout/js/view/billing-address',
+    'Magento_Checkout/js/action/create-billing-address'
+], function ($, storage, wrapper, consumerscore, quote, customer, urlBuilder, fullScreenLoader, billing, createBillingAddress) {
     'use strict';
 
     return function (placeOrderAction) {
@@ -41,6 +42,8 @@ define([
         /** Override default place order action and add agreement_ids to request */
         return wrapper.wrap(placeOrderAction, function (originalAction, paymentData, messageContainer) {
             if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled) {
+                alert('Kabelbruch');
+
                 var serviceUrl;
 
                 if (!customer.isLoggedIn()) {
@@ -51,7 +54,7 @@ define([
                     serviceUrl = urlBuilder.createUrl('/carts/mine/payone-consumerscore', {});
                 }
 
-                var addressData = quote.shippingAddress();
+                var addressData = quote.billingAddress();
                 var request = {
                     addressData: addressData,
                     isBillingAddress: true,
@@ -60,20 +63,25 @@ define([
                 };
 
                 fullScreenLoader.startLoader();
-                console.log('Bananarama');
 
-                storage.post(
-                    serviceUrl,
-                    JSON.stringify(request)
-                ).done(
+                $.ajax({
+                    url: urlBuilder.build(serviceUrl),
+                    type: 'POST',
+                    data: JSON.stringify(request),
+                    global: true,
+                    contentType: 'application/json'
+                }).done(
                     function (response) {
                         if (response.success == true) {
+                            alert('Bruchstück');
                             if (response.corrected_address != null) {
+                                var newBillingAddress = createBillingAddress(response.corrected_address);
                                 if (!window.checkoutConfig.payment.payone.addresscheckConfirmCorrection || confirm(response.confirm_message)) {
-                                    billing.payoneUpdateAddress(response.corrected_address);
+                                    quote.billingAddress(newBillingAddress);
                                 }
                             }
-                            //originalAction(paymentData, messageContainer)
+
+
                         } else {
                             alert(response.errormessage);
                         }
