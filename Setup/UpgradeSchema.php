@@ -75,5 +75,19 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
         if (!$setup->getConnection()->isTableExists($setup->getTable(PaymentBan::TABLE_PAYMENT_BAN))) {
             $this->addTable($setup, PaymentBan::getData());
         }
+        if (version_compare($context->getVersion(), '2.3.0', '<=')) {// pre update version is lower than 1.3.0
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable('payone_protocol_api'),
+                'mid', ['type' => Table::TYPE_INTEGER, 'default' => '0']
+            );
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable('payone_protocol_api'),
+                'aid', ['type' => Table::TYPE_INTEGER, 'default' => '0']
+            );
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable('payone_protocol_api'),
+                'portalid', ['type' => Table::TYPE_INTEGER, 'default' => '0']
+            );
+        }
     }
 }

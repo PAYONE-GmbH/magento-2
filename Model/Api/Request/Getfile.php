@@ -79,7 +79,7 @@ class Getfile extends Base
             $aResponse['file'] = $oOrder->getPayoneMandateId().'.pdf';
         }
 
-        $this->apiLog->addApiLogEntry($this, $aResponse, $sStatus); // log request to db
+        $this->apiLog->addApiLogEntry($this->getParameters(), $aResponse, $sStatus, $this->getOrderId()); // log request to db
         return $sReturn;
     }
 }

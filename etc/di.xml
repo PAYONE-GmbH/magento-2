@@ -76,4 +76,7 @@
     <type name="Magento\Checkout\Model\GuestPaymentInformationManagement">
         <plugin name="Payone_Core_Plugin_GuestPaymentInformationManagement" type="Payone\Core\Model\Plugins\GuestPaymentInformationManagement" sortOrder="1" />
     </type>
+    <type name="Magento\Sales\Model\Service\CreditmemoService">
+        <plugin name="Payone_Core_plugin_CreditmemoService" type="Payone\Core\Model\Plugins\CreditmemoService" sortOrder="1" />
+    </type>
 </config>
