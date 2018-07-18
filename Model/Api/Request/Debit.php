@@ -136,6 +136,8 @@ class Debit extends Base
     {
         $oOrder = $oPaymentInfo->getOrder();
 
+        $this->setStoreCode($oOrder->getStore()->getCode());
+
         $aPositions = $this->getInvoiceList($oOrder);
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
@@ -195,7 +197,7 @@ class Debit extends Base
      */
     protected function getRefundAppendix(Order $oOrder, PayoneMethod $oPayment)
     {
-        $sText = $this->shopHelper->getConfigParam('invoice_appendix_refund', 'invoicing');
+        $sText = $this->shopHelper->getConfigParam('invoice_appendix_refund', 'invoicing', 'payone_general', $this->storeCode);
         $sCreditMemoIncrId = '';
         $sInvoiceIncrementId = '';
         $sInvoiceId = '';
