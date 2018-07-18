@@ -112,6 +112,8 @@ class Capture extends Base
     {
         $oOrder = $oPaymentInfo->getOrder();
 
+        $this->setStoreCode($oOrder->getStore()->getCode());
+
         $aPositions = $this->getInvoiceList($oOrder);
 
         $iTxid = $oPaymentInfo->getParentTransactionId();

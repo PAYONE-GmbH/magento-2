@@ -37,6 +37,7 @@ use Payone\Core\Helper\Api;
 use Magento\Sales\Model\Order\Item;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Store\Model\Store;
 
 class CaptureTest extends BaseTestCase
 {
@@ -92,13 +93,19 @@ class CaptureTest extends BaseTestCase
         $item_missing = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
         $item_missing->method('getItemId')->willReturn('missing');
 
+        $store = $this->getMockBuilder(Store::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $store->method('getCode')->willReturn('default');
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getAllItems'])
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getAllItems', 'getStore'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
         $order->method('getAllItems')->willReturn([$item, $item_missing]);
+        $order->method('getStore')->willReturn($store);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
@@ -120,12 +127,18 @@ class CaptureTest extends BaseTestCase
         $payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
 
+        $store = $this->getMockBuilder(Store::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $store->method('getCode')->willReturn(null);
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode'])
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getStore'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
+        $order->method('getStore')->willReturn($store);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
