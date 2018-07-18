@@ -222,4 +222,14 @@ class DebitTest extends BaseTestCase
         $this->expectException(LocalizedException::class);
         $this->classToTest->sendRequest($payment, $paymentInfo, 100);
     }
+
+    public function testGetResponse()
+    {
+        $expected = ['status' => 'VALID'];
+
+        $this->classToTest->setResponse($expected);
+        $result = $this->classToTest->getResponse();
+
+        $this->assertEquals($expected, $result);
+    }
 }

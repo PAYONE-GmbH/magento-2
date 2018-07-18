@@ -76,6 +76,9 @@ abstract class PayoneMethod extends BaseMethod
         }
         $aResponse = $this->debitRequest->sendRequest($this, $payment, $amount);
         if ($aResponse['status'] == 'ERROR') {
+            $this->checkoutSession->setPayoneDebitRequest($this->debitRequest->getParameters());
+            $this->checkoutSession->setPayoneDebitResponse($this->debitRequest->getResponse());
+            $this->checkoutSession->setPayoneDebitOrderId($this->debitRequest->getOrderId());
             throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
         } elseif (!$aResponse) {
             throw new LocalizedException(__('Unkown error'));

@@ -56,6 +56,13 @@ abstract class Base
     protected $aParameters = [];
 
     /**
+     * Response of the request
+     *
+     * @var array
+     */
+    protected $aResponse = false;
+
+    /**
      * URL of PAYONE Server API
      *
      * @var string
@@ -196,6 +203,27 @@ abstract class Base
     }
 
     /**
+     * Set response array
+     *
+     * @param  $aResponse
+     * @return void
+     */
+    public function setResponse($aResponse)
+    {
+        $this->aResponse = $aResponse;
+    }
+
+    /**
+     * Return the response array
+     *
+     * @return array
+     */
+    public function getResponse()
+    {
+        return $this->aResponse;
+    }
+
+    /**
      * Add non-global parameters specifically configured in the payment type
      *
      * @param  PayoneMethod $oPayment
@@ -284,8 +312,10 @@ abstract class Base
         
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
-        $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
-        
+        $this->setResponse($aResponse);
+
+        $this->apiLog->addApiLogEntry($this->getParameters(), $aResponse, $aResponse['status'], $this->getOrderId()); // log request to db
+
         return $aResponse;
     }
 }
