@@ -30,6 +30,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\DB\Ddl\Table;
+use Payone\Core\Setup\Tables\Api;
 use Payone\Core\Setup\Tables\PaymentBan;
 
 /**
@@ -75,7 +76,7 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
         if (!$setup->getConnection()->isTableExists($setup->getTable(PaymentBan::TABLE_PAYMENT_BAN))) {
             $this->addTable($setup, PaymentBan::getData());
         }
-        if (version_compare($context->getVersion(), '2.3.0', '<=')) {// pre update version is lower than 1.3.0
+        if (version_compare($context->getVersion(), '2.3.0', '<=')) {
             $setup->getConnection()->modifyColumn(
                 $setup->getTable('payone_protocol_api'),
                 'mid', ['type' => Table::TYPE_INTEGER, 'default' => '0']
@@ -87,6 +88,22 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
             $setup->getConnection()->modifyColumn(
                 $setup->getTable('payone_protocol_api'),
                 'portalid', ['type' => Table::TYPE_INTEGER, 'default' => '0']
+            );
+        }
+
+        /*
+         * add index to payone_protocoll_api::txid to speed up transactional api calls
+         */
+        if (version_compare($context->getVersion(), '2.3.1', '<=')) {
+
+            $connection = $setup->getConnection();
+            $protocolApiTable = $connection->getTableName(Api::TABLE_PROTOCOL_API);
+            $indexField = 'txid';
+
+            $connection->addIndex(
+                $protocolApiTable,
+                $connection->getIndexName($protocolApiTable, $indexField),
+                $indexField
             );
         }
     }
