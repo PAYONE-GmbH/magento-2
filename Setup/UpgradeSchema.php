@@ -92,7 +92,7 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
         }
 
         /*
-         * add index to payone_protocoll_api::txid to speed up transactional api calls
+         * add index to payone_protocol_api::txid to speed up transaction status calls
          */
         if (version_compare($context->getVersion(), '2.3.1', '<=')) {
 
