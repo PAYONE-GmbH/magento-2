@@ -26,12 +26,13 @@
 
 namespace Payone\Core\Setup;
 
+use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
-use Magento\Framework\DB\Ddl\Table;
 use Payone\Core\Setup\Tables\Api;
 use Payone\Core\Setup\Tables\PaymentBan;
+use Payone\Core\Setup\Tables\Transactionstatus;
 
 /**
  * Magento script for updating the database after the initial installation
@@ -41,7 +42,7 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
     /**
      * Upgrade method
      *
-     * @param  SchemaSetupInterface   $setup
+     * @param  SchemaSetupInterface $setup
      * @param  ModuleContextInterface $context
      * @return void
      */
@@ -104,6 +105,21 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 $protocolApiTable,
                 $connection->getIndexName($protocolApiTable, $indexField),
                 $indexField
+            );
+
+            $transactionStatusTable = $connection->getTableName(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS);
+            $indexFieldTxid = 'txid';
+            $indexFieldCustomerid = 'customerid';
+
+            $connection->addIndex(
+                $transactionStatusTable,
+                $connection->getIndexName($transactionStatusTable, $indexFieldTxid),
+                $indexFieldTxid
+            );
+            $connection->addIndex(
+                $transactionStatusTable,
+                $connection->getIndexName($transactionStatusTable, $indexFieldCustomerid),
+                $indexFieldCustomerid
             );
         }
     }
