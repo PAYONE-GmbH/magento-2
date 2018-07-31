@@ -37,6 +37,5 @@
         <add id="Payone_Core::payone_protocol" title="Logs" module="Payone_Core" sortOrder="30" parent="Payone_Core::payone" resource="Payone_Core::payone_protocol"/>
         <add id="Payone_Core::payone_protocol_api" title="Api" module="Payone_Core" sortOrder="10" parent="Payone_Core::payone_protocol" action="payone/protocol_api" resource="Payone_Core::payone_protocol_api"/>
         <add id="Payone_Core::payone_protocol_transactionstatus" title="Transactionstatus" module="Payone_Core" sortOrder="20" parent="Payone_Core::payone_protocol" action="payone/protocol_transactionstatus" resource="Payone_Core::payone_protocol_transactionstatus"/>
-        <add id="Payone_Core::payone_information" title="Information" module="Payone_Core" sortOrder="40" parent="Payone_Core::payone" action="payone/information" resource="Payone_Core::payone_information"/>
     </menu>
 </config>
