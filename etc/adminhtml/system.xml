@@ -186,17 +186,17 @@
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_invoice" translate="label" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Payolution Invoice</label>
+                    <label>Paysafe Pay Later™ Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_debit" translate="label" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Payolution Debit</label>
+                    <label>Paysafe Pay Later™ Debit</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_installment" translate="label" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Payolution Installment</label>
+                    <label>Paysafe Pay Later™ Installment</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
