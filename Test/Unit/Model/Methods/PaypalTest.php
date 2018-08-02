@@ -80,6 +80,8 @@ class PaypalTest extends BaseTestCase
     {
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
+        $this->classToTest->setIsPayPalExpress(true);
+
         $result = $this->classToTest->getPaymentSpecificParameters($order);
         $expected = ['wallettype' => 'PPE', 'workorderid' => '12345'];
         $this->assertEquals($expected, $result);
