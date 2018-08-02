@@ -40,13 +40,13 @@ use Payone\Core\Setup\Tables\Transactionstatus;
 class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
 {
     /**
-     * Upgrade method
+     * Add new columns
      *
      * @param  SchemaSetupInterface $setup
      * @param  ModuleContextInterface $context
      * @return void
      */
-    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    protected function addNewColumns(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         if (version_compare($context->getVersion(), '1.3.0', '<')) {// pre update version is lower than 1.3.0
             $this->addTable($setup, \Payone\Core\Setup\Tables\CheckedAddresses::getData());
@@ -74,9 +74,31 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+    }
+
+    /**
+     * Add new tables
+     *
+     * @param  SchemaSetupInterface $setup
+     * @param  ModuleContextInterface $context
+     * @return void
+     */
+    protected function addNewTables(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    {
         if (!$setup->getConnection()->isTableExists($setup->getTable(PaymentBan::TABLE_PAYMENT_BAN))) {
             $this->addTable($setup, PaymentBan::getData());
         }
+    }
+
+    /**
+     * Modify already existing columns
+     *
+     * @param  SchemaSetupInterface $setup
+     * @param  ModuleContextInterface $context
+     * @return void
+     */
+    protected function modifyColumns(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    {
         if (version_compare($context->getVersion(), '2.3.0', '<=')) {
             $setup->getConnection()->modifyColumn(
                 $setup->getTable('payone_protocol_api'),
@@ -91,36 +113,41 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 'portalid', ['type' => Table::TYPE_INTEGER, 'default' => '0']
             );
         }
+    }
 
-        /*
-         * add index to payone_protocol_api::txid to speed up transaction status calls
-         */
+    /**
+     * Add indexes to speed up certain calls
+     *
+     * @param  SchemaSetupInterface $setup
+     * @param  ModuleContextInterface $context
+     * @return void
+     */
+    protected function addIndexes(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    {
         if (version_compare($context->getVersion(), '2.3.1', '<=')) {
-
             $connection = $setup->getConnection();
-            $protocolApiTable = $connection->getTableName(Api::TABLE_PROTOCOL_API);
-            $indexField = 'txid';
 
-            $connection->addIndex(
-                $protocolApiTable,
-                $connection->getIndexName($protocolApiTable, $indexField),
-                $indexField
-            );
+            $protocolApiTable = $connection->getTableName(Api::TABLE_PROTOCOL_API);
+            $connection->addIndex($protocolApiTable, $connection->getIndexName($protocolApiTable, 'txid'), 'txid');
 
             $transactionStatusTable = $connection->getTableName(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS);
-            $indexFieldTxid = 'txid';
-            $indexFieldCustomerid = 'customerid';
-
-            $connection->addIndex(
-                $transactionStatusTable,
-                $connection->getIndexName($transactionStatusTable, $indexFieldTxid),
-                $indexFieldTxid
-            );
-            $connection->addIndex(
-                $transactionStatusTable,
-                $connection->getIndexName($transactionStatusTable, $indexFieldCustomerid),
-                $indexFieldCustomerid
-            );
+            $connection->addIndex($transactionStatusTable, $connection->getIndexName($transactionStatusTable, 'txid'), 'txid');
+            $connection->addIndex($transactionStatusTable, $connection->getIndexName($transactionStatusTable, 'customerid'), 'customerid');
         }
+    }
+
+    /**
+     * Upgrade method
+     *
+     * @param  SchemaSetupInterface $setup
+     * @param  ModuleContextInterface $context
+     * @return void
+     */
+    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    {
+        $this->addNewColumns($setup, $context);
+        $this->addNewTables($setup, $context);
+        $this->modifyColumns($setup, $context);
+        $this->addIndexes($setup, $context);
     }
 }
