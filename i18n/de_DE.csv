@@ -1042,7 +1042,7 @@
 
 "You have to be at least 18 years old to use this payment type!","Sie müssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu können!"
 
-"I agree with the transmission of the necessary data to payolution which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an payolution bin ich einverstanden."
+"I agree with the transmission of the necessary data to Paysafe Pay Later™ which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an Paysafe Pay Later™ bin ich einverstanden."
 "I agree with the transmission of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an Klarna bin ich einverstanden."
 "I agree with the processing of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Datenverarbeitung der für die Abwicklung des Rechnungskaufes und einer Identitäts- und Bonitätsprüfung erforderlichen Daten durch Klarna bin ich einverstanden."
 "My","Meine"
@@ -1050,7 +1050,7 @@
 "The general terms and conditions of the dealer apply.","Es gelten die AGB des Händlers."
 "acceptance","Einwilligung"
 "PAYONE_PAYOLUTION_API_ERRORMESSAGE","Diese Zahlung konnte nicht durchgeführt werden. Dies kann unterschiedliche Gruende haben, wie etwa fehlerhafte Eingabedaten, eine unbekannte Adresse, oder ein vorübergehendes technisches Problem. Bitte überprüfen Sie die angegebenen Daten, oder wählen Sie ein anderes Zahlungsmittel."
-"Please confirm the transmission of the necessary data to payolution!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an payolution!"
+"Please confirm the transmission of the necessary data to Paysafe Pay Later™!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an Paysafe Pay Later™!"
 "Please confirm the transmission of the necessary data to Klarna!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an Klarna!"
 "Please confirm the SEPA mandate!","Bitte bestätigen Sie das SEPA-Mandat!"
 
