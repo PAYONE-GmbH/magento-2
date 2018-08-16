@@ -244,4 +244,39 @@ class Database extends \Payone\Core\Helper\Base
         }
         return $this->getDb()->fetchOne($oSelect, $aParams);
     }
+
+    public function relabelTransaction($sOldOrderId, $sNewOrderId, $sNewPaymentId)
+    {
+        $table = $this->databaseResource->getTableName('sales_payment_transaction');
+        $data = [
+            'order_id' => $sNewOrderId,
+            'payment_id' => $sNewPaymentId
+        ];
+        $where = ['order_id = ?' => $sOldOrderId];
+        return $this->getDb()->update($table, $data, $where);
+    }
+
+    public function relabelApiProtocol($sOldIncrementId, $sNewIncrementId)
+    {
+        $table = $this->databaseResource->getTableName('payone_protocol_api');
+        $data = ['order_id' => $sNewIncrementId];
+        $where = ['order_id = ?' => $sOldIncrementId];
+        return $this->getDb()->update($table, $data, $where);
+    }
+
+    public function relabelOrderPayment($sOldIncrementId, $sNewOrderId)
+    {
+        $oSelect = $this->getDb()
+            ->select()
+            ->from(['a' => $this->databaseResource->getTableName('sales_order_payment')], ['last_trans_id'])
+            ->joinInner(['b' => $this->databaseResource->getTableName('sales_order')], 'a.parent_id = b.entity_id')
+            ->where("b.increment_id = :incrementId")
+            ->limit(1);
+        $sLastTransId = $this->getDb()->fetchOne($oSelect, ['incrementId' => $sOldIncrementId]);
+
+        $table = $this->databaseResource->getTableName('sales_order_payment');
+        $data = ['last_trans_id' => $sLastTransId];
+        $where = ['parent_id = ?' => $sNewOrderId];
+        return $this->getDb()->update($table, $data, $where);
+    }
 }

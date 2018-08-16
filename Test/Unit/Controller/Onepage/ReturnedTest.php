@@ -26,19 +26,21 @@
 
 namespace Payone\Core\Test\Unit\Controller\Onepage;
 
+use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Onepage\Returned as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order as OrderCore;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
-use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Store\App\Response\Redirect as RedirectResponse;
 use Magento\Framework\App\Console\Response;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\UrlInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-
+use Magento\Quote\Model\QuoteRepository;
+use Magento\Sales\Model\OrderRepository;
+use Magento\Sales\Model\Order\Payment;
 
 class ReturnedTest extends BaseTestCase
 {
@@ -51,6 +53,11 @@ class ReturnedTest extends BaseTestCase
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $checkoutSession;
 
     protected function setUp()
     {
@@ -70,16 +77,71 @@ class ReturnedTest extends BaseTestCase
         $context->method('getResponse')->willReturn($response);
         $context->method('getUrl')->willReturn($url);
 
-        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
+        $this->checkoutSession = $this->getMockBuilder(Session::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getLastRealOrder',
+                'setLastRealOrderId',
+                'getPayoneCanceledOrder',
+                'unsPayoneCanceledOrder',
+                'unsPayoneCustomerIsRedirected',
+                'setPayoneCreatingSubstituteOrder',
+                'unsPayoneCreatingSubstituteOrder',
+                'setLastOrderId',
+                'getQuote'
+            ])
+            ->getMock();
+
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+
+        $quoteRepository = $this->getMockBuilder(QuoteRepository::class)->disableOriginalConstructor()->getMock();
+        $quoteRepository->method('get')->willReturn($quote);
+
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getId')->willReturn(123);
+
+        $order = $this->getMockBuilder(OrderCore::class)->disableOriginalConstructor()->getMock();
+        $order->method('getPayment')->willReturn($payment);
+
+        $orderRepository = $this->getMockBuilder(OrderRepository::class)->disableOriginalConstructor()->getMock();
+        $orderRepository->method('get')->willReturn($order);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
-            'checkoutSession' => $checkoutSession
+            'checkoutSession' => $this->checkoutSession,
+            'quoteRepository' => $quoteRepository,
+            'orderRepository' => $orderRepository
         ]);
     }
 
     public function testExecute()
     {
+        $order = $this->getMockBuilder(OrderCore::class)->disableOriginalConstructor()->getMock();
+        $order->method('getId')->willReturn(null);
+        $order->method('getStatus')->willReturn(OrderCore::STATE_COMPLETE);
+
+        $this->checkoutSession->method('getLastRealOrder')->willReturn($order);
+        $this->checkoutSession->method('getPayoneCanceledOrder')->willReturn(null);
+
+        $result = $this->classToTest->execute();
+        $this->assertNull($result);
+    }
+
+    public function testExecuteSubstitute()
+    {
+        $order = $this->getMockBuilder(OrderCore::class)->disableOriginalConstructor()->getMock();
+        $order->method('getId')->willReturn(null);
+        $order->method('getStatus')->willReturn(OrderCore::STATE_CANCELED);
+        $order->method('getQuoteId')->willReturn('123');
+        $order->method('getData')->willReturn(['payone_txid' => '12345']);
+
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote->method('setIsActive')->willReturn($quote);
+
+        $this->checkoutSession->method('getLastRealOrder')->willReturn($order);
+        $this->checkoutSession->method('getPayoneCanceledOrder')->willReturn(123);
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
+
         $result = $this->classToTest->execute();
         $this->assertNull($result);
     }
