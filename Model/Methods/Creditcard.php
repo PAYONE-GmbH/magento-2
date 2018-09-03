@@ -73,7 +73,8 @@ class Creditcard extends PayoneMethod
         'pseudocardpan',
         'truncatedcardpan',
         'cardtype',
-        'cardexpiredate'
+        'cardexpiredate',
+        'selectedData'
     ];
 
     /**
@@ -84,9 +85,12 @@ class Creditcard extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        return [
-            'pseudocardpan' => $this->getInfoInstance()->getAdditionalInformation('pseudocardpan'),
-        ];
+        $aReturn = ['pseudocardpan' => $this->getInfoInstance()->getAdditionalInformation('pseudocardpan')];
+        $sSelectedData = $this->getInfoInstance()->getAdditionalInformation('selectedData');
+        if (!empty($sSelectedData) && $sSelectedData != 'new') {
+            $aReturn['pseudocardpan'] = $this->getInfoInstance()->getAdditionalInformation('selectedData');
+        }
+        return $aReturn;
     }
 
     /**
@@ -107,6 +111,28 @@ class Creditcard extends PayoneMethod
             }
         }
 
+        $aAddData = $data->getAdditionalData();
+        if (isset($aAddData['saveData']) && $aAddData['saveData'] == '1') {
+            $this->handlePaymentDataStorage($data);
+        }
+
         return $this;
+    }
+
+    /**
+     * Convert DataObject to needed array format
+     *
+     * @param  DataObject $data
+     * @return array
+     */
+    protected function getPaymentStorageData(DataObject $data)
+    {
+        $aReturn = parent::getPaymentStorageData($data);
+        $aAdditionalData = $data->getAdditionalData();
+        if (isset($aAdditionalData['pseudocardpan']) && isset($aAdditionalData['truncatedcardpan'])) {
+            $aReturn['cardpan'] = $aAdditionalData['pseudocardpan'];
+            $aReturn['masked'] = $aAdditionalData['truncatedcardpan'];
+        }
+        return $aReturn;
     }
 }

@@ -319,6 +319,7 @@
                 <use_global>1</use_global>
                 <check_cvc>always</check_cvc>
                 <min_validity_period>35</min_validity_period>
+                <save_data_enabled>0</save_data_enabled>
             </payone_creditcard>
             <payone_debit>
                 <use_global>1</use_global>
