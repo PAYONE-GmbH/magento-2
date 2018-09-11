@@ -103,4 +103,14 @@ class ManagementTest extends BaseTestCase
         $result = $this->classToTest->getActionUrl('1', 'delete');
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetCardtypeUrl()
+    {
+        $expected = 'https://cdn.pay1.de/cc/v/s/default.png';
+
+        $aData = ['payment_data' => ['cardtype' => 'V']];
+
+        $result = $this->classToTest->getCardtypeUrl($aData);
+        $this->assertEquals($expected, $result);
+    }
 }

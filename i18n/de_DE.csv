@@ -1089,13 +1089,13 @@
 
 "Payment information is transmitted using the selected currency","Zahlungsinformation wird in dieser Währung übermittelt"
 
-"PAYONE Creditcard management","PAYONE Kreditkarten-Verwaltung"
+"Creditcard management","Kreditkarten-Verwaltung"
 "You have no saved creditcard data.","Sie haben noch keine gespeicherten Kreditkarten-Daten."
 "Save the payment data for future use.","Daten für zukünftige Nutzung speichern."
-"Masked creditcard number","Maskierte Kreditkartennummer"
 "Saved creditcard","Gespeicherte Kreditkarte"
 "Add new creditcard","Neue Kreditkarte hinzufügen"
 "Default","Standard"
 "Saved at","Gespeichert am"
 "Declare as default","Als Standard festlegen"
 "Delete","Löschen"
+"ends with","endet auf"

@@ -69,6 +69,11 @@ class Management extends \Magento\Framework\View\Element\Template
         $this->customerSession = $customerSession;
     }
 
+    public function getCardtypeUrl($aData)
+    {
+        return 'https://cdn.pay1.de/cc/'.strtolower($aData['payment_data']['cardtype']).'/s/default.png';
+    }
+
     /**
      * Load all saved payment data of the current customer
      *

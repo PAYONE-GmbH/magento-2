@@ -113,6 +113,16 @@ define(
             getSelectedSavedData: function () {
                 return $('input[name=' + this.getCode() +'_saved_data]:checked').val();
             },
+            getSelectedSavedCardExpireData: function () {
+                var sSelectedCardPan = this.getSelectedSavedData();
+                var aSavedPaymentData = this.getSavedPaymentData();
+                for (var i = 0; i < aSavedPaymentData.length; i++) {
+                    if (aSavedPaymentData[i].payment_data.cardpan == sSelectedCardPan) {
+                        return aSavedPaymentData[i].payment_data.cardexpiredate;
+                    }
+                }
+                return false;
+            },
             isSavedPaymentDataUsed: function () {
                 var sSelectedSavedData = this.getSelectedSavedData();
                 if (this.useSaveDataMode() && sSelectedSavedData && sSelectedSavedData != 'new') {
@@ -179,6 +189,9 @@ define(
                         this.messageContainer.addErrorMessage({'message': $t('Please enter the lastname.')});
                         return false;
                     }
+                } else if (!this.isMinValidityCorrect(this.getSelectedSavedCardExpireData())) {
+                    this.messageContainer.addErrorMessage({'message': $t("This transaction could not be performed. Please select another payment method.")});
+                    return;
                 }
                 return true;
             },

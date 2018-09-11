@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<!--
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,15 +21,15 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
--->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <update handle="customer_account"/>
-    <head>
-        <css src="Payone_Core::css/paymentdata.css"/>
-    </head>
-    <body>
-        <referenceContainer name="content">
-            <block class="Payone\Core\Block\Payments\Management" name="payone.payments.management" cacheable="false" template="payments/management.phtml" />
-        </referenceContainer>
-    </body>
-</page>
+.ccard .payment-method-title IMG {
+    height: 15px;
+    margin-right: 5px;
+}
+.ccard .payment-method-title * {
+    vertical-align: middle;
+}
+.ccard .payment-method-title .cardholder {
+    display: inline-block;
+    min-width: 120px;
+    margin: 0 15px 0 15px;
+}

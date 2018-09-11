@@ -74,7 +74,10 @@ class Creditcard extends PayoneMethod
         'truncatedcardpan',
         'cardtype',
         'cardexpiredate',
-        'selectedData'
+        'selectedData',
+        'firstname',
+        'lastname',
+
     ];
 
     /**
@@ -120,6 +123,22 @@ class Creditcard extends PayoneMethod
     }
 
     /**
+     * Add value to the payment storage data array
+     *
+     * @param  array  $aDest
+     * @param  array  $aSource
+     * @param  string $sDestField
+     * @param  string $sSourceField
+     * @return void
+     */
+    protected function addValueToArray(&$aDest, $aSource, $sDestField, $sSourceField)
+    {
+        if (isset($aSource[$sSourceField])) {
+            $aDest[$sDestField] = $aSource[$sSourceField];
+        }
+    }
+
+    /**
      * Convert DataObject to needed array format
      *
      * @param  DataObject $data
@@ -129,9 +148,14 @@ class Creditcard extends PayoneMethod
     {
         $aReturn = parent::getPaymentStorageData($data);
         $aAdditionalData = $data->getAdditionalData();
+
         if (isset($aAdditionalData['pseudocardpan']) && isset($aAdditionalData['truncatedcardpan'])) {
-            $aReturn['cardpan'] = $aAdditionalData['pseudocardpan'];
-            $aReturn['masked'] = $aAdditionalData['truncatedcardpan'];
+            $this->addValueToArray($aReturn, $aAdditionalData, 'cardpan', 'pseudocardpan');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'masked', 'truncatedcardpan');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'firstname', 'firstname');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'lastname', 'lastname');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'cardtype', 'cardtype');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'cardexpiredate', 'cardexpiredate');
         }
         return $aReturn;
     }

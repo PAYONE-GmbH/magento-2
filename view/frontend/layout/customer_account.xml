@@ -30,7 +30,7 @@
             <block class="Payone\Core\Block\Customer\Link" name="payone-customer-account-navigation-payments-management">
                 <arguments>
                     <argument name="path" xsi:type="string">payone/payments/management</argument>
-                    <argument name="label" xsi:type="string" translate="true">PAYONE Creditcard management</argument>
+                    <argument name="label" xsi:type="string" translate="true">Creditcard management</argument>
                 </arguments>
             </block>
         </referenceBlock>

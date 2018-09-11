@@ -71,7 +71,7 @@ class Management extends \Magento\Framework\App\Action\Action
     {
         if ((bool)$this->baseHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment') === true) {
             $resultPage = $this->pageFactory->create();
-            $resultPage->getConfig()->getTitle()->set(__('PAYONE Creditcard management'));
+            $resultPage->getConfig()->getTitle()->set(__('Creditcard management'));
 
             return $resultPage;
         }
