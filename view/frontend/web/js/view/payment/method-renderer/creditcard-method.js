@@ -27,28 +27,34 @@ define(
         'Payone_Core/js/view/payment/method-renderer/base',
         'Magento_Ui/js/model/messageList',
         'mage/translate',
-        'Magento_Checkout/js/model/full-screen-loader'
+        'Magento_Checkout/js/model/full-screen-loader',
+        'Magento_Checkout/js/model/payment/additional-validators',
+        'Magento_Customer/js/model/customer'
     ],
-    function ($, Component, messageList, $t, fullScreenLoader) {
+    function ($, Component, messageList, $t, fullScreenLoader, additionalValidators, customer) {
         'use strict';
         return Component.extend({
             defaults: {
                 template: 'Payone_Core/payment/creditcard',
                 firstname: '',
                 lastname: '',
-                pseudocardpan: ''
+                pseudocardpan: '',
+                saveData: 0,
+                showNewData: false
             },
-            
+
             initObservable: function () {
                 this._super()
                     .observe([
                         'firstname',
                         'lastname',
-                        'pseudocardpan'
+                        'pseudocardpan',
+                        'saveData',
+                        'showNewData'
                     ]);
                 return this;
             },
-            
+
             getData: function () {
                 var parentReturn = this._super();
                 if (parentReturn.additional_data === null) {
@@ -62,9 +68,13 @@ define(
                     parentReturn.additional_data.cardtype = window.checkoutConfig.payment.payone.ccCheckResponse.cardtype;
                     parentReturn.additional_data.cardexpiredate = window.checkoutConfig.payment.payone.ccCheckResponse.cardexpiredate;
                 }
+                if (this.isSaveDataEnabled()) {
+                    parentReturn.additional_data.saveData = this.saveData();
+                    parentReturn.additional_data.selectedData = this.getSelectedSavedData();
+                }
                 return parentReturn;
             },
-            
+
             handleIframes: function () {
                 var fieldconfig = window.checkoutConfig.payment.payone.fieldConfig;
                 if (typeof fieldconfig.language != 'undefined') {
@@ -83,6 +93,51 @@ define(
                     document.getElementById(sCardTypeId).onchange = function () {
                         window.iframes.setCardType(this.value); // on change: set new type of credit card to process
                     };
+                }
+            },
+            useSaveDataMode: function () {
+                if (this.isSaveDataEnabled() && this.getSavedPaymentData().length > 0) {
+                    return true;
+                }
+                return false;
+            },
+            isSaveDataEnabled: function () {
+                if(!customer.isLoggedIn()) {
+                    return false;
+                }
+                return window.checkoutConfig.payment.payone.saveCCDataEnabled;
+            },
+            getSavedPaymentData: function () {
+                return window.checkoutConfig.payment.payone.savedPaymentData;
+            },
+            getSelectedSavedData: function () {
+                return $('input[name=' + this.getCode() +'_saved_data]:checked').val();
+            },
+            getSelectedSavedCardExpireData: function () {
+                var sSelectedCardPan = this.getSelectedSavedData();
+                var aSavedPaymentData = this.getSavedPaymentData();
+                for (var i = 0; i < aSavedPaymentData.length; i++) {
+                    if (aSavedPaymentData[i].payment_data.cardpan == sSelectedCardPan) {
+                        return aSavedPaymentData[i].payment_data.cardexpiredate;
+                    }
+                }
+                return false;
+            },
+            isSavedPaymentDataUsed: function () {
+                var sSelectedSavedData = this.getSelectedSavedData();
+                if (this.useSaveDataMode() && sSelectedSavedData && sSelectedSavedData != 'new') {
+                    return true;
+                }
+                return false;
+            },
+            handleNewDataVisibility: function () {
+                var oElem = $('#payone_creditcard_new_data');
+                if (oElem.length > 0) {
+                    if (oElem[0].checked === true) {
+                        $('#payone_creditcard_new_data_container').show();
+                    } else {
+                        $('#payone_creditcard_new_data_container').hide();
+                    }
                 }
             },
             showCvc: function () {
@@ -121,33 +176,55 @@ define(
             },
 
             validate: function () {
-                if (document.getElementById(this.getCode() + '_credit_card_type').value == '') {
-                    this.messageContainer.addErrorMessage({'message': $t('Please choose the creditcard type.')});
-                    return false;
-                }
-                if (this.firstname() == '') {
-                    this.messageContainer.addErrorMessage({'message': $t('Please enter the firstname.')});
-                    return false;
-                }
-                if (this.lastname() == '') {
-                    this.messageContainer.addErrorMessage({'message': $t('Please enter the lastname.')});
-                    return false;
+                if (this.isSavedPaymentDataUsed() === false) {
+                    if (document.getElementById(this.getCode() + '_credit_card_type').value == '') {
+                        this.messageContainer.addErrorMessage({'message': $t('Please choose the creditcard type.')});
+                        return false;
+                    }
+                    if (this.firstname() == '') {
+                        this.messageContainer.addErrorMessage({'message': $t('Please enter the firstname.')});
+                        return false;
+                    }
+                    if (this.lastname() == '') {
+                        this.messageContainer.addErrorMessage({'message': $t('Please enter the lastname.')});
+                        return false;
+                    }
+                } else if (!this.isMinValidityCorrect(this.getSelectedSavedCardExpireData())) {
+                    this.messageContainer.addErrorMessage({'message': $t("This transaction could not be performed. Please select another payment method.")});
+                    return;
                 }
                 return true;
             },
-            
+
             handleCreditcardCheck: function () {
-                // PayOne Request if the data is valid
-                if (window.iframes.isComplete()) {
-                    window.ccjs = this;
-                    window.processPayoneResponseCCHosted = window.processPayoneResponseCCHosted || function (response) {
+                if (this.isSavedPaymentDataUsed() === false) {
+                    // PayOne Request if the data is valid
+                    if (window.iframes.isComplete()) {
+                        window.ccjs = this;
+                        window.processPayoneResponseCCHosted = window.processPayoneResponseCCHosted || function (response) {
                             window.ccjs.processPayoneResponseCCHosted(response);
                         };
-                    window.iframes.creditCardCheck('processPayoneResponseCCHosted'); // Perform "CreditCardCheck" to create and get a
-                    // PseudoCardPan; then call your function "payCallback"
-                    fullScreenLoader.startLoader();
-                } else {
-                    this.messageContainer.addErrorMessage({'message': $t("Please enter complete data.")});
+                        window.iframes.creditCardCheck('processPayoneResponseCCHosted'); // Perform "CreditCardCheck" to create and get a
+                        // PseudoCardPan; then call your function "payCallback"
+                        fullScreenLoader.startLoader();
+                    } else {
+                        this.messageContainer.addErrorMessage({'message': $t("Please enter complete data.")});
+                    }
+                }
+            },
+            handleCreditcardPayment: function () {
+                var firstValidation = additionalValidators.validate();
+                if (!(firstValidation)) {
+                    return false;
+                }
+
+                if (this.validate() && firstValidation) {
+                    if ($('#' + this.getCode() + '_pseudocardpan').val() != '' || this.isSavedPaymentDataUsed()) {
+                        this.handleRedirectAction('payone/onepage/redirect/');
+                        return false;
+                    } else {
+                        this.handleCreditcardCheck();
+                    }
                 }
             },
             isInt: function (value) {
@@ -188,8 +265,19 @@ define(
                 } else if (response.status === "ERROR") {
                     this.messageContainer.addErrorMessage({'message': $t(response.errormessage)});
                 }
+            },
+            markDefaultSavedPayment: function () {
+                if (this.isSaveDataEnabled()) {
+                    var savedPayments = this.getSavedPaymentData();
+                    for (var i = 0; i < savedPayments.length; i++) {
+                        if (savedPayments[i].is_default == 1) {
+                            $('#payone_creditcard_new_data_container').hide();
+                            $('#payone_creditcard_data_' + savedPayments[i].id).prop("checked", true);
+                        }
+                    }
+                }
             }
         });
-    
+
     }
 );

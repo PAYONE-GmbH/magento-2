@@ -94,6 +94,31 @@ class Payment extends \Payone\Core\Helper\Base
     ];
 
     /**
+     * Resource model for saved payment data
+     *
+     * @var \Payone\Core\Model\ResourceModel\SavedPaymentData
+     */
+    protected $savedPaymentData;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\App\Helper\Context             $context
+     * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
+     * @param \Payone\Core\Helper\Shop                          $shopHelper
+     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
+     */
+    public function __construct(
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
+    ) {
+        parent::__construct($context, $storeManager, $shopHelper);
+        $this->savedPaymentData = $savedPaymentData;
+    }
+
+    /**
      * Return available payment types
      *
      * @return array

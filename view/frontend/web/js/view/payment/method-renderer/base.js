@@ -97,22 +97,6 @@ define(
                 }
             },
             
-            handleCreditcardPayment: function () {
-                var firstValidation = additionalValidators.validate();
-                if (!(firstValidation)) {
-                    return false;
-                }
-
-                if (this.validate() && firstValidation) {
-                    if (document.getElementById(this.getCode() + '_pseudocardpan').value != '') {
-                        this.handleRedirectAction('payone/onepage/redirect/');
-                        return false;
-                    } else {
-                        this.handleCreditcardCheck();
-                    }
-                }
-            },
-            
             handleDebitPayment: function () {
                 if (this.validate() && additionalValidators.validate()) {
                     if (window.checkoutConfig.payment.payone.validateBankCode == true && window.checkoutConfig.payment.payone.bankCodeValidatedAndValid == false) {

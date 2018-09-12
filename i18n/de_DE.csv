@@ -36,6 +36,8 @@
 "Minimum Order Total","Minimaler Warenwert"
 "Maximum Order Total","Maximaler Warenwert"
 "Minimum Validity Period","Mindest-Gültigkeitszeitraum"
+"Creditcard-management enabled","Kreditkartenverwaltung aktiviert"
+"Enables the customer to save his creditcard data for future use. The shop doesn't save the real creditcard number - only the PAYONE creditcard pan.","Hiermit kann der Kunde seine Kreditkarten-Daten für zukünftige Nutzung abspeichern. Der Shop speichert nicht die echten Kreditkarten-Daten, sondern nur die PAYONE Creditcard-pan."
 "Minimum period a CreditCard has to be valid. (in days)","Minimaler benötigter Gültigkeits-Zeitraum bevor Kreditkarten abgelehnt werden (in Tagen)"
 "Narrative Text","Buchungstext"
 "Maximum 81 digits. Placeholders: {{order_increment_id}}","Maximal 81 Zeichen. Platzhalter: {{order_increment_id}}"
@@ -1086,3 +1088,14 @@
 "Company trade registry number","Handelsregisternummer"
 
 "Payment information is transmitted using the selected currency","Zahlungsinformation wird in dieser Währung übermittelt"
+
+"Creditcard management","Kreditkarten-Verwaltung"
+"You have no saved creditcard data.","Sie haben noch keine gespeicherten Kreditkarten-Daten."
+"Save the payment data for future use.","Daten für zukünftige Nutzung speichern."
+"Saved creditcard","Gespeicherte Kreditkarte"
+"Add new creditcard","Neue Kreditkarte hinzufügen"
+"Default","Standard"
+"Saved at","Gespeichert am"
+"Declare as default","Als Standard festlegen"
+"Delete","Löschen"
+"ends with","endet auf"

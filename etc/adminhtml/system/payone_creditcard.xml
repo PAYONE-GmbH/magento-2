@@ -69,6 +69,11 @@
             <label>Minimum Validity Period</label>
             <comment>Minimum period a CreditCard has to be valid. (in days)</comment>
         </field>
+        <field id="save_data_enabled" translate="label,tooltip" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Creditcard-management enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <tooltip>Enables the customer to save his creditcard data for future use. The shop doesn't save the real creditcard number - only the PAYONE creditcard pan.</tooltip>
+        </field>
         <include path="Payone_Core::system/default_fields.xml"/>
     </group>
 </include>

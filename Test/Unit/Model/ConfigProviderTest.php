@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model;
 
+use Magento\Quote\Model\Quote;
 use Payone\Core\Model\ConfigProvider as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Helper\Data;
@@ -41,6 +42,7 @@ use Magento\Payment\Model\Method\AbstractMethod;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
+use Payone\Core\Model\ResourceModel\SavedPaymentData;
 
 class ConfigProviderTest extends BaseTestCase
 {
@@ -91,11 +93,20 @@ class ConfigProviderTest extends BaseTestCase
         $consumerscoreHelper = $this->getMockBuilder(Consumerscore::class)->disableOriginalConstructor()->getMock();
         $consumerscoreHelper->method('canShowPaymentHintText')->willReturn(true);
         $consumerscoreHelper->method('canShowAgreementMessage')->willReturn(true);
+        $savedPaymentData = $this->getMockBuilder(SavedPaymentData::class)->disableOriginalConstructor()->getMock();
+        $savedPaymentData->method('getSavedPaymentData')->willReturn([]);
+
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getCustomerId'])
+            ->getMock();
+        $quote->method('getCustomerId')->willReturn(123);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneCanceledPaymentMethod', 'unsPayoneCanceledPaymentMethod', 'getPayoneIsError'])
+            ->setMethods(['getPayoneCanceledPaymentMethod', 'unsPayoneCanceledPaymentMethod', 'getPayoneIsError', 'getQuote'])
             ->getMock();
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'dataHelper' => $this->dataHelper,
@@ -106,7 +117,8 @@ class ConfigProviderTest extends BaseTestCase
             'requestHelper' => $requestHelper,
             'escaper' => $escaper,
             'consumerscoreHelper' => $consumerscoreHelper,
-            'checkoutSession' => $this->checkoutSession
+            'checkoutSession' => $this->checkoutSession,
+            'savedPaymentData' => $savedPaymentData
         ]);
     }
 
