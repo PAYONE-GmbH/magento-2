@@ -31,7 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class PayoneMethodTest extends BaseTestCase
 {
@@ -101,6 +101,12 @@ class PayoneMethodTest extends BaseTestCase
     public function testNeedsProductInfo()
     {
         $result = $this->classToTest->needsProductInfo();
+        $this->assertFalse($result);
+    }
+
+    public function testNeedsSepaDataOnDebito()
+    {
+        $result = $this->classToTest->needsSepaDataOnDebit();
         $this->assertFalse($result);
     }
 

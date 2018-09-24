@@ -102,7 +102,7 @@ class Managemandate extends AddressRequest
         if ($oInfoInstance->getAdditionalInformation('bic')) {
             $this->addParameter('bic', $oInfoInstance->getAdditionalInformation('bic'));
         }
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote));
 
         $aResponse = $this->send($oPayment);
         if (is_array($aResponse)) {

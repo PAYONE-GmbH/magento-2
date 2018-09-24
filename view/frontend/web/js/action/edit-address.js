@@ -1,4 +1,3 @@
-<?php
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,13 +17,39 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-?>
-<div style="width:100%;">
-    <iframe src="<?php echo $this->getPayoneUrl(); ?>" width="100%" frameborder="0" border="0"
-            style="min-height:1300px; height: 100%; overflow: hidden;">
-    </iframe>
-</div>
+/*jshint browser:true jquery:true*/
+/*global alert*/
+define([
+    'jquery',
+    'Magento_Checkout/js/model/url-builder',
+    'mage/storage',
+    'Magento_Checkout/js/model/full-screen-loader'
+], function ($, urlBuilder, storage, fullScreenLoader) {
+    'use strict';
+
+    return function (addressData) {
+        var serviceUrl = urlBuilder.createUrl('/carts/mine/payone-editAddress', {});
+        var request = {
+            addressData: addressData
+        };
+
+        fullScreenLoader.startLoader();
+
+        return storage.post(
+            serviceUrl,
+            JSON.stringify(request)
+        ).done(
+            function (response) {
+                fullScreenLoader.stopLoader();
+            }
+        ).fail(
+            function (response) {
+                fullScreenLoader.stopLoader();
+            }
+        );
+    };
+});

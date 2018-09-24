@@ -33,7 +33,7 @@ use Payone\Core\Helper\Api;
 use Payone\Core\Model\ResourceModel\CheckedAddresses;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class AddresscheckTest extends BaseTestCase
 {

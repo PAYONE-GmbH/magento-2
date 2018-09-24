@@ -30,6 +30,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Sales\Setup\SalesSetupFactory;
+use Payone\Core\Helper\Shop;
 
 /**
  * Class UpgradeData
@@ -44,13 +45,22 @@ class UpgradeData implements UpgradeDataInterface
     protected $salesSetupFactory;
 
     /**
+     * PAYONE shop helper object
+     *
+     * @var Shop
+     */
+    protected $shopHelper;
+
+    /**
      * Constructor
      *
      * @param SalesSetupFactory $salesSetupFactory
+     * @param Shop              $shopHelper
      */
-    public function __construct(SalesSetupFactory $salesSetupFactory)
+    public function __construct(SalesSetupFactory $salesSetupFactory, Shop $shopHelper)
     {
         $this->salesSetupFactory = $salesSetupFactory;
+        $this->shopHelper = $shopHelper;
     }
 
     /**
@@ -151,7 +161,81 @@ class UpgradeData implements UpgradeDataInterface
                 ['type' => 'varchar', 'length' => 64, 'default' => '']
             );
         }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_refund_iban')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_refund_iban',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_refund_bic')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_refund_bic',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
+
+        $serializedRows = $this->getSerializedConfigRows($setup);
+        if (!empty($serializedRows) && version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) {
+            $this->convertSerializedDataToJson($setup, $serializedRows);
+        }
+
+        if (version_compare($context->getVersion(), '2.2.0', '<=')) {// pre update version is less than or equal to 2.2.1
+            $this->convertPersonstatusMappingConfig($setup);
+        }
+
         $setup->endSetup();
     }
 
+    /**
+     * Fetch all serialized config rows from the payone module from the DB
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @return array
+     */
+    protected function getSerializedConfigRows(ModuleDataSetupInterface $setup)
+    {
+        $select = $setup->getConnection()
+            ->select()
+            ->from($setup->getTable('core_config_data'), ['config_id', 'value'])
+            ->where('path LIKE "%payone%"')
+            ->where('value LIKE "a:%"');
+
+        return $setup->getConnection()->fetchAssoc($select);
+    }
+
+    /**
+     * Convert serialized data to json-encoded data in the core_config_data table
+     *
+     * @param ModuleDataSetupInterface $setup
+     * @param array                    $serializedRows
+     * @return void
+     */
+    protected function convertSerializedDataToJson(ModuleDataSetupInterface $setup, $serializedRows)
+    {
+        foreach ($serializedRows as $id => $serializedRow) {
+            $aValue = unserialize($serializedRow['value']);
+            $sNewValue = json_encode($aValue);
+
+            $data = ['value' => $sNewValue];
+            $where = ['config_id = ?' => $id];
+            $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
+        }
+    }
+
+    /**
+     * Change config path of personstatus mapping configuration
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @return void
+     */
+    protected function convertPersonstatusMappingConfig(ModuleDataSetupInterface $setup)
+    {
+        $data = ['path' => 'payone_protect/personstatus/mapping'];
+        $where = ['path = ?' => 'payone_protect/address_check/mapping_personstatus'];
+        $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
+    }
 }

@@ -194,7 +194,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Invoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Invoice</title>
+                <title>PAYONE - Paysafe Pay Later™ Invoice</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_invoice>
@@ -203,7 +203,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Debit</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Debit</title>
+                <title>PAYONE - Paysafe Pay Later™ Debit</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_debit>
@@ -212,7 +212,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Installment</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Installment</title>
+                <title>PAYONE - Paysafe Pay Later™ Installment</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_installment>
@@ -242,6 +242,7 @@
                 <portalid></portalid>
                 <aid></aid>
                 <key></key>
+                <currency>base</currency>
                 <transmit_ip>1</transmit_ip>
             </global>
             <invoicing>
@@ -280,6 +281,9 @@
             </emails>
         </payone_general>
         <payone_protect>
+            <personstatus>
+                <mapping></mapping>
+            </personstatus>
             <address_check>
                 <enabled>0</enabled>
                 <mode>live</mode>
@@ -287,7 +291,6 @@
                 <check_shipping>NO</check_shipping>
                 <check_billing_for_virtual_order>0</check_billing_for_virtual_order>
                 <confirm_address_correction>0</confirm_address_correction>
-                <mapping_personstatus></mapping_personstatus>
                 <message_response_invalid></message_response_invalid>
                 <handle_response_error>continue_checkout</handle_response_error>
                 <stop_checkout_message></stop_checkout_message>
@@ -325,6 +328,8 @@
             <payone_creditcard>
                 <use_global>1</use_global>
                 <check_cvc>always</check_cvc>
+                <min_validity_period>35</min_validity_period>
+                <save_data_enabled>0</save_data_enabled>
             </payone_creditcard>
             <payone_debit>
                 <use_global>1</use_global>
@@ -378,6 +383,7 @@
             </payone_klarna>
             <payone_safe_invoice>
                 <use_global>1</use_global>
+                <disable_after_refusal>0</disable_after_refusal>
             </payone_safe_invoice>
             <payone_payolution_invoice>
                 <use_global>1</use_global>
@@ -398,6 +404,7 @@
         <payone_misc>
             <processing>
                 <valid_ips><![CDATA[185.60.20.*]]></valid_ips>
+                <proxy_mode>0</proxy_mode>
             </processing>
             <costs>
                 <sku>delivery</sku>

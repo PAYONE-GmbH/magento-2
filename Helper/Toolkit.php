@@ -28,7 +28,9 @@ namespace Payone\Core\Helper;
 
 use Magento\Framework\DataObject;
 use Magento\Sales\Model\Order as SalesOrder;
+use Magento\Store\Model\Store;
 use Payone\Core\Model\Methods\PayoneMethod;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Toolkit class for methods that dont fit in a certain drawer

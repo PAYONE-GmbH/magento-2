@@ -30,9 +30,10 @@ define(
         'mage/url',
         'mage/translate',
         'Magento_Checkout/js/checkout-data',
-        'Magento_Checkout/js/action/select-payment-method'
+        'Magento_Checkout/js/action/select-payment-method',
+        'Magento_Checkout/js/action/place-order'
     ],
-    function (Component, $, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction) {
+    function (Component, $, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction, placeOrderAction) {
         'use strict';
         return Component.extend({
             redirectToPayoneController: function(sUrl) {
@@ -47,15 +48,25 @@ define(
                 this.isPlaceOrderActionAllowed(false);
 
                 this.getPlaceOrderDeferredObject()
-                    .fail(
-                        function () {
-                            self.isPlaceOrderActionAllowed(true);
-                        }
-                    ).done(
+                .fail(
+                    function () {
+                        self.isPlaceOrderActionAllowed(true);
+                    }
+                ).done(
                     function () {
                         self.afterPlaceOrder();
                         self.redirectToPayoneController(sUrl);
                     }
+                );
+            },
+
+            getPlaceOrderDeferredObject: function () {
+                if (window.checkoutConfig.payment.payone.orderDeferredExists === true) {
+                    return this._super();
+                }
+                // fallback for pre 2.1.0 Magentos
+                return $.when(
+                    placeOrderAction(this.getData(), this.redirectAfterPlaceOrder, this.messageContainer)
                 );
             },
 
@@ -86,22 +97,6 @@ define(
                 }
             },
             
-            handleCreditcardPayment: function () {
-                var firstValidation = additionalValidators.validate();
-                if (!(firstValidation)) {
-                    return false;
-                }
-
-                if (this.validate() && firstValidation) {
-                    if (document.getElementById(this.getCode() + '_pseudocardpan').value != '') {
-                        this.handleRedirectAction('payone/onepage/redirect/');
-                        return false;
-                    } else {
-                        this.handleCreditcardCheck();
-                    }
-                }
-            },
-            
             handleDebitPayment: function () {
                 if (this.validate() && additionalValidators.validate()) {
                     if (window.checkoutConfig.payment.payone.validateBankCode == true && window.checkoutConfig.payment.payone.bankCodeValidatedAndValid == false) {
@@ -128,7 +123,7 @@ define(
                 return true;
             },
             initialize: function () {
-                this._super().initChildren();
+                this._super();
                 if(this.getCode() === window.checkoutConfig.payment.payone.canceledPaymentMethod) {
                     selectPaymentMethodAction({method: this.getCode()});
                     checkoutData.setSelectedPaymentMethod(this.item.method);

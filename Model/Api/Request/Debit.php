@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Model\Api\Request;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Payment\Model\InfoInterface;
@@ -81,6 +82,16 @@ class Debit extends Base
     }
 
     /**
+     * Get creditmemo array from request parameters
+     *
+     * @return mixed
+     */
+    protected function getCreditmemoRequestParams()
+    {
+        return $this->shopHelper->getRequestParameter('creditmemo');
+    }
+
+    /**
      * Generate position list for invoice data transmission
      *
      * @param Order $oOrder
@@ -88,14 +99,14 @@ class Debit extends Base
      */
     protected function getInvoiceList(Order $oOrder)
     {
-        $aCreditmemo = $this->shopHelper->getRequestParameter('creditmemo');
+        $aCreditmemo = $this->getCreditmemoRequestParams();
 
         $aPositions = [];
         $blFull = true;
         if ($aCreditmemo && array_key_exists('items', $aCreditmemo) !== false) {
             foreach ($oOrder->getAllItems() as $oItem) {
                 if (isset($aCreditmemo['items'][$oItem->getItemId()]) && $aCreditmemo['items'][$oItem->getItemId()]['qty'] > 0) {
-                    $aPositions[$oItem->getProductId()] = $aCreditmemo['items'][$oItem->getItemId()]['qty'];
+                    $aPositions[$oItem->getProductId().$oItem->getSku()] = $aCreditmemo['items'][$oItem->getItemId()]['qty'];
                     if ($aCreditmemo['items'][$oItem->getItemId()]['qty'] != $oItem->getQtyOrdered()) {
                         $blFull = false;
                     }
@@ -125,6 +136,8 @@ class Debit extends Base
     {
         $oOrder = $oPaymentInfo->getOrder();
 
+        $this->setStoreCode($oOrder->getStore()->getCode());
+
         $aPositions = $this->getInvoiceList($oOrder);
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
@@ -140,8 +153,9 @@ class Debit extends Base
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));
 
         // Total order sum in smallest currency unit
-        $this->addParameter('amount', number_format((-1 * $dAmount), 2, '.', '') * 100);
-        $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // Currency
+        $this->addParameter('amount', number_format((-1 * $dAmount), 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromOrder($oOrder)); // add currency to request
+
         $this->addParameter('transactiontype', 'GT');
 
         $sRefundAppendix = $this->getRefundAppendix($oOrder, $oPayment);
@@ -153,7 +167,21 @@ class Debit extends Base
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
-        // Add debit bank data given - see oxid integration
+        $aCreditmemo = $this->getCreditmemoRequestParams();
+        $sIban = false;
+        $sBic = false;
+        if (!empty($oOrder->getPayoneRefundIban()) && !empty($oOrder->getPayoneRefundBic())) {
+            $sIban = $oOrder->getPayoneRefundIban();
+            $sBic = $oOrder->getPayoneRefundBic();
+        } elseif (isset($aCreditmemo['payone_iban']) && isset($aCreditmemo['payone_bic'])) {
+            $sIban = $aCreditmemo['payone_iban'];
+            $sBic = $aCreditmemo['payone_bic'];
+        }
+
+        if ($sIban !== false && $sBic !== false && $this->isSepaDataValid($sIban, $sBic)) {
+            $this->addParameter('iban', $sIban);
+            $this->addParameter('bic', $sBic);
+        }
 
         $aResponse = $this->send($oPayment);
 
@@ -169,7 +197,7 @@ class Debit extends Base
      */
     protected function getRefundAppendix(Order $oOrder, PayoneMethod $oPayment)
     {
-        $sText = $this->shopHelper->getConfigParam('invoice_appendix_refund', 'invoicing');
+        $sText = $this->shopHelper->getConfigParam('invoice_appendix_refund', 'invoicing', 'payone_general', $this->storeCode);
         $sCreditMemoIncrId = '';
         $sInvoiceIncrementId = '';
         $sInvoiceId = '';
@@ -194,5 +222,64 @@ class Debit extends Base
         ];
         $sRefundAppendix = $this->toolkitHelper->handleSubstituteReplacement($sText, $aSubstitutionArray, 255);
         return $sRefundAppendix;
+    }
+
+    /**
+     * Validate IBAN
+     *
+     * @param  string $sIban
+     * @return bool
+     */
+    protected function isIbanValid($sIban)
+    {
+        $sRegex = '/^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}(?:[a-zA-Z0-9]?){0,16}$/';
+        return $this->checkRegex($sRegex, $sIban);
+    }
+
+    /**
+     * Check if the regex validates correctly
+     *
+     * @param  string $sRegex
+     * @param  string $sValue
+     * @return bool
+     */
+    protected function checkRegex($sRegex, $sValue)
+    {
+        preg_match($sRegex, str_replace(' ', '', $sValue), $aMatches);
+        if (empty($aMatches)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validate IBAN
+     *
+     * @param  string $sBic
+     * @return bool
+     */
+    protected function isBicValid($sBic)
+    {
+        $sRegex = '/^([a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?)$/';
+        return $this->checkRegex($sRegex, $sBic);
+    }
+
+    /**
+     * Check IBAN and BIC fields
+     *
+     * @param  string $sIban
+     * @param  string $sBic
+     * @return bool
+     * @throws LocalizedException
+     */
+    public function isSepaDataValid($sIban, $sBic)
+    {
+        if (!$this->isIbanValid($sIban)) {
+            throw new LocalizedException(__('The given IBAN is invalid!'));
+        }
+        if (!$this->isBicValid($sBic)) {
+            throw new LocalizedException(__('The given BIC is invalid!'));
+        }
+        return true;
     }
 }

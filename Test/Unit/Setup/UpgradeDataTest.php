@@ -34,7 +34,8 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Helper\Shop;
 
 class UpgradeDataTest extends BaseTestCase
 {
@@ -59,21 +60,36 @@ class UpgradeDataTest extends BaseTestCase
             ->getMock();
         $salesSetupFactory->method('create')->willReturn($salesSetup);
 
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getMagentoVersion')->willReturn('2.2.0');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'salesSetupFactory' => $salesSetupFactory
+            'salesSetupFactory' => $salesSetupFactory,
+            'shopHelper' => $shopHelper
         ]);
     }
 
     public function testInstall()
     {
-        $connection = $this->getMockBuilder(Mysql::class)->disableOriginalConstructor()->getMock();
+        $fetchResult = [['value' => serialize(['a' => 'b'])]];
+
+        $connection = $this->getMockBuilder(Mysql::class)
+            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->method('tableColumnExists')->willReturn(false);
+        $connection->method('select')->willReturn($connection);
+        $connection->method('from')->willReturn($connection);
+        $connection->method('where')->willReturn($connection);
+        $connection->method('update')->willReturn(1);
+        $connection->method('fetchAssoc')->willReturn($fetchResult);
 
         $setup = $this->getMockBuilder(ModuleDataSetupInterface::class)->disableOriginalConstructor()->getMock();
         $setup->method('getTable')->willReturn('table');
         $setup->method('getConnection')->willReturn($connection);
 
         $context = $this->getMockBuilder(ModuleContextInterface::class)->disableOriginalConstructor()->getMock();
+        $context->method('getVersion')->willReturn('2.0.1');
 
         $result = $this->classToTest->upgrade($setup, $context);
         $this->assertNull($result);

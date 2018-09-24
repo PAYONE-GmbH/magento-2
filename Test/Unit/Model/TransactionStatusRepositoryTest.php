@@ -32,7 +32,7 @@ use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\ResourceModel\TransactionStatus as ResourceModel;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class TransactionStatusRepositoryTest extends BaseTestCase
 {

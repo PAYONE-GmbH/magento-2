@@ -32,7 +32,7 @@ use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\UrlInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class ExpressButtonTest extends BaseTestCase
 {

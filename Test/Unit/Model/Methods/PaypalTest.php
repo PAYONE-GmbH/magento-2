@@ -32,7 +32,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Url;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class PaypalTest extends BaseTestCase
 {
@@ -79,6 +79,8 @@ class PaypalTest extends BaseTestCase
     public function testGetPaymentSpecificParameters()
     {
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+
+        $this->classToTest->setIsPayPalExpress(true);
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
         $expected = ['wallettype' => 'PPE', 'workorderid' => '12345'];

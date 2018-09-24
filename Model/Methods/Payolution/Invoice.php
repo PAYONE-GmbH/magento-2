@@ -75,6 +75,9 @@ class Invoice extends PayolutionBase
      */
     public function authorize(InfoInterface $payment, $amount)
     {
+        if ($this->shopHelper->getConfigParam('currency') == 'display') {
+            $amount = $payment->getOrder()->getTotalDue(); // send display amount instead of base amount
+        }
         $this->sendPayonePreCheck($amount);
         return parent::authorize($payment, $amount);
     }

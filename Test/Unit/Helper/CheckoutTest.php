@@ -33,7 +33,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Customer\Model\Session;
 use Magento\Checkout\Helper\Data;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class CheckoutTest extends BaseTestCase
 {

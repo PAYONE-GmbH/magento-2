@@ -25,7 +25,7 @@
  */
 -->
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
-    <group id="payone_safe_invoice" translate="label" type="text" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
+    <group id="payone_safe_invoice" translate="label" type="text" sortOrder="233" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Safe Invoice</label>
         <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Enabled</label>
@@ -56,6 +56,11 @@
         <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Sort Order</label>
             <config_path>payment/payone_safe_invoice/sort_order</config_path>
+        </field>
+        <field id="disable_after_refusal" translate="label,tooltip" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Disable directly after refusal</label>
+            <tooltip>Enables a Javascript-Mixin for the error-processor. This could collide with other extensions of the error-processor. Only activate if needed.</tooltip>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <include path="Payone_Core::system/default_fields.xml"/>
     </group>

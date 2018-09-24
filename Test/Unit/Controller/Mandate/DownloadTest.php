@@ -38,7 +38,7 @@ use Magento\Sales\Model\Order\Payment AS OrderPayment;
 use Payone\Core\Model\Methods\Debit;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class DownloadTest extends BaseTestCase
 {

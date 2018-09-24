@@ -37,7 +37,7 @@ use Magento\Framework\App\Console\Response;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\UrlInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 
 class ReturnedTest extends BaseTestCase

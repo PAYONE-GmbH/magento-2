@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,44 +18,16 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Block\Adminhtml;
-
-use Magento\Framework\Phrase;
-
-/**
- * Admin information-page block
- */
-class Information extends \Magento\Backend\Block\Template
-{
-    /**
-     * Template
-     *
-     * @var string
-     */
-    protected $_template = 'information.phtml';
-
-    /**
-     * Get header
-     *
-     * @return Phrase
-     */
-    public function getHeader()
-    {
-        return __('Information');
-    }
-
-    /**
-     * Get link to PAYONE information site
-     *
-     * @return string
-     */
-    public function getPayoneUrl()
-    {
-        return '//www.payone.de/embedded-sites/magento/information/';
-    }
-}
+$instructions = $block->getMethod()->getInstructions();
+?>
+<?php if ($instructions): ?>
+    <?php $methodCode = $block->escapeHtml($block->getMethodCode());?>
+    <div class="items <?php /* @noEscape */ echo $methodCode ?> instructions agreement" id="payment_form_<?php /* @noEscape */ echo $methodCode ?>" style="display: none;">
+        <?php /* @noEscape */ echo nl2br($block->escapeHtml($instructions)) ?>
+    </div>
+<?php endif; ?>

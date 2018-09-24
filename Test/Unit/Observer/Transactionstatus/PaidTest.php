@@ -34,10 +34,11 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 use Payone\Core\Helper\Base;
 use Payone\Core\Model\Methods\Creditcard;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class PaidTest extends BaseTestCase
 {
@@ -75,11 +76,16 @@ class PaidTest extends BaseTestCase
         $method->method('getCode')->willReturn(PayoneConfig::METHOD_CREDITCARD);
 
         $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getLastTransId')->willReturn('123');
         $payment->method('getMethodInstance')->willReturn($method);
+
+        $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
+
+        $invoiceCollection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()->getMock();
+        $invoiceCollection->method('getItems')->willReturn([$invoice]);
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getPayment')->willReturn($payment);
+        $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);

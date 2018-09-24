@@ -107,6 +107,20 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $checkoutSession;
 
     /**
+     * PAYONE shop helper
+     *
+     * @var \Payone\Core\Helper\Shop
+     */
+    protected $shopHelper;
+
+    /**
+     * Resource model for saved payment data
+     *
+     * @var \Payone\Core\Model\ResourceModel\SavedPaymentData
+     */
+    protected $savedPaymentData;
+
+    /**
      * Constructor
      *
      * @param \Magento\Payment\Model\CcConfig                      $ccConfig
@@ -120,6 +134,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @param \Payone\Core\Helper\Consumerscore                    $consumerscoreHelper
      * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
      * @param \Magento\Checkout\Model\Session                      $checkoutSession
+     * @param \Payone\Core\Helper\Shop                             $shopHelper
+     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData    $savedPaymentData
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -132,7 +148,9 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Magento\Framework\Escaper $escaper,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -145,6 +163,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->privacyDeclaration = $privacyDeclaration;
         $this->checkoutSession = $checkoutSession;
+        $this->shopHelper = $shopHelper;
+        $this->savedPaymentData = $savedPaymentData;
     }
 
     /**
@@ -197,16 +217,18 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'hostedRequest' => $this->requestHelper->getHostedIframeRequest(),
             'mandateManagementActive' => $this->paymentHelper->isMandateManagementActive(),
             'checkCvc' => (bool)$this->paymentHelper->isCheckCvcActive(),
+            'ccMinValidity' => $this->requestHelper->getConfigParam('min_validity_period', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'requestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
             'requestIbanBicSofortUeberweisung' => (bool)$this->requestHelper->getConfigParam('show_iban', PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG, 'payone_payment'),
             'validateBankCode' => (bool)$this->requestHelper->getConfigParam('check_bankaccount', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
+            'disableSafeInvoice' => (bool)$this->requestHelper->getConfigParam('disable_after_refusal', PayoneConfig::METHOD_SAFE_INVOICE, 'payone_payment'),
             'bankaccountcheckRequest' => $this->requestHelper->getBankaccountCheckRequest(),
             'bankCodeValidatedAndValid' => false,
             'blockedMessage' => $this->paymentHelper->getBankaccountCheckBlockedMessage(),
             'epsBankGroups' => Eps::getBankGroups(),
             'idealBankGroups' => Ideal::getBankGroups(),
             'customerHasGivenGender' => $this->customerHelper->customerHasGivenGender(),
-            'customerHasGivenBirthday' => $this->customerHelper->customerHasGivenBirthday(),
+            'customerBirthday' => $this->customerHelper->getCustomerBirthday(),
             'addresscheckEnabled' => (int)$this->requestHelper->getConfigParam('enabled', 'address_check', 'payone_protect'),
             'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
             'addresscheckShippingEnabled' => $this->requestHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
@@ -217,7 +239,11 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'agreementMessage' => $this->requestHelper->getConfigParam('agreement_message', 'creditrating', 'payone_protect'),
             'payolution' => $this->getPayolutionConfig(),
             'canceledPaymentMethod' => $this->getCanceledPaymentMethod(),
-            'isError' => $this->checkoutSession->getPayoneIsError()
+            'isError' => $this->checkoutSession->getPayoneIsError(),
+            'klarnaStoreIds' => $this->paymentHelper->getKlarnaStoreIds(),
+            'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>='),
+            'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
+            'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId()),
         ];
     }
 

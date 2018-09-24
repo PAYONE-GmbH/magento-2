@@ -31,8 +31,14 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Payone\Core\Model\Methods\Creditcard;
+use Magento\Sales\Model\Order\Payment;
+use Payone\Core\Model\PayoneConfig;
+use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Sales\Model\Order\Invoice;
+use Payone\Core\Helper\Base;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class AppointedTest extends BaseTestCase
 {
@@ -57,14 +63,36 @@ class AppointedTest extends BaseTestCase
 
         $this->orderSender = $this->getMockBuilder(OrderSender::class)->disableOriginalConstructor()->getMock();
 
+        $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
+
+        $invoiceService = $this->getMockBuilder(InvoiceService::class)->disableOriginalConstructor()->getMock();
+        $invoiceService->method('prepareInvoice')->willReturn($invoice);
+
+        $baseHelper = $this->getMockBuilder(Base::class)->disableOriginalConstructor()->getMock();
+        $baseHelper->method('getConfigParam')->willReturn('1');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'orderSender' => $this->orderSender
+            'orderSender' => $this->orderSender,
+            'invoiceService' => $invoiceService,
+            'baseHelper' => $baseHelper
         ]);
     }
 
     public function testExecute()
     {
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $method = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
+        $method->method('getCode')->willReturn(PayoneConfig::METHOD_CREDITCARD);
+
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getLastTransId')->willReturn('123');
+        $payment->method('getMethodInstance')->willReturn($method);
+
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save'])
+            ->getMock();
+        $order->method('getPayment')->willReturn($payment);
+        $order->method('getPayoneAuthmode')->willReturn('authorization');
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
@@ -78,7 +106,19 @@ class AppointedTest extends BaseTestCase
         $exception = new \Exception();
         $this->orderSender->method('send')->willThrowException($exception);
 
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $method = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
+        $method->method('getCode')->willReturn(PayoneConfig::METHOD_ADVANCE_PAYMENT);
+
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getLastTransId')->willReturn('123');
+        $payment->method('getMethodInstance')->willReturn($method);
+
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save'])
+            ->getMock();
+        $order->method('getPayment')->willReturn($payment);
+        $order->method('getPayoneAuthmode')->willReturn('authorization');
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);

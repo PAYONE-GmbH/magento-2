@@ -30,6 +30,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Model\Exception\AuthorizationException;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order;
+use Magento\Framework\DataObject;
 
 /**
  * Abstract model for all the PAYONE payment methods
@@ -71,8 +72,14 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneDebit(InfoInterface $payment, $amount)
     {
+        if ($this->shopHelper->getConfigParam('currency') == 'display' && $payment->getCreditmemo()) {
+            $amount = $payment->getCreditmemo()->getGrandTotal(); // send display amount instead of base amount
+        }
         $aResponse = $this->debitRequest->sendRequest($this, $payment, $amount);
         if ($aResponse['status'] == 'ERROR') {
+            $this->checkoutSession->setPayoneDebitRequest($this->debitRequest->getParameters());
+            $this->checkoutSession->setPayoneDebitResponse($this->debitRequest->getResponse());
+            $this->checkoutSession->setPayoneDebitOrderId($this->debitRequest->getOrderId());
             throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
         } elseif (!$aResponse) {
             throw new LocalizedException(__('Unkown error'));
@@ -89,6 +96,10 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneCapture(InfoInterface $payment, $amount)
     {
+        if ($this->shopHelper->getConfigParam('currency') == 'display' && $payment->getOrder()->hasInvoices()) {
+            $oInvoice = $payment->getOrder()->getInvoiceCollection()->getLastItem();
+            $amount = $oInvoice->getGrandTotal(); // send display amount instead of base amount
+        }
         $aResponse = $this->captureRequest->sendRequest($this, $payment, $amount);
         if ($aResponse['status'] == 'ERROR') {// request returned an error
             throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
@@ -124,6 +135,16 @@ abstract class PayoneMethod extends BaseMethod
         $this->unsetSessionStatusFlags();
         $oOrder = $payment->getOrder();
         $oOrder->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
+
+        if ($this->shopHelper->getConfigParam('currency') == 'display') {
+            $amount = $oOrder->getTotalDue(); // send display amount instead of base amount
+        }
+
+        $this->checkoutSession->unsPayoneRedirectUrl(); // remove redirect url from session
+        $this->checkoutSession->unsPayoneRedirectedPaymentMethod();
+        $this->checkoutSession->unsPayoneCanceledPaymentMethod();
+        $this->checkoutSession->unsPayoneIsError();
+
         $aResponse = $this->authorizationRequest->sendRequest($this, $oOrder, $amount);
         $aResponse = $this->handleResponse($aResponse, $oOrder, $amount);
         if ($aResponse['status'] == 'ERROR') {// request returned an error
@@ -150,6 +171,36 @@ abstract class PayoneMethod extends BaseMethod
     {
         // hook for certain payment methods
         return $aResponse;
+    }
+
+
+    /**
+     * Convert DataObject to needed array format
+     * Hook for overriding in specific payment type class
+     *
+     * @param  DataObject $data
+     * @return array
+     */
+    protected function getPaymentStorageData(DataObject $data)
+    {
+        return [];
+    }
+
+    /**
+     * Check config and save payment data
+     *
+     * @param  DataObject $data
+     * @return void
+     */
+    protected function handlePaymentDataStorage(DataObject $data)
+    {
+        if ((bool)$this->getCustomConfigParam('save_data_enabled') === true) {
+            $aPaymentData = $this->getPaymentStorageData($data);
+            $iCustomerId = $this->checkoutSession->getQuote()->getCustomerId();
+            if (!empty($aPaymentData) && $iCustomerId) {
+                $this->savedPaymentData->addSavedPaymentData($iCustomerId, $this->getCode(), $aPaymentData);
+            }
+        }
     }
 
     /**
@@ -221,6 +272,17 @@ abstract class PayoneMethod extends BaseMethod
     public function needsProductInfo()
     {
         return $this->blNeedsProductInfo;
+    }
+
+
+    /**
+     * Return if bank data has to be added to the debit request
+     *
+     * @return bool
+     */
+    public function needsSepaDataOnDebit()
+    {
+        return $this->blNeedsSepaDataOnDebit;
     }
 
     /**

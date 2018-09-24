@@ -40,7 +40,7 @@ class Creditcard extends Base
     {
         $aTypes = CreditcardTypes::getCreditcardTypes();
         if (array_key_exists($sShortType, $aTypes) !== false) {
-            return $aTypes[$sShortType];
+            return $aTypes[$sShortType]['name'];
         }
         return '';
     }
@@ -59,13 +59,19 @@ class Creditcard extends Base
         $transport = parent::_prepareSpecificInformation($transport);
         $data = [];
 
-        $oStatus = $this->getAppointedStatus();
+        $oInfo = $this->getInfo();
+        if ($oInfo->getAdditionalInformation('truncatedcardpan')) {
+            $data[(string)__('Credit Card Type:')] = $this->getCreditcardType($oInfo->getAdditionalInformation('cardtype'));
+            $data[(string)__('Credit Card Number:')] = $oInfo->getAdditionalInformation('truncatedcardpan');
+            $data[(string)__('Expiration Date:')] = $oInfo->getAdditionalInformation('cardexpiredate');
+        } else {
+            $oStatus = $this->getAppointedStatus();
+            $data[(string)__('Credit Card Type:')] = $this->getCreditcardType($oStatus->getCardtype());
+            $data[(string)__('Credit Card Number:')] = $oStatus->getCardpan();
+            $data[(string)__('Expiration Date:')] = $oStatus->getCardexpiredate();
+        }
 
-        $data[(string)__('Credit Card Type:')] = $this->getCreditcardType($oStatus->getCardtype());
-        $data[(string)__('Credit Card Number:')] = $oStatus->getCardpan();
-        $data[(string)__('Expiration Date:')] = $oStatus->getCardexpiredate();
-
-        $sTransId = $this->getInfo()->getLastTransId();
+        $sTransId = $oInfo->getLastTransId();
         if ($sTransId == '') {
             $data[(string)__('Payment has not been processed yet.')] = '';
         } else {

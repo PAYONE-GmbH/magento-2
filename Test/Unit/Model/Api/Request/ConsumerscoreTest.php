@@ -37,7 +37,7 @@ use Payone\Core\Model\ResourceModel\CheckedAddresses;
 use Payone\Core\Model\Source\AddressCheckType;
 use Payone\Core\Model\Source\CreditratingCheckType;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class ConsumerscoreTest extends BaseTestCase
 {

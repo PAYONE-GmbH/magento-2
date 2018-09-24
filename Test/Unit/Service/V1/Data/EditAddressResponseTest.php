@@ -19,48 +19,38 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Block\Adminhtml;
+namespace Payone\Core\Test\Unit\Service\V1\Data;
 
-use Payone\Core\Block\Adminhtml\Information as ClassToTest;
+use Payone\Core\Service\V1\Data\EditAddressResponse as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class InformationTest extends BaseTestCase
+class EditAddressResponseTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
      */
     private $classToTest;
 
-    /**
-     * @var ObjectManager|PayoneObjectManager
-     */
-    private $objectManager;
-
     protected function setUp()
     {
-        $this->objectManager = $this->getObjectManager();
+        $objectManager = $this->getObjectManager();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $this->classToTest = $objectManager->getObject(ClassToTest::class, [
+            'data' => ['success' => 'success']
+        ]);
     }
 
-    public function testGetHeader()
+    public function testGetSuccess()
     {
-        $result = $this->classToTest->getHeader();
-        $expected = 'Information';
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testGetPayoneUrl()
-    {
-        $result = $this->classToTest->getPayoneUrl();
-        $expected = '//www.payone.de/embedded-sites/magento/information/';
+        $result = $this->classToTest->getSuccess();
+        $expected = 'success';
         $this->assertEquals($expected, $result);
     }
 }

@@ -107,6 +107,7 @@ class PayolutionBase extends PayoneMethod
      * @param \Payone\Core\Model\Api\Request\Debit                    $debitRequest
      * @param \Payone\Core\Model\Api\Request\Capture                  $captureRequest
      * @param \Payone\Core\Model\Api\Request\Authorization            $authorizationRequest
+     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData       $savedPaymentData
      * @param \Payone\Core\Model\Api\Request\Genericpayment\PreCheck  $precheckRequest
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
@@ -127,12 +128,13 @@ class PayolutionBase extends PayoneMethod
         \Payone\Core\Model\Api\Request\Debit $debitRequest,
         \Payone\Core\Model\Api\Request\Capture $captureRequest,
         \Payone\Core\Model\Api\Request\Authorization $authorizationRequest,
+        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
         \Payone\Core\Model\Api\Request\Genericpayment\PreCheck $precheckRequest,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $resource, $resourceCollection, $data);
+        parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $savedPaymentData, $resource, $resourceCollection, $data);
         $this->precheckRequest = $precheckRequest;
     }
 
@@ -169,14 +171,16 @@ class PayolutionBase extends PayoneMethod
     /**
      * Method to trigger the Payone genericpayment request pre-check
      *
-     * @param  float       $dAmount
-     * @param  string|bool $sBirthday
+     * @param  float $dAmount
      * @return array
      * @throws LocalizedException
      */
     public function sendPayonePreCheck($dAmount)
     {
         $oQuote = $this->checkoutSession->getQuote();
+        if ($this->shopHelper->getConfigParam('currency') == 'display') {
+            $dAmount = $oQuote->getGrandTotal(); // send display amount instead of base amount
+        }
         $aResponse = $this->precheckRequest->sendRequest($this, $oQuote, $dAmount);
 
         if ($aResponse['status'] == 'ERROR') {// request returned an error

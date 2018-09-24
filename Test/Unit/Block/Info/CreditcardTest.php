@@ -33,7 +33,7 @@ use Magento\Payment\Model\Info;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Payone\Core\Model\TransactionStatusRepository;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class CreditcardTest extends BaseTestCase
 {
@@ -69,7 +69,7 @@ class CreditcardTest extends BaseTestCase
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getLastTransId', 'getOrder'])
+            ->setMethods(['getLastTransId', 'getOrder', 'getAdditionalInformation'])
             ->getMock();
         $this->info->method('getOrder')->willReturn($order);
 
@@ -122,6 +122,7 @@ class CreditcardTest extends BaseTestCase
     public function testPrepareSpecificInformationNoLastTransId()
     {
         $this->info->method('getLastTransId')->willReturn('');
+        $this->info->method('getAdditionalInformation')->willReturn('123');
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertArrayHasKey('Payment has not been processed yet.', $result);

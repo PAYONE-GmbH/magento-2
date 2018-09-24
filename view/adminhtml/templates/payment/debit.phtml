@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2017 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var Payone\Core\Block\Form\Debit $block */
+
+$code = $block->escapeHtml($block->getMethodCode());
+
+?>
+<fieldset class="admin__fieldset payment-method"
+          id="payment_form_<?php /* @noEscape */ echo $code; ?>"
+          style="display:none"
+>
+    <div class="admin__field _required">
+        <label class="label admin__field-label" for="<?php /* @noEscape */ echo $code; ?>_country" >
+            <span><?php echo $block->escapeHtml(__('Bank country')); ?></span>
+        </label>
+        <div class="admin__field-control control">
+            <select id="<?php /* @noEscape */ echo $code; ?>_country" name="payment[bank_country]"
+                    class="required-entry select admin__control-select validate-cc-type-select">
+                <?php foreach ($block->getSepaCountries() as $country): ?>
+                    <option value="<?php echo $block->escapeHtml($country['id']); ?>"
+                        <?php if($country['id'] == $block->getInfoData('bank_country')): ?> selected="selected"<?php endif; ?>>
+                        <?php echo $block->escapeHtml($country['title']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+    <div class="admin__field _required">
+        <label class="label admin__field-label" for="<?php /* @noEscape */ echo $code; ?>_iban">
+            <span><?php echo $block->escapeHtml(__('IBAN')); ?></span>
+        </label>
+        <div class="admin__field-control control">
+            <input id="<?php /* @noEscape */ echo $code; ?>_iban" name="payment[iban]" value="<?php echo $block->getInfoData('iban'); ?>">
+        </div>
+    </div>
+
+    <?php if ($block->isBicNeeded()): ?>
+        <div class="admin__field _required">
+            <label class="label admin__field-label" for="<?php /* @noEscape */ echo $code; ?>_bic">
+                <span><?php echo $block->escapeHtml(__('BIC')); ?></span>
+            </label>
+            <div class="admin__field-control control">
+                <input id="<?php /* @noEscape */ echo $code; ?>_bic" name="payment[bic]" value="<?php echo $block->getInfoData('bic'); ?>">
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <input type="submit" name="Submit" style="display: none;">
+</fieldset>

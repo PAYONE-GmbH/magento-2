@@ -39,12 +39,12 @@ class PreCheck extends Base
      *
      * @param  PayoneMethod $oPayment payment object
      * @param  Quote        $oQuote   order object
-     * @param  float        $dAmount  order sum amount
+     * @param  float|bool   $dAmount  order sum amount
      * @param  string|bool  $sBirthday
      * @param  string|bool  $sEmail
      * @return array
      */
-    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote, $dAmount, $sBirthday = false, $sEmail = false)
+    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote, $dAmount = false, $sBirthday = false, $sEmail = false)
     {
         $this->addParameter('request', 'genericpayment');
         $this->addParameter('add_paydata[action]', 'pre_check');
@@ -57,8 +57,11 @@ class PreCheck extends Base
         $this->addParameter('financingtype', $oPayment->getSubType());
         $this->addParameter('add_paydata[payment_type]', $oPayment->getLongSubType());
 
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
+        if ($dAmount === false) {
+            $dAmount = $this->apiHelper->getQuoteAmount($oQuote);
+        }
+        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote)); // add currency to request
 
         if ($sEmail === false) {
             $sEmail = $oQuote->getCustomerEmail();

@@ -87,13 +87,13 @@ class Customer extends \Payone\Core\Helper\Base
     /**
      * Determine if the customer entered his birthday
      *
-     * @return bool
+     * @return string|bool
      */
-    public function customerHasGivenBirthday()
+    public function getCustomerBirthday()
     {
         $oCustomer = $this->checkoutSession->getQuote()->getCustomer();
         if ($oCustomer && $oCustomer->getDob()) {
-            return true;
+            return $oCustomer->getDob();
         }
         return false;
     }

@@ -36,7 +36,7 @@ use Magento\Quote\Model\Quote\Address;
 use Magento\Payment\Model\Info;
 use Payone\Core\Helper\Environment;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class PreCheckTest extends BaseTestCase
 {
@@ -114,7 +114,7 @@ class PreCheckTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($payment, $quote, 100, 'birthday');
+        $result = $this->classToTest->sendRequest($payment, $quote, false, 'birthday');
         $this->assertEquals($response, $result);
     }
 }

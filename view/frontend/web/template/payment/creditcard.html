@@ -46,102 +46,135 @@
             <input type="hidden" name="payment[cc_pseudocardpan]" value=""
                    data-bind="attr: {autocomplete: off, id: getCode() + '_pseudocardpan'},
                               value: pseudocardpan">
+
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'payone_form_cc'}">
-                <div class="field">
-                    <label data-bind="attr: {for: getCode() + '_credit_card_type'}" class="label">
-                        <span><!-- ko i18n: 'Credit Card Type'--><!-- /ko --></span>
-                    </label>
-                    <div class='control'>
-                        <select style="width:200px;" name="payment[cc_type]" class="select"
-                            data-bind=" attr: {id: getCode() + '_credit_card_type', 'data-container': getCode() + '_credit_card_type'},
-                                        mageInit: {creditCardType:{creditCardTypeContainer:'#' + getCode() + '_credit_card_type_ss_div'}},
-                                        enable: true,
-                                        options: getCreditcardTypes(),
-                                        optionsValue: 'id',
-                                        optionsText: 'title',
-                                        optionsCaption: $t('--Please Select--')">
-                        </select>
+                <!-- ko if: useSaveDataMode() -->
+                <div data-bind="foreach: getSavedPaymentData()">
+                    <div class="payment-method">
+                        <div class="payment-method-title field choice">
+                            <input data-bind="attr: {id: $parent.getCode() + '_data_' + $data.id, name: $parent.getCode() + '_saved_data'}, value: $data.payment_data.cardpan, event: { change: $parent.handleNewDataVisibility }" type="radio" class="radio"/>
+                            <label data-bind="attr: {for: $parent.getCode() + '_data_' + $data.id}" class="label">
+                                <img data-bind="attr: {src: 'https://cdn.pay1.de/cc/' + $data.payment_data.cardtype.toLowerCase() + '/s/default.png'}"/>
+                                <!-- ko i18n: 'ends with'--><!-- /ko -->
+                                <span data-bind="text: '-' + $data.payment_data.masked.substring(($data.payment_data.masked.length-4), $data.payment_data.masked.length)"></span>
+                                <span data-bind="text: $data.payment_data.firstname + ' ' + $data.payment_data.lastname" class="cardholder"></span>
+                                <span data-bind="text: $data.payment_data.cardexpiredate.substring(2, 4) + '/20' + $data.payment_data.cardexpiredate.substring(0, 2)"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_firstname'}" class="label">
-                        <span><!-- ko i18n: 'Firstname'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[cc_firstname]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_firstname',
-                                    title: $t('Firstname'),
-                                    'data-container': getCode() + '-firstname'},
-                              value: firstname,
-                              valueUpdate: 'keyup' "/>
+                <div class="payment-method">
+                    <div class="payment-method-title field choice">
+                        <input data-bind="attr: {id: getCode() + '_new_data', name: getCode() + '_saved_data'}, event: { change: handleNewDataVisibility }" type="radio" class="radio" value="new"/>
+                        <label data-bind="attr: {for: getCode() + '_new_data'}" class="label"><!-- ko i18n: 'Add new creditcard'--><!-- /ko --></label>
                     </div>
                 </div>
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_lastname'}" class="label">
-                        <span><!-- ko i18n: 'Lastname'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[cc_lastname]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_lastname',
-                                    title: $t('Lastname'),
-                                    'data-container': getCode() + '-lastname'},
-                              value: lastname,
-                              valueUpdate: 'keyup' "/>
+                <!--/ko-->
+                <div data-bind="attr: {id: getCode() + '_new_data_container'}" class="fieldset ccard">
+                    <div class="field">
+                        <label data-bind="attr: {for: getCode() + '_credit_card_type'}" class="label">
+                            <span><!-- ko i18n: 'Credit Card Type'--><!-- /ko --></span>
+                        </label>
+                        <div class='control'>
+                            <select style="width:200px;" name="payment[cc_type]" class="select"
+                                    data-bind=" attr: {id: getCode() + '_credit_card_type', 'data-container': getCode() + '_credit_card_type'},
+                                            mageInit: {creditCardType:{creditCardTypeContainer:'#' + getCode() + '_credit_card_type_ss_div'}},
+                                            enable: true,
+                                            options: getCreditcardTypes(),
+                                            optionsValue: 'id',
+                                            optionsText: 'title',
+                                            optionsCaption: $t('--Please Select--')">
+                            </select>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_cc_number'}" class="label">
-                        <span><!-- ko i18n: 'Credit Card Number'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <span id="cardpan" class="inputIframe"></span>
+
+                    <div class="field number required">
+                        <label data-bind="attr: {for: getCode() + '_firstname'}" class="label">
+                            <span><!-- ko i18n: 'Firstname'--><!-- /ko --></span>
+                        </label>
+                        <div class="control">
+                            <input type="text" name="payment[cc_firstname]" class="input-text" value=""
+                                   data-bind="attr: {
+                                        autocomplete: off,
+                                        id: getCode() + '_firstname',
+                                        title: $t('Firstname'),
+                                        'data-container': getCode() + '-firstname'},
+                                  value: firstname,
+                                  valueUpdate: 'keyup' "/>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="field date required" data-bind="attr: {id: getCode() + '_cc_type_exp_div'}">
-                    <label data-bind="attr: {for: getCode() + '_expiration'}" class="label">
-                        <span><!-- ko i18n: 'Expiration Date'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <div class="fields group group-2">
-                            <div class="field no-label month">
-                                <div class="control">
-                                    <span id="cardexpiremonth"></span>
+                    <div class="field number required">
+                        <label data-bind="attr: {for: getCode() + '_lastname'}" class="label">
+                            <span><!-- ko i18n: 'Lastname'--><!-- /ko --></span>
+                        </label>
+                        <div class="control">
+                            <input type="text" name="payment[cc_lastname]" class="input-text" value=""
+                                   data-bind="attr: {
+                                        autocomplete: off,
+                                        id: getCode() + '_lastname',
+                                        title: $t('Lastname'),
+                                        'data-container': getCode() + '-lastname'},
+                                  value: lastname,
+                                  valueUpdate: 'keyup' "/>
+                        </div>
+                    </div>
+
+                    <div class="field number required">
+                        <label data-bind="attr: {for: getCode() + '_cc_number'}" class="label">
+                            <span><!-- ko i18n: 'Credit Card Number'--><!-- /ko --></span>
+                        </label>
+                        <div class="control">
+                            <span id="cardpan" class="inputIframe"></span>
+                        </div>
+                    </div>
+
+                    <div class="field date required" data-bind="attr: {id: getCode() + '_cc_type_exp_div'}">
+                        <label data-bind="attr: {for: getCode() + '_expiration'}" class="label">
+                            <span><!-- ko i18n: 'Expiration Date'--><!-- /ko --></span>
+                        </label>
+                        <div class="control">
+                            <div class="fields group group-2">
+                                <div class="field no-label month">
+                                    <div class="control">
+                                        <span id="cardexpiremonth"></span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="field no-label year">
-                                <div class="control">
-                                    <span id="cardexpireyear"></span>
+                                <div class="field no-label year">
+                                    <div class="control">
+                                        <span id="cardexpireyear"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- ko if: showCvc() -->
-                <div class="field cvv required" data-bind="attr: {id: getCode() + '_cc_type_cvv_div'}">
-                    <label data-bind="attr: {for: getCode() + '_cc_cid'}" class="label">
-                        <span><!-- ko i18n: 'Card Verification Number'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <span id="cardcvc2" class="inputIframe"></span>
+
+                    <!-- ko if: showCvc() -->
+                    <div class="field cvv required" data-bind="attr: {id: getCode() + '_cc_type_cvv_div'}">
+                        <label data-bind="attr: {for: getCode() + '_cc_cid'}" class="label">
+                            <span><!-- ko i18n: 'Card Verification Number'--><!-- /ko --></span>
+                        </label>
+                        <div class="control">
+                            <span id="cardcvc2" class="inputIframe"></span>
+                        </div>
                     </div>
+                    <!--/ko-->
+
+                    <!-- ko if: isSaveDataEnabled() -->
+                    <input type="checkbox" data-bind="attr: {id: getCode() + '_save_data_checkbox'}, checked: saveData" />
+                    <label data-bind="attr: {for: getCode() + '_save_data_checkbox'}" class="required" style="float:none;">
+                        <!-- ko i18n: 'Save the payment data for future use.'--><!-- /ko --><br>
+                    </label>
+                    <!--/ko-->
                 </div>
-                <!--/ko-->
             </fieldset>
         </form>
         <div data-bind="html: handleIframes()"></div>
+        <span data-bind="html: markDefaultSavedPayment()"></span>
 
         <p data-bind="html: getInstructions()"></p>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
-                <!-- ko template: getTemplate() --><!-- /ko -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
         <div class="actions-toolbar">

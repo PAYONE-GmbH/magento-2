@@ -49,6 +49,13 @@ class CashOnDelivery extends PayoneMethod
     protected $sClearingtype = 'cod';
 
     /**
+     * Determines if the bank data has to be added to the debit-request
+     *
+     * @var bool
+     */
+    protected $blNeedsSepaDataOnDebit = true;
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder

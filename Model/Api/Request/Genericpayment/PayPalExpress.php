@@ -38,10 +38,10 @@ class PayPalExpress extends Base
      * Send request to PAYONE Server-API with
      * request-type "genericpayment"
      *
-     * @param Quote $oQuote
-     * @param Paypal $oPayment
-     * @param string $sWorkorderId
-     *
+     * @param Quote       $oQuote
+     * @param Paypal      $oPayment
+     * @param float       $dAmount  order sum amount
+     * @param string|bool $sWorkorderId
      * @return array Response
      */
     public function sendRequest(Quote $oQuote, Paypal $oPayment, $sWorkorderId = false)
@@ -51,9 +51,10 @@ class PayPalExpress extends Base
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // ID of PayOne Sub-Account
         $this->addParameter('clearingtype', 'wlt');
         $this->addParameter('wallettype', 'PPE');
-        $this->addParameter('amount', number_format($oQuote->getGrandTotal(), 2, '.', '') * 100);
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
         $this->addParameter('narrative_text', 'Test');
+
+        $this->addParameter('amount', number_format($this->apiHelper->getQuoteAmount($oQuote), 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote)); // add currency to request
 
         if ($sWorkorderId !== false) {
             $this->addParameter('workorderid', $sWorkorderId);

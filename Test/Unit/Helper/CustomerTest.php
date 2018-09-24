@@ -39,7 +39,7 @@ use Magento\Sales\Model\Order\Address;
 use Magento\Directory\Model\RegionFactory;
 use Magento\Directory\Model\Region;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class CustomerTest extends BaseTestCase
 {
@@ -122,16 +122,16 @@ class CustomerTest extends BaseTestCase
 
     public function testCustomerHasGivenBirthday()
     {
-        $this->coreCustomer->method('getDob')->willReturn('1999-19-09');
-        $result = $this->customer->customerHasGivenBirthday();
-        $expected = true;
+        $expected = '1999-19-09';
+        $this->coreCustomer->method('getDob')->willReturn($expected);
+        $result = $this->customer->getCustomerBirthday();
         $this->assertEquals($expected, $result);
     }
 
     public function testCustomerHasGivenBirthdayFalse()
     {
         $this->coreCustomer->method('getDob')->willReturn(null);
-        $result = $this->customer->customerHasGivenBirthday();
+        $result = $this->customer->getCustomerBirthday();
         $expected = false;
         $this->assertEquals($expected, $result);
     }

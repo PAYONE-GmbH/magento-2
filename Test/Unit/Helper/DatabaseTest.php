@@ -33,10 +33,10 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Select;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class DatabaseTest extends BaseTestCase
 {
@@ -78,7 +78,15 @@ class DatabaseTest extends BaseTestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
-        $this->connection = $this->getMockBuilder(AdapterInterface::class)->disableOriginalConstructor()->getMock();
+        $this->connection = $this->getMockBuilder(Select::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['fetchOne', 'fetchAll', 'select', 'from', 'where', 'limit', 'order'])
+            ->getMock();
+        $this->connection->method('select')->willReturn($this->connection);
+        $this->connection->method('from')->willReturn($this->connection);
+        $this->connection->method('where')->willReturn($this->connection);
+        $this->connection->method('limit')->willReturn($this->connection);
+        $this->connection->method('order')->willReturn($this->connection);
 
         $this->databaseResource = $this->getMockBuilder(ResourceConnection::class)->disableOriginalConstructor()->getMock();
         $this->databaseResource->method('getConnection')->willReturn($this->connection);

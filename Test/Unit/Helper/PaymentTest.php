@@ -36,7 +36,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class PaymentTest extends BaseTestCase
 {
@@ -92,8 +92,8 @@ class PaymentTest extends BaseTestCase
     {
         $creditcardTypes = 'V,M';
         $expected = [
-            ['id' => 'V', 'title' => 'Visa'],
-            ['id' => 'M', 'title' => 'Mastercard']
+            ['id' => 'V', 'title' => 'Visa', 'cvc_length' => 3],
+            ['id' => 'M', 'title' => 'Mastercard', 'cvc_length' => 3]
         ];
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
@@ -173,6 +173,19 @@ class PaymentTest extends BaseTestCase
 
         $result = $this->payment->getPaymentAbbreviation('not_existing');
         $expected = 'unknown';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetKlarnaStoreIds()
+    {
+        $storeIds = ['key' => ['store_id' => '123', 'countries' => ['DE', 'AT']]];
+
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($storeIds)]]);
+
+        $expected = ['DE' => '123', 'AT' => '123'];
+        $result = $this->payment->getKlarnaStoreIds();
         $this->assertEquals($expected, $result);
     }
 }

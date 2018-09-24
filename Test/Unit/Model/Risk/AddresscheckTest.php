@@ -36,7 +36,7 @@ use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class AddresscheckTest extends BaseTestCase
 {
@@ -265,7 +265,7 @@ class AddresscheckTest extends BaseTestCase
         $status = 'x';
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
-            ->willReturnMap([['mapping_personstatus', 'address_check', 'payone_protect', null, $this->toolkitHelper->serialize($status)]]);
+            ->willReturnMap([['mapping', 'personstatus', 'payone_protect', null, $this->toolkitHelper->serialize($status)]]);
 
         $this->addresscheck->method('sendRequest')->willReturn(['personstatus' => 'ABC']);
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
@@ -282,7 +282,7 @@ class AddresscheckTest extends BaseTestCase
         ];
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
-            ->willReturnMap([['mapping_personstatus', 'address_check', 'payone_protect', null, $this->toolkitHelper->serialize($status)]]);
+            ->willReturnMap([['mapping', 'personstatus', 'payone_protect', null, $this->toolkitHelper->serialize($status)]]);
 
         $this->addresscheck->method('sendRequest')->willReturn(['personstatus' => 'ABC']);
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();

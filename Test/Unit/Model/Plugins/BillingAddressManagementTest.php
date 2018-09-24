@@ -34,7 +34,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\BillingAddressManagement;
 use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Model\Test\PayoneObjectManager;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
 class BillingAddressManagementTest extends BaseTestCase
 {

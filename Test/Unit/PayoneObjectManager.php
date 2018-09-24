@@ -24,7 +24,7 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Test;
+namespace Payone\Core\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 

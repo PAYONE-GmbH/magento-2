@@ -19,43 +19,56 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Controller\Adminhtml\Information;
+namespace Payone\Core\Model\Source;
+
+use Magento\Framework\Option\ArrayInterface;
+use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Controller class for admin information page
+ * Source class for currency to transmit
  */
-class Index extends \Magento\Backend\App\Action
+class Currency implements ArrayInterface
 {
+
     /**
-     * Return if the user has the needed rights to view this page
+     * Store object
      *
-     * @return bool
+     * @var Store
      */
-    protected function _isAllowed()
+    private $store;
+
+    /**
+     * Constructor
+     *
+     * @param StoreManagerInterface $storeManager
+     */
+    public function __construct(StoreManagerInterface $storeManager)
     {
-        return $this->_authorization->isAllowed('Payone_Core::payone_information');
+        $this->store = $storeManager->getStore();
     }
 
     /**
-     * Displays the information page
+     * Return currency options
      *
-     * @return void
+     * @return array
      */
-    public function execute()
+    public function toOptionArray()
     {
-        if ($this->_isAllowed()) {
-            $this->_view->loadLayout();
-            $this->_setActiveMenu('Payone_Core::payone_information');
-            $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Payone information'));
-            $this->_addContent(
-                $this->_view->getLayout()->createBlock('Payone\Core\Block\Adminhtml\Information')
-            );
-            $this->_view->renderLayout();
-        }
+        return [
+            [
+                'value' => 'base',
+                'label' => __('Base Currency').' ('.$this->store->getBaseCurrencyCode().')'
+            ],
+            [
+                'value' => 'display',
+                'label' => __('Display Currency')
+            ]
+        ];
     }
 }

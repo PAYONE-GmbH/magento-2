@@ -24,9 +24,10 @@
 define(
     [
         'Magento_Checkout/js/view/payment/default',
-        'mage/translate'
+        'mage/translate',
+        'Magento_Checkout/js/model/quote'
     ],
-    function (Component, $t) {
+    function (Component, $t, quote) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -44,14 +45,27 @@ define(
                     ]);
                 return this;
             },
+            isB2bMode: function () {
+                if (quote.billingAddress() !== null &&
+                    typeof quote.billingAddress().company !== 'undefined' &&
+                    quote.billingAddress().company !== ''
+                ) {
+                    return true;
+                }
+                return false;
+            },
             requestBirthday: function () {
-                if (window.checkoutConfig.payment.payone.customerHasGivenBirthday == false) {
+                if (window.checkoutConfig.payment.payone.customerBirthday === false && !this.isB2bMode()) {
                     return true;
                 }
                 return false;
             },
             isCustomerTooYoung: function () {
-                var sBirthDate = this.birthyear() + "-" + this.birthmonth() + "-" + this.birthday();
+                if (window.checkoutConfig.payment.payone.customerBirthday !== false) {
+                    var sBirthDate = window.checkoutConfig.payment.payone.customerBirthday;
+                } else {
+                    var sBirthDate = this.birthyear() + "-" + this.birthmonth() + "-" + this.birthday();
+                }
                 var oBirthDate = new Date(sBirthDate);
                 var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
                 if(oBirthDate < oMinDate) {
@@ -60,7 +74,7 @@ define(
                 return true;
             },
             validate: function () {
-                if (this.isCustomerTooYoung()) {
+                if (!this.isB2bMode() && this.isCustomerTooYoung()) {
                     this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
                     return false;
                 }

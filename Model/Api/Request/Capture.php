@@ -85,7 +85,7 @@ class Capture extends Base
         if ($aInvoice && array_key_exists('items', $aInvoice) !== false) {
             foreach ($oOrder->getAllItems() as $oItem) {
                 if (isset($aInvoice['items'][$oItem->getItemId()]) && $aInvoice['items'][$oItem->getItemId()] > 0) {
-                    $aPositions[$oItem->getProductId()] = $aInvoice['items'][$oItem->getItemId()];
+                    $aPositions[$oItem->getProductId().$oItem->getSku()] = $aInvoice['items'][$oItem->getItemId()];
                     if ($aInvoice['items'][$oItem->getItemId()] != $oItem->getQtyOrdered()) {
                         $blFull = false;
                     }
@@ -112,6 +112,8 @@ class Capture extends Base
     {
         $oOrder = $oPaymentInfo->getOrder();
 
+        $this->setStoreCode($oOrder->getStore()->getCode());
+
         $aPositions = $this->getInvoiceList($oOrder);
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
@@ -123,8 +125,8 @@ class Capture extends Base
         $this->addParameter('language', $this->shopHelper->getLocale());
 
         // Total order sum in smallest currency unit
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
-        $this->addParameter('currency', $oOrder->getOrderCurrencyCode()); // Currency
+        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromOrder($oOrder)); // add currency to request
 
         $this->addParameter('txid', $iTxid); // PayOne Transaction ID
         $this->addParameter('sequencenumber', $this->databaseHelper->getSequenceNumber($iTxid));
@@ -136,6 +138,8 @@ class Capture extends Base
         }
 
         $aResponse = $this->send($oPayment);
+
+        $this->apiHelper->addPayoneOrderData($oOrder, false, $aResponse); // add payone data to order
 
         return $aResponse;
     }
