@@ -23,28 +23,7 @@
  * @link      http://www.payone.de
  */
 ?>
+
 <div class="amazonpay" style="text-align: center;margin-top:15px;">
     <div id="LoginWithAmazon"></div>
 </div>
-
-<script>
-    window.onAmazonLoginReady = function() {
-        amazon.Login.setClientId('<?php echo $this->getClientId(); ?>');
-    };
-    window.onAmazonPaymentsReady = function(){
-        var authRequest;
-        OffAmazonPayments.Button('LoginWithAmazon', '<?php echo $this->getSellerId(); ?>', {
-            type: '<?php echo $this->getButtonType(); ?>',
-            color: '<?php echo $this->getButtonColor(); ?>',
-            language: '<?php echo $this->getButtonLanguage(); ?>',
-            size: 'medium',
-            authorization: function() {
-                var loginOptions = {scope: 'profile payments:widget payments:shipping_address payments:billing_address', popup: true};
-                authRequest = amazon.Login.authorize (loginOptions, '<?php echo $this->getRedirectUrl(); ?>');
-            }
-        });
-    }
-</script>
-
-<!-- URL changes to https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js when mode=live -->
-<script src="https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js" async="async"></script>

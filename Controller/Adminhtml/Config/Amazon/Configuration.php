@@ -60,6 +60,7 @@ class Configuration extends Action
      * @param \Magento\Backend\App\Action\Context                            $context
      * @param \Magento\Framework\Controller\Result\JsonFactory               $resultJsonFactory
      * @param \Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration $getConfiguration
+     * @param \Payone\Core\Model\Methods\AmazonPay                           $payment
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,

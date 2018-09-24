@@ -27,4 +27,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
     <template id="payone_misc_email_error_template" label="PAYONE - Email Error" file="error_template.phtml" type="html" module="Payone_Core" area="frontend"/>
     <template id="payone_misc_email_avs_template" label="PAYONE - Email AVS" file="avs_template.phtml" type="html" module="Payone_Core" area="frontend"/>
+    <template id="payone_amazon_soft_decline" label="Please update your payment information" file="amazon_soft_decline.phtml" type="html" module="Payone_Core" area="frontend"/>
+    <template id="payone_amazon_hard_decline" label="Please contact us about your order" file="amazon_hard_decline.phtml" type="html" module="Payone_Core" area="frontend"/>
 </config>

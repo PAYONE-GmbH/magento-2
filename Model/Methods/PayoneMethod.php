@@ -27,6 +27,7 @@
 namespace Payone\Core\Model\Methods;
 
 use Magento\Framework\Exception\LocalizedException;
+use Payone\Core\Model\Exception\AuthorizationException;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order;
 
@@ -39,7 +40,6 @@ abstract class PayoneMethod extends BaseMethod
      * Returns clearingtype
      *
      * @return string
-     * @throws LocalizedException
      */
     public function getClearingtype()
     {
@@ -98,6 +98,20 @@ abstract class PayoneMethod extends BaseMethod
     }
 
     /**
+     * Removes status flag used during checkout process from session
+     *
+     * @return void
+     */
+    protected function unsetSessionStatusFlags() {
+        $this->checkoutSession->unsPayoneRedirectUrl();
+        $this->checkoutSession->unsPayoneRedirectedPaymentMethod();
+        $this->checkoutSession->unsPayoneCanceledPaymentMethod();
+        $this->checkoutSession->unsPayoneIsError();
+        $this->checkoutSession->unsShowAmazonPendingNotice();
+        $this->checkoutSession->unsAmazonRetryAsync();
+    }
+
+    /**
      * Method handling the authorization request and the response
      *
      * @param  InfoInterface $payment
@@ -107,16 +121,13 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneAuthorization(InfoInterface $payment, $amount)
     {
+        $this->unsetSessionStatusFlags();
         $oOrder = $payment->getOrder();
         $oOrder->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
-        $this->checkoutSession->unsPayoneRedirectUrl(); // remove redirect url from session
-        $this->checkoutSession->unsPayoneRedirectedPaymentMethod();
-        $this->checkoutSession->unsPayoneCanceledPaymentMethod();
-        $this->checkoutSession->unsPayoneIsError();
         $aResponse = $this->authorizationRequest->sendRequest($this, $oOrder, $amount);
-        $this->handleResponse($aResponse);
+        $aResponse = $this->handleResponse($aResponse, $oOrder, $amount);
         if ($aResponse['status'] == 'ERROR') {// request returned an error
-            throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
+            throw new AuthorizationException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']), $aResponse);
         } elseif ($aResponse['status'] == 'APPROVED' || $aResponse['status'] == 'REDIRECT') {// request successful
             $payment->setTransactionId($aResponse['txid']);
             $payment->setIsTransactionClosed(0);
@@ -131,11 +142,14 @@ abstract class PayoneMethod extends BaseMethod
      * Perform certain actions with the response
      *
      * @param  array $aResponse
-     * @return void
+     * @param  Order $oOrder
+     * @param  float $amount
+     * @return array
      */
-    protected function handleResponse($aResponse)
+    protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
         // hook for certain payment methods
+        return $aResponse;
     }
 
     /**

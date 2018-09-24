@@ -63,15 +63,18 @@ class Barzahlen extends PayoneMethod
      * Perform certain actions with the response
      *
      * @param  array $aResponse
-     * @return void
+     * @param  Order $oOrder
+     * @param  float $amount
+     * @return array
      */
-    protected function handleResponse($aResponse)
+    protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
         if (isset($aResponse['status']) && $aResponse['status'] == 'APPROVED'
                 && isset($aResponse['add_paydata[instruction_notes]'])) {
             $sInstructionNotes = urldecode($aResponse['add_paydata[instruction_notes]']);
             $this->checkoutSession->setPayoneInstructionNotes($sInstructionNotes);
         }
+        return $aResponse;
     }
 
     /**

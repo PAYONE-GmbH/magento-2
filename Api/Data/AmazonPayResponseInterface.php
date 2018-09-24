@@ -34,4 +34,25 @@ interface AmazonPayResponseInterface
      * @return string
      */
     public function getWorkorderId();
+
+    /**
+     * Returns if the call was successful
+     *
+     * @return bool
+     */
+    public function getSuccess();
+
+    /**
+     * Returns the given redirect url
+     *
+     * @return string
+     */
+    public function getRedirectUrl();
+
+    /**
+     * Return rendered review html
+     *
+     * @return string
+     */
+    public function getAmazonReviewHtml();
 }

@@ -23,8 +23,6 @@
  * @link      http://www.payone.de
  */
 ?>
-<?php
-/*
 
 <script>
     window.onAmazonLoginReady = function() {
@@ -42,10 +40,19 @@
                 authRequest = amazon.Login.authorize (loginOptions, '<?php echo $this->getRedirectUrl(); ?>');
             }
         });
+    };
+
+    function checkForMiniBasketExistance() {
+        if (document.getElementById('LoginWithAmazon') === null) {
+            setTimeout(function(){
+                window.requestAnimationFrame(checkForMiniBasketExistance);
+            }, 1000);
+        } else {
+            require(['jquery'], function($){
+                $.getScript("<?php echo $this->getWidgetUrl(); ?>");
+            });
+        }
     }
+
+    checkForMiniBasketExistance();
 </script>
-
-<!-- URL changes to https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js when mode=live -->
-<script src="https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js" async="async"></script>
-
- */

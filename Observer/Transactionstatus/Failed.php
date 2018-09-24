@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -29,42 +29,44 @@ namespace Payone\Core\Observer\Transactionstatus;
 use Magento\Sales\Model\Order;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
-use Magento\Sales\Model\Order\Email\Sender\OrderSender;
-use Psr\Log\LoggerInterface;
+use Payone\Core\Helper\Mail;
+use Payone\Core\Model\PayoneConfig;
 
 /**
- * Event observer for Transactionstatus appointed
+ * Event observer for Transactionstatus failed
  */
-class Appointed implements ObserverInterface
+class Failed implements ObserverInterface
 {
     /**
-     * Logger object
+     * PAYONE email helper object
      *
-     * @var LoggerInterface
+     * @var Mail
      */
-    protected $logger = null;
-
-    /**
-     * OrderSender object
-     *
-     * @var OrderSender
-     */
-    protected $orderSender = null;
+    protected $emailHelper = null;
 
     /**
      * Constructor.
      *
-     * @param LoggerInterface $logger
-     * @param OrderSender $orderSender
+     * @param Mail      $emailHelper
      */
-    public function __construct(LoggerInterface $logger, OrderSender $orderSender)
+    public function __construct(Mail $emailHelper)
     {
-        $this->logger = $logger;
-        $this->orderSender = $orderSender;
+        $this->emailHelper = $emailHelper;
     }
 
     /**
-     * Send order confirmation mail to the customer
+     * Send amazon hard decline mail to customer
+     *
+     * @param  Order $oOrder
+     * @return void
+     */
+    protected function sendHardDeclineMail(Order $oOrder)
+    {
+        $this->emailHelper->sendEmail($oOrder->getCustomerEmail(), 'payone_amazon_hard_decline');
+    }
+
+    /**
+     * Send the amazon hard decline mail to the customer if needed
      *
      * @param  Observer $observer
      * @return void
@@ -74,15 +76,8 @@ class Appointed implements ObserverInterface
         /* @var $oOrder Order */
         $oOrder = $observer->getOrder();
 
-        // order is not guaranteed to exist if using transaction status forwarding
-        if (null === $oOrder || $oOrder->getEmailSent()) {
-            return;
-        }
-
-        try {
-            $this->orderSender->send($oOrder);
-        } catch (\Exception $e) {
-            $this->logger->critical($e);
+        if ($oOrder->getPayment()->getMethod() == PayoneConfig::METHOD_AMAZONPAY) {
+            $this->sendHardDeclineMail($oOrder);
         }
     }
 }

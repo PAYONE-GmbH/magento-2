@@ -46,10 +46,10 @@ class AmazonMode implements ArrayInterface
                 'value' => 'synchronousFirst',
                 'label' => __('Asynchronous On Failure'),
             ],
-            [
-                'value' => 'asynchronous',
-                'label' => __('Always Asynchronous')
-            ],
+            #[
+            #    'value' => 'asynchronous',
+            #    'label' => __('Always Asynchronous')
+            #],
             [
                 'value' => 'synchronous',
                 'label' => __('Always Synchronous')

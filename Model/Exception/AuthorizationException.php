@@ -19,23 +19,45 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Api;
+namespace Payone\Core\Model\Exception;
 
-interface AmazonPayInterface
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Phrase;
+
+class AuthorizationException extends LocalizedException
 {
     /**
-     * PAYONE addresscheck
-     * The full class-paths must be given here otherwise the Magento 2 WebApi
-     * cant handle this with its fake type system!
+     * Response array from PAYONE request
      *
-     * @param  string $amazonReferenceId
-     * @param  string $amazonAddressToken
-     * @return \Payone\Core\Service\V1\Data\AmazonPayResponse
+     * @var array
      */
-    public function getWorkorderId($amazonReferenceId, $amazonAddressToken);
+    protected $response = null;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\Phrase $phrase
+     * @param array                     $response
+     * @param \Exception                $cause
+     */
+    public function __construct(Phrase $phrase, $response, \Exception $cause = null)
+    {
+        parent::__construct($phrase, $cause);
+        $this->response = $response;
+    }
+
+    /**
+     * Return the PAYONE response
+     *
+     * @return array
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
 }

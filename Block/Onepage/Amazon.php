@@ -42,27 +42,27 @@ class Amazon extends Template
     protected $checkoutSession;
 
     /**
-     * @var \Payone\Core\Helper\Base
+     * @var \Payone\Core\Helper\Payment
      */
-    protected $baseHelper;
+    protected $paymentHelper;
 
     /**
      * Constructor
      *
      * @param \Magento\Checkout\Model\Session                  $checkoutSession
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Payone\Core\Helper\Base                         $baseHelper
+     * @param \Payone\Core\Helper\Payment                      $paymentHelper
      * @param array                                            $data
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\View\Element\Template\Context $context,
-        \Payone\Core\Helper\Base $baseHelper,
+        \Payone\Core\Helper\Payment $paymentHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->checkoutSession = $checkoutSession;
-        $this->baseHelper = $baseHelper;
+        $this->paymentHelper = $paymentHelper;
     }
 
     /**
@@ -72,7 +72,7 @@ class Amazon extends Template
      */
     public function getClientId()
     {
-        return $this->baseHelper->getConfigParam('client_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+        return $this->paymentHelper->getConfigParam('client_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
     }
 
     /**
@@ -82,6 +82,36 @@ class Amazon extends Template
      */
     public function getSellerId()
     {
-        return $this->baseHelper->getConfigParam('seller_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+        return $this->paymentHelper->getConfigParam('seller_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+    }
+
+    /**
+     * Get redirect url of the checkout controller
+     *
+     * @return string
+     */
+    public function getCartUrl()
+    {
+        return $this->_urlBuilder->getUrl("checkout/cart", ['_secure' => true]);
+    }
+
+    /**
+     * Get url of the loadReview ajax controller
+     *
+     * @return string
+     */
+    public function getLoadReviewUrl()
+    {
+        return $this->_urlBuilder->getUrl("payone/amazon/loadReview", ['_secure' => true]);
+    }
+
+    /**
+     * Get amazon widget url
+     *
+     * @return string
+     */
+    public function getWidgetUrl()
+    {
+        return $this->paymentHelper->getAmazonPayWidgetUrl();
     }
 }

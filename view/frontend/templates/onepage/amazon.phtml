@@ -29,6 +29,10 @@
 ?>
 
 <script>
+    initiatedByPopup = true;
+    if (window.location.hash.substring(1)) {
+        initiatedByPopup = false;
+    }
     window.onAmazonLoginReady = function() {amazon.Login.setClientId('<?php echo $this->getClientId(); ?>'); };
     window.onAmazonPaymentsReady = function() {
         new OffAmazonPayments.Widgets.AddressBook({
@@ -61,17 +65,54 @@
             }
         }).bind("walletWidgetDiv");
     };
+    window.onAmazonPaymentsInvalidPayment = function () {
+        jQuery('#placeOrder').attr('disabled', true);
+        jQuery('#checkoutStepInitContent, #chooseMethod').addClass('locked');
+        jQuery('#addressBookWidgetDiv, #walletWidgetDiv').empty();
+        new OffAmazonPayments.Widgets.AddressBook({
+            displayMode: 'Read',
+            sellerId: '<?php echo $this->getSellerId(); ?>',
+            amazonOrderReferenceId: window.amazonOrderReferenceId,
+            scope: 'payments:billing_address payments:shipping_address payments:widget profile',
+            onAddressSelect: function () {
+                jQuery('#confirmSelection').attr('disabled', true);
+            },
+            design: {
+                designMode: 'responsive'
+            },
+            onReady: window.onAmazonWidgetsInitialized,
+            onError: window.onAmazonPaymentsError
+        }).bind('addressBookWidgetDiv').renderRequested = initiatedByPopup;
+        new OffAmazonPayments.Widgets.Wallet({
+            sellerId: '<?php echo $this->getSellerId(); ?>',
+            amazonOrderReferenceId: window.amazonOrderReferenceId,
+            scope: 'payments:billing_address payments:shipping_address payments:widget profile',
+            onPaymentSelect: function () {
+                jQuery('#confirmSelection').attr('disabled', false);
+                jQuery('#checkoutStepInitContent').addClass('solved');
+            },
+            design: {
+                designMode: 'responsive'
+            },
+            onError: function (error) {
+                console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
+            }
+        }).bind('walletWidgetDiv').renderRequested = initiatedByPopup;
+        payoneShowInitStep();
+    };
     window.onAmazonPaymentsError = function (error) {
+        /*
         if (error.getErrorCode() === 'BuyerSessionExpired') {
-            jQuery('#addressBookWidgetCover, #walletWidgetCover')
+            //jQuery('#addressBookWidgetCover, #walletWidgetCover')
                 .css('background', 'lightgrey').addClass('show').delay(15)
                 .promise().done(function () {
                 alert('Expired');
                 //window.location.href = 'http://localhost';
             });
         } else {
+        */
             console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
-        }
+        /* } */
     };
     window.onAmazonWidgetsInitialized = function (orderReference) {
         var match,
@@ -89,54 +130,189 @@
     };
 </script>
 
-<div class="step" id="checkoutStepInitContent">
-    <div>
-        <label id="amazonWidgetsNotice">
-            <?php echo __('Notice: Please verify your payment information or choose another method.') ?>
-            <span></span>
-        </label>
-    </div>
-    <div id="addressBookWidgetWrap">
-        <div id="addressBookWidgetCover"></div>
-        <div id="addressBookWidgetDiv"></div>
-    </div>
-    <div id="walletWidgetWrap">
-        <div id="walletWidgetCover"></div>
-        <div id="walletWidgetDiv"></div>
-    </div>
-</div>
+<ol id="checkoutSteps" style="list-style: none;padding:0;">
+    <li class="section allow" onclick="window.location.href = '<?php echo $this->getCartUrl(); ?>'; return false;">
+        <div class="step-title">
+            <span class="number">1</span>
+            <h2><?php echo __('Review shopping cart'); ?></h2>
+            <a href="#"><?php echo __('View'); ?></a>
+        </div>
+    </li>
+    <li class="section allow active" id="checkoutStepInit">
+        <div class="step-title">
+            <span class="number">2</span>
+            <h2><?php echo __('Shipping address & payment'); ?></h2>
+            <a href="#" onclick="payoneShowInitStep()"><?php echo __('Edit'); ?></a>
+        </div>
+        <div class="step" id="checkoutStepInitContent">
+            <div>
+                <label id="amazonWidgetsNotice">
+                    <?php echo __('Notice: Please verify your payment information or choose another method.') ?>
+                    <span></span>
+                </label>
+            </div>
+            <div id="addressBookWidgetWrap">
+                <div id="addressBookWidgetCover"></div>
+                <div id="addressBookWidgetDiv"></div>
+            </div>
+            <div id="walletWidgetWrap">
+                <div id="walletWidgetCover"></div>
+                <div id="walletWidgetDiv"></div>
+            </div>
+            <div style="clear:both;"></div>
 
-<br><br>
-<a href="#" class="action create primary" onclick="payoneBlub()">
-    <span>Fortfahren</span>
-</a>
+            <br>
+            <a href="#" class="action create primary" onclick="payoneConfirmSelection();return false;">
+                <span>Fortfahren</span>
+            </a>
+        </div>
+    </li>
+    <li class="section allow active" id="checkoutStepFinish">
+        <div class="step-title">
+            <span class="number">3</span>
+            <h2><?php echo __('Shipping method & summary'); ?></h2>
+            <a href="#"><?php echo __('Edit'); ?></a>
+        </div>
+        <div class="step">
+            <div class="paypal-review view">
+                <div id="checkoutStepFinishContent"></div>
+                <div id="checkoutStepFinishForm" style="display:none;">
+                    <!--form method="post" id="order-review-form" action="<?php echo $block->escapeUrl($block->getPlaceOrderUrl()); ?>" class="form order-review-form" -->
+                        <?php echo $block->getChildHtml('agreements'); ?>
+                        <div class="actions-toolbar" id="review-buttons-container">
+                            <div class="primary">
+                                <input type="submit" id="review-button" onclick="payonePlaceOrder();return false;" class="action checkout primary" value="<?php echo $block->escapeHtml(__('Place Order')); ?>">
+                            </div>
+                            <span class="please-wait load indicator" id="review-please-wait" style="display: none;"
+                                  data-text="<?php echo $block->escapeHtml(__('Submitting order information...')); ?>">
+                                <span><?php echo $block->escapeHtml(__('Submitting order information...')); ?></span>
+                            </span>
+                        </div>
+                    <!--/form-->
+                </div>
+            </div>
+        </div>
+    </li>
+</ol>
 
-<script src="https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js" async="async"></script>
-
+<script src="<?php echo $this->getWidgetUrl(); ?>" async="async"></script>
 <script>
-    require([
-        'jquery',
-        'mage/storage',
-    ], function($, storage){
-        var request = {
-            silber: 'fisch'
+    require(['jquery', 'Magento_Ui/js/model/messageList'], function($, messageList){
+        window.payoneConfirmSelection = function() {
+            $.ajax({
+                url: '<?php echo $this->getLoadReviewUrl(); ?>',
+                type: 'POST',
+                dataType: 'html',
+                data: {
+                    action: 'confirmSelection',
+                    amazonReferenceId: window.amazonOrderReferenceId,
+                    amazonAddressToken: window.addressConsentToken
+                },
+                showLoader: true,
+                complete: function(responseRaw) {
+                    if (payoneUpdateContent(responseRaw) === true) {
+                        $('#checkoutStepInit').removeClass('active');
+                        $('#checkoutStepFinish').addClass('allow active');
+                        $('#checkoutStepFinishForm').show();
+                    }
+                },
+                error: function (xhr, status, errorThrown) {
+                    alert('An error occured. ' + status);
+                }
+            });
         };
-        window.payoneBlub = function() {
-
-            var serviceUrl = 'https://192.168.2.194/magento213/rest/default/V1/carts/mine/payone-amazonPay';
-            return storage.post(
-                serviceUrl,
-                JSON.stringify(request)
-            ).done(
-                function (response) {
-                    alert('Floetenteich');
+        window.payonePlaceOrder = function() {
+            $.ajax({
+                url: '<?php echo $this->getLoadReviewUrl(); ?>',
+                type: 'POST',
+                dataType: 'html',
+                data: {
+                    action: 'placeOrder'
+                },
+                showLoader: true,
+                complete: function(responseRaw) {
+                    if (responseRaw.responseText.length !== 0) {
+                        var oResponse = JSON.parse(responseRaw.responseText);
+                        console.log(oResponse);
+                        if (oResponse.success === true && oResponse.successUrl !== undefined) {
+                            window.location = oResponse.successUrl;
+                            return true;
+                        } else if(oResponse.errorUrl !== undefined) {
+                            window.location = oResponse.errorUrl;
+                            return true;
+                        } else if(oResponse.errorMessage !== undefined) {
+                            if (oResponse.errorMessage === 'PaymentMethodNotAllowed' || oResponse.errorMessage === 'InvalidPaymentMethod') {
+                                onAmazonPaymentsInvalidPayment();
+                            }
+                        }
+                    }
+                },
+                error: function (xhr, status, errorThrown) {
+                    alert('An error occured. ' + status);
                 }
-            ).fail(
-                function (response) {
-                    alert('An error occured.');
-                }
-            );
+            });
         }
-
+        window.payoneUpdateContent = function(response) {
+            if (response.responseText.length !== 0) {
+                var oResponse = JSON.parse(response.responseText);
+                if (oResponse.html !== undefined) {
+                    $('#checkoutStepFinishContent').html(oResponse.html);
+                    return true;
+                }
+            }
+            return false;
+        };
+        window.payoneShowInitStep = function() {
+            $('#checkoutStepFinish').removeClass('active');
+            $('#checkoutStepInit').addClass('allow active');
+        };
+        window.payoneUpdateShippingCosts = function() {
+            $.ajax({
+                url: '<?php echo $this->getLoadReviewUrl(); ?>',
+                type: 'POST',
+                dataType: 'html',
+                data: {
+                    action: 'updateShipping',
+                    shippingMethod: $('#shipping-method').val()
+                },
+                showLoader: true,
+                complete: function(responseRaw) {
+                    payoneUpdateContent(responseRaw);
+                },
+                error: function (xhr, status, errorThrown) {
+                    alert('An error occured. ' + status);
+                }
+            });
+        };
+        window.payoneUpdateCoupon = function(iRemove) {
+            var couponCode = $('#coupon_code').val();
+            if (couponCode.length > 0) {
+                $.ajax({
+                    url: '<?php echo $this->getLoadReviewUrl(); ?>',
+                    type: 'POST',
+                    dataType: 'html',
+                    data: {
+                        action: 'updateCoupon',
+                        couponCode: couponCode,
+                        remove: iRemove
+                    },
+                    showLoader: true,
+                    complete: function (responseRaw) {
+                        payoneUpdateContent(responseRaw);
+                    },
+                    error: function (xhr, status, errorThrown) {
+                        alert('An error occured. ' + status);
+                    }
+                });
+            }
+        };
+        window.toggleCouponBlock = function() {
+            if ($('#block-discount').hasClass('active')) {
+                $('#block-discount').removeClass('active')
+            } else {
+                $('#block-discount').addClass('active')
+            }
+            return false;
+        };
     });
 </script>

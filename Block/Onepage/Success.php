@@ -114,13 +114,26 @@ class Success extends Template
     }
 
     /**
+     * Return if amazon order is pending message needs to be shown
+     *
+     * @return bool
+     */
+    public function showAmazonPendingMessage()
+    {
+        if ($this->checkoutSession->getShowAmazonPendingNotice() === true) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Determine if extra info has to be shown on success page
      *
      * @return bool
      */
     protected function pageRenderNeeded()
     {
-        if ($this->showMandateLink() || $this->getInstructionNotes()) {
+        if ($this->showMandateLink() || $this->getInstructionNotes() || $this->showAmazonPendingMessage()) {
             return true;
         }
         return false;
@@ -134,7 +147,9 @@ class Success extends Template
     public function toHtml()
     {
         if ($this->pageRenderNeeded() === true) {
-            return parent::toHtml();
+            $sReturn = parent::toHtml();
+            $this->checkoutSession->unsShowAmazonPendingNotice();
+            return $sReturn;
         }
         return '';
     }

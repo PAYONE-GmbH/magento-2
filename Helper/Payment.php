@@ -218,4 +218,29 @@ class Payment extends \Payone\Core\Helper\Base
         }
         return 'unknown';
     }
+
+    /**
+     * Check if given payment method is activated
+     *
+     * @param  string $sMethodCode
+     * @return bool
+     */
+    public function isPaymentMethodActive($sMethodCode)
+    {
+        return (bool)$this->getConfigParam('active', $sMethodCode, 'payment');
+    }
+
+    /**
+     * Get amazon widget url depending on the mode
+     *
+     * @return string
+     */
+    public function getAmazonPayWidgetUrl()
+    {
+        $sSandbox = '';
+        if ('test' == $this->getConfigParam('mode', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment')) {
+            $sSandbox = '/sandbox';
+        }
+        return "https://static-eu.payments-amazon.com/OffAmazonPayments/eur".$sSandbox."/lpa/js/Widgets.js";
+    }
 }

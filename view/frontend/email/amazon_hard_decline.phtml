@@ -1,5 +1,4 @@
-<?php
-
+<!--
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,23 +18,32 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
+-->
+<!--@subject Bitte kontaktieren Sie uns wegen Ihrer Bestellung @-->
+<!--@vars
+{"store url=\"\"":"Store Url",
+"var logo_url":"Email Logo Image Url",
+"var logo_alt":"Email Logo Image Alt",
+"var store.getFrontendName()":"Store Name",
+@-->
+<!--@styles
+@-->
 
-namespace Payone\Core\Api;
+{{template config_path="design/email/header_template"}}
 
-interface AmazonPayInterface
-{
-    /**
-     * PAYONE addresscheck
-     * The full class-paths must be given here otherwise the Magento 2 WebApi
-     * cant handle this with its fake type system!
-     *
-     * @param  string $amazonReferenceId
-     * @param  string $amazonAddressToken
-     * @return \Payone\Core\Service\V1\Data\AmazonPayResponse
-     */
-    public function getWorkorderId($amazonReferenceId, $amazonAddressToken);
-}
+<p>
+    Sehr geehrter Kunde,<br><br>
+
+    Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {{var store.getFrontendName()}} von Amazon Pay zurückgewiesen.<br>
+    Bitte kontaktieren Sie uns.<br><br>
+
+    Mit freundlichen Grüßen<br><br>
+
+    {{var store.getFrontendName()}}
+</p>
+
+{{template config_path="design/email/footer_template"}}

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2018 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <container name="root">
+        <block class="Payone\Core\Block\Onepage\Review" name="payone_onepage_review" template="Payone_Core::onepage/amazon_review.phtml" cacheable="false">
+            <block class="Magento\Framework\View\Element\Text\ListText" name="paypal.additional.actions">
+                <block class="Magento\Checkout\Block\Cart\Coupon" name="paypal.cart.coupon" as="coupon" template="Payone_Core::onepage/review/coupon.phtml"/>
+            </block>
+            <block class="Payone\Core\Block\Onepage\Review\Details" name="payone_onepage_review_details" as="details" template="Payone_Core::onepage/review/details.phtml">
+                <block class="Magento\Framework\View\Element\RendererList" name="checkout.onepage.review.item.renderers" as="renderer.list">
+                    <block class="Magento\Checkout\Block\Cart\Item\Renderer" as="default" template="onepage/review/item.phtml"/>
+                    <block class="Magento\Framework\View\Element\Template" name="additional.product.info" template="Magento_Theme::template.phtml"/>
+                    <block class="Magento\Checkout\Block\Item\Price\Renderer" name="checkout.item.price.unit" template="item/price/unit.phtml"/>
+                    <block class="Magento\Checkout\Block\Item\Price\Renderer" name="checkout.item.price.row" template="item/price/row.phtml"/>
+                    <block class="Magento\Checkout\Block\Item\Price\Renderer" name="checkout.onepage.review.item.price.unit.excl" template="onepage/review/item/price/unit_excl_tax.phtml"/>
+                    <block class="Magento\Checkout\Block\Item\Price\Renderer" name="checkout.onepage.review.item.price.unit.incl" template="onepage/review/item/price/unit_incl_tax.phtml"/>
+                    <block class="Magento\Checkout\Block\Item\Price\Renderer" name="checkout.onepage.review.item.price.rowtotal.excl" template="onepage/review/item/price/row_excl_tax.phtml"/>
+                    <block class="Magento\Checkout\Block\Item\Price\Renderer" name="checkout.onepage.review.item.price.rowtotal.incl" template="onepage/review/item/price/row_incl_tax.phtml"/>
+                </block>
+                <block class="Magento\Checkout\Block\Cart\Totals" name="payone_onepage_review_details_totals" as="totals" template="Payone_Core::onepage/review/totals.phtml"/>
+            </block>
+        </block>
+    </container>
+</layout>

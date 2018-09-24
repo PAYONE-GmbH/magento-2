@@ -42,4 +42,34 @@ class AmazonPayResponse extends \Magento\Framework\Api\AbstractExtensibleObject 
     {
         return $this->_get('workorderId');
     }
+
+    /**
+     * Returns if the call was successful
+     *
+     * @return bool
+     */
+    public function getSuccess()
+    {
+        return $this->_get('success');
+    }
+
+    /**
+     * Returns the given redirect url
+     *
+     * @return string
+     */
+    public function getRedirectUrl()
+    {
+        return $this->_get('redirectUrl');
+    }
+
+    /**
+     * Return rendered review html
+     *
+     * @return string
+     */
+    public function getAmazonReviewHtml()
+    {
+        return $this->_get('amazonReviewHtml');
+    }
 }

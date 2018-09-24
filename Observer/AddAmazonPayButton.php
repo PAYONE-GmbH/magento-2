@@ -31,6 +31,7 @@ use Payone\Core\Helper\Payment;
 use Magento\Framework\Event\Observer;
 use Magento\Paypal\Block\Express\Shortcut;
 use Magento\Store\Model\StoreManagerInterface;
+use Payone\Core\Model\PayoneConfig;
 
 /**
  * Event class to add the Amazon Pay buttons to the frontend
@@ -70,9 +71,9 @@ class AddAmazonPayButton implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        #if (true || $this->paymentHelper->isPayPalExpressActive() === false) {
-        #    return;
-        #}
+        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_AMAZONPAY) === false) {
+            return;
+        }
 
         /** @var \Magento\Catalog\Block\ShortcutButtons $shortcutButtons */
         $shortcutButtons = $observer->getEvent()->getContainer();

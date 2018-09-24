@@ -230,7 +230,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\AmazonPay</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Debit</title>
+                <title>PAYONE - AmazonPay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_amazonpay>

@@ -35,24 +35,26 @@ use Payone\Core\Model\PayoneConfig;
 class Scripts extends \Magento\Framework\View\Element\Template
 {
     /**
-     * @var \Payone\Core\Helper\Base
+     * PAYONE payment helper object
+     *
+     * @var \Payone\Core\Helper\Payment
      */
-    protected $baseHelper;
+    protected $paymentHelper;
 
     /**
      * Constructor
      *
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Payone\Core\Helper\Base                         $baseHelper
+     * @param \Payone\Core\Helper\Payment                      $paymentHelper
      * @param array                                            $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \Payone\Core\Helper\Base $baseHelper,
+        \Payone\Core\Helper\Payment $paymentHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->baseHelper = $baseHelper;
+        $this->paymentHelper = $paymentHelper;
     }
 
     /**
@@ -62,7 +64,7 @@ class Scripts extends \Magento\Framework\View\Element\Template
      */
     public function getClientId()
     {
-        return $this->baseHelper->getConfigParam('client_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+        return $this->paymentHelper->getConfigParam('client_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
     }
 
     /**
@@ -72,7 +74,7 @@ class Scripts extends \Magento\Framework\View\Element\Template
      */
     public function getSellerId()
     {
-        return $this->baseHelper->getConfigParam('seller_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+        return $this->paymentHelper->getConfigParam('seller_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
     }
 
     /**
@@ -82,7 +84,7 @@ class Scripts extends \Magento\Framework\View\Element\Template
      */
     public function getButtonType()
     {
-        return $this->baseHelper->getConfigParam('button_type', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+        return $this->paymentHelper->getConfigParam('button_type', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
     }
 
     /**
@@ -92,7 +94,7 @@ class Scripts extends \Magento\Framework\View\Element\Template
      */
     public function getButtonColor()
     {
-        return $this->baseHelper->getConfigParam('button_color', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+        return $this->paymentHelper->getConfigParam('button_color', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
     }
 
     /**
@@ -102,7 +104,7 @@ class Scripts extends \Magento\Framework\View\Element\Template
      */
     public function getButtonLanguage()
     {
-        return $this->baseHelper->getConfigParam('button_language', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+        return $this->paymentHelper->getConfigParam('button_language', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
     }
 
     /**
@@ -113,5 +115,28 @@ class Scripts extends \Magento\Framework\View\Element\Template
     public function getRedirectUrl()
     {
         return $this->getUrl("payone/onepage/amazon", ['_secure' => true]);
+    }
+
+    /**
+     * Get amazon widget url
+     *
+     * @return string
+     */
+    public function getWidgetUrl()
+    {
+        return $this->paymentHelper->getAmazonPayWidgetUrl();
+    }
+
+    /**
+     * Render block HTML
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_AMAZONPAY) === false) {
+            return '';
+        }
+        return parent::_toHtml();
     }
 }
