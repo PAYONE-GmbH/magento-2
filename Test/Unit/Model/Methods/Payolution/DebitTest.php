@@ -85,13 +85,6 @@ class DebitTest extends BaseTestCase
         $this->classToTest->setInfoInstance($info);
     }
 
-    public function testGetAuthorizationMode()
-    {
-        $result = $this->classToTest->getAuthorizationMode();
-        $expected = PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
-        $this->assertEquals($expected, $result);
-    }
-
     public function testAuthorize()
     {
         $response = ['status' => 'OK', 'workorderid' => 'WORKORDER'];
