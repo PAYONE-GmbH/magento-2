@@ -76,7 +76,7 @@ class Failed implements ObserverInterface
         /* @var $oOrder Order */
         $oOrder = $observer->getOrder();
 
-        if ($oOrder->getPayment()->getMethod() == PayoneConfig::METHOD_AMAZONPAY) {
+        if ($oOrder && $oOrder->getPayment()->getMethod() == PayoneConfig::METHOD_AMAZONPAY) {
             $this->sendHardDeclineMail($oOrder);
         }
     }

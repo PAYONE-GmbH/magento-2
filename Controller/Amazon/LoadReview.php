@@ -420,10 +420,11 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      */
     protected function getErrorIdentifier($iErrorCode)
     {
+        $sIdentifier = 'UnknownError';
         if (isset($this->amazonErrors[$iErrorCode])) {
-            return $this->amazonErrors[$iErrorCode];
+            $sIdentifier = $this->amazonErrors[$iErrorCode];
         }
-        return 'UnknownError';
+        return $sIdentifier;
     }
 
     /**
