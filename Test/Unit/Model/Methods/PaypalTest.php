@@ -52,9 +52,10 @@ class PaypalTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneWorkorderId'])
+            ->setMethods(['getPayoneWorkorderId', 'getIsPayonePayPalExpress'])
             ->getMock();
         $checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $checkoutSession->method('getIsPayonePayPalExpress')->willReturn(true);
 
         $url = $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
         $url->method('getUrl')->willReturn('http://testdomain.org');
@@ -65,22 +66,9 @@ class PaypalTest extends BaseTestCase
         ]);
     }
 
-    public function testIsPayPalExpress()
-    {
-        $result = $this->classToTest->isPayPalExpress();
-        $this->assertFalse($result);
-
-        $this->classToTest->setIsPayPalExpress(true);
-
-        $result = $this->classToTest->isPayPalExpress();
-        $this->assertTrue($result);
-    }
-
     public function testGetPaymentSpecificParameters()
     {
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
-
-        $this->classToTest->setIsPayPalExpress(true);
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
         $expected = ['wallettype' => 'PPE', 'workorderid' => '12345'];
@@ -93,8 +81,6 @@ class PaypalTest extends BaseTestCase
 
         $result = $this->classToTest->getSuccessUrl();
         $this->assertEquals($expected, $result);
-
-        $this->classToTest->setIsPayPalExpress(true);
 
         $result = $this->classToTest->getSuccessUrl();
         $this->assertEquals($expected, $result);
