@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Controller\Mandate;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Controller\Amazon\LoadReview as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -56,6 +57,8 @@ use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\App\Response\RedirectInterface;
+use Magento\SalesRule\Model\CouponFactory;
+use Magento\SalesRule\Model\Coupon;
 
 class LoadReviewTest extends BaseTestCase
 {
@@ -83,6 +86,16 @@ class LoadReviewTest extends BaseTestCase
      * @var CartManagementInterface
      */
     private $cartManagement;
+
+    /**
+     * @var Quote
+     */
+    private $quote;
+
+    /**
+     * @var Coupon
+     */
+    private $coupon;
 
     protected function setUp()
     {
@@ -126,7 +139,7 @@ class LoadReviewTest extends BaseTestCase
 
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getEmail', 'getShippingMethod', 'setShippingMethod'])
+            ->setMethods(['getEmail', 'getShippingMethod', 'setShippingMethod', 'setCollectShippingRates'])
             ->getMock();
         $address->method('getEmail')->willReturn('test@test.de');
         $address->method('getShippingMethod')->willReturn('free');
@@ -139,10 +152,13 @@ class LoadReviewTest extends BaseTestCase
         $assignment->method('getShipping')->willReturn($shipping);
         $aAssignments = [$assignment];
 
-        $extensionAttributes = $this->getMockBuilder(CartExtensionInterface::class)->disableOriginalConstructor()->getMock();
+        $extensionAttributes = $this->getMockBuilder(CartExtensionInterface::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getShippingAssignments'])
+            ->getMock();
         $extensionAttributes->method('getShippingAssignments')->willReturn($aAssignments);
 
-        $quote = $this->getMockBuilder(Quote::class)
+        $this->quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->setMethods([
                 'getPayment',
@@ -157,19 +173,23 @@ class LoadReviewTest extends BaseTestCase
                 'save',
                 'getIsVirtual',
                 'getExtensionAttributes',
+                'getCouponCode',
+                'getItemsCount',
+                'setCouponCode',
             ])
             ->getMock();
-        $quote->method('getPayment')->willReturn($payment);
-        $quote->method('collectTotals')->willReturn($quote);
-        $quote->method('setCustomerId')->willReturn($quote);
-        $quote->method('setCustomerEmail')->willReturn($quote);
-        $quote->method('setCustomerIsGuest')->willReturn($quote);
-        $quote->method('setCustomerGroupId')->willReturn($quote);
-        $quote->method('getBillingAddress')->willReturn($address);
-        $quote->method('getShippingAddress')->willReturn($address);
-        $quote->method('setIsActive')->willReturn($quote);
-        $quote->method('getIsVirtual')->willReturn(false);
-        $quote->method('getExtensionAttributes')->willReturn($extensionAttributes);
+        $this->quote->method('getPayment')->willReturn($payment);
+        $this->quote->method('collectTotals')->willReturn($this->quote);
+        $this->quote->method('setCustomerId')->willReturn($this->quote);
+        $this->quote->method('setCustomerEmail')->willReturn($this->quote);
+        $this->quote->method('setCustomerIsGuest')->willReturn($this->quote);
+        $this->quote->method('setCustomerGroupId')->willReturn($this->quote);
+        $this->quote->method('getBillingAddress')->willReturn($address);
+        $this->quote->method('getShippingAddress')->willReturn($address);
+        $this->quote->method('setIsActive')->willReturn($this->quote);
+        $this->quote->method('getIsVirtual')->willReturn(false);
+        $this->quote->method('getExtensionAttributes')->willReturn($extensionAttributes);
+        $this->quote->method('setCouponCode')->willReturn($this->quote);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -190,7 +210,7 @@ class LoadReviewTest extends BaseTestCase
             ])
             ->getMock();
         $checkoutSession->method('getAmazonWorkorderId')->willReturn(null);
-        $checkoutSession->method('getQuote')->willReturn($quote);
+        $checkoutSession->method('getQuote')->willReturn($this->quote);
         $checkoutSession->method('getOrderReferenceDetailsExecuted')->willReturn(false);
 
         $responseGetConfiguration = [
@@ -209,12 +229,20 @@ class LoadReviewTest extends BaseTestCase
         $this->setOrderReferenceDetails = $this->getMockBuilder(SetOrderReferenceDetails::class)->disableOriginalConstructor()->getMock();
 
         $orderHelper = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
-        $orderHelper->method('updateAddresses')->willReturn($quote);
+        $orderHelper->method('updateAddresses')->willReturn($this->quote);
 
         $checkoutHelper = $this->getMockBuilder(Checkout::class)->disableOriginalConstructor()->getMock();
         $checkoutHelper->method('getCurrentCheckoutMethod')->willReturn(Onepage::METHOD_GUEST);
 
         $this->cartManagement = $this->getMockBuilder(CartManagementInterface::class)->disableOriginalConstructor()->getMock();
+
+        $this->coupon = $this->getMockBuilder(Coupon::class)->disableOriginalConstructor()->getMock();
+
+        $couponFactory = $this->getMockBuilder(CouponFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $couponFactory->method('create')->willReturn($this->coupon);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
@@ -226,7 +254,8 @@ class LoadReviewTest extends BaseTestCase
             'setOrderReferenceDetails' => $this->setOrderReferenceDetails,
             'orderHelper' => $orderHelper,
             'checkoutHelper' => $checkoutHelper,
-            'cartManagement' => $this->cartManagement
+            'cartManagement' => $this->cartManagement,
+            'couponFactory' => $couponFactory,
         ]);
     }
 
@@ -299,5 +328,129 @@ class LoadReviewTest extends BaseTestCase
 
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(ResponseInterface::class, $result);
+    }
+
+    public function testExecuteUpdateCouponUsed()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, '12345'],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->method('getItemsCount')->willReturn(5);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteUpdateCouponNoItemCountLengthInvalid()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, '123456789012345678911234567892123456789312345678941234567895123456789612345678971234567898123456789912345678901234567891123456789212345678931234567894123456789512345678961234567897123456789812345678991234567890123456789112345678921234567893123456789412345678951234567896123456789712345678981234567899'],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->method('getItemsCount')->willReturn(false);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteUpdateCouponValid()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, '12345'],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->method('getItemsCount')->willReturn(false);
+
+        $this->coupon->method('getId')->willReturn('123');
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteUpdateCouponNotLoaded()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, '12345'],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->method('getItemsCount')->willReturn(false);
+
+        $this->coupon->method('getId')->willReturn(false);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteUpdateCouponLocalizedException()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, '12345'],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->method('getItemsCount')->willReturn(false);
+
+        $exception = $this->getMockBuilder(LocalizedException::class)->disableOriginalConstructor()->getMock();
+        $exception->method('getMessage')->willReturn('Error');
+
+        $this->coupon->method('load')->willThrowException($exception);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteUpdateCouponException()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, '12345'],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('12345');
+        $this->quote->method('getItemsCount')->willReturn(false);
+
+        $exception = new \Exception('Error');
+        $this->coupon->method('load')->willThrowException($exception);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteUpdateCouponNotValid()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, '12345'],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('123');
+        $this->quote->method('getItemsCount')->willReturn(5);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteUpdateCouponOnlyOldCoupon()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, null],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('123');
+        $this->quote->method('getItemsCount')->willReturn(5);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
     }
 }

@@ -322,9 +322,10 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      */
     protected function handleCouponRequest()
     {
-        $couponCode = $this->getRequest()->getParam('remove') == 1
-            ? ''
-            : trim($this->getRequest()->getParam('couponCode'));
+        $couponCode = '';
+        if ($this->getRequest()->getParam('remove') != 1) {
+            $couponCode = trim($this->getRequest()->getParam('couponCode'));
+        }
 
         $cartQuote = $this->checkoutSession->getQuote();
         $oldCouponCode = $cartQuote->getCouponCode();
@@ -345,7 +346,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
             }
 
             if ($codeLength) {
-                $escaper = $this->_objectManager->get('Magento\Framework\Escaper');
+                #$escaper = $this->_objectManager->get('Magento\Framework\Escaper');
                 if (!$itemsCount) {
                     if ($isCodeLengthValid) {
                         $coupon = $this->couponFactory->create();
