@@ -113,7 +113,7 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
 
         // "last successful quote"
         $sQuoteId = $oQuote->getId();
-        $this->checkoutSession->setLastQuoteId($sQuoteId)->setLastSuccessQuoteId($sQuoteId)->unsPayoneWorkorderId();
+        $this->checkoutSession->setLastQuoteId($sQuoteId)->setLastSuccessQuoteId($sQuoteId)->unsPayoneWorkorderId()->unsIsPayonePayPalExpress();
 
         $oQuote->setIsActive(false)->save();
     }

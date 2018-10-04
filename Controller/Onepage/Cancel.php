@@ -86,6 +86,7 @@ class Cancel extends Action
         try {
             $this->checkoutSession->setIsPayoneRedirectCancellation(true);
             $this->checkoutSession->unsPayoneWorkorderId();
+            $this->checkoutSession->unsIsPayonePayPalExpress();
 
             $sPaymentMethod = $this->checkoutSession->getPayoneRedirectedPaymentMethod();
             if ($sPaymentMethod) {
