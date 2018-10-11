@@ -41,7 +41,7 @@ define([
 
         /** Override default place order action and add agreement_ids to request */
         return wrapper.wrap(placeOrderAction, function (originalAction, paymentData, messageContainer) {
-            if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled) {
+            if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled && window.checkoutConfig.payment.payone.bonicheckIntegrationEvent === 'after_payment') {
                 alert('Kabelbruch');
 
                 var serviceUrl;
@@ -54,6 +54,8 @@ define([
                     serviceUrl = urlBuilder.createUrl('/carts/mine/payone-consumerscore', {});
                 }
 
+                alert('PlaceOrder: ' + serviceUrl);
+
                 var addressData = quote.billingAddress();
                 var request = {
                     addressData: addressData,
@@ -65,7 +67,7 @@ define([
                 fullScreenLoader.startLoader();
 
                 $.ajax({
-                    url: urlBuilder.build(serviceUrl),
+                    url: serviceUrl,
                     type: 'POST',
                     data: JSON.stringify(request),
                     global: true,

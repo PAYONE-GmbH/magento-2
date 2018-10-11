@@ -42,7 +42,7 @@ define([
             return false;
         },
         payoneBonicheckAddress: function () {
-            if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled) {
+            if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled && window.checkoutConfig.payment.payone.bonicheckIntegrationEvent === 'before_payment') {
                 return true;
             }
             return false;
