@@ -21,25 +21,22 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-/*jshint browser:true jquery:true*/
-/*global alert*/
 define([
     'jquery',
-    'mage/utils/wrapper',
     'Magento_Checkout/js/model/quote',
     'Magento_Customer/js/model/customer',
     'Magento_Checkout/js/model/url-builder',
     'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/action/create-billing-address',
+    'Magento_Checkout/js/action/create-shipping-address',
+    'Magento_Checkout/js/action/select-shipping-address',
+    'Payone_Core/js/action/edit-address',
+    'Magento_Checkout/js/checkout-data',
     'mage/url'
-], function ($, wrapper, quote, customer, urlBuilder, fullScreenLoader, createBillingAddress, buildUrl) {
-    'use strict';
-
-    return function (placeOrderAction) {
-
-        /** Override default place order action and add agreement_ids to request */
-        return wrapper.wrap(placeOrderAction, function (originalAction, paymentData, messageContainer) {
-            if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled && window.checkoutConfig.payment.payone.bonicheckIntegrationEvent === 'after_payment') {
+], function ($, quote, customer, urlBuilder, fullScreenLoader, createBillingAddress, createShippingAddress, selectShippingAddress, editAddress, checkoutData, buildUrl) {
+        'use strict';
+        return {
+            handleCreditrating: function() {
                 var serviceUrl;
 
                 if (!customer.isLoggedIn()) {
@@ -61,23 +58,42 @@ define([
 
                 fullScreenLoader.startLoader();
 
+                var self = this;
+
                 $.ajax({
                     url: buildUrl.build(serviceUrl),
                     type: 'POST',
                     data: JSON.stringify(request),
                     global: true,
-                    contentType: 'application/json'
+                    contentType: 'application/json',
+                    async: false
                 }).done(
                     function (response) {
                         if (response.success == true) {
+                            if (self.isAddressTheSame(quote.billingAddress(), quote.shippingAddress())) {
+                                alert('Gleich');
+                            } else {
+                                alert('UNgleich');
+                            }
                             if (response.corrected_address != null) {
-                                var newBillingAddress = createBillingAddress(response.corrected_address);
+                                var sameAddress = false;
+                                if (self.isAddressTheSame(quote.billingAddress(), quote.shippingAddress())) {
+                                    sameAddress = true;
+                                }
+
                                 if (!window.checkoutConfig.payment.payone.addresscheckConfirmCorrection || confirm(response.confirm_message)) {
-                                    quote.billingAddress(newBillingAddress);
+                                    quote.billingAddress(createBillingAddress(response.corrected_address));
+                                    if (sameAddress === true) {
+                                        /*
+                                        var newShippingAddress = createShippingAddress(response.corrected_address);
+                                        editAddress(newShippingAddress);
+                                        selectShippingAddress(newShippingAddress);
+                                        checkoutData.setSelectedShippingAddress(newShippingAddress.getKey());
+                                        */
+                                        self.payoneUpdateAddressRegistered(response.corrected_address);
+                                    }
                                 }
                             }
-
-                            return originalAction(paymentData, messageContainer);
                         } else {
                             alert(response.errormessage);
                         }
@@ -90,11 +106,19 @@ define([
                         fullScreenLoader.stopLoader();
                     }
                 );
-
-                //return true;
-            } else {
-                return originalAction(paymentData, messageContainer);
+            },
+            isAddressTheSame: function(billing, shipping) {
+                if (billing.getAddressInline() == shipping.getAddressInline()) {
+                    return true;
+                }
+                return false;
+            },
+            validate: function() {
+                if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled && window.checkoutConfig.payment.payone.bonicheckIntegrationEvent === 'after_payment') {
+                    this.handleCreditrating();
+                }
+                return true;
             }
-        });
-    };
-});
+        }
+    }
+);

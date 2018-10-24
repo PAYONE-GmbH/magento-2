@@ -48,7 +48,8 @@ define([
             addressData: addressData,
             isBillingAddress: isBillingAddress,
             isVirtual: quote.isVirtual(),
-            dTotal: window.checkoutConfig.quoteData.subtotal
+            dTotal: window.checkoutConfig.quoteData.subtotal,
+            sIntegrationEvent: 'before_payment'
         };
 
         fullScreenLoader.startLoader();

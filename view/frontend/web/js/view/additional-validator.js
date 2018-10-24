@@ -1,5 +1,3 @@
-<?php
-
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,22 +21,15 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-
-namespace Payone\Core\Api;
-
-interface ConsumerscoreInterface
-{
-    /**
-     * PAYONE consumerscore
-     * The full class-paths must be given here otherwise the Magento 2 WebApi
-     * cant handle this with its fake type system!
-     *
-     * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
-     * @param  bool                                     $isBillingAddress
-     * @param  bool                                     $isVirtual
-     * @param  double                                   $dTotal
-     * @param  string                                   $sIntegrationEvent
-     * @return \Payone\Core\Service\V1\Data\ConsumerscoreResponse
-     */
-    public function executeConsumerscore(\Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal, $sIntegrationEvent);
-}
+define(
+    [
+        'uiComponent',
+        'Magento_Checkout/js/model/payment/additional-validators',
+        'Payone_Core/js/model/bonicheck-validator'
+    ],
+    function (Component, additionalValidators, yourValidator) {
+        'use strict';
+        additionalValidators.registerValidator(yourValidator);
+        return Component.extend({});
+    }
+);

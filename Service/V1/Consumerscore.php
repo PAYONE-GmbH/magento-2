@@ -205,13 +205,14 @@ class Consumerscore implements ConsumerscoreInterface
      * @param  bool                                     $isBillingAddress
      * @param  bool                                     $isVirtual
      * @param  double                                   $dTotal
+     * @param  string                                   $sIntegrationEvent
      * @return \Payone\Core\Service\V1\Data\ConsumerscoreResponse
      */
-    public function executeConsumerscore(\Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal)
+    public function executeConsumerscore(\Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal, $sIntegrationEvent)
     {
         $oResponse = $this->responseFactory->create();
         $oResponse->setData('success', false); // set success to false as default, set to true later if true
-        if ($this->consumerscoreHelper->isCreditratingNeeded(Event::BEFORE_PAYMENT, $dTotal) === true) {
+        if ($this->consumerscoreHelper->isCreditratingNeeded($sIntegrationEvent, $dTotal) === true) {
             $oResponse = $this->handleBonicheck($oResponse, $addressData, $isBillingAddress);
         }
         return $oResponse;

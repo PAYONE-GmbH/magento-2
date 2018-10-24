@@ -45,9 +45,8 @@ define([
             return parentReturn;
         },
         afterPlaceOrder: function () {
-            this.redirectAfterPlaceOrder = false;
+            //this.redirectAfterPlaceOrder = false;
 
-            alert('Krawallkind!');
             return this._super();
         }
     };
