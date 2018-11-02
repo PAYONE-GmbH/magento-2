@@ -22,18 +22,19 @@
  * @link      http://www.payone.de
  */
 define([
-    'jquery',
-    'Magento_Checkout/js/model/quote',
-    'Magento_Customer/js/model/customer',
-    'Magento_Checkout/js/model/url-builder',
-    'Magento_Checkout/js/model/full-screen-loader',
-    'Magento_Checkout/js/action/create-billing-address',
-    'Magento_Checkout/js/action/create-shipping-address',
-    'Magento_Checkout/js/action/select-shipping-address',
-    'Payone_Core/js/action/edit-address',
-    'Magento_Checkout/js/checkout-data',
-    'mage/url'
-], function ($, quote, customer, urlBuilder, fullScreenLoader, createBillingAddress, createShippingAddress, selectShippingAddress, editAddress, checkoutData, buildUrl) {
+        'jquery',
+        'Magento_Checkout/js/model/quote',
+        'Magento_Customer/js/model/customer',
+        'Magento_Checkout/js/model/url-builder',
+        'Magento_Checkout/js/model/full-screen-loader',
+        'Magento_Checkout/js/action/create-billing-address',
+        'Magento_Checkout/js/action/create-shipping-address',
+        'Magento_Checkout/js/action/select-shipping-address',
+        'Payone_Core/js/action/edit-address',
+        'Magento_Checkout/js/checkout-data',
+        'Magento_Checkout/js/view/shipping',
+        'mage/url'
+    ], function ($, quote, customer, urlBuilder, fullScreenLoader, createBillingAddress, createShippingAddress, selectShippingAddress, editAddress, checkoutData, shippingView, buildUrl) {
         'use strict';
         return {
             handleCreditrating: function() {
@@ -70,11 +71,6 @@ define([
                 }).done(
                     function (response) {
                         if (response.success == true) {
-                            if (self.isAddressTheSame(quote.billingAddress(), quote.shippingAddress())) {
-                                alert('Gleich');
-                            } else {
-                                alert('UNgleich');
-                            }
                             if (response.corrected_address != null) {
                                 var sameAddress = false;
                                 if (self.isAddressTheSame(quote.billingAddress(), quote.shippingAddress())) {
@@ -108,10 +104,64 @@ define([
                 );
             },
             isAddressTheSame: function(billing, shipping) {
-                if (billing.getAddressInline() == shipping.getAddressInline()) {
+                if (this.getAddressInline(billing) == this.getAddressInline(shipping)) {
+                    alert('Gleich');
                     return true;
                 }
+                alert('UNGleich');
                 return false;
+            },
+            getAddressInline: function(address) {
+                return address.firstname + address.lastname + address.street.join("") + address.postcode + address.city + address.countryId;
+            },
+            payoneReplaceInSelectedShippingAddress: function (sReplace, sReplaceWith) {
+                var oElem = $('.shipping-address-item.selected-item');
+                if (oElem.length > 0) {
+                    oElem.html(oElem.html().replace(sReplace, sReplaceWith));
+                }
+            },
+            payoneUpdateField: function(oSourceAddress, oResponseAddress, sField) {
+                if (sField === "street") {
+                    if (oSourceAddress[sField][0] !== oResponseAddress[sField][0]) {
+                        this.payoneReplaceInSelectedShippingAddress(oSourceAddress[sField][0], oResponseAddress[sField][0]);
+                        oSourceAddress[sField][0] = oResponseAddress[sField][0];
+                    }
+                } else {
+                    if (oSourceAddress[sField] !== oResponseAddress[sField]) {
+                        this.payoneReplaceInSelectedShippingAddress(oSourceAddress[sField], oResponseAddress[sField]);
+                        oSourceAddress[sField] = oResponseAddress[sField];
+                    }
+                }
+                return oSourceAddress;
+            },
+            payoneUpdateAddress: function (addressData) {
+                //if (this.isFormInline) {
+                //    this.payoneUpdateAddressSource(addressData);
+                //} else {
+                this.payoneUpdateAddressRegistered(addressData);
+                //}
+            },
+            payoneUpdateAddressSource: function (addressData) {
+                shippingView().source.set('shippingAddress.postcode', addressData.postcode);
+                shippingView().source.set('shippingAddress.firstname', addressData.firstname);
+                shippingView().source.set('shippingAddress.lastname', addressData.lastname);
+                shippingView().source.set('shippingAddress.street.0', addressData.street[0]);
+                shippingView().source.set('shippingAddress.city', addressData.city);
+                shippingView().source.set('shippingAddress.country_id', addressData.country_id);
+            },
+            payoneUpdateAddressRegistered: function (addressData) {
+                var newShippingAddress = quote.shippingAddress();
+                var aUpdateFields = ["postcode", "firstname", "lastname", "street", "city"];
+                for (var i = 0; i < aUpdateFields.length; i++) {
+                    newShippingAddress = this.payoneUpdateField(newShippingAddress, addressData, aUpdateFields[i]);
+                }
+
+                //this.payoneUpdateAddressSource(addressData);
+
+                editAddress(addressData);
+
+                selectShippingAddress(newShippingAddress);
+                checkoutData.setSelectedShippingAddress(newShippingAddress.getKey());
             },
             validate: function() {
                 if (window.checkoutConfig.payment.payone.bonicheckAddressEnabled && window.checkoutConfig.payment.payone.bonicheckIntegrationEvent === 'after_payment') {
