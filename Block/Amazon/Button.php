@@ -42,6 +42,11 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
     protected $alias = 'payone.block.amazon.button';
 
     /**
+     * @var int $counter
+     */
+    public static $counter = 0;
+
+    /**
      * @var \Payone\Core\Helper\Base
      */
     protected $baseHelper;
@@ -131,5 +136,15 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
     public function getRedirectUrl()
     {
         return $this->getUrl("payone/onepage/amazon", ['_secure' => true]);
+    }
+
+    /**
+     * Returns current counter
+     *
+     * @return int
+     */
+    public function getCounter()
+    {
+        return ++$this::$counter;
     }
 }

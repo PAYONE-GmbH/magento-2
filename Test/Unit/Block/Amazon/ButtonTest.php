@@ -139,4 +139,10 @@ class ButtonTest extends BaseTestCase
         $result = $this->classToTest->getRedirectUrl();
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetCounter()
+    {
+        $result = $this->classToTest->getCounter();
+        $this->assertGreaterThan(0, $result);
+    }
 }
