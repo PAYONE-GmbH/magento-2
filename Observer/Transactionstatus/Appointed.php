@@ -101,7 +101,7 @@ class Appointed implements ObserverInterface
     }
 
     /**
-     * Generate an invoice for the order to mark the order as paid
+     * Send order confirmation mail to the customer
      *
      * @param  Observer $observer
      * @return void

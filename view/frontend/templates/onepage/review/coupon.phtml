@@ -1,0 +1,61 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2018 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+?>
+<div class="block discount" id="block-discount">
+    <div class="title" data-role="title" onclick="toggleCouponBlock()">
+        <strong id="block-discount-heading" role="heading" aria-level="2">
+            <?php echo __('Apply Discount Code') ?>
+        </strong>
+    </div>
+    <div class="content" data-role="content" aria-labelledby="block-discount-heading">
+        <form id="discount-coupon-form"
+              action="<?php echo $block->getUrl('checkout/cart/couponPost') ?>"
+              method="post">
+            <div class="fieldset coupon<?php strlen($block->getCouponCode()) ? ' applied' : ''?>">
+                <input type="hidden" name="remove" id="remove-coupon" value="0" />
+                <div class="field">
+                    <label for="coupon_code" class="label"><span><?php /* @escapeNotVerified */ echo __('Enter discount code') ?></span></label>
+                    <div class="control">
+                        <input type="text" class="input-text" id="coupon_code" name="coupon_code" value="<?php echo $block->escapeHtml($block->getCouponCode()) ?>" placeholder="<?php echo $block->escapeHtml(__('Enter discount code'));?>" />
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <?php if (!strlen($block->getCouponCode())): ?>
+                        <div class="primary">
+                            <button class="action apply primary" type="button" onclick="payoneUpdateCoupon(0)" value="<?php echo __('Apply Discount') ?>">
+                                <span><?php echo __('Apply Discount') ?></span>
+                            </button>
+                        </div>
+                    <?php else: ?>
+                        <div class="primary">
+                            <button  type="button" class="action cancel primary" onclick="payoneUpdateCoupon(1)" value="<?php /* @escapeNotVerified */ echo __('Cancel Coupon') ?>"><span><?php /* @escapeNotVerified */ echo __('Cancel Coupon') ?></span></button>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

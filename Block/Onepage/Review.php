@@ -40,6 +40,13 @@ use Magento\Framework\DataObject;
 class Review extends \Magento\Framework\View\Element\Template
 {
     /**
+     * Template
+     *
+     * @var string
+     */
+    protected $_template = 'Payone_Core::onepage/review.phtml';
+
+    /**
      * @var \Magento\Quote\Model\Quote
      */
     protected $_quote;
@@ -279,6 +286,7 @@ class Review extends \Magento\Framework\View\Element\Template
         } else {
             // prepare shipping rates
             $this->_address = $this->_quote->getShippingAddress();
+            $this->_address->setCollectShippingRates(true);
             $groups = $this->_address->getGroupedAllShippingRates();
             if ($groups && $this->_address) {
                 $this->setShippingRateGroups($groups);

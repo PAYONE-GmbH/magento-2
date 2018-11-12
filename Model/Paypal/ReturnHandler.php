@@ -59,13 +59,6 @@ class ReturnHandler
     protected $paypalPayment;
 
     /**
-     * Cart management interface
-     *
-     * @var \Magento\Quote\Api\CartManagementInterface
-     */
-    protected $cartManagement;
-
-    /**
      * PAYONE order helper
      *
      * @var \Payone\Core\Helper\Order
@@ -85,7 +78,6 @@ class ReturnHandler
      * @param \Magento\Checkout\Model\Session                             $checkoutSession
      * @param \Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress $genericRequest
      * @param \Payone\Core\Model\Methods\Paypal                           $paypalPayment
-     * @param \Magento\Quote\Api\CartManagementInterface                  $cartManagement
      * @param \Payone\Core\Helper\Order                                   $orderHelper
      * @param \Payone\Core\Helper\Checkout                                $checkoutHelper
      */
@@ -93,62 +85,14 @@ class ReturnHandler
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress $genericRequest,
         \Payone\Core\Model\Methods\Paypal $paypalPayment,
-        \Magento\Quote\Api\CartManagementInterface $cartManagement,
         \Payone\Core\Helper\Order $orderHelper,
         \Payone\Core\Helper\Checkout $checkoutHelper
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->genericRequest = $genericRequest;
         $this->paypalPayment = $paypalPayment;
-        $this->cartManagement = $cartManagement;
         $this->orderHelper = $orderHelper;
         $this->checkoutHelper = $checkoutHelper;
-    }
-
-    /**
-     * Map response parameters to distinct parameters
-     *
-     * @param  Address $oAddress
-     * @param  array   $aResponse
-     * @return Address
-     */
-    protected function fillSingleAddress($oAddress, $aResponse)
-    {
-        return $this->orderHelper->fillSingleAddress(
-            $oAddress,
-            $aResponse['add_paydata[shipping_firstname]'],
-            $aResponse['add_paydata[shipping_lastname]'],
-            $aResponse['add_paydata[shipping_street]'],
-            $aResponse['add_paydata[shipping_city]'],
-            $aResponse['add_paydata[shipping_zip]'],
-            $aResponse['add_paydata[shipping_country]'],
-            $aResponse['add_paydata[shipping_country]']
-        );
-    }
-
-    /**
-     * Address-handling for billing- and shipping address
-     *
-     * @param  Quote $oQuote
-     * @param  array $aResponse
-     * @return Quote
-     */
-    protected function handleAddresses(Quote $oQuote, $aResponse)
-    {
-        $oBillingAddress = $this->fillSingleAddress($oQuote->getBillingAddress(), $aResponse);
-        $oBillingAddress->setEmail($aResponse['add_paydata[email]']);
-
-        $oQuote->setBillingAddress($oBillingAddress);
-        $oQuote->getBillingAddress()->setShouldIgnoreValidation(true);
-
-        if (!$oQuote->getIsVirtual()) {
-            $oShippingAddress = $this->fillSingleAddress($oQuote->getShippingAddress(), $aResponse);
-            $oShippingAddress = $this->orderHelper->setShippingMethod($oShippingAddress, $oQuote);
-            $oQuote->setShippingAddress($oShippingAddress);
-            $oQuote->getShippingAddress()->setShouldIgnoreValidation(true);
-        }
-
-        return $oQuote;
     }
 
     /**
@@ -160,7 +104,7 @@ class ReturnHandler
      */
     protected function handleQuote(Quote $oQuote, $aResponse)
     {
-        $oQuote = $this->handleAddresses($oQuote, $aResponse);
+        $oQuote = $this->orderHelper->updateAddresses($oQuote, $aResponse);
 
         if ($this->checkoutHelper->getCurrentCheckoutMethod($oQuote) == Onepage::METHOD_GUEST) {
             $oQuote->setCustomerId(null)
@@ -190,8 +134,6 @@ class ReturnHandler
         $oQuote = $this->checkoutSession->getQuote();
         $aResponse = $this->genericRequest->sendRequest($oQuote, $this->paypalPayment, $sWorkorderId);
 
-        $oQuote = $this->handleQuote($oQuote, $aResponse);
-        #$this->cartManagement->placeOrder($oQuote->getId());
-        #$oQuote->setIsActive(false)->save();
+        $this->handleQuote($oQuote, $aResponse);
     }
 }
