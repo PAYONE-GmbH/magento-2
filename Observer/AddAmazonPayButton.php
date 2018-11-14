@@ -79,7 +79,7 @@ class AddAmazonPayButton implements ObserverInterface
         $shortcutButtons = $observer->getEvent()->getContainer();
 
         $blIsSsl = $this->storeManager->getStore()->isCurrentlySecure();
-        if (!$blIsSsl || $shortcutButtons->getNameInLayout() === 'addtocart.shortcut.buttons') {
+        if (!$blIsSsl || in_array($shortcutButtons->getNameInLayout(), ['addtocart.shortcut.buttons', 'addtocart.shortcut.buttons.additional'])) {
             return;
         }
 
