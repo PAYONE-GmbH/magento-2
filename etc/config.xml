@@ -194,7 +194,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Invoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Invoice</title>
+                <title>PAYONE - Paysafe Pay Later™ Invoice</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_invoice>
@@ -203,7 +203,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Debit</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Debit</title>
+                <title>PAYONE - Paysafe Pay Later™ Debit</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_debit>
@@ -212,7 +212,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Installment</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Installment</title>
+                <title>PAYONE - Paysafe Pay Later™ Installment</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_installment>
@@ -319,6 +319,7 @@
                 <use_global>1</use_global>
                 <check_cvc>always</check_cvc>
                 <min_validity_period>35</min_validity_period>
+                <save_data_enabled>0</save_data_enabled>
             </payone_creditcard>
             <payone_debit>
                 <use_global>1</use_global>

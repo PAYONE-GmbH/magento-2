@@ -33,6 +33,7 @@ use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Payone\Core\Setup\Tables\Api;
 use Payone\Core\Setup\Tables\PaymentBan;
 use Payone\Core\Setup\Tables\Transactionstatus;
+use Payone\Core\Setup\Tables\SavedPaymentData;
 
 /**
  * Magento script for updating the database after the initial installation
@@ -100,6 +101,9 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
     {
         if (!$setup->getConnection()->isTableExists($setup->getTable(PaymentBan::TABLE_PAYMENT_BAN))) {
             $this->addTable($setup, PaymentBan::getData());
+        }
+        if (!$setup->getConnection()->isTableExists($setup->getTable(SavedPaymentData::TABLE_SAVED_PAYMENT_DATA))) {
+            $this->addTable($setup, SavedPaymentData::getData());
         }
     }
 

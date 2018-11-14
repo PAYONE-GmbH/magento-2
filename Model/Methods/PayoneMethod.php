@@ -29,6 +29,7 @@ namespace Payone\Core\Model\Methods;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order;
+use Magento\Framework\DataObject;
 
 /**
  * Abstract model for all the PAYONE payment methods
@@ -153,6 +154,35 @@ abstract class PayoneMethod extends BaseMethod
     protected function handleResponse($aResponse, Order $oOrder)
     {
         // hook for certain payment methods
+    }
+
+    /**
+     * Convert DataObject to needed array format
+     * Hook for overriding in specific payment type class
+     *
+     * @param  DataObject $data
+     * @return array
+     */
+    protected function getPaymentStorageData(DataObject $data)
+    {
+        return [];
+    }
+
+    /**
+     * Check config and save payment data
+     *
+     * @param  DataObject $data
+     * @return void
+     */
+    protected function handlePaymentDataStorage(DataObject $data)
+    {
+        if ((bool)$this->getCustomConfigParam('save_data_enabled') === true) {
+            $aPaymentData = $this->getPaymentStorageData($data);
+            $iCustomerId = $this->checkoutSession->getQuote()->getCustomerId();
+            if (!empty($aPaymentData) && $iCustomerId) {
+                $this->savedPaymentData->addSavedPaymentData($iCustomerId, $this->getCode(), $aPaymentData);
+            }
+        }
     }
 
     /**

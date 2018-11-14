@@ -124,11 +124,12 @@ class PlaceOrderTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote', 'setLastQuoteId', 'setLastSuccessQuoteId', 'unsPayoneWorkorderId', 'getPayoneGenericpaymentSubtotal'])
+            ->setMethods(['getQuote', 'setLastQuoteId', 'setLastSuccessQuoteId', 'unsPayoneWorkorderId', 'unsIsPayonePayPalExpress', 'getPayoneGenericpaymentSubtotal'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
         $this->checkoutSession->method('setLastQuoteId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('setLastSuccessQuoteId')->willReturn($this->checkoutSession);
+        $this->checkoutSession->method('unsPayoneWorkorderId')->willReturn($this->checkoutSession);
 
         $this->agreementValidator = $this->getMockBuilder(AgreementsValidatorInterface::class)->disableOriginalConstructor()->getMock();
         $this->agreementValidator->method('isValid')->willReturn(false);

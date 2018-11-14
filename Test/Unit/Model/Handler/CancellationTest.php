@@ -90,7 +90,10 @@ class CancellationTest extends BaseTestCase
         $this->order->method('load')->willReturn($this->order);
         $this->order->method('getIncrementId')->willReturn(123);
 
-        $orderFactory = $this->getMockBuilder(OrderFactory::class)->disableOriginalConstructor()->getMock();
+        $orderFactory = $this->getMockBuilder(OrderFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $orderFactory->method('create')->willReturn($this->order);
 
         $quoteRepository = $this->getMockBuilder(QuoteRepository::class)->disableOriginalConstructor()->getMock();

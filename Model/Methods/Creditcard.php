@@ -73,7 +73,11 @@ class Creditcard extends PayoneMethod
         'pseudocardpan',
         'truncatedcardpan',
         'cardtype',
-        'cardexpiredate'
+        'cardexpiredate',
+        'selectedData',
+        'firstname',
+        'lastname',
+
     ];
 
     /**
@@ -84,9 +88,12 @@ class Creditcard extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        return [
-            'pseudocardpan' => $this->getInfoInstance()->getAdditionalInformation('pseudocardpan'),
-        ];
+        $aReturn = ['pseudocardpan' => $this->getInfoInstance()->getAdditionalInformation('pseudocardpan')];
+        $sSelectedData = $this->getInfoInstance()->getAdditionalInformation('selectedData');
+        if (!empty($sSelectedData) && $sSelectedData != 'new') {
+            $aReturn['pseudocardpan'] = $this->getInfoInstance()->getAdditionalInformation('selectedData');
+        }
+        return $aReturn;
     }
 
     /**
@@ -107,6 +114,49 @@ class Creditcard extends PayoneMethod
             }
         }
 
+        $aAddData = $data->getAdditionalData();
+        if (isset($aAddData['saveData']) && $aAddData['saveData'] == '1') {
+            $this->handlePaymentDataStorage($data);
+        }
+
         return $this;
+    }
+
+    /**
+     * Add value to the payment storage data array
+     *
+     * @param  array  $aDest
+     * @param  array  $aSource
+     * @param  string $sDestField
+     * @param  string $sSourceField
+     * @return void
+     */
+    protected function addValueToArray(&$aDest, $aSource, $sDestField, $sSourceField)
+    {
+        if (isset($aSource[$sSourceField])) {
+            $aDest[$sDestField] = $aSource[$sSourceField];
+        }
+    }
+
+    /**
+     * Convert DataObject to needed array format
+     *
+     * @param  DataObject $data
+     * @return array
+     */
+    protected function getPaymentStorageData(DataObject $data)
+    {
+        $aReturn = parent::getPaymentStorageData($data);
+        $aAdditionalData = $data->getAdditionalData();
+
+        if (isset($aAdditionalData['pseudocardpan']) && isset($aAdditionalData['truncatedcardpan'])) {
+            $this->addValueToArray($aReturn, $aAdditionalData, 'cardpan', 'pseudocardpan');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'masked', 'truncatedcardpan');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'firstname', 'firstname');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'lastname', 'lastname');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'cardtype', 'cardtype');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'cardexpiredate', 'cardexpiredate');
+        }
+        return $aReturn;
     }
 }

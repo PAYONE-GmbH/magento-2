@@ -24,8 +24,9 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Model\Methods\OnlineBankTransfer;
+namespace Payone\Core\Test\Unit\Model\Methods\Payolution;
 
+use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Payolution\Invoice as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -77,20 +78,17 @@ class InvoiceTest extends BaseTestCase
         $authorizationRequest = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
         $authorizationRequest->method('sendRequest')->willReturn(['status' => 'APPROVED', 'txid' => '12345']);
 
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getConfigParam')->willReturn('display');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'toolkitHelper' => $toolkitHelper,
             'checkoutSession' => $checkoutSession,
             'precheckRequest' => $this->precheckRequest,
-            'authorizationRequest' => $authorizationRequest
+            'authorizationRequest' => $authorizationRequest,
+            'shopHelper' => $shopHelper
         ]);
         $this->classToTest->setInfoInstance($info);
-    }
-
-    public function testGetAuthorizationMode()
-    {
-        $result = $this->classToTest->getAuthorizationMode();
-        $expected = PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
-        $this->assertEquals($expected, $result);
     }
 
     public function testAuthorize()

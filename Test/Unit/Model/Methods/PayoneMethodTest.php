@@ -32,6 +32,7 @@ use Payone\Core\Helper\Shop;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\Url;
 
 class PayoneMethodTest extends BaseTestCase
 {
@@ -56,8 +57,12 @@ class PayoneMethodTest extends BaseTestCase
 
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
 
+        $url = $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
+        $url->method('getUrl')->willReturn('http://testdomain.org');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'shopHelper' => $this->shopHelper
+            'shopHelper' => $this->shopHelper,
+            'url' => $url
         ]);
     }
 
@@ -133,6 +138,14 @@ class PayoneMethodTest extends BaseTestCase
     {
         $result = $this->classToTest->getNarrativeTextMaxLength();
         $expected = 37;
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetSuccessUrl()
+    {
+        $expected = 'http://testdomain.org';
+
+        $result = $this->classToTest->getSuccessUrl();
         $this->assertEquals($expected, $result);
     }
 }

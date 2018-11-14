@@ -24,14 +24,15 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Block\Adminhtml;
+namespace Payone\Core\Test\Unit\Block\Customer;
 
-use Payone\Core\Block\Adminhtml\Information as ClassToTest;
+use Payone\Core\Block\Customer\Link as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Helper\Base;
 
-class InformationTest extends BaseTestCase
+class LinkTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -43,24 +44,36 @@ class InformationTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var Base
+     */
+    private $baseHelper;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $this->baseHelper = $this->getMockBuilder(Base::class)->disableOriginalConstructor()->getMock();
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'baseHelper' => $this->baseHelper
+        ]);
     }
 
-    public function testGetHeader()
+    public function testToHtml()
     {
-        $result = $this->classToTest->getHeader();
-        $expected = 'Information';
-        $this->assertEquals($expected, $result);
+        $this->baseHelper->method('getConfigParam')->willReturn('1');
+
+        $this->classToTest->setCurrent(true);
+
+        $result = $this->classToTest->toHtml();
+        $this->assertNotEmpty($result);
     }
 
-    public function testGetPayoneUrl()
+    public function testToHtmlDisabled()
     {
-        $result = $this->classToTest->getPayoneUrl();
-        $expected = '//www.payone.de/embedded-sites/magento/information/';
-        $this->assertEquals($expected, $result);
+        $this->baseHelper->method('getConfigParam')->willReturn('0');
+
+        $result = $this->classToTest->toHtml();
+        $this->assertEmpty($result);
     }
 }

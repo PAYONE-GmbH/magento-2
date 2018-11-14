@@ -144,7 +144,7 @@ class Express extends \Magento\Framework\App\Action\Action
                 return $resultRedirect->setPath('customer/account/login');
             }
 
-            $this->paypalPayment->setIsPayPalExpress(true);
+            $this->checkoutSession->setIsPayonePayPalExpress(true);
             $aResponse = $this->genericRequest->sendRequest($oQuote, $this->paypalPayment);
             if ($aResponse['status'] == 'ERROR') {
                 $this->messageManager->addError(__($aResponse['customermessage']));

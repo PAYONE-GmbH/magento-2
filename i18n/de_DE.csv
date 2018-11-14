@@ -36,6 +36,8 @@
 "Minimum Order Total","Minimaler Warenwert"
 "Maximum Order Total","Maximaler Warenwert"
 "Minimum Validity Period","Mindest-Gültigkeitszeitraum"
+"Creditcard-management enabled","Kreditkartenverwaltung aktiviert"
+"Enables the customer to save his creditcard data for future use. The shop doesn't save the real creditcard number - only the PAYONE creditcard pan.","Hiermit kann der Kunde seine Kreditkarten-Daten für zukünftige Nutzung abspeichern. Der Shop speichert nicht die echten Kreditkarten-Daten, sondern nur die PAYONE Creditcard-pan."
 "Minimum period a CreditCard has to be valid. (in days)","Minimaler benötigter Gültigkeits-Zeitraum bevor Kreditkarten abgelehnt werden (in Tagen)"
 "Narrative Text","Buchungstext"
 "Maximum 81 digits. Placeholders: {{order_increment_id}}","Maximal 81 Zeichen. Platzhalter: {{order_increment_id}}"
@@ -290,7 +292,7 @@
 "Payone Core Installation", "Payone Core Installation"
 
 "ID","ID"
-"Txid","Vorgansgnr."
+"Txid","Vorgangsnr."
 "Reference","Bestellnummer"
 "Last Txaction","Status"
 "Txaction","Status"
@@ -1042,7 +1044,7 @@
 
 "You have to be at least 18 years old to use this payment type!","Sie müssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu können!"
 
-"I agree with the transmission of the necessary data to payolution which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an payolution bin ich einverstanden."
+"I agree with the transmission of the necessary data to Paysafe Pay Later™ which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an Paysafe Pay Later™ bin ich einverstanden."
 "I agree with the transmission of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an Klarna bin ich einverstanden."
 "I agree with the processing of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Datenverarbeitung der für die Abwicklung des Rechnungskaufes und einer Identitäts- und Bonitätsprüfung erforderlichen Daten durch Klarna bin ich einverstanden."
 "My","Meine"
@@ -1050,7 +1052,7 @@
 "The general terms and conditions of the dealer apply.","Es gelten die AGB des Händlers."
 "acceptance","Einwilligung"
 "PAYONE_PAYOLUTION_API_ERRORMESSAGE","Diese Zahlung konnte nicht durchgeführt werden. Dies kann unterschiedliche Gruende haben, wie etwa fehlerhafte Eingabedaten, eine unbekannte Adresse, oder ein vorübergehendes technisches Problem. Bitte überprüfen Sie die angegebenen Daten, oder wählen Sie ein anderes Zahlungsmittel."
-"Please confirm the transmission of the necessary data to payolution!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an payolution!"
+"Please confirm the transmission of the necessary data to Paysafe Pay Later™!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an Paysafe Pay Later™!"
 "Please confirm the transmission of the necessary data to Klarna!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an Klarna!"
 "Please confirm the SEPA mandate!","Bitte bestätigen Sie das SEPA-Mandat!"
 
@@ -1086,3 +1088,14 @@
 "Company trade registry number","Handelsregisternummer"
 
 "Payment information is transmitted using the selected currency","Zahlungsinformation wird in dieser Währung übermittelt"
+
+"Creditcard management","Kreditkarten-Verwaltung"
+"You have no saved creditcard data.","Sie haben noch keine gespeicherten Kreditkarten-Daten."
+"Save the payment data for future use.","Daten für zukünftige Nutzung speichern."
+"Saved creditcard","Gespeicherte Kreditkarte"
+"Add new creditcard","Neue Kreditkarte hinzufügen"
+"Default","Standard"
+"Saved at","Gespeichert am"
+"Declare as default","Als Standard festlegen"
+"Delete","Löschen"
+"ends with","endet auf"
