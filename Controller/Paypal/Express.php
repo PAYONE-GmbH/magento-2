@@ -158,6 +158,7 @@ class Express extends \Magento\Framework\App\Action\Action
                 $oQuote->save();
 
                 $this->checkoutSession->setPayoneWorkorderId($aResponse['workorderid']);
+                $this->checkoutSession->setPayoneGenericpaymentSubtotal($oQuote->getSubtotal());
                 $this->_redirect($aResponse['redirecturl']);
             }
             return;

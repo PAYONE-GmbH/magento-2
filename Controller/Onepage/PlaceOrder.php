@@ -104,6 +104,14 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
     protected function placeOrder()
     {
         $oQuote = $this->checkoutSession->getQuote();
+
+        if ($oQuote->getSubtotal() != $this->checkoutSession->getPayoneGenericpaymentSubtotal()) {
+            // The basket was changed - abort current checkout
+            $this->messageManager->addErrorMessage('An error occured during the Checkout.');
+            $this->_redirect('checkout/cart');
+            return;
+        }
+
         $oQuote->getBillingAddress()->setShouldIgnoreValidation(true);
         if (!$oQuote->getIsVirtual()) {
             $oQuote->getShippingAddress()->setShouldIgnoreValidation(true);

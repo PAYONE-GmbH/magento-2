@@ -34,13 +34,6 @@ use Magento\Sales\Model\Order;
 class Index extends \Magento\Framework\App\Action\Action
 {
     /**
-     * Contect object
-     *
-     * @var \Magento\Framework\App\Action\Context
-     */
-    protected $context;
-
-    /**
      * TransactionStatus model
      *
      * @var \Payone\Core\Model\ResourceModel\TransactionStatus
@@ -69,18 +62,11 @@ class Index extends \Magento\Framework\App\Action\Action
     protected $orderHelper;
 
     /**
-     * PAYONE TransactionStatus Mapping
+     * TransactionStatus handler
      *
-     * @var \Payone\Core\Model\TransactionStatus\Mapping
+     * @var \Payone\Core\Model\Handler\TransactionStatus
      */
-    protected $statusMapping;
-
-    /**
-     * PAYONE TransactionStatus Forwarding
-     *
-     * @var \Payone\Core\Model\TransactionStatus\Forwarding
-     */
-    protected $statusForwarding;
+    protected $transactionStatusHandler;
 
     /**
      * Result factory for file-download
@@ -90,13 +76,6 @@ class Index extends \Magento\Framework\App\Action\Action
     protected $resultRawFactory;
 
     /**
-     * Event manager object
-     *
-     * @var \Magento\Framework\Event\ManagerInterface
-     */
-    protected $eventManager;
-
-    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context              $context
@@ -104,8 +83,7 @@ class Index extends \Magento\Framework\App\Action\Action
      * @param \Payone\Core\Helper\Toolkit                        $toolkitHelper
      * @param \Payone\Core\Helper\Environment                    $environmentHelper
      * @param \Payone\Core\Helper\Order                          $orderHelper
-     * @param \Payone\Core\Model\TransactionStatus\Mapping       $statusMapping
-     * @param \Payone\Core\Model\TransactionStatus\Forwarding    $statusForwarding
+     * @param \Payone\Core\Model\Handler\TransactionStatus       $transactionStatusHandler,
      * @param \Magento\Framework\Controller\Result\RawFactory    $resultRawFactory
      */
     public function __construct(
@@ -114,20 +92,16 @@ class Index extends \Magento\Framework\App\Action\Action
         \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Order $orderHelper,
-        \Payone\Core\Model\TransactionStatus\Mapping $statusMapping,
-        \Payone\Core\Model\TransactionStatus\Forwarding $statusForwarding,
+        \Payone\Core\Model\Handler\TransactionStatus $transactionStatusHandler,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
     ) {
         parent::__construct($context);
-        $this->context = $context;
         $this->transactionStatus = $transactionStatus;
         $this->toolkitHelper = $toolkitHelper;
         $this->environmentHelper = $environmentHelper;
         $this->orderHelper = $orderHelper;
-        $this->statusMapping = $statusMapping;
-        $this->statusForwarding = $statusForwarding;
+        $this->transactionStatusHandler = $transactionStatusHandler;
         $this->resultRawFactory = $resultRawFactory;
-        $this->eventManager = $context->getEventManager();
     }
 
     /**
@@ -138,7 +112,7 @@ class Index extends \Magento\Framework\App\Action\Action
      */
     protected function getParam($sKey)
     {
-        return $this->context->getRequest()->getParam($sKey, '');
+        return $this->getRequest()->getParam($sKey, '');
     }
 
     /**
@@ -148,31 +122,20 @@ class Index extends \Magento\Framework\App\Action\Action
      */
     protected function getPostArray()
     {
-        return $this->context->getRequest()->getPost()->toArray();
+        return $this->getRequest()->getPostValue();
     }
 
     /**
      * Write the TransactionStatus to the database
      *
      * @param  Order $oOrder
+     * @param  array $aRequest
+     * @param  bool  $blWillBeHandled
      * @return void
      */
-    protected function log(Order $oOrder = null)
+    protected function logTransactionStatus(Order $oOrder = null, $aRequest, $blWillBeHandled)
     {
-        $this->transactionStatus->addTransactionLogEntry($this->context, $oOrder);
-    }
-
-    /**
-     * Order processing
-     *
-     * @param  Order $oOrder
-     * @return void
-     */
-    protected function handleOrder(Order $oOrder)
-    {
-        $sAction = $this->getParam('txaction');
-        $oOrder->setPayoneTransactionStatus($sAction);
-        $oOrder->save();
+        $this->transactionStatus->addTransactionLogEntry($aRequest, $oOrder, $blWillBeHandled);
     }
 
     /**
@@ -184,27 +147,23 @@ class Index extends \Magento\Framework\App\Action\Action
     {
         if (!$this->environmentHelper->isRemoteIpValid()) {
             return 'Access denied';
+        } elseif (!$this->toolkitHelper->isKeyValid($this->getParam('key'))) {
+            return 'Key wrong or missing!';
         }
-        if ($this->toolkitHelper->isKeyValid($this->getParam('key'))) {
-            $oOrder = $this->orderHelper->getOrderByTxid($this->getParam('txid'));
-            $this->log($oOrder);
-            if ($oOrder) {
-                $this->handleOrder($oOrder);
-                $this->statusMapping->handleMapping($oOrder, $this->getParam('txaction'));
-            }
-            $this->statusForwarding->handleForwardings($this->getPostArray());
 
-            $aParams = [
-                'order' => $oOrder,
-                'transactionstatus' => $this->getPostArray(),
-            ];
-
-            $this->eventManager->dispatch('payone_core_transactionstatus_all', $aParams);
-            $this->eventManager->dispatch('payone_core_transactionstatus_'.$this->getParam('txaction'), $aParams);
-
-            return 'TSOK';
+        $blWillBeHandled = true;
+        $oOrder = $this->orderHelper->getOrderByTxid($this->getParam('txid'));
+        if ($this->getParam('txaction') == 'appointed' && $oOrder->getStatus() == 'canceled') {
+            $blWillBeHandled = false; // order was already canceled, status will be handled in substitute order mechanism, if order is finished
         }
-        return 'Key wrong or missing!';
+
+        $this->logTransactionStatus($oOrder, $this->getPostArray(), $blWillBeHandled);
+
+        if ($blWillBeHandled === true) {
+            $this->transactionStatusHandler->handle($oOrder, $this->getPostArray());
+        }
+
+        return 'TSOK';
     }
 
     /**
@@ -215,8 +174,10 @@ class Index extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         $sOutput = $this->handleTransactionStatus();
+
         $oResultRaw = $this->resultRawFactory->create();
         $oResultRaw->setContents($sOutput);
+
         return $oResultRaw;
     }
 }

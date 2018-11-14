@@ -36,11 +36,11 @@ use Magento\Sales\Model\Order;
 class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
-     * Context object
+     * TransactionStatus POST request
      *
-     * @var \Magento\Framework\App\Action\Context
+     * @var array
      */
-    protected $oContext = null;
+    protected $request = [];
 
     /**
      * Store manager object
@@ -86,6 +86,29 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
     }
 
     /**
+     * Set request property
+     *
+     * @param  array $request
+     * @return void
+     */
+    public function setRequest($request)
+    {
+        if (is_array($request)) {
+            $this->request = $request;
+        }
+    }
+
+    /**
+     * Get request property
+     *
+     * @return array
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
      * Get request-parameter value or a given default if not set
      *
      * @param  string $sKey
@@ -94,8 +117,8 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
      */
     public function getParam($sKey, $sDefault = '')
     {
-        if ($this->oContext) {
-            $sParam = $this->oContext->getRequest()->getParam($sKey, $sDefault);
+        if (isset($this->request[$sKey])) {
+            $sParam = $this->request[$sKey];
             if (!$this->toolkitHelper->isUTF8($sParam)) {
                 $sParam = utf8_encode($sParam);
             }
@@ -107,15 +130,16 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
     /**
      * Write TransactionStatus entry to database
      *
-     * @param  Context $oContext
-     * @param  Order   $oOrder
+     * @param  array $aRequest
+     * @param  Order $oOrder
+     * @param  bool  $blHasBeenHandled
      * @return $this
      */
-    public function addTransactionLogEntry(Context $oContext, Order $oOrder = null)
+    public function addTransactionLogEntry($aRequest, Order $oOrder = null, $blHasBeenHandled = true)
     {
-        $this->oContext = $oContext;
-        $aRequest = $oContext->getRequest()->getPostValue();
-        $sRawStatus = serialize($aRequest);
+        $this->setRequest($aRequest);
+
+        $sRawStatus = serialize($this->getRequest());
         if (!$this->toolkitHelper->isUTF8($sRawStatus)) {
             $sRawStatus = utf8_encode($sRawStatus); // needed for serializing the array
         }
@@ -177,6 +201,7 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
                 'clearing_reference' => $this->getParam('clearing_reference'),
                 'clearing_instructionnote' => $this->getParam('clearing_instructionnote'),
                 'raw_status' => $sRawStatus,
+                'has_been_handled' => $blHasBeenHandled
             ]
         );
         return $this;
