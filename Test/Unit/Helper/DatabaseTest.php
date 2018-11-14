@@ -251,4 +251,17 @@ class DatabaseTest extends BaseTestCase
         $result = $this->database->relabelOrderPayment('1', '2');
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetNotHandledTransactionsByOrderId()
+    {
+        $expected = [
+            ['id' => '5'],
+        ];
+
+        $this->databaseResource->method('getTableName')->willReturn('payone_protocol_transactionstatus');
+        $this->connection->method('fetchAll')->willReturn($expected);
+
+        $result = $this->database->getNotHandledTransactionsByOrderId(5);
+        $this->assertEquals($expected, $result);
+    }
 }

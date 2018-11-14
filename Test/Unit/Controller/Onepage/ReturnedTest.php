@@ -41,6 +41,9 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Order\Payment;
+use Payone\Core\Helper\Database;
+use Payone\Core\Model\Entities\TransactionStatusFactory;
+use Payone\Core\Model\Entities\TransactionStatus;
 
 class ReturnedTest extends BaseTestCase
 {
@@ -106,11 +109,24 @@ class ReturnedTest extends BaseTestCase
         $orderRepository = $this->getMockBuilder(OrderRepository::class)->disableOriginalConstructor()->getMock();
         $orderRepository->method('get')->willReturn($order);
 
+        $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
+        $databaseHelper->method('getNotHandledTransactionsByOrderId')->willReturn([['id' => 5]]);
+
+        $status = $this->getMockBuilder(TransactionStatus::class)->disableOriginalConstructor()->getMock();
+
+        $statusFactory = $this->getMockBuilder(TransactionStatusFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $statusFactory->method('create')->willReturn($status);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $this->checkoutSession,
             'quoteRepository' => $quoteRepository,
-            'orderRepository' => $orderRepository
+            'orderRepository' => $orderRepository,
+            'databaseHelper' => $databaseHelper,
+            'statusFactory' => $statusFactory
         ]);
     }
 

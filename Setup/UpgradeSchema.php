@@ -74,6 +74,19 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS), 'has_been_handled')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'has_been_handled',
+                [
+                    'type' => Table::TYPE_SMALLINT,
+                    'length' => null,
+                    'nullable' => false,
+                    'default' => 1,
+                    'comment' => 'Has the status been handled already'
+                ]
+            );
+        }
     }
 
     /**

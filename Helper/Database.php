@@ -245,6 +245,14 @@ class Database extends \Payone\Core\Helper\Base
         return $this->getDb()->fetchOne($oSelect, $aParams);
     }
 
+    /**
+     * Relabel sales payment transaction to substitute order
+     *
+     * @param  string $sOldOrderId
+     * @param  string $sNewOrderId
+     * @param  string $sNewPaymentId
+     * @return int
+     */
     public function relabelTransaction($sOldOrderId, $sNewOrderId, $sNewPaymentId)
     {
         $table = $this->databaseResource->getTableName('sales_payment_transaction');
@@ -256,6 +264,13 @@ class Database extends \Payone\Core\Helper\Base
         return $this->getDb()->update($table, $data, $where);
     }
 
+    /**
+     * Relabel payone protocol api to substitute order
+     *
+     * @param  string $sOldIncrementId
+     * @param  string $sNewIncrementId
+     * @return int
+     */
     public function relabelApiProtocol($sOldIncrementId, $sNewIncrementId)
     {
         $table = $this->databaseResource->getTableName('payone_protocol_api');
@@ -264,6 +279,13 @@ class Database extends \Payone\Core\Helper\Base
         return $this->getDb()->update($table, $data, $where);
     }
 
+    /**
+     * Relabel sales order payment to substitute order
+     *
+     * @param  string $sOldIncrementId
+     * @param  string $sNewOrderId
+     * @return int
+     */
     public function relabelOrderPayment($sOldIncrementId, $sNewOrderId)
     {
         $oSelect = $this->getDb()
@@ -278,5 +300,22 @@ class Database extends \Payone\Core\Helper\Base
         $data = ['last_trans_id' => $sLastTransId];
         $where = ['parent_id = ?' => $sNewOrderId];
         return $this->getDb()->update($table, $data, $where);
+    }
+
+    /**
+     * Return not handled transactions by order id
+     *
+     * @param  string $sOrderId
+     * @return array
+     */
+    public function getNotHandledTransactionsByOrderId($sOrderId)
+    {
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('payone_protocol_transactionstatus'), ['id'])
+            ->where("order_id = :orderId")
+            ->where("has_been_handled = 0")
+            ->order('id ASC');
+        return $this->getDb()->fetchAll($oSelect, ['orderId' => $sOrderId]);
     }
 }

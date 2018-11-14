@@ -69,14 +69,30 @@ class Returned extends \Magento\Framework\App\Action\Action
     protected $databaseHelper;
 
     /**
+     * TransactionStatus factory
+     *
+     * @var \Payone\Core\Model\Entities\TransactionStatusFactory
+     */
+    protected $statusFactory;
+
+    /**
+     * TransactionStatus handler
+     *
+     * @var \Payone\Core\Model\Handler\TransactionStatus
+     */
+    protected $transactionStatusHandler;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Action\Context       $context
-     * @param \Magento\Checkout\Model\Session             $checkoutSession
-     * @param \Magento\Quote\Model\QuoteManagement        $quoteManagement
-     * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
-     * @param \Magento\Quote\Api\CartRepositoryInterface  $quoteRepository
-     * @param \Payone\Core\Helper\Database                $databaseHelper
+     * @param \Magento\Framework\App\Action\Context                $context
+     * @param \Magento\Checkout\Model\Session                      $checkoutSession
+     * @param \Magento\Quote\Model\QuoteManagement                 $quoteManagement
+     * @param \Magento\Sales\Api\OrderRepositoryInterface          $orderRepository
+     * @param \Magento\Quote\Api\CartRepositoryInterface           $quoteRepository
+     * @param \Payone\Core\Helper\Database                         $databaseHelper
+     * @param \Payone\Core\Model\Entities\TransactionStatusFactory $statusFactory
+     * @param \Payone\Core\Model\Handler\TransactionStatus         $transactionStatusHandler
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -84,7 +100,9 @@ class Returned extends \Magento\Framework\App\Action\Action
         \Magento\Quote\Model\QuoteManagement $quoteManagement,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
-        \Payone\Core\Helper\Database $databaseHelper
+        \Payone\Core\Helper\Database $databaseHelper,
+        \Payone\Core\Model\Entities\TransactionStatusFactory $statusFactory,
+        \Payone\Core\Model\Handler\TransactionStatus $transactionStatusHandler
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
@@ -92,6 +110,8 @@ class Returned extends \Magento\Framework\App\Action\Action
         $this->orderRepository = $orderRepository;
         $this->databaseHelper = $databaseHelper;
         $this->quoteRepository = $quoteRepository;
+        $this->statusFactory = $statusFactory;
+        $this->transactionStatusHandler = $transactionStatusHandler;
     }
 
     /**
@@ -131,7 +151,30 @@ class Returned extends \Magento\Framework\App\Action\Action
         $this->databaseHelper->relabelApiProtocol($canceledOrder->getIncrementId(), $newOrder->getIncrementId());
         $this->databaseHelper->relabelOrderPayment($canceledOrder->getIncrementId(), $newOrder->getId());
 
+        $this->handleTransactionStatus($canceledOrder, $newOrder);
+
         $this->checkoutSession->unsPayoneCreatingSubstituteOrder();
+    }
+
+    /**
+     * Handle stored TransactionStatus
+     *
+     * @param  Order $canceledOrder
+     * @param  Order $newOrder
+     * @return void
+     */
+    protected function handleTransactionStatus(Order $canceledOrder, Order $newOrder)
+    {
+        $aTransactionStatusIds = $this->databaseHelper->getNotHandledTransactionsByOrderId($canceledOrder->getIncrementId());
+        foreach ($aTransactionStatusIds as $aRow) {
+            $oTransactionStatus = $this->statusFactory->create();
+            $oTransactionStatus->load($aRow['id']);
+
+            $this->transactionStatusHandler->handle($newOrder, $oTransactionStatus->getRawStatusArray());
+
+            $oTransactionStatus->setHasBeenHandled(true);
+            $oTransactionStatus->save();
+        }
     }
 
     /**
