@@ -71,20 +71,24 @@ class EditAddress implements EditAddressInterface
      */
     public function editAddress(\Magento\Quote\Api\Data\AddressInterface $addressData)
     {
-        $address = $this->addressRepository->getById($addressData->getCustomerAddressId());
-        $address->setPostcode($addressData->getPostcode());
-        $address->setFirstname($addressData->getFirstname());
-        $address->setLastname($addressData->getLastname());
-        $address->setCity($addressData->getCity());
-        $address->setCountryId($addressData->getCountryId());
+        $iCustomerAddressId = $addressData->getCustomerAddressId();
 
-        $street = $addressData->getStreet();
-        if (!is_array($street)) {
-            $street = [$street];
+        if (!empty($iCustomerAddressId)) {
+            $address = $this->addressRepository->getById($addressData->getCustomerAddressId());
+            $address->setPostcode($addressData->getPostcode());
+            $address->setFirstname($addressData->getFirstname());
+            $address->setLastname($addressData->getLastname());
+            $address->setCity($addressData->getCity());
+            $address->setCountryId($addressData->getCountryId());
+
+            $street = $addressData->getStreet();
+            if (!is_array($street)) {
+                $street = [$street];
+            }
+            $address->setStreet($street);
+
+            $this->addressRepository->save($address);
         }
-        $address->setStreet($street);
-
-        $this->addressRepository->save($address);
 
         $oResponse = $this->responseFactory->create();
         $oResponse->setData('success', true);
