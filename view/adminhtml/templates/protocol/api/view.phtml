@@ -41,7 +41,7 @@ $oApiLog = $block->getApiLogEntry();
                         <?php foreach ($oApiLog->getRawRequestArray() as $sKey => $sValue): ?>
                         <tr>
                             <th><?php echo $sKey; ?></th>
-                            <td><?php echo $sValue; ?></td>
+                            <td><?php echo $block->formatValue($sKey, $sValue); ?></td>
                         </tr>                
                         <?php endforeach; ?>
                     </tbody>
@@ -58,7 +58,7 @@ $oApiLog = $block->getApiLogEntry();
                         <?php foreach ($oApiLog->getRawResponseArray() as $sKey => $sValue): ?>
                         <tr>
                             <th><?php echo $sKey; ?></th>
-                            <td><?php echo $sValue; ?></td>
+                            <td><?php echo $block->formatValue($sKey, $sValue); ?></td>
                         </tr>                
                         <?php endforeach; ?>
                     </tbody>

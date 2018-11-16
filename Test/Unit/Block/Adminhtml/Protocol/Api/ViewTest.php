@@ -86,4 +86,22 @@ class ViewTest extends BaseTestCase
         $result = $this->classToTest->getApiLogEntry();
         $this->assertInstanceOf(ApiLog::class, $result);
     }
+
+    public function testFormatValue()
+    {
+        $key = 'a';
+        $value = 'b';
+
+        $result = $this->classToTest->formatValue($key, $value);
+        $this->assertEquals($value, $result);
+    }
+
+    public function testFormatValueAmazon()
+    {
+        $key = 'add_paydata[amazon_address_token]';
+        $value = 'b';
+
+        $result = $this->classToTest->formatValue($key, $value);
+        $this->assertNotEquals($value, $result);
+    }
 }

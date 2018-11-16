@@ -153,7 +153,6 @@ class ScriptsTest extends BaseTestCase
     public function testToHtml()
     {
         $result = $this->classToTest->toHtml();
-        error_log($result);
         $this->assertTrue(true);
     }
 

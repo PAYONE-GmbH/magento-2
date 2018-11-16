@@ -65,13 +65,12 @@ class AmazonPay extends PayoneMethod
 
     /**
      * Returns authorization-mode
-     * Barzahlen only supports preauthorization
      *
      * @return string
      */
     public function getAuthorizationMode()
     {
-        return PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
+        return $this->getCustomConfigParam('request_type');
     }
 
     /**
@@ -81,7 +80,7 @@ class AmazonPay extends PayoneMethod
      */
     protected function getAmazonMode()
     {
-        return $this->shopHelper->getConfigParam('amazon_mode', $this->getCode(), 'payone_payment');
+        return $this->getCustomConfigParam('amazon_mode');
     }
 
     /**
