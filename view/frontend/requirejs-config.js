@@ -34,10 +34,7 @@ var config = {
             },
             'Magento_Checkout/js/view/payment/default': {
                 'Payone_Core/js/view/payment/default-mixin': true
-            }//,
-            //'Magento_Checkout/js/action/place-order': {
-            //    'Payone_Core/js/action/place-order-mixin': true
-            //}
+            }
         }
     }
 };

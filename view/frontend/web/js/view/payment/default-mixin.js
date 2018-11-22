@@ -43,11 +43,6 @@ define([
                 parentReturn.additional_data.payone_boni_agreement = blAgreed;
             }
             return parentReturn;
-        },
-        afterPlaceOrder: function () {
-            //this.redirectAfterPlaceOrder = false;
-
-            return this._super();
         }
     };
 

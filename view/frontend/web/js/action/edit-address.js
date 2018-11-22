@@ -27,22 +27,38 @@ define([
     'jquery',
     'Magento_Checkout/js/model/url-builder',
     'mage/storage',
-    'Magento_Checkout/js/model/full-screen-loader'
-], function ($, urlBuilder, storage, fullScreenLoader) {
+    'Magento_Checkout/js/model/full-screen-loader',
+    'Magento_Checkout/js/model/quote',
+    'Magento_Customer/js/model/customer',
+    'mage/url'
+], function ($, urlBuilder, storage, fullScreenLoader, quote, customer, buildUrl) {
     'use strict';
 
-    return function (addressData) {
-        var serviceUrl = urlBuilder.createUrl('/carts/mine/payone-editAddress', {});
+    return function (addressData, useAsync) {
+        var serviceUrl;
         var request = {
             addressData: addressData
         };
 
+        if (!customer.isLoggedIn()) {
+            serviceUrl = urlBuilder.createUrl('/guest-carts/:quoteId/payone-editAddressGuest', {
+                quoteId: quote.getQuoteId()
+            });
+        } else {
+            serviceUrl = urlBuilder.createUrl('/carts/mine/payone-editAddress', {});
+            request.cartId = quote.getQuoteId();
+        }
+
         fullScreenLoader.startLoader();
 
-        return storage.post(
-            serviceUrl,
-            JSON.stringify(request)
-        ).done(
+        $.ajax({
+            url: buildUrl.build(serviceUrl),
+            type: 'POST',
+            data: JSON.stringify(request),
+            global: true,
+            contentType: 'application/json',
+            async: useAsync
+        }).done(
             function (response) {
                 fullScreenLoader.stopLoader();
             }

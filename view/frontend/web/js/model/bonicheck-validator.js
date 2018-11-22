@@ -80,12 +80,6 @@ define([
                                 if (!window.checkoutConfig.payment.payone.addresscheckConfirmCorrection || confirm(response.confirm_message)) {
                                     quote.billingAddress(createBillingAddress(response.corrected_address));
                                     if (sameAddress === true) {
-                                        /*
-                                        var newShippingAddress = createShippingAddress(response.corrected_address);
-                                        editAddress(newShippingAddress);
-                                        selectShippingAddress(newShippingAddress);
-                                        checkoutData.setSelectedShippingAddress(newShippingAddress.getKey());
-                                        */
                                         self.payoneUpdateAddressRegistered(response.corrected_address);
                                     }
                                 }
@@ -105,10 +99,8 @@ define([
             },
             isAddressTheSame: function(billing, shipping) {
                 if (this.getAddressInline(billing) == this.getAddressInline(shipping)) {
-                    alert('Gleich');
                     return true;
                 }
-                alert('UNGleich');
                 return false;
             },
             getAddressInline: function(address) {
@@ -135,19 +127,7 @@ define([
                 return oSourceAddress;
             },
             payoneUpdateAddress: function (addressData) {
-                //if (this.isFormInline) {
-                //    this.payoneUpdateAddressSource(addressData);
-                //} else {
                 this.payoneUpdateAddressRegistered(addressData);
-                //}
-            },
-            payoneUpdateAddressSource: function (addressData) {
-                shippingView().source.set('shippingAddress.postcode', addressData.postcode);
-                shippingView().source.set('shippingAddress.firstname', addressData.firstname);
-                shippingView().source.set('shippingAddress.lastname', addressData.lastname);
-                shippingView().source.set('shippingAddress.street.0', addressData.street[0]);
-                shippingView().source.set('shippingAddress.city', addressData.city);
-                shippingView().source.set('shippingAddress.country_id', addressData.country_id);
             },
             payoneUpdateAddressRegistered: function (addressData) {
                 var newShippingAddress = quote.shippingAddress();
@@ -156,9 +136,7 @@ define([
                     newShippingAddress = this.payoneUpdateField(newShippingAddress, addressData, aUpdateFields[i]);
                 }
 
-                //this.payoneUpdateAddressSource(addressData);
-
-                editAddress(addressData);
+                editAddress(addressData, false);
 
                 selectShippingAddress(newShippingAddress);
                 checkoutData.setSelectedShippingAddress(newShippingAddress.getKey());

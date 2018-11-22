@@ -66,8 +66,6 @@ define([
                         }
                     }
                     baseView.payoneContinue(type);
-                } else {
-                    alert(response.errormessage);
                 }
                 fullScreenLoader.stopLoader();
             }

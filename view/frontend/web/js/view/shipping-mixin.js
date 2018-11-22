@@ -103,7 +103,7 @@ define([
 
             this.payoneUpdateAddressSource(addressData);
 
-            editAddress(addressData);
+            editAddress(addressData, true);
 
             selectShippingAddressAction(newShippingAddress);
             checkoutData.setSelectedShippingAddress(newShippingAddress.getKey());
@@ -124,15 +124,16 @@ define([
 
             if (!this.source.get('payone_guest_address_checked')) {
                 if (this.validateShippingInformation()) {
+                    var address;
                     if (!this.isFormInline) {
-                        if (this.payoneCheckAddress()) {
-                            addresscheck(quote.shippingAddress(), false, this, 'setShippingInformation');
-                        } else if(this.payoneBonicheckAddress()) {
-                            consumerscore(quote.shippingAddress(), false, this, 'setShippingInformation');
-                        }
+                        address = quote.shippingAddress();
                     } else {
-                        ///@TODO: Bonicheck+Addresscheck für Gäste
-                        addresscheck(this.source.get('shippingAddress'), false, this, 'setShippingInformation');
+                        address = this.source.get('shippingAddress');
+                    }
+                    if (this.payoneCheckAddress()) {
+                        addresscheck(address, false, this, 'setShippingInformation');
+                    } else if(this.payoneBonicheckAddress()) {
+                        consumerscore(address, false, this, 'setShippingInformation');
                     }
                 }
             } else {
