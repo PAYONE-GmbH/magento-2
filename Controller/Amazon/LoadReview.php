@@ -479,7 +479,8 @@ class LoadReview extends \Magento\Framework\App\Action\Action
                 $this->unsetSessionVariables();
             }
         } catch (\Exception $e) {
-            // do nothing
+            //error_log($e->getMessage());
+            $aReturnData['errorMessage'] = __('There has been an error processing your request.');
         }
         return $aReturnData;
     }
