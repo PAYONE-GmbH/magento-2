@@ -21,7 +21,6 @@ matrix:
       env: MAGEVER=2.2
   allow_failures:
     - env: MAGEVER=2.1
-    - env: MAGEVER=2.3
 services:
 - mysql
 before_script:
