@@ -144,10 +144,10 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '2.3.1', '<=')) {
             $connection = $setup->getConnection();
 
-            $protocolApiTable = $connection->getTableName(Api::TABLE_PROTOCOL_API);
+            $protocolApiTable = $setup->getTable($connection->getTableName(Api::TABLE_PROTOCOL_API));
             $connection->addIndex($protocolApiTable, $connection->getIndexName($protocolApiTable, 'txid'), 'txid');
 
-            $transactionStatusTable = $connection->getTableName(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS);
+            $transactionStatusTable = $setup->getTable($connection->getTableName(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS));
             $connection->addIndex($transactionStatusTable, $connection->getIndexName($transactionStatusTable, 'txid'), 'txid');
             $connection->addIndex($transactionStatusTable, $connection->getIndexName($transactionStatusTable, 'customerid'), 'customerid');
         }
