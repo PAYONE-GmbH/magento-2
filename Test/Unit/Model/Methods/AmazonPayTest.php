@@ -84,8 +84,12 @@ class AmazonPayTest extends BaseTestCase
                 'unsPayoneIsError',
                 'unsShowAmazonPendingNotice',
                 'unsAmazonRetryAsync',
+                'setShowAmazonPendingNotice',
+                'setPayoneRedirectUrl',
+                'setPayoneRedirectedPaymentMethod',
             ])
             ->getMock();
+
         $this->checkoutSession->method('getAmazonWorkorderId')->willReturn('12345');
         $this->checkoutSession->method('getAmazonAddressToken')->willReturn('12345');
         $this->checkoutSession->method('getAmazonReferenceId')->willReturn('12345');
