@@ -51,7 +51,7 @@ use Magento\Checkout\Model\Type\Onepage;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Framework\UrlInterface;
 use Magento\Quote\Api\CartManagementInterface;
-use Magento\Quote\Api\Data\CartExtensionInterface;
+use Magento\Quote\Api\Data\CartExtension;
 use Magento\Quote\Api\Data\ShippingInterface;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Framework\App\ResponseInterface;
@@ -152,7 +152,7 @@ class LoadReviewTest extends BaseTestCase
         $assignment->method('getShipping')->willReturn($shipping);
         $aAssignments = [$assignment];
 
-        $extensionAttributes = $this->getMockBuilder(CartExtensionInterface::class)
+        $extensionAttributes = $this->getMockBuilder(CartExtension::class)
             ->disableOriginalConstructor()
             ->setMethods(['getShippingAssignments'])
             ->getMock();
