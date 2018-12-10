@@ -47,11 +47,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     protected $resultJsonFactory;
 
     /**
-     * @var \Magento\Framework\App\ViewInterface
-     */
-    protected $view;
-
-    /**
      * @var \Payone\Core\Block\Onepage\Review
      */
     protected $reviewBlock;
@@ -160,7 +155,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      * @param \Magento\Framework\App\Action\Context                                  $context
      * @param \Magento\Framework\Controller\Result\JsonFactory                       $resultJsonFactory
      * @param \Payone\Core\Block\Onepage\Review                                      $reviewBlock
-     * @param \Magento\Framework\App\ViewInterface                                   $view
      * @param \Magento\Framework\View\Result\PageFactory                             $pageFactory
      * @param \Magento\Checkout\Model\Session                                        $checkoutSession
      * @param \Magento\Checkout\Model\Cart                                           $cart
@@ -178,7 +172,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Payone\Core\Block\Onepage\Review $reviewBlock,
-        \Magento\Framework\App\ViewInterface $view,
         \Magento\Framework\View\Result\PageFactory $pageFactory,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Checkout\Model\Cart $cart,
@@ -194,7 +187,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->view = $view;
         $this->reviewBlock = $reviewBlock;
         $this->pageFactory = $pageFactory;
         $this->checkoutSession = $checkoutSession;

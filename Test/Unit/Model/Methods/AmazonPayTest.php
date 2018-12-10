@@ -149,6 +149,7 @@ class AmazonPayTest extends BaseTestCase
 
     public function testAuthorize()
     {
+        $this->checkoutSession->method('getAmazonRetryAsync')->willReturn(true);
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
