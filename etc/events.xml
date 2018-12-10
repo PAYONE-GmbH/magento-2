@@ -46,4 +46,10 @@
     <event name="payone_core_transactionstatus_appointed">
         <observer name="payone_transactionstatus_appointed" instance="Payone\Core\Observer\Transactionstatus\Appointed" />
     </event>
+    <event name="payone_core_transactionstatus_pending">
+        <observer name="payone_transactionstatus_pending" instance="Payone\Core\Observer\Transactionstatus\Pending" />
+    </event>
+    <event name="payone_core_transactionstatus_failed">
+        <observer name="payone_transactionstatus_failed" instance="Payone\Core\Observer\Transactionstatus\Failed" />
+    </event>
 </config>

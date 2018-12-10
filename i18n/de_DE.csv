@@ -1081,6 +1081,9 @@
 "The installment calculation failed. Please choose another payment type.","Die Ratenberechnung ist fehlgeschlagen. Bitte waehlen Sie eine andere Zahlart."
 
 "PAYONE debit","PAYONE Gutschrift"
+"Your transaction with Amazon Pay is currently being validated. Please be aware that we will inform you shortly as needed.","Ihre Zahlung mit Amazon Pay ist derzeit noch in Prüfung. Bitte beachten Sie, dass wir uns mit Ihnen in Kürze per Email in Verbindung setzen werden, falls noch Unklarheiten bestehen sollten."
+"Sorry, your transaction with Amazon Pay was not successful. Please choose another payment method.","Entschuldigung, die Transaktion mit Amazon Pay war nicht erfolgreich. Bitte wählen Sie eine andere Zahlart."
+"Notice: Please verify your payment information or choose another method.","Hinweis: Bitte überprüfen Sie Ihre Daten oder wählen Sie eine andere Zahlart."
 
 "Hereby I grant the","Hiermit erteile ich das"
 "SEPA-Mandate","SEPA-Lastschriftmandat"

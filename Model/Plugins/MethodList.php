@@ -29,6 +29,7 @@ namespace Payone\Core\Model\Plugins;
 use Magento\Payment\Model\MethodList as OrigMethodList;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Api\Data\AddressInterface;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Source\CreditratingIntegrationEvent as Event;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Source\PersonStatus;
@@ -217,6 +218,22 @@ class MethodList
     }
 
     /**
+     * Remove Amazon Pay from payment method array
+     *
+     * @param  array $aPaymentMethods
+     * @return array
+     */
+    public function removeAmazonPay($aPaymentMethods)
+    {
+        for($i = 0; $i < count($aPaymentMethods); $i++) {
+            if ($aPaymentMethods[$i]->getCode() == PayoneConfig::METHOD_AMAZONPAY) {
+                unset($aPaymentMethods[$i]);
+            }
+        }
+        return $aPaymentMethods;
+    }
+
+    /**
      *
      * @param  OrigMethodList    $subject
      * @param  MethodInterface[] $aPaymentMethods
@@ -243,6 +260,7 @@ class MethodList
         }
 
         $aPaymentMethods = $this->removeBannedPaymentMethods($aPaymentMethods, $oQuote);
+        $aPaymentMethods = $this->removeAmazonPay($aPaymentMethods);
 
         return $aPaymentMethods;
     }

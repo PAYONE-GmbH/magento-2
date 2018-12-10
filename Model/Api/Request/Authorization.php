@@ -102,6 +102,8 @@ class Authorization extends AddressRequest
      */
     public function sendRequest(PayoneMethod $oPayment, Order $oOrder, $dAmount)
     {
+        $this->initRequest(); // reinitialize
+
         $this->setOrderId($oOrder->getRealOrderId()); // save order id to object for later use
 
         $this->addParameter('request', $oPayment->getAuthorizationMode()); // add request type

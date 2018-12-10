@@ -1,0 +1,49 @@
+.amazon-or {
+    line-height: 34px;
+    margin: 0 10px 5px;
+}
+
+.amazon-checkout-button > div {
+    display: inline;
+}
+
+.checkout-types.top .amazon-checkout-button .amazon-or {
+    margin-top: 5px;
+}
+
+.checkout-types.bottom .amazon-or,
+.checkout-types.minicart .amazon-or {
+    margin: 0;
+    display: block;
+    text-align: center;
+}
+.checkout-types.minicart .amazon-checkout-button img,
+.checkout-types.minicart .paypal-logo img {
+    display: inline;
+    padding-bottom: 10px;
+    margin-bottom: -2px;
+}
+
+@media only screen and (max-width: 740px) {
+    .amazon-or,
+    .amazon-checkout-button {
+        text-align: center;
+        width: 100%;
+        display: block;
+        margin-right: 0;
+        margin-left: 0;
+        float: none;
+    }
+    .checkout-types.bottom .amazon-or,
+    .checkout-types.minicart .amazon-or {
+        width: auto;
+        float: none;
+    }
+}
+
+@media only screen and (min-width: 741px) {
+    .checkout-types.bottom .amazon-or {
+        text-align: right;
+        padding-right: 70px;
+    }
+}

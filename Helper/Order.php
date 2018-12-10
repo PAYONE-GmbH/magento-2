@@ -108,6 +108,92 @@ class Order extends \Payone\Core\Helper\Base
     }
 
     /**
+     * Fill billing and shipping addresses with the needed information from the response
+     *
+     * @param  Address $oAddress
+     * @param  string  $sFirstname
+     * @param  string  $sLastname
+     * @param  string  $sStreet
+     * @param  string  $sCity
+     * @param  string  $sZip
+     * @param  string  $sCountry
+     * @param  string  $sState
+     * @return Address
+     */
+    public function fillSingleAddress(Address $oAddress, $sFirstname, $sLastname, $sStreet, $sCity, $sZip, $sCountry, $sState)
+    {
+        $oAddress->setFirstname($sFirstname);
+        $oAddress->setLastname($sLastname);
+        $oAddress->setStreet($sStreet);
+        $oAddress->setCity($sCity);
+        $oAddress->setPostcode($sZip);
+        $oAddress->setCountryId($sCountry);
+
+        $oRegion = $this->customerHelper->getRegion($sCountry, $sState);
+        if ($oRegion) {
+            $oAddress->setRegionId($oRegion->getId());
+            $oAddress->setRegionCode($sState);
+        } else {
+            $oAddress->setRegionId(null);
+            $oAddress->setRegionCode(null);
+        }
+        return $oAddress;
+    }
+
+    /**
+     * Map response parameters to distinct parameters
+     *
+     * @param  Address $oAddress
+     * @param  array   $aResponse
+     * @param  bool    $blIsBilling
+     * @return Address
+     */
+    public function fillSingleAddressByResponse($oAddress, $aResponse, $blIsBilling = false)
+    {
+        $sPrefix = 'shipping';
+        if ($blIsBilling === true) {
+            $sPrefix = 'billing';
+        }
+        return $this->fillSingleAddress(
+            $oAddress,
+            $aResponse['add_paydata['.$sPrefix.'_firstname]'],
+            $aResponse['add_paydata['.$sPrefix.'_lastname]'],
+            $aResponse['add_paydata['.$sPrefix.'_street]'],
+            $aResponse['add_paydata['.$sPrefix.'_city]'],
+            $aResponse['add_paydata['.$sPrefix.'_zip]'],
+            $aResponse['add_paydata['.$sPrefix.'_country]'],
+            $aResponse['add_paydata['.$sPrefix.'_country]']
+        );
+    }
+
+    /**
+     * Address-handling for billing- and shipping address
+     *
+     * @param  Quote $oQuote
+     * @param  array $aResponse
+     * @param  bool $blUseBilling
+     * @return Quote
+     */
+    public function updateAddresses(Quote $oQuote, $aResponse, $blUseBilling = false)
+    {
+        $oBillingAddress = $this->fillSingleAddressByResponse($oQuote->getBillingAddress(), $aResponse, $blUseBilling);
+        $oBillingAddress->setEmail($aResponse['add_paydata[email]']);
+
+        $oQuote->setBillingAddress($oBillingAddress);
+        $oQuote->getBillingAddress()->setShouldIgnoreValidation(true);
+
+        if (!$oQuote->getIsVirtual()) {
+            $oShippingAddress = $this->fillSingleAddressByResponse($oQuote->getShippingAddress(), $aResponse);
+            #$oShippingAddress->setCollectShippingRates(true);
+            $this->setShippingMethod($oShippingAddress, $oQuote);
+            $oQuote->setShippingAddress($oShippingAddress);
+            $oQuote->getShippingAddress()->setShouldIgnoreValidation(true);
+        }
+
+        return $oQuote;
+    }
+
+    /**
      * Determine the cheapest available shipping method
      *
      * @param  Quote   $oQuote
@@ -153,36 +239,6 @@ class Order extends \Payone\Core\Helper\Base
         }
         $oAddress->setShippingMethod($sShippingMethod);
 
-        return $oAddress;
-    }
-
-    /**
-     * Fill billing and shipping addresses with the needed information from the response
-     *
-     * @param  Address $oAddress
-     * @param  string  $sFirstname
-     * @param  string  $sLastname
-     * @param  string  $sStreet
-     * @param  string  $sCity
-     * @param  string  $sZip
-     * @param  string  $sCountry
-     * @param  string  $sState
-     * @return Address
-     */
-    public function fillSingleAddress(Address $oAddress, $sFirstname, $sLastname, $sStreet, $sCity, $sZip, $sCountry, $sState)
-    {
-        $oAddress->setFirstname($sFirstname);
-        $oAddress->setLastname($sLastname);
-        $oAddress->setStreet($sStreet);
-        $oAddress->setCity($sCity);
-        $oAddress->setPostcode($sZip);
-        $oAddress->setCountryId($sCountry);
-
-        $oRegion = $this->customerHelper->getRegion($sCountry, $sState);
-        if ($oRegion) {
-            $oAddress->setRegionId($oRegion->getId());
-            $oAddress->setRegionCode($sState);
-        }
         return $oAddress;
     }
 }

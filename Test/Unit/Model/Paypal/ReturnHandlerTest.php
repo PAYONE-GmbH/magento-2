@@ -112,6 +112,8 @@ class ReturnHandlerTest extends BaseTestCase
 
         $orderHelper = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $orderHelper->method('fillSingleAddress')->willReturn($address);
+        $orderHelper->method('updateAddresses')->willReturn($quote);
+
         $checkoutHelper = $this->getMockBuilder(Checkout::class)->disableOriginalConstructor()->getMock();
         $checkoutHelper->method('getCurrentCheckoutMethod')->willReturn(Onepage::METHOD_GUEST);
 

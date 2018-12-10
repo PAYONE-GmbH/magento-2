@@ -146,6 +146,7 @@ abstract class Base
      */
     protected function initRequest()
     {
+        $this->aParameters = [];
         $this->addParameter('mid', $this->shopHelper->getConfigParam('mid', 'global', 'payone_general', $this->storeCode)); // PayOne Merchant ID
         $this->addParameter('portalid', $this->shopHelper->getConfigParam('portalid', 'global', 'payone_general', $this->storeCode)); // PayOne Portal ID
         $this->addParameter('key', md5($this->shopHelper->getConfigParam('key', 'global', 'payone_general', $this->storeCode))); // PayOne Portal Key
@@ -333,6 +334,7 @@ abstract class Base
         
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
+
         $this->setResponse($aResponse);
 
         $this->apiLog->addApiLogEntry($this->getParameters(), $aResponse, $aResponse['status'], $this->getOrderId()); // log request to db
