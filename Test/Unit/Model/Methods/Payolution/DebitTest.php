@@ -24,7 +24,7 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Model\Methods\OnlineBankTransfer;
+namespace Payone\Core\Test\Unit\Model\Methods\Payolution;
 
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Payolution\Debit as ClassToTest;
@@ -83,13 +83,6 @@ class DebitTest extends BaseTestCase
             'authorizationRequest' => $authorizationRequest
         ]);
         $this->classToTest->setInfoInstance($info);
-    }
-
-    public function testGetAuthorizationMode()
-    {
-        $result = $this->classToTest->getAuthorizationMode();
-        $expected = PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
-        $this->assertEquals($expected, $result);
     }
 
     public function testAuthorize()

@@ -99,19 +99,12 @@ class TransactionStatusTest extends BaseTestCase
 
     public function testAddTransactionLogEntry()
     {
-        $post = 15;
+        $request = [
+            'txaction' => 'appointed',
+            'txtime' => time(),
+        ];
 
-        $request = $this->getMockBuilder(Http::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getPostValue', 'getParam'])
-            ->getMock();
-        $request->method('getPostValue')->willReturn($post);
-        $request->method('getParam')->willReturn(15);
-
-        $context = $this->getMockBuilder(ActionContext::class)->disableOriginalConstructor()->getMock();
-        $context->method('getRequest')->willReturn($request);
-
-        $result = $this->classToTest->addTransactionLogEntry($context);
+        $result = $this->classToTest->addTransactionLogEntry($request);
         $this->assertInstanceOf(ClassToTest::class, $result);
     }
 

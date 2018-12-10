@@ -19,24 +19,20 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Observer;
+namespace Payone\Core\Model\Handler;
 
-use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Event\Observer;
 use Magento\Checkout\Model\Session;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Framework\Exception\LocalizedException;
+use \Magento\Quote\Api\CartRepositoryInterface as QuoteRepo;
 
-/**
- * Event class to prevent the basket from getting lost with redirect payment types
- * when the customer uses the browser back-button
- */
-class PredispatchCheckoutIndex implements ObserverInterface
+class Cancellation
 {
     /**
      * Checkout session
@@ -53,37 +49,57 @@ class PredispatchCheckoutIndex implements ObserverInterface
     protected $orderFactory;
 
     /**
+     * Order repository
+     *
+     * @var QuoteRepo
+     */
+    protected $quoteRepository;
+
+    /**
      * Constructor
      *
      * @param Session      $checkoutSession
      * @param OrderFactory $orderFactory
+     * @param QuoteRepo    $quoteRepository
      */
-    public function __construct(Session $checkoutSession, OrderFactory $orderFactory)
+    public function __construct(Session $checkoutSession, OrderFactory $orderFactory, QuoteRepo $quoteRepository)
     {
         $this->checkoutSession = $checkoutSession;
         $this->orderFactory = $orderFactory;
+        $this->quoteRepository = $quoteRepository;
     }
 
     /**
-     * @param  Observer $observer
-     * @return $this
+     * @return void
      */
-    public function execute(Observer $observer)
+    public function handle()
     {
         if ($this->checkoutSession->getPayoneCustomerIsRedirected()) {
             try {
                 $orderId = $this->checkoutSession->getLastOrderId();
                 $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
                 if ($order) {
-                    $order->cancel()->save();
+                    $order->cancel();
+                    $order->addStatusHistoryComment(__('The Payone transaction has been canceled.'), Order::STATE_CANCELED);
+                    $order->save();
 
-                    $this->checkoutSession->restoreQuote();
+                    $oCurrentQuote = $this->checkoutSession->getQuote();
+
+                    $quoteId = $this->checkoutSession->getLastQuoteId();
+                    $oOldQuote = $this->quoteRepository->get($quoteId);
+                    if ($oOldQuote && $oOldQuote->getId()) {
+                        $oCurrentQuote->merge($oOldQuote);
+                        $oCurrentQuote->collectTotals();
+                        $oCurrentQuote->save();
+                    }
 
                     $this->checkoutSession
                         ->unsLastQuoteId()
                         ->unsLastSuccessQuoteId()
                         ->unsLastOrderId()
                         ->unsLastRealOrderId();
+
+                    $this->checkoutSession->setPayoneCanceledOrder($order->getIncrementId());
                 }
             } catch (LocalizedException $e) {
                 // catch and continue - do something when needed

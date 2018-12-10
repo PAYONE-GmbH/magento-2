@@ -80,13 +80,14 @@ class DatabaseTest extends BaseTestCase
 
         $this->connection = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
-            ->setMethods(['fetchOne', 'fetchAll', 'select', 'from', 'where', 'limit', 'order'])
+            ->setMethods(['fetchOne', 'fetchAll', 'select', 'from', 'where', 'limit', 'order', 'update', 'joinInner'])
             ->getMock();
         $this->connection->method('select')->willReturn($this->connection);
         $this->connection->method('from')->willReturn($this->connection);
         $this->connection->method('where')->willReturn($this->connection);
         $this->connection->method('limit')->willReturn($this->connection);
         $this->connection->method('order')->willReturn($this->connection);
+        $this->connection->method('joinInner')->willReturn($this->connection);
 
         $this->databaseResource = $this->getMockBuilder(ResourceConnection::class)->disableOriginalConstructor()->getMock();
         $this->databaseResource->method('getConnection')->willReturn($this->connection);
@@ -215,6 +216,52 @@ class DatabaseTest extends BaseTestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->database->getOldAddressStatus($address, false);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testRelabelTransaction()
+    {
+        $expected = '1';
+
+        $this->databaseResource->method('getTableName')->willReturn('sales_payment_transaction');
+        $this->connection->method('update')->willReturn($expected);
+
+        $result = $this->database->relabelTransaction('1', '2', '3');
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testRelabelApiProtocol()
+    {
+        $expected = '1';
+
+        $this->databaseResource->method('getTableName')->willReturn('payone_protocol_api');
+        $this->connection->method('update')->willReturn($expected);
+
+        $result = $this->database->relabelApiProtocol('1', '2');
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testRelabelOrderPayment()
+    {
+        $expected = '1';
+
+        $this->databaseResource->method('getTableName')->willReturn('sales_order_payment');
+        $this->connection->method('update')->willReturn($expected);
+
+        $result = $this->database->relabelOrderPayment('1', '2');
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetNotHandledTransactionsByOrderId()
+    {
+        $expected = [
+            ['id' => '5'],
+        ];
+
+        $this->databaseResource->method('getTableName')->willReturn('payone_protocol_transactionstatus');
+        $this->connection->method('fetchAll')->willReturn($expected);
+
+        $result = $this->database->getNotHandledTransactionsByOrderId(5);
         $this->assertEquals($expected, $result);
     }
 }
