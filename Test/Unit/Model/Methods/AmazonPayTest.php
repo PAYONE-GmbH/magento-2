@@ -87,6 +87,7 @@ class AmazonPayTest extends BaseTestCase
                 'setShowAmazonPendingNotice',
                 'setPayoneRedirectUrl',
                 'setPayoneRedirectedPaymentMethod',
+                'getPayoneCreatingSubstituteOrder',
             ])
             ->getMock();
 
