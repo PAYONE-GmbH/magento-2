@@ -313,4 +313,16 @@ class AddresscheckTest extends BaseTestCase
         $result = $this->classToTest->getResponse($address);
         $this->assertTrue($result);
     }
+
+    public function testSetResponse()
+    {
+        $expected = ['success' => true];
+
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+
+
+        $this->classToTest->setResponse($expected);
+        $result = $this->classToTest->getResponse($address);
+        $this->assertEquals($expected, $result);
+    }
 }

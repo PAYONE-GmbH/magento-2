@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Service\V1\Data;
 
+use Magento\Framework\Exception\InputException;
 use Payone\Core\Service\V1\EditAddress as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Quote\Api\Data\AddressInterface;
@@ -36,6 +37,10 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Customer\Model\Address;
 use Magento\Customer\Api\Data\AddressInterface as CustomerAddressInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Model\Quote;
+use \Magento\Quote\Model\QuoteIdMaskFactory;
+use \Magento\Quote\Model\QuoteIdMask;
 
 class EditAddressTest extends BaseTestCase
 {
@@ -43,6 +48,11 @@ class EditAddressTest extends BaseTestCase
      * @var ClassToTest
      */
     private $classToTest;
+
+    /**
+     * @var CartRepositoryInterface
+     */
+    private $quoteRepository;
 
     /**
      * @var EditAddressResponse|\PHPUnit_Framework_MockObject_MockObject
@@ -65,9 +75,26 @@ class EditAddressTest extends BaseTestCase
         $addressRepository = $this->getMockBuilder(AddressRepository::class)->disableOriginalConstructor()->getMock();
         $addressRepository->method('getById')->willReturn($address);
 
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+
+        $this->quoteRepository = $this->getMockBuilder(CartRepositoryInterface::class)->disableOriginalConstructor()->getMock();
+        $this->quoteRepository->method('get')->willReturn($quote);
+
+        $quoteIdMask = $this->getMockBuilder(QuoteIdMask::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['load', 'getQuoteId'])
+            ->getMock();
+        $quoteIdMask->method('load')->willReturn($quoteIdMask);
+        $quoteIdMask->method('getQuoteId')->willReturn(5);
+
+        $quoteIdMaskFactory = $this->getMockBuilder(QuoteIdMaskFactory::class)->disableOriginalConstructor()->getMock();
+        $quoteIdMaskFactory->method('create')->willReturn($quoteIdMask);
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'responseFactory' => $responseFactory,
-            'addressRepository' => $addressRepository
+            'addressRepository' => $addressRepository,
+            'quoteRepository' => $this->quoteRepository,
+            'quoteIdMaskFactory' => $quoteIdMaskFactory,
         ]);
     }
 
@@ -75,7 +102,27 @@ class EditAddressTest extends BaseTestCase
     {
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->editAddress($addressData);
+        $result = $this->classToTest->editAddress(5, $addressData);
+        $result = $result->__toArray();
+        $this->assertTrue($result['success']);
+    }
+
+    public function testEditAddressException()
+    {
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+
+        $exception = new \Exception;
+        $this->quoteRepository->method('save')->willThrowException($exception);
+
+        $this->expectException(InputException::class);
+        $this->classToTest->editAddress(5, $addressData);
+    }
+
+    public function testEditAddressGuest()
+    {
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->editAddressGuest(5, $addressData);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }

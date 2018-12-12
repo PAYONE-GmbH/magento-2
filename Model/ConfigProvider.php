@@ -29,7 +29,6 @@ namespace Payone\Core\Model;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Eps;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Ideal;
-use Payone\Core\Model\Source\AddressCheckType;
 use Payone\Core\Model\Source\CreditratingIntegrationEvent;
 
 /**
@@ -224,7 +223,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
             'addresscheckShippingEnabled' => $this->requestHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
             'addresscheckConfirmCorrection' => (int)$this->requestHelper->getConfigParam('confirm_address_correction', 'address_check', 'payone_protect'),
-            'bonicheckAddressEnabled' => $this->isBonicheckAddressEnabled(),
+            'bonicheckAddressEnabled' => $this->consumerscoreHelper->isBonicheckAddressEnabled(),
             'bonicheckIntegrationEvent' => $this->requestHelper->getConfigParam('integration_event', 'creditrating', 'payone_protect'),
             'canShowPaymentHintText' => $this->consumerscoreHelper->canShowPaymentHintText(),
             'paymentHintText' => $this->requestHelper->getConfigParam('payment_hint_text', 'creditrating', 'payone_protect'),
@@ -236,15 +235,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'klarnaStoreIds' => $this->paymentHelper->getKlarnaStoreIds(),
             'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>=')
         ];
-    }
-
-    protected function isBonicheckAddressEnabled()
-    {
-        if ($this->requestHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect') == AddressCheckType::NONE &&
-            $this->requestHelper->getConfigParam('enabled', 'creditrating', 'payone_protect') == 1) {
-            return true;
-        }
-        return false;
     }
 
     /**

@@ -109,12 +109,6 @@ class EditAddress implements EditAddressInterface
     {
         /** @var \Magento\Quote\Model\Quote $quote */
         $quote = $this->quoteRepository->get($cartId);
-        try {
-            $quoteTest = $this->quoteRepository->getActive($cartId);
-            error_log('Got Active: '.$quoteTest->getId());
-        } catch(NoSuchEntityException $ex) {
-            error_log('FEHLERFALL!!!');
-        }
         $quote->setShippingAddress($addressData);
         try {
             $this->quoteRepository->save($quote);
@@ -122,27 +116,6 @@ class EditAddress implements EditAddressInterface
             $this->logger->critical($e);
             throw new InputException(__('Unable to save shipping information. Please check input data.'));
         }
-
-        /*
-        $iCustomerAddressId = $addressData->getCustomerAddressId();
-
-        if (!empty($iCustomerAddressId)) {
-            $address = $this->addressRepository->getById($addressData->getCustomerAddressId());
-            $address->setPostcode($addressData->getPostcode());
-            $address->setFirstname($addressData->getFirstname());
-            $address->setLastname($addressData->getLastname());
-            $address->setCity($addressData->getCity());
-            $address->setCountryId($addressData->getCountryId());
-
-            $street = $addressData->getStreet();
-            if (!is_array($street)) {
-                $street = [$street];
-            }
-            $address->setStreet($street);
-
-            $this->addressRepository->save($address);
-        }
-        */
 
         $oResponse = $this->responseFactory->create();
         $oResponse->setData('success', true);
