@@ -112,6 +112,8 @@ class Capture extends Base
     {
         $oOrder = $oPaymentInfo->getOrder();
 
+        $this->setStoreCode($oOrder->getStore()->getCode());
+
         $aPositions = $this->getInvoiceList($oOrder);
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
@@ -136,6 +138,8 @@ class Capture extends Base
         }
 
         $aResponse = $this->send($oPayment);
+
+        $this->apiHelper->addPayoneOrderData($oOrder, false, $aResponse); // add payone data to order
 
         return $aResponse;
     }

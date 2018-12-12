@@ -30,4 +30,10 @@
     </a>
 <?php elseif ($this->getInstructionNotes()): ?>
     <?php echo $this->getInstructionNotes(); ?>
+<?php elseif ($this->showAmazonPendingMessage()): ?>
+    <div class="messages">
+        <div class="message message-error notice">
+            <div><?php echo __('Your transaction with Amazon Pay is currently being validated. Please be aware that we will inform you shortly as needed.'); ?></div>
+        </div>
+    </div>
 <?php endif; ?>

@@ -78,14 +78,17 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Get value from array at given key or empty string if not set
      *
-     * @param  array  $aRequest
-     * @param  string $sField
+     * @param  array       $aRequest
+     * @param  string      $sField
+     * @param  string|null $sDefault
      * @return string
      */
-    protected function getParamValue($aRequest, $sField)
+    protected function getParamValue($aRequest, $sField, $sDefault = null)
     {
         if (isset($aRequest[$sField])) {
             return $aRequest[$sField];
+        } elseif ($sDefault !== null) {
+            return $sDefault;
         }
         return '';
     }
@@ -123,31 +126,33 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Save Api-log entry to database
      *
-     * @param  Base   $oRequest
+     * @param  array  $aRequest
      * @param  array  $aResponse
      * @param  string $sStatus
+     * @param  string $sOrderId
      * @return $this
      */
-    public function addApiLogEntry(Base $oRequest, $aResponse, $sStatus = '')
+    public function addApiLogEntry($aRequest, $aResponse, $sStatus = '', $sOrderId = '')
     {
-        $aRequest = $oRequest->getParameters();
         $aRequest = $this->maskParameters($aRequest);
         $iTxid = '';
         if (isset($aResponse['txid'])) {
             $iTxid = $aResponse['txid'];
+        } elseif (isset($aRequest['txid'])) {
+            $iTxid = $aRequest['txid'];
         }
 
         $this->getConnection()->insert(
             $this->getMainTable(),
             [
-                'order_id' => $oRequest->getOrderId(),
+                'order_id' => $sOrderId,
                 'store_id' => $this->shopHelper->getStoreId(),
                 'refnr' => $this->getParamValue($aRequest, 'reference'),
                 'txid' => $iTxid,
                 'requesttype' => $this->getParamValue($aRequest, 'request'),
                 'responsestatus' => $sStatus,
                 'mid' => $this->getParamValue($aRequest, 'mid'),
-                'aid' => $this->getParamValue($aRequest, 'aid'),
+                'aid' => $this->getParamValue($aRequest, 'aid', '0'),
                 'portalid' => $this->getParamValue($aRequest, 'portalid'),
                 'raw_request' => serialize($aRequest),
                 'raw_response' => serialize($aResponse),

@@ -244,4 +244,78 @@ class Database extends \Payone\Core\Helper\Base
         }
         return $this->getDb()->fetchOne($oSelect, $aParams);
     }
+
+    /**
+     * Relabel sales payment transaction to substitute order
+     *
+     * @param  string $sOldOrderId
+     * @param  string $sNewOrderId
+     * @param  string $sNewPaymentId
+     * @return int
+     */
+    public function relabelTransaction($sOldOrderId, $sNewOrderId, $sNewPaymentId)
+    {
+        $table = $this->databaseResource->getTableName('sales_payment_transaction');
+        $data = [
+            'order_id' => $sNewOrderId,
+            'payment_id' => $sNewPaymentId
+        ];
+        $where = ['order_id = ?' => $sOldOrderId];
+        return $this->getDb()->update($table, $data, $where);
+    }
+
+    /**
+     * Relabel payone protocol api to substitute order
+     *
+     * @param  string $sOldIncrementId
+     * @param  string $sNewIncrementId
+     * @return int
+     */
+    public function relabelApiProtocol($sOldIncrementId, $sNewIncrementId)
+    {
+        $table = $this->databaseResource->getTableName('payone_protocol_api');
+        $data = ['order_id' => $sNewIncrementId];
+        $where = ['order_id = ?' => $sOldIncrementId];
+        return $this->getDb()->update($table, $data, $where);
+    }
+
+    /**
+     * Relabel sales order payment to substitute order
+     *
+     * @param  string $sOldIncrementId
+     * @param  string $sNewOrderId
+     * @return int
+     */
+    public function relabelOrderPayment($sOldIncrementId, $sNewOrderId)
+    {
+        $oSelect = $this->getDb()
+            ->select()
+            ->from(['a' => $this->databaseResource->getTableName('sales_order_payment')], ['last_trans_id'])
+            ->joinInner(['b' => $this->databaseResource->getTableName('sales_order')], 'a.parent_id = b.entity_id')
+            ->where("b.increment_id = :incrementId")
+            ->limit(1);
+        $sLastTransId = $this->getDb()->fetchOne($oSelect, ['incrementId' => $sOldIncrementId]);
+
+        $table = $this->databaseResource->getTableName('sales_order_payment');
+        $data = ['last_trans_id' => $sLastTransId];
+        $where = ['parent_id = ?' => $sNewOrderId];
+        return $this->getDb()->update($table, $data, $where);
+    }
+
+    /**
+     * Return not handled transactions by order id
+     *
+     * @param  string $sOrderId
+     * @return array
+     */
+    public function getNotHandledTransactionsByOrderId($sOrderId)
+    {
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('payone_protocol_transactionstatus'), ['id'])
+            ->where("order_id = :orderId")
+            ->where("has_been_handled = 0")
+            ->order('id ASC');
+        return $this->getDb()->fetchAll($oSelect, ['orderId' => $sOrderId]);
+    }
 }

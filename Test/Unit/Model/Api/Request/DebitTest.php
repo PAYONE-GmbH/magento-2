@@ -41,6 +41,7 @@ use Payone\Core\Helper\Shop;
 use Magento\Sales\Model\Order\Item;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Store\Model\Store;
 
 class DebitTest extends BaseTestCase
 {
@@ -106,15 +107,21 @@ class DebitTest extends BaseTestCase
 
     protected function getOrderMock()
     {
+        $store = $this->getMockBuilder(Store::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $store->method('getCode')->willReturn('default');
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getIncrementId', 'getId', 'getCustomerId', 'getPayoneRefundIban', 'getPayoneRefundBic', 'getAllItems'])
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getIncrementId', 'getId', 'getCustomerId', 'getPayoneRefundIban', 'getPayoneRefundBic', 'getAllItems', 'getStore'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
         $order->method('getIncrementId')->willReturn('12345');
         $order->method('getId')->willReturn('12345');
         $order->method('getCustomerId')->willReturn('12345');
+        $order->method('getStore')->willReturn($store);
         return $order;
     }
 
@@ -221,5 +228,15 @@ class DebitTest extends BaseTestCase
 
         $this->expectException(LocalizedException::class);
         $this->classToTest->sendRequest($payment, $paymentInfo, 100);
+    }
+
+    public function testGetResponse()
+    {
+        $expected = ['status' => 'VALID'];
+
+        $this->classToTest->setResponse($expected);
+        $result = $this->classToTest->getResponse();
+
+        $this->assertEquals($expected, $result);
     }
 }

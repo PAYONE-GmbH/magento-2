@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods;
 
+use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Creditcard as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -34,6 +35,8 @@ use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\DataObject;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Checkout\Model\Session;
+use Magento\Quote\Model\Quote;
 
 class CreditcardTest extends BaseTestCase
 {
@@ -57,8 +60,25 @@ class CreditcardTest extends BaseTestCase
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn('info');
 
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getConfigParam')->willReturn(true);
+
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getCustomerId'])
+            ->getMock();
+        $quote->method('getCustomerId')->willReturn(123);
+
+        $checkoutSession = $this->getMockBuilder(Session::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getQuote'])
+            ->getMock();
+        $checkoutSession->method('getQuote')->willReturn($quote);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'toolkitHelper' => $toolkitHelper
+            'toolkitHelper' => $toolkitHelper,
+            'shopHelper' => $shopHelper,
+            'checkoutSession' => $checkoutSession
         ]);
         $this->classToTest->setInfoInstance($info);
     }
@@ -74,7 +94,17 @@ class CreditcardTest extends BaseTestCase
 
     public function testAssignData()
     {
-        $data = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->getMock();
+        $addData = [
+            'saveData' => 1,
+            'pseudocardpan' => '123',
+            'truncatedcardpan' => '1X3'
+        ];
+
+        $data = $this->getMockBuilder(DataObject::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAdditionalData'])
+            ->getMock();
+        $data->method('getAdditionalData')->willReturn($addData);
 
         $result = $this->classToTest->assignData($data);
         $this->assertInstanceOf(ClassToTest::class, $result);

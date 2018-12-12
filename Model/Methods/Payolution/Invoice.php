@@ -56,17 +56,6 @@ class Invoice extends PayolutionBase
     protected $sLongSubType = 'Payolution-Invoicing';
 
     /**
-     * Returns authorization-mode
-     * Barzahlen only supports preauthorization
-     *
-     * @return string
-     */
-    public function getAuthorizationMode()
-    {
-        return PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION;
-    }
-
-    /**
      * Authorize payment abstract method
      *
      * @param  InfoInterface $payment

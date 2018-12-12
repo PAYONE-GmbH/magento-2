@@ -40,7 +40,6 @@
                         <resource id="Payone_Core::payone_protocol_api" title="Api" sortOrder="10" />
                         <resource id="Payone_Core::payone_protocol_transactionstatus" title="Transactionstatus" sortOrder="20" />
                     </resource>
-                    <resource id="Payone_Core::payone_information" title="Information" sortOrder="40" />
                 </resource>
             </resource>
         </resources>

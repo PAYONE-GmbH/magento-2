@@ -24,7 +24,7 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Model\Methods\OnlineBankTransfer;
+namespace Payone\Core\Test\Unit\Model\Methods\Payolution;
 
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Payolution\Installment as ClassToTest;

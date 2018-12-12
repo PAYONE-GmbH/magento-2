@@ -177,6 +177,14 @@ class UpgradeData implements UpgradeDataInterface
                 ['type' => 'varchar', 'length' => 64, 'default' => '']
             );
         }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_cancel_substitute_increment_id')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_cancel_substitute_increment_id',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
 
         $serializedRows = $this->getSerializedConfigRows($setup);
         if (!empty($serializedRows) && version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) {

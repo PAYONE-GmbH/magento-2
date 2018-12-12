@@ -56,6 +56,13 @@ abstract class Base
     protected $aParameters = [];
 
     /**
+     * Response of the request
+     *
+     * @var array
+     */
+    protected $aResponse = false;
+
+    /**
      * URL of PAYONE Server API
      *
      * @var string
@@ -104,6 +111,13 @@ abstract class Base
     protected $apiLog;
 
     /**
+     * Store id for the current context
+     *
+     * @var string
+     */
+    protected $storeCode = null;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
@@ -132,14 +146,29 @@ abstract class Base
      */
     protected function initRequest()
     {
-        $this->addParameter('mid', $this->shopHelper->getConfigParam('mid')); // PayOne Merchant ID
-        $this->addParameter('portalid', $this->shopHelper->getConfigParam('portalid')); // PayOne Portal ID
-        $this->addParameter('key', md5($this->shopHelper->getConfigParam('key'))); // PayOne Portal Key
+        $this->aParameters = [];
+        $this->addParameter('mid', $this->shopHelper->getConfigParam('mid', 'global', 'payone_general', $this->storeCode)); // PayOne Merchant ID
+        $this->addParameter('portalid', $this->shopHelper->getConfigParam('portalid', 'global', 'payone_general', $this->storeCode)); // PayOne Portal ID
+        $this->addParameter('key', md5($this->shopHelper->getConfigParam('key', 'global', 'payone_general', $this->storeCode))); // PayOne Portal Key
         $this->addParameter('encoding', $this->environmentHelper->getEncoding()); // Encoding
         $this->addParameter('integrator_name', 'Magento2'); // Shop-system
         $this->addParameter('integrator_version', $this->shopHelper->getMagentoVersion()); // Shop version
         $this->addParameter('solution_name', 'fatchip'); // Company developing the module
         $this->addParameter('solution_version', PayoneConfig::MODULE_VERSION); // Module version
+    }
+
+    /**
+     * Set current store code and reinit base parameters
+     *
+     * @param  string $sStoreCode
+     * @return void
+     */
+    public function setStoreCode($sStoreCode)
+    {
+        if ($this->storeCode != $sStoreCode) {
+            $this->storeCode = $sStoreCode;
+            $this->initRequest(); //reinit base parameters
+        }
     }
 
     /**
@@ -193,6 +222,27 @@ abstract class Base
     public function getParameters()
     {
         return $this->aParameters;
+    }
+
+    /**
+     * Set response array
+     *
+     * @param  $aResponse
+     * @return void
+     */
+    public function setResponse($aResponse)
+    {
+        $this->aResponse = $aResponse;
+    }
+
+    /**
+     * Return the response array
+     *
+     * @return array
+     */
+    public function getResponse()
+    {
+        return $this->aResponse;
     }
 
     /**
@@ -284,7 +334,14 @@ abstract class Base
 
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
+<<<<<<< HEAD
         $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
+=======
+
+        $this->setResponse($aResponse);
+
+        $this->apiLog->addApiLogEntry($this->getParameters(), $aResponse, $aResponse['status'], $this->getOrderId()); // log request to db
+>>>>>>> 114002644732c1642a36ee16a54d9405c2dea50e
 
         return $aResponse;
     }

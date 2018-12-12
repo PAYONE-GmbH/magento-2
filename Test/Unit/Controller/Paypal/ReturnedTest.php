@@ -73,7 +73,7 @@ class ReturnedTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneWorkorderId'])
+            ->setMethods(['getPayoneWorkorderId', 'setIsPayonePayPalExpress'])
             ->getMock();
         $checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
 
