@@ -334,14 +334,10 @@ abstract class Base
 
         $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
         $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
-<<<<<<< HEAD
-        $this->apiLog->addApiLogEntry($this, $aResponse, $aResponse['status']); // log request to db
-=======
 
         $this->setResponse($aResponse);
 
         $this->apiLog->addApiLogEntry($this->getParameters(), $aResponse, $aResponse['status'], $this->getOrderId()); // log request to db
->>>>>>> 114002644732c1642a36ee16a54d9405c2dea50e
 
         return $aResponse;
     }
