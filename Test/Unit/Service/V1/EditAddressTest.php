@@ -87,7 +87,10 @@ class EditAddressTest extends BaseTestCase
         $quoteIdMask->method('load')->willReturn($quoteIdMask);
         $quoteIdMask->method('getQuoteId')->willReturn(5);
 
-        $quoteIdMaskFactory = $this->getMockBuilder(QuoteIdMaskFactory::class)->disableOriginalConstructor()->getMock();
+        $quoteIdMaskFactory = $this->getMockBuilder(QuoteIdMaskFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
         $quoteIdMaskFactory->method('create')->willReturn($quoteIdMask);
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
