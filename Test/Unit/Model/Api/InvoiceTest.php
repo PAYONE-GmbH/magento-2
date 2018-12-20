@@ -151,7 +151,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
 
-        $positions = ['12345test_123' => '1', 'delcost' => '10'];
+        $positions = ['12345test_123' => '1', 'delcost' => '10', 'discount' => '-10'];
 
         $result = $this->classToTest->addProductInfo($authorization, $order, $positions, true);
         $this->assertEquals($expected, $result);
