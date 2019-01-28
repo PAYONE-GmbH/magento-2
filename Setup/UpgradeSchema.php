@@ -130,6 +130,27 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 'portalid', ['type' => Table::TYPE_INTEGER, 'default' => '0']
             );
         }
+
+        if (version_compare($context->getVersion(), '2.5.1', '<')) {
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable('payone_protocol_transactionstatus'),
+                'aid',
+                [
+                    'type' => Table::TYPE_INTEGER,
+                    'unsigned' => true,
+                    'default' => '0'
+                ]
+            );
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable('payone_protocol_transactionstatus'),
+                'portalid',
+                [
+                    'type' => Table::TYPE_INTEGER,
+                    'unsigned' => true,
+                    'default' => '0'
+                ]
+            );
+        }
     }
 
     /**
