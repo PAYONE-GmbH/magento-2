@@ -60,7 +60,8 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INVOICE,
         PayoneConfig::METHOD_PAYOLUTION_DEBIT,
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT,
-        PayoneConfig::METHOD_ALIPAY
+        PayoneConfig::METHOD_ALIPAY,
+        PayoneConfig::METHOD_AMAZONPAY,
     ];
 
     /**
@@ -91,7 +92,33 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_DEBIT => 'fnc',
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT => 'fnc',
         PayoneConfig::METHOD_ALIPAY => 'wlt',
+        PayoneConfig::METHOD_AMAZONPAY => 'wlt',
     ];
+
+    /**
+     * Resource model for saved payment data
+     *
+     * @var \Payone\Core\Model\ResourceModel\SavedPaymentData
+     */
+    protected $savedPaymentData;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\App\Helper\Context             $context
+     * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
+     * @param \Payone\Core\Helper\Shop                          $shopHelper
+     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
+     */
+    public function __construct(
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
+    ) {
+        parent::__construct($context, $storeManager, $shopHelper);
+        $this->savedPaymentData = $savedPaymentData;
+    }
 
     /**
      * Return available payment types
@@ -239,5 +266,30 @@ class Payment extends \Payone\Core\Helper\Base
             }
         }
         return $aStoreIds;
+    }
+
+    /**
+     * Check if given payment method is activated
+     *
+     * @param  string $sMethodCode
+     * @return bool
+     */
+    public function isPaymentMethodActive($sMethodCode)
+    {
+        return (bool)$this->getConfigParam('active', $sMethodCode, 'payment');
+    }
+
+    /**
+     * Get amazon widget url depending on the mode
+     *
+     * @return string
+     */
+    public function getAmazonPayWidgetUrl()
+    {
+        $sSandbox = '';
+        if ('test' == $this->getConfigParam('mode', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment')) {
+            $sSandbox = '/sandbox';
+        }
+        return "https://static-eu.payments-amazon.com/OffAmazonPayments/eur".$sSandbox."/lpa/js/Widgets.js";
     }
 }

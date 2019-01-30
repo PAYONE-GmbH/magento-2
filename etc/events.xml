@@ -35,12 +35,21 @@
         <observer name="payone_payment_method_assign_data" instance="Payone\Core\Observer\PaymentMethodAssignData" />
     </event>
     <event name="controller_action_predispatch_checkout_index_index">
-        <observer name="paypal_predispatch_checkout_index" instance="Payone\Core\Observer\PredispatchCheckoutIndex" />
+        <observer name="payone_predispatch_checkout_index" instance="Payone\Core\Observer\CancelOrder" />
+    </event>
+    <event name="checkout_cart_save_after">
+        <observer name="payone_checkout_cart_save_after" instance="Payone\Core\Observer\CancelOrder" />
     </event>
     <event name="payone_core_transactionstatus_paid">
         <observer name="payone_transactionstatus_paid" instance="Payone\Core\Observer\Transactionstatus\Paid" />
     </event>
     <event name="payone_core_transactionstatus_appointed">
         <observer name="payone_transactionstatus_appointed" instance="Payone\Core\Observer\Transactionstatus\Appointed" />
+    </event>
+    <event name="payone_core_transactionstatus_pending">
+        <observer name="payone_transactionstatus_pending" instance="Payone\Core\Observer\Transactionstatus\Pending" />
+    </event>
+    <event name="payone_core_transactionstatus_failed">
+        <observer name="payone_transactionstatus_failed" instance="Payone\Core\Observer\Transactionstatus\Failed" />
     </event>
 </config>

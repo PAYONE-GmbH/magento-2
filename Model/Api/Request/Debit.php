@@ -28,6 +28,7 @@ namespace Payone\Core\Model\Api\Request;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Creditmemo;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Payment\Model\InfoInterface;
 
@@ -94,10 +95,11 @@ class Debit extends Base
     /**
      * Generate position list for invoice data transmission
      *
-     * @param Order $oOrder
+     * @param  Order      $oOrder
+     * @param  Creditmemo $oCreditmemo
      * @return array|false
      */
-    protected function getInvoiceList(Order $oOrder)
+    protected function getInvoiceList(Order $oOrder, Creditmemo $oCreditmemo)
     {
         $aCreditmemo = $this->getCreditmemoRequestParams();
 
@@ -118,6 +120,12 @@ class Debit extends Base
         if (isset($aCreditmemo['shipping_amount']) && $aCreditmemo['shipping_amount'] != 0) {
             $aPositions['delcost'] = $aCreditmemo['shipping_amount'];
         }
+        if ($blFull !== true && $oCreditmemo->getBaseDiscountAmount() != 0) {
+            $aPositions['discount'] = $oCreditmemo->getBaseDiscountAmount();
+            if ($this->shopHelper->getConfigParam('currency') == 'display') {
+                $aPositions['discount'] = $oCreditmemo->getDiscountAmount();
+            }
+        }
         if ($blFull === true && (!isset($aCreditmemo['shipping_amount']) || $aCreditmemo['shipping_amount'] == $oOrder->getBaseShippingInclTax())) {
             $aPositions = false; // false = full debit
         }
@@ -136,7 +144,10 @@ class Debit extends Base
     {
         $oOrder = $oPaymentInfo->getOrder();
 
-        $aPositions = $this->getInvoiceList($oOrder);
+        $this->setStoreCode($oOrder->getStore()->getCode());
+
+        $oCreditmemo = $oPaymentInfo->getCreditmemo();
+        $aPositions = $this->getInvoiceList($oOrder, $oCreditmemo);
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
         if (strpos($iTxid, '-') !== false) {
@@ -195,7 +206,7 @@ class Debit extends Base
      */
     protected function getRefundAppendix(Order $oOrder, PayoneMethod $oPayment)
     {
-        $sText = $this->shopHelper->getConfigParam('invoice_appendix_refund', 'invoicing');
+        $sText = $this->shopHelper->getConfigParam('invoice_appendix_refund', 'invoicing', 'payone_general', $this->storeCode);
         $sCreditMemoIncrId = '';
         $sInvoiceIncrementId = '';
         $sInvoiceId = '';

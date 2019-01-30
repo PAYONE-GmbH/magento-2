@@ -85,7 +85,7 @@ class MethodListTest extends BaseTestCase
             ->method('getAllowedMethodsForScore')
             ->willReturnMap([
                     ['Y', [PayoneConfig::METHOD_CREDITCARD, PayoneConfig::METHOD_ADVANCE_PAYMENT]],
-                    ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CASH_ON_DELIVERY]]
+                    ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CASH_ON_DELIVERY, PayoneConfig::METHOD_AMAZONPAY]],
                 ]);
 
 
@@ -211,6 +211,24 @@ class MethodListTest extends BaseTestCase
         $paymentMethods = [$payment];
 
         $this->quote->method('getCustomerId')->willReturn(null);
+
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $this->assertEmpty($result);
+    }
+
+    public function testAfterGetAvailableMethodsRemoveAmazonPay()
+    {
+        $this->consumerscore->method('sendRequest')->willReturn(true);
+        $this->consumerscoreHelper->method('getWorstScore')->willReturn('Y');
+
+        $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
+
+        $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_AMAZONPAY);
+        $paymentMethods = [$payment];
+
+        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
         $this->assertEmpty($result);

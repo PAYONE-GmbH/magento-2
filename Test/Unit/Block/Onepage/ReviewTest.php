@@ -46,6 +46,12 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\View\Element\Template\File\Resolver;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\ReadInterface;
+use Magento\Framework\View\Element\Template\File\Validator;
+use Magento\Framework\View\TemplateEnginePool;
+use Magento\Framework\View\TemplateEngineInterface;
 
 class ReviewTest extends BaseTestCase
 {
@@ -102,11 +108,33 @@ class ReviewTest extends BaseTestCase
 
         $eventManager = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()->getMock();
 
+        $resolver = $this->getMockBuilder(Resolver::class)->disableOriginalConstructor()->getMock();
+        $resolver->method('getTemplateFileName')->willReturn('review.phtml');
+
+        $directory = $this->getMockBuilder(ReadInterface::class)->disableOriginalConstructor()->getMock();
+        $directory->method('getRelativePath')->willReturn('.');
+
+        $filesystem = $this->getMockBuilder(Filesystem::class)->disableOriginalConstructor()->getMock();
+        $filesystem->method('getDirectoryRead')->willReturn($directory);
+
+        $validator = $this->getMockBuilder(Validator::class)->disableOriginalConstructor()->getMock();
+        $validator->method('isValid')->willReturn(true);
+
+        $templateEngine = $this->getMockBuilder(TemplateEngineInterface::class)->disableOriginalConstructor()->getMock();
+        $templateEngine->method('render')->willReturn('');
+
+        $enginePool = $this->getMockBuilder(TemplateEnginePool::class)->disableOriginalConstructor()->getMock();
+        $enginePool->method('get')->willReturn($templateEngine);
+
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->method('getScopeConfig')->willReturn($this->scopeConfig);
         $context->method('getEscaper')->willReturn($escaper);
         $context->method('getUrlBuilder')->willReturn($this->urlBuilder);
         $context->method('getEventManager')->willReturn($eventManager);
+        $context->method('getResolver')->willReturn($resolver);
+        $context->method('getFilesystem')->willReturn($filesystem);
+        $context->method('getValidator')->willReturn($validator);
+        $context->method('getEnginePool')->willReturn($enginePool);
 
         $this->store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
 
@@ -138,6 +166,7 @@ class ReviewTest extends BaseTestCase
             'taxHelper' => $this->taxHelper,
             'priceCurrency' => $this->priceCurrency
         ]);
+        #$this->classToTest->setCacheLifetime(1);
     }
 
     public function testGetShippingAddress()
@@ -272,6 +301,8 @@ class ReviewTest extends BaseTestCase
         $this->quote->method('getIsVirtual')->willReturn(false);
         $this->quote->method('getShippingAddress')->willReturn($address);
 
+        $this->classToTest->setArea('frontend');
+
         $result = $this->classToTest->toHtml();
         $expected = '';
         $this->assertEquals($expected, $result);
@@ -287,6 +318,8 @@ class ReviewTest extends BaseTestCase
 
         $this->quote->method('getPayment')->willReturn($payment);
         $this->quote->method('getIsVirtual')->willReturn(true);
+
+        $this->classToTest->setArea('frontend');
 
         $result = $this->classToTest->toHtml();
         $expected = '';

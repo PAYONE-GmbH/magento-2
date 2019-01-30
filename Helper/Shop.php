@@ -87,6 +87,16 @@ class Shop extends \Payone\Core\Helper\Base
     }
 
     /**
+     * Return the name of the current store
+     *
+     * @return int
+     */
+    public function getStoreName()
+    {
+        return $this->storeManager->getStore()->getName();
+    }
+
+    /**
      * Return locale config of current store
      *
      * @return string

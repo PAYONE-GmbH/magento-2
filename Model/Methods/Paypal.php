@@ -57,40 +57,13 @@ class Paypal extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
-     * Determines if this paypal payment is an express-payment
-     *
-     * @var bool
-     */
-    protected $blIsPayPalExpress = false;
-
-    /**
-     * Set if this paypal payment is an express-payment
-     *
-     * @param bool $blIsPayPalExpress
-     */
-    public function setIsPayPalExpress($blIsPayPalExpress)
-    {
-        $this->blIsPayPalExpress = $blIsPayPalExpress;
-    }
-
-    /**
-     * Get if this paypal payment is an express-payment
-     *
-     * @return bool
-     */
-    public function isPayPalExpress()
-    {
-        return $this->blIsPayPalExpress;
-    }
-
-    /**
      * Return success url for redirect payment types
      *
      * @return string
      */
     public function getSuccessUrl()
     {
-        if ($this->isPayPalExpress() === true) {
+        if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
             return $this->url->getUrl('payone/paypal/returned');
         }
         return parent::getSuccessUrl();
@@ -106,9 +79,11 @@ class Paypal extends PayoneMethod
     {
         $aParams = ['wallettype' => 'PPE'];
 
-        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
-        if ($sWorkorderId) {
-            $aParams['workorderid'] = $sWorkorderId;
+        if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
+            $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+            if ($sWorkorderId) {
+                $aParams['workorderid'] = $sWorkorderId;
+            }
         }
         return $aParams;
     }

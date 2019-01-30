@@ -58,4 +58,21 @@
             <parameter name="cartId" force="true">%cart_id%</parameter>
         </data>
     </route>
+
+    <route url="/V1/carts/mine/payone-editAddress" method="POST">
+        <service class="Payone\Core\Api\EditAddressInterface" method="editAddress"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <route url="/V1/carts/mine/payone-amazonPay" method="POST">
+        <service class="Payone\Core\Api\AmazonPayInterface" method="getWorkorderId"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
 </routes>

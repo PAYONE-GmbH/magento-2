@@ -75,18 +75,32 @@ class ApiLogTest extends BaseTestCase
             'reference' => 'pre_12345',
             'request' => 'authorization',
             'mid' => '12345',
-            'aid' => '123456',
             'ip' => '192.168.0.1',
         ];
-
-        $request = $this->getMockBuilder(Base::class)->disableOriginalConstructor()->getMock();
-        $request->method('getParameters')->willReturn($params);
-        $request->method('getOrderId')->willReturn('12345');
+        $orderId = '12345';
 
         $response = ['txid' => '12345'];
         $status = 'appointed';
 
-        $result = $this->classToTest->addApiLogEntry($request, $response, $status);
+        $result = $this->classToTest->addApiLogEntry($params, $response, $status, $orderId);
+        $this->assertInstanceOf(ClassToTest::class, $result);
+    }
+
+    public function testHandlePayPalReturnrRequestTxid()
+    {
+        $params = [
+            'reference' => 'pre_12345',
+            'request' => 'authorization',
+            'mid' => '12345',
+            'ip' => '192.168.0.1',
+            'txid' => '12345'
+        ];
+        $orderId = '12345';
+
+        $response = [];
+        $status = 'appointed';
+
+        $result = $this->classToTest->addApiLogEntry($params, $response, $status, $orderId);
         $this->assertInstanceOf(ClassToTest::class, $result);
     }
 }

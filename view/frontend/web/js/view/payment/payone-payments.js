@@ -119,6 +119,10 @@ define(
             {
                 type: 'payone_alipay',
                 component: 'Payone_Core/js/view/payment/method-renderer/alipay-method'
+            },
+            {
+                type: 'payone_amazonpay',
+                component: 'Payone_Core/js/view/payment/method-renderer/amazonpay-method'
             }
         );
         /** Add view logic here if needed */

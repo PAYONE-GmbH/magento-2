@@ -1,0 +1,51 @@
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2018 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<!--@subject Bitte aktualisieren Sie Ihre Zahlungsinformationen @-->
+<!--@vars
+{"store url=\"\"":"Store Url",
+"var logo_url":"Email Logo Image Url",
+"var logo_alt":"Email Logo Image Alt",
+"var store.getFrontendName()":"Store Name",
+@-->
+<!--@styles
+@-->
+
+{{template config_path="design/email/header_template"}}
+
+<p>
+    Sehr geehrter Kunde,<br><br>
+
+    Vielen Dank für Ihre Bestellung bei {{var store.getFrontendName()}}.<br><br>
+
+    Leider wurde Ihre Bezahlung von Amazon Pay abgelehnt.<br>
+    Sie können unter <a href="https://pay.amazon.com/de/jr/your-account/orders?language=de_DE">https://pay.amazon.com/de/jr/your-account/orders?language=de_DE</a> die Zahlungsinformationen für Ihre Bestellung aktualisieren, indem Sie eine andere Zahlungsweise auswählen oder eine neue Zahlungsweise angeben. Mit der neuen Zahlungsweise wird dann ein erneuter Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.<br><br>
+
+    Mit freundlichen Grüßen<br><br>
+
+    {{var store.getFrontendName()}}
+</p>
+
+{{template config_path="design/email/footer_template"}}

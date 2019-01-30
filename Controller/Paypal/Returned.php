@@ -42,13 +42,6 @@ class Returned extends \Magento\Framework\App\Action\Action
     protected $checkoutSession;
 
     /**
-     * PayPal payment model
-     *
-     * @var \Payone\Core\Model\Methods\Paypal
-     */
-    protected $paypalPayment;
-
-    /**
      * PAYONE PayPal return handler
      *
      * @var \Payone\Core\Model\Paypal\ReturnHandler
@@ -60,18 +53,15 @@ class Returned extends \Magento\Framework\App\Action\Action
      *
      * @param \Magento\Framework\App\Action\Context   $context
      * @param \Magento\Checkout\Model\Session         $checkoutSession
-     * @param \Payone\Core\Model\Methods\Paypal       $paypalPayment
      * @param \Payone\Core\Model\Paypal\ReturnHandler $returnHandler
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Model\Methods\Paypal $paypalPayment,
         \Payone\Core\Model\Paypal\ReturnHandler $returnHandler
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
-        $this->paypalPayment = $paypalPayment;
         $this->returnHandler = $returnHandler;
     }
 
@@ -82,7 +72,7 @@ class Returned extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $this->paypalPayment->setIsPayPalExpress(true);
+        $this->checkoutSession->setIsPayonePayPalExpress(true);
         $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
         if ($sWorkorderId) {
             try {

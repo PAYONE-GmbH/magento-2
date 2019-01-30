@@ -194,7 +194,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Invoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Invoice</title>
+                <title>PAYONE - Paysafe Pay Later™ Invoice</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_invoice>
@@ -203,7 +203,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Debit</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Debit</title>
+                <title>PAYONE - Paysafe Pay Later™ Debit</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_debit>
@@ -212,7 +212,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Installment</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Payolution Installment</title>
+                <title>PAYONE - Paysafe Pay Later™ Installment</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_installment>
@@ -225,6 +225,16 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_alipay>
+            <payone_amazonpay>
+                <active>0</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\AmazonPay</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - AmazonPay</title>
+                <request_type>preauthorization</request_type>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_amazonpay>
         </payment>
         <payone_general>
             <global>
@@ -262,6 +272,7 @@
                 <payone_payolution_debit>{"_payone_status_mapping8":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_debit>
                 <payone_payolution_installment>{"_payone_status_mapping9":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_installment>
                 <payone_alipay>{"_payone_status_alipay":{"txaction":"appointed","state_status":"processing"}}</payone_alipay>
+                <payone_amazonpay>{"_payone_status_amazon":{"txaction":"appointed","state_status":"processing"}}</payone_amazonpay>
             </statusmapping>
             <creditcard>
                 <cc_template>{"Number_type":"tel","Number_count":"30","Number_max":"16","Number_iframe":"standard","Number_style":"standard","CVC_type":"tel","CVC_count":"30","CVC_max":"4","CVC_iframe":"standard","CVC_style":"standard","Month_type":"select","Month_count":"3","Month_max":"2","Month_iframe":"custom","Month_width":"120px","Month_height":"20px","Month_style":"standard","Year_type":"select","Year_count":"5","Year_max":"4","Year_iframe":"custom","Year_width":"120px","Year_height":"20px","Year_style":"standard","Standard_input":"width:223px;height:30px;padding: 0 9px;font-size:14px;font-family:'Helvetica Neue',Verdana,Arial,sans-serif;","Standard_selection":"width:100px;","Iframe_width":"365px","Iframe_height":"30px","Errors_active":"false","Errors_lang":"de"}</cc_template>
@@ -318,6 +329,8 @@
             <payone_creditcard>
                 <use_global>1</use_global>
                 <check_cvc>always</check_cvc>
+                <min_validity_period>35</min_validity_period>
+                <save_data_enabled>0</save_data_enabled>
             </payone_creditcard>
             <payone_debit>
                 <use_global>1</use_global>
@@ -371,6 +384,7 @@
             </payone_klarna>
             <payone_safe_invoice>
                 <use_global>1</use_global>
+                <disable_after_refusal>0</disable_after_refusal>
             </payone_safe_invoice>
             <payone_payolution_invoice>
                 <use_global>1</use_global>
@@ -384,6 +398,9 @@
             <payone_alipay>
                 <use_global>1</use_global>
             </payone_alipay>
+            <payone_amazonpay>
+                <use_global>1</use_global>
+            </payone_amazonpay>
         </payone_payment>
         <payone_misc>
             <processing>

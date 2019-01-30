@@ -36,6 +36,8 @@
 "Minimum Order Total","Minimaler Warenwert"
 "Maximum Order Total","Maximaler Warenwert"
 "Minimum Validity Period","Mindest-Gültigkeitszeitraum"
+"Creditcard-management enabled","Kreditkartenverwaltung aktiviert"
+"Enables the customer to save his creditcard data for future use. The shop doesn't save the real creditcard number - only the PAYONE creditcard pan.","Hiermit kann der Kunde seine Kreditkarten-Daten für zukünftige Nutzung abspeichern. Der Shop speichert nicht die echten Kreditkarten-Daten, sondern nur die PAYONE Creditcard-pan."
 "Minimum period a CreditCard has to be valid. (in days)","Minimaler benötigter Gültigkeits-Zeitraum bevor Kreditkarten abgelehnt werden (in Tagen)"
 "Narrative Text","Buchungstext"
 "Maximum 81 digits. Placeholders: {{order_increment_id}}","Maximal 81 Zeichen. Platzhalter: {{order_increment_id}}"
@@ -91,6 +93,9 @@
 "Creditcard-Type","Kartentyp"
 "Request BIC","BIC abfrage"
 "Check Card Validation Code","Prüfe Kartenprüfziffer"
+"Minimum Validity Period","Mindest-Gültigkeitszeitraum"
+"Minimum period a CreditCard has to be valid. (in days)","Minimaler benötigter Gültigkeits-Zeitraum bevor Kreditkarten abgelehnt werden (in Tagen)"
+"This transaction could not be performed. Please select another payment method.","Die Zahlung konnte nicht durchgefuehrt werden. Bitte waehlen Sie eine andere Zahlungsart"
 "Validate bank code","Prüfe Bankverbindung"
 "List of supported SEPA countries","Liste der unterstützten Kontoländer"
 "Show additional account number/bank code number","Zusätzlich Kontonummer/Bankleitzahl anzeigen"
@@ -111,6 +116,8 @@
 "Wallet Type","Walletart"
 "Financing Type", "Finanzierungs-Art"
 "Safe Invoice Type", "Sicherer Rechnungskauf: Typ"
+"Disable directly after refusal","Nach Ablehnung deaktivieren"
+"Enables a Javascript-Mixin for the error-processor. This could collide with other extensions of the error-processor. Only activate if needed.","Aktiviert ein Javascript-Mixin für den error-processor. Dies könnte mit anderen Erweiterungen für den error-processor kollidieren. Nur aktivieren wenn Sie dieses Feature brauchen."
 
 "Creditcard","Kreditkarte"
 "Invoice","Rechnung"
@@ -285,7 +292,7 @@
 "Payone Core Installation", "Payone Core Installation"
 
 "ID","ID"
-"Txid","Vorgansgnr."
+"Txid","Vorgangsnr."
 "Reference","Bestellnummer"
 "Last Txaction","Status"
 "Txaction","Status"
@@ -337,7 +344,7 @@
 "Please transfer the order amount to this bank account:","Bitte überweisen Sie den Gesamtbetrag an diese Bankverbindung:"
 "Accountholder:","Kontoinhaber:"
 "Accountnumber:","Kontonummer:"
-"Bank code:","Postleitzahl:"
+"Bank code:","Bankleitzahl:"
 "IBAN:","IBAN:"
 "BIC:","BIC:"
 "Bank:","Bank:"
@@ -1037,7 +1044,7 @@
 
 "You have to be at least 18 years old to use this payment type!","Sie müssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu können!"
 
-"I agree with the transmission of the necessary data to payolution which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an payolution bin ich einverstanden."
+"I agree with the transmission of the necessary data to Paysafe Pay Later™ which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an Paysafe Pay Later™ bin ich einverstanden."
 "I agree with the transmission of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an Klarna bin ich einverstanden."
 "I agree with the processing of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Datenverarbeitung der für die Abwicklung des Rechnungskaufes und einer Identitäts- und Bonitätsprüfung erforderlichen Daten durch Klarna bin ich einverstanden."
 "My","Meine"
@@ -1045,7 +1052,7 @@
 "The general terms and conditions of the dealer apply.","Es gelten die AGB des Händlers."
 "acceptance","Einwilligung"
 "PAYONE_PAYOLUTION_API_ERRORMESSAGE","Diese Zahlung konnte nicht durchgeführt werden. Dies kann unterschiedliche Gruende haben, wie etwa fehlerhafte Eingabedaten, eine unbekannte Adresse, oder ein vorübergehendes technisches Problem. Bitte überprüfen Sie die angegebenen Daten, oder wählen Sie ein anderes Zahlungsmittel."
-"Please confirm the transmission of the necessary data to payolution!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an payolution!"
+"Please confirm the transmission of the necessary data to Paysafe Pay Later™!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an Paysafe Pay Later™!"
 "Please confirm the transmission of the necessary data to Klarna!","Bitte bestätigen Sie die Übermittlung der erforderlichen Daten an Klarna!"
 "Please confirm the SEPA mandate!","Bitte bestätigen Sie das SEPA-Mandat!"
 
@@ -1074,6 +1081,9 @@
 "The installment calculation failed. Please choose another payment type.","Die Ratenberechnung ist fehlgeschlagen. Bitte waehlen Sie eine andere Zahlart."
 
 "PAYONE debit","PAYONE Gutschrift"
+"Your transaction with Amazon Pay is currently being validated. Please be aware that we will inform you shortly as needed.","Ihre Zahlung mit Amazon Pay ist derzeit noch in Prüfung. Bitte beachten Sie, dass wir uns mit Ihnen in Kürze per Email in Verbindung setzen werden, falls noch Unklarheiten bestehen sollten."
+"Sorry, your transaction with Amazon Pay was not successful. Please choose another payment method.","Entschuldigung, die Transaktion mit Amazon Pay war nicht erfolgreich. Bitte wählen Sie eine andere Zahlart."
+"Notice: Please verify your payment information or choose another method.","Hinweis: Bitte überprüfen Sie Ihre Daten oder wählen Sie eine andere Zahlart."
 
 "Hereby I grant the","Hiermit erteile ich das"
 "SEPA-Mandate","SEPA-Lastschriftmandat"
@@ -1081,3 +1091,14 @@
 "Company trade registry number","Handelsregisternummer"
 
 "Payment information is transmitted using the selected currency","Zahlungsinformation wird in dieser Währung übermittelt"
+
+"Creditcard management","Kreditkarten-Verwaltung"
+"You have no saved creditcard data.","Sie haben noch keine gespeicherten Kreditkarten-Daten."
+"Save the payment data for future use.","Daten für zukünftige Nutzung speichern."
+"Saved creditcard","Gespeicherte Kreditkarte"
+"Add new creditcard","Neue Kreditkarte hinzufügen"
+"Default","Standard"
+"Saved at","Gespeichert am"
+"Declare as default","Als Standard festlegen"
+"Delete","Löschen"
+"ends with","endet auf"

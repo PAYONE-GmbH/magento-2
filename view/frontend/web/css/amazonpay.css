@@ -1,0 +1,326 @@
+
+#addressBookWidgetDiv,
+#walletWidgetDiv {
+    display: block;
+    padding-right: 10px;
+    margin-right: 0;
+    width: 270px;
+    height: 230px;
+}
+
+#addressBookWidgetCover,
+#walletWidgetCover {
+    display: none;
+    position: absolute;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    width: 260px;
+    height: 230px;
+}
+
+#checkoutStepInitContent {
+    overflow: hidden;
+    position: relative;
+}
+
+#addressBookWidgetCover.show,
+#walletWidgetCover.show {
+    display: inline-block;
+}
+
+#checkoutStepInitContent #amazonWidgetsNotice,
+#chooseMethod #shippingMethodsNotice {
+    display: none;
+}
+
+#chooseMethod.locked #shippingMethodsDiv {
+    display: none;
+}
+
+#checkoutStepInitContent.locked #amazonWidgetsNotice,
+#chooseMethod.locked #shippingMethodsNotice {
+    display: inline-block;
+    font-weight: normal;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px dashed grey;
+    margin-bottom: 20px;
+    padding: 3px 6px;
+    color: grey;
+}
+
+
+#checkoutStepInitContent #amazonWidgetsNotice span {
+    width: 22px;
+    margin-left: 2px;
+    border-radius: 11px;
+    display: inline-block;
+    border: 1px solid lightgrey;
+    background-color: #f8f8f8;
+    font-weight: normal;
+    text-align: center;
+    font-size: 13px;
+    color: red;
+}
+
+#checkoutStepInitContent #amazonWidgetsNotice span::after {
+    content: '\002717';
+}
+
+#checkoutStepInitContent.solved #amazonWidgetsNotice span {
+    color: green;
+}
+
+#checkoutStepInitContent.solved #amazonWidgetsNotice span::after {
+    content: '\002713';
+}
+
+#shippingMethodsDiv .sp-methods dd input.radio {
+    float: left;
+    margin-right: -40px;
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+#shippingMethodsDiv .sp-methods dd label {
+    font-size: 14px !important;
+    font-weight: normal !important;
+    color: #636363;
+    background-color: #f4f4f4;
+    padding: 6px 10px 6px 40px;
+    display: inline-block;
+    width: auto;
+    max-width: none;
+    min-width: 250px;
+    float: none;
+}
+
+#shippingMethodsDiv .sp-methods dd span ~ label {
+    padding-left: 15px !important;
+}
+
+#shippingMethodsDiv .sp-methods dd input ~ label:hover,
+#shippingMethodsDiv .sp-methods dd input:hover ~ label {
+    background-color: #ececec;
+}
+
+#checkoutSteps .section .step {
+    padding: 20px 20px 12px 20px;
+}
+
+#checkoutSteps .section .step .fadeOut {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    font-size: 30px;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+#checkoutSteps .section .step.disabled .fadeOut {
+    display: block;
+}
+
+#checkoutSteps .section .step .fadeOut div {
+    position: fixed;
+    top: 50vh;
+    left: 50vw;
+    width: 300px;
+    text-align: center;
+}
+
+#checkoutSteps .section .step .fadeOut div span {
+    position: relative;
+    left: -150px;
+}
+
+#checkoutSteps .section .step .fadeOut div span img {
+    margin-right: 16px;
+}
+
+#checkoutSteps .section .step:after,
+#checkoutSteps .section .step-title:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+#checkoutSteps .section:not(.active) .step {
+    display: none;
+}
+
+#checkoutSteps .section .step-title {
+    width: 100%;
+    border-top: 1px solid #ECECEC;
+    position: relative;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+#checkoutSteps .section.active .step-title {
+    border-bottom: 1px solid #ECECEC;
+}
+
+#checkoutSteps .section.allow:not(.active) .step-title {
+    cursor: pointer;
+}
+
+#checkoutSteps .section.allow:not(.active) .step-title:hover {
+    background-color: #F4F4F4;
+}
+
+#checkoutSteps .section .step-title .number {
+    width: 26px;
+    height: 26px;
+    text-align: center;
+    color: #FFFFFF;
+    line-height: 26px;
+    background-color: #3399CC;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    margin-top: -13px;
+}
+
+#checkoutSteps .section.allow:not(.active) .step-title .number {
+    background-color: #99CCE5;
+}
+
+#checkoutSteps .section .step-title h2 {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 40px;
+    float: left;
+    margin: 0 4px 0 45px;
+}
+
+#checkoutSteps .section .step-title a {
+    display: none;
+    float: right;
+    line-height: 40px;
+    height: 40px;
+    padding: 0 10px;
+}
+
+#checkoutSteps .section.allow:not(.active) .step-title a {
+    display: block;
+}
+
+#checkoutSteps .section .buttons-set {
+    display: none;
+    text-align: left;
+    margin: 0 20px 10px 20px;
+    padding: 10px 0 0 0;
+}
+
+#checkoutSteps .section.active .buttons-set {
+    display: block;
+}
+
+#checkoutSteps .section.active .buttons-set .please-wait {
+    display: none;
+}
+
+#checkoutSteps .section.active .buttons-set.disabled {
+    opacity: 0.5;
+}
+
+#checkoutSteps .section.active .buttons-set.disabled .please-wait {
+    display: inline-block;
+}
+
+#checkoutSteps .section.active .buttons-set.disabled button[disabled] {
+    background-color: #3399cc;
+}
+
+#checkoutSteps .section .buttons-set button {
+    float: left;
+    margin: 0 10px 0 0;
+}
+
+#checkoutSteps .section .buttons-set button#submitOrder {
+    min-width: 220px;
+}
+
+@media only screen and (max-width: 1151px) {
+    #walletWidgetWrap, #addressBookWidgetWrap {
+        top: 10px;
+        height: 240px;
+    }
+}
+
+@media only screen and (min-width: 480px) {
+
+    #addressBookWidgetDiv,
+    #walletWidgetDiv {
+        width: 410px;
+    }
+
+    #addressBookWidgetCover,
+    #walletWidgetCover {
+        width: 400px;
+    }
+}
+
+@media only screen and (min-width: 640px) {
+
+    #addressBookWidgetDiv,
+    #walletWidgetDiv {
+        width: 570px;
+    }
+
+    #addressBookWidgetCover,
+    #walletWidgetCover {
+        width: 560px;
+    }
+}
+
+@media only screen and (min-width: 750px) {
+
+    #addressBookWidgetDiv,
+    #walletWidgetDiv {
+        width: 685px;
+    }
+
+    #addressBookWidgetCover,
+    #walletWidgetCover {
+        width: 675px;
+    }
+}
+
+@media only screen and (min-width: 1152px) {
+
+    #addressBookWidgetDiv,
+    #walletWidgetDiv {
+        width: 512px;
+        height: 270px;
+    }
+
+    #addressBookWidgetCover,
+    #walletWidgetCover {
+        width: 502px;
+        height: 270px;
+    }
+
+    #addressBookWidgetDiv,
+    #walletWidgetDiv {
+        display: block;
+    }
+
+    #walletWidgetWrap {
+        display: block;
+        float: left;
+    }
+    #addressBookWidgetWrap {
+        display: block;
+        float: left;
+    }
+}

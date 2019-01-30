@@ -1,0 +1,62 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2018 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+?>
+<?php $paymentData = $block->getSavedPaymentData(); ?>
+<?php if (!empty($paymentData)): ?>
+    <div class="table-wrapper">
+        <table class="data table paymentdata">
+            <thead>
+            <tr>
+                <th scope="col" class="col masked" colspan="2"><?php echo __('Kreditkarte') ?></th>
+                <th scope="col" class="col cardholder"><?php echo __('Name on Card') ?></th>
+                <th scope="col" class="col expirationdate"><?php echo __('Expiration Date') ?></th>
+                <th scope="col" class="col default"><?php echo __('Default') ?></th>
+                <th scope="col" class="col created_at"><?php echo __('Saved at') ?></th>
+                <th scope="col" class="col actions">&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($paymentData as $data): ?>
+                <tr>
+                    <td class="col cardtype"><img src="<?php echo $block->getCardtypeUrl($data); ?>"></td>
+                    <td class="col masked"><?php echo __('ends with').' -'.substr($data['payment_data']['masked'], strlen($data['payment_data']['masked']) - 4, 4); ?></td>
+                    <td class="col default"><?php echo $data['payment_data']['firstname'].' '.$data['payment_data']['lastname']; ?></td>
+                    <td class="col expirationdate"><?php echo substr($data['payment_data']['cardexpiredate'], 2, 2).'/20'.substr($data['payment_data']['cardexpiredate'], 0, 2); ?></td>
+                    <td class="col default"><?php echo $data['is_default'] == 1 ? __('Yes') : __('No'); ?></td>
+                    <td class="col created_at"><?php echo $data['created_at']; ?></td>
+                    <td class="col actions">
+                        <a href="<?php echo $block->getActionUrl($data['id'], 'delete') ?>" class="action view"><span><?php echo __('Delete') ?></span></a>
+                        <?php if ($data['is_default'] == 0): ?>
+                            <a href="<?php echo $block->getActionUrl($data['id'], 'setDefault') ?>" class="action view"><span><?php echo __('Declare as default') ?></span></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php else: ?>
+    <div class="message info empty"><span><?php echo __('You have no saved creditcard data.'); ?></span></div>
+<?php endif ?>

@@ -117,7 +117,7 @@ define(
             },
             validate: function () {
                 if (this.agreement() == false) {
-                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to payolution!')});
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Paysafe Pay Later™!')});
                     return false;
                 }
                 if (this.mandate() == false) {

@@ -216,7 +216,10 @@ class Invoice
         if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
             $dTransmitDiscount = $oOrder->getDiscountAmount();
         }
-        if ($dTransmitDiscount != 0 && $oOrder->getCouponCode() && ($aPositions === false || ($blDebit === false || array_key_exists('oxvoucherdiscount', $aPositions) !== false))) {
+        if ($dTransmitDiscount != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('discount', $aPositions) !== false))) {
+            if ($aPositions !== false && array_key_exists('discount', $aPositions) !== false) {
+                $dTransmitDiscount = $aPositions['discount'];
+            }
             $dDiscount = $this->toolkitHelper->formatNumber($dTransmitDiscount); // format discount
             if ($aPositions === false) {// full invoice?
                 // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if

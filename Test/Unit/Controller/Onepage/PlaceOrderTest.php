@@ -103,20 +103,33 @@ class PlaceOrderTest extends BaseTestCase
 
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getBillingAddress',
+                'getShippingAddress',
+                'getIsVirtual',
+                'getId',
+                'setIsActive',
+                'getSubtotal',
+                'save'
+            ])
+            ->getMock();
         $quote->method('getBillingAddress')->willReturn($address);
         $quote->method('getShippingAddress')->willReturn($address);
         $quote->method('getIsVirtual')->willReturn(false);
         $quote->method('getId')->willReturn('12345');
         $quote->method('setIsActive')->willReturn($quote);
+        $quote->method('getSubtotal')->willReturn(100);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote', 'setLastQuoteId', 'setLastSuccessQuoteId', 'unsPayoneWorkorderId'])
+            ->setMethods(['getQuote', 'setLastQuoteId', 'setLastSuccessQuoteId', 'unsPayoneWorkorderId', 'unsIsPayonePayPalExpress', 'getPayoneGenericpaymentSubtotal'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
         $this->checkoutSession->method('setLastQuoteId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('setLastSuccessQuoteId')->willReturn($this->checkoutSession);
+        $this->checkoutSession->method('unsPayoneWorkorderId')->willReturn($this->checkoutSession);
 
         $this->agreementValidator = $this->getMockBuilder(AgreementsValidatorInterface::class)->disableOriginalConstructor()->getMock();
         $this->agreementValidator->method('isValid')->willReturn(false);
@@ -133,6 +146,7 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecute()
     {
+        $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(100);
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -147,9 +161,19 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecuteException()
     {
+        $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(100);
+
         $exception = new \Exception();
         $this->cartManagement->method('placeOrder')->willThrowException($exception);
 
+        $this->request->method('getBeforeForwardInfo')->willReturn(false);
+        $result = $this->classToTest->execute();
+        $this->assertNull($result);
+    }
+
+    public function testExecuteSubtotalMismatch()
+    {
+        $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(110);
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
