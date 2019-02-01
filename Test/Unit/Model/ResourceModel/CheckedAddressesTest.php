@@ -113,7 +113,7 @@ class CheckedAddressesTest extends BaseTestCase
             'state' => '',
         ];
 
-        $result = $this->classToTest->addCheckedAddress($this->address, $response);
+        $result = $this->classToTest->addCheckedAddress($this->address, $response, 'BA');
         $this->assertInstanceOf(ClassToTest::class, $result);
     }
 
@@ -121,7 +121,7 @@ class CheckedAddressesTest extends BaseTestCase
     {
         $this->shopHelper->method('getConfigParam')->willReturn(null);
 
-        $result = $this->classToTest->wasAddressCheckedBefore($this->address, true);
+        $result = $this->classToTest->wasAddressCheckedBefore($this->address, 'BA', true);
         $this->assertFalse($result);
     }
 
@@ -130,7 +130,7 @@ class CheckedAddressesTest extends BaseTestCase
         $this->shopHelper->method('getConfigParam')->willReturn(5);
         $this->connection->method('fetchOne')->willReturn(false);
 
-        $result = $this->classToTest->wasAddressCheckedBefore($this->address, true);
+        $result = $this->classToTest->wasAddressCheckedBefore($this->address, 'BA', true);
         $this->assertFalse($result);
     }
 
@@ -139,7 +139,7 @@ class CheckedAddressesTest extends BaseTestCase
         $this->shopHelper->method('getConfigParam')->willReturn(5);
         $this->connection->method('fetchOne')->willReturn('2017-01-01 01:01:01');
 
-        $result = $this->classToTest->wasAddressCheckedBefore($this->address, true);
+        $result = $this->classToTest->wasAddressCheckedBefore($this->address, 'BA', true);
         $this->assertTrue($result);
     }
 }

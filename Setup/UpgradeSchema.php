@@ -31,6 +31,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Payone\Core\Setup\Tables\Api;
+use Payone\Core\Setup\Tables\CheckedAddresses;
 use Payone\Core\Setup\Tables\PaymentBan;
 use Payone\Core\Setup\Tables\Transactionstatus;
 use Payone\Core\Setup\Tables\SavedPaymentData;
@@ -85,6 +86,19 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                     'nullable' => false,
                     'default' => 1,
                     'comment' => 'Has the status been handled already'
+                ]
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES), 'checktype')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES),
+                'checktype',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 16,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Checktype used'
                 ]
             );
         }

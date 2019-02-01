@@ -168,10 +168,10 @@ class Addresscheck extends AddressRequest
         $this->addParameter('language', $this->shopHelper->getLocale());
         $this->addAddress($oAddress);
 
-        if ($this->addressesChecked->wasAddressCheckedBefore($oAddress) === false) {
+        if ($this->addressesChecked->wasAddressCheckedBefore($oAddress, $sType) === false) {
             $aResponse = $this->send();
             if ($aResponse['status'] == 'VALID') {
-                $this->addressesChecked->addCheckedAddress($oAddress, $aResponse);
+                $this->addressesChecked->addCheckedAddress($oAddress, $aResponse, $sType);
             }
             return $aResponse;
         }
