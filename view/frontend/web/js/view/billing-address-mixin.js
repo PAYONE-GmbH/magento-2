@@ -60,6 +60,27 @@ define([
             this.source.set(this.dataScopePrefix + '.postcode', addressData.postcode);
             this.source.set(this.dataScopePrefix + '.city', addressData.city);
         },
+        isAddressTheSame: function(addressA, addressB) {
+            if (this.getAddressInline(addressA) === this.getAddressInline(addressB)) {
+                return true;
+            }
+            return false;
+        },
+        getAddressInline: function(address) {
+            var street = address.street;
+            if (typeof street === 'object') {
+                if (street.length === 2) {
+                    street = [street[0], street[1]];
+                } else {
+                    street = Object.values(street);
+                }
+            }
+            var country = address.countryId;
+            if (!address.countryId) {
+                country = address.country_id
+            }
+            return address.firstname + address.lastname + street.join("") + address.postcode + address.city + country;
+        },
         payoneContinue: function () {
             this.source.set('payone_address_checked', true);
             this.updateAddress();
