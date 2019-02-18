@@ -82,11 +82,13 @@ class CheckedAddressesTest extends BaseTestCase
 
         $this->connection = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
-            ->setMethods(['fetchOne', 'select', 'from', 'where', 'insert'])
+            ->setMethods(['fetchOne', 'select', 'from', 'where', 'insert', 'assemble'])
             ->getMock();
         $this->connection->method('select')->willReturn($this->connection);
         $this->connection->method('from')->willReturn($this->connection);
         $this->connection->method('where')->willReturn($this->connection);
+
+        $this->connection->method('assemble')->willReturn('Query'); // Just for Test - remove again!
 
         $resource = $this->getMockBuilder(ResourceConnection::class)->disableOriginalConstructor()->getMock();
         $resource->method('getConnection')->willReturn($this->connection);

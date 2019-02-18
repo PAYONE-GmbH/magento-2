@@ -167,10 +167,16 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             $sGroup = 'creditrating';
         }
 
+        $sDebugPath = '../../../../../../';
+        error_log("###############################################################\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log("1 - wasAddressCheckedBefore - Start\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
         $sLifetime = $this->shopHelper->getConfigParam('result_lifetime', $sGroup, 'payone_protect');
+        error_log("2 - Lifetime config param: '".$sLifetime."'\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
         if (empty($sLifetime) || !is_numeric($sLifetime)) {
+            error_log("3 - Empty or not numeric - CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
             return false; // no lifetime = check every time
         }
+        error_log("4 - Not empty and numeric - go further\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
 
         $oSelect = $this->getConnection()->select()
             ->from($this->getMainTable(), ['checkdate'])
@@ -186,10 +192,15 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             'lifetime' => $sLifetime
         ];
 
+        error_log("5 - SQL assembled: ".$oSelect->assemble()."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(print_r($aParams, true)."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+
         $sDate = $this->getConnection()->fetchOne($oSelect, $aParams);
         if ($sDate != false) {
+            error_log("6 - Got date: ".$sDate." - address was checked before - DONT CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
             return true;
         }
+        error_log("7 - Got no date: ".$sDate." - address was not checked before ?!? - CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
         return false;
     }
 }
