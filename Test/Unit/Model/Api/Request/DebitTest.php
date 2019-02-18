@@ -73,7 +73,6 @@ class DebitTest extends BaseTestCase
         $toolkitHelper->method('handleSubstituteReplacement')->willReturn('test text');
 
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
-        $this->shopHelper->method('getConfigParam')->willReturn('test');
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'databaseHelper' => $databaseHelper,
@@ -127,18 +126,25 @@ class DebitTest extends BaseTestCase
 
     public function testSendRequest()
     {
+        $this->shopHelper->method('getConfigParam')->willReturn('test');
+
         $payment = $this->getPaymentMock();
 
         $order = $this->getOrderMock();
         $order->method('getPayoneRefundIban')->willReturn('DE85123456782599100003');
         $order->method('getPayoneRefundBic')->willReturn('TESTTEST');
 
+        $oCreditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
+        $oCreditmemo->method('getBaseDiscountAmount')->willReturn(0);
+        $oCreditmemo->method('getDiscountAmount')->willReturn(0);
+
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId'])
+            ->setMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12-345');
+        $paymentInfo->method('getCreditmemo')->willReturn($oCreditmemo);
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
@@ -150,8 +156,16 @@ class DebitTest extends BaseTestCase
 
     public function testSendRequestPositions()
     {
+        $this->shopHelper->method('getConfigParam')->willReturnMap(
+            [
+                ['currency', 'global', 'payone_general', null, 'display'],
+                ['invoice_appendix_refund', 'invoicing', 'payone_general', 'default', 'test']
+            ]
+        );
+
         $requestparam = ['items' => ['id' => ['qty' => 1]], 'shipping_amount' => 5, 'payone_iban' => 'DE85123456782599100003', 'payone_bic' => 'TESTTEST'];
         $this->shopHelper->method('getRequestParameter')->willReturn($requestparam);
+        $this->shopHelper->method('getConfigParam')->willReturn('display');
 
         $payment = $this->getPaymentMock();
 
@@ -169,12 +183,17 @@ class DebitTest extends BaseTestCase
         $order = $this->getOrderMock();
         $order->method('getAllItems')->willReturn([$item, $item_missing]);
 
+        $oCreditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
+        $oCreditmemo->method('getBaseDiscountAmount')->willReturn(-5);
+        $oCreditmemo->method('getDiscountAmount')->willReturn(-5);
+
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId'])
+            ->setMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12-345');
+        $paymentInfo->method('getCreditmemo')->willReturn($oCreditmemo);
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
@@ -186,18 +205,25 @@ class DebitTest extends BaseTestCase
 
     public function testSendRequestIbanException()
     {
+        $this->shopHelper->method('getConfigParam')->willReturn('test');
+
         $payment = $this->getPaymentMock();
 
         $order = $this->getOrderMock();
         $order->method('getPayoneRefundIban')->willReturn('12345');
         $order->method('getPayoneRefundBic')->willReturn('TESTTEST');
 
+        $oCreditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
+        $oCreditmemo->method('getBaseDiscountAmount')->willReturn(0);
+        $oCreditmemo->method('getDiscountAmount')->willReturn(0);
+
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId'])
+            ->setMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12-345');
+        $paymentInfo->method('getCreditmemo')->willReturn($oCreditmemo);
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
@@ -209,18 +235,25 @@ class DebitTest extends BaseTestCase
 
     public function testSendRequestBicException()
     {
+        $this->shopHelper->method('getConfigParam')->willReturn('test');
+
         $payment = $this->getPaymentMock();
 
         $order = $this->getOrderMock();
         $order->method('getPayoneRefundIban')->willReturn('DE85123456782599100003');
         $order->method('getPayoneRefundBic')->willReturn('12345');
 
+        $oCreditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
+        $oCreditmemo->method('getBaseDiscountAmount')->willReturn(0);
+        $oCreditmemo->method('getDiscountAmount')->willReturn(0);
+
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId'])
+            ->setMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12-345');
+        $paymentInfo->method('getCreditmemo')->willReturn($oCreditmemo);
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
@@ -232,6 +265,8 @@ class DebitTest extends BaseTestCase
 
     public function testGetResponse()
     {
+        $this->shopHelper->method('getConfigParam')->willReturn('test');
+
         $expected = ['status' => 'VALID'];
 
         $this->classToTest->setResponse($expected);

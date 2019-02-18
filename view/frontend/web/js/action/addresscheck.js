@@ -50,7 +50,12 @@ define([
             isVirtual: quote.isVirtual(),
             dTotal: window.checkoutConfig.quoteData.subtotal
         };
-        
+
+        if (window.checkoutConfig.payment.payone.checkedAddress && baseView.isAddressTheSame(addressData, window.checkoutConfig.payment.payone.checkedAddress)) {
+            baseView.payoneContinue(type);
+            return;
+        }
+
         fullScreenLoader.startLoader();
 
         return storage.post(
@@ -59,6 +64,7 @@ define([
         ).done(
             function (response) {
                 if (response.success == true) {
+                    window.checkoutConfig.payment.payone.checkedAddress = addressData;
                     if (response.corrected_address != null) {
                         if (!window.checkoutConfig.payment.payone.addresscheckConfirmCorrection || confirm(response.confirm_message)) {
                             baseView.payoneUpdateAddress(response.corrected_address);

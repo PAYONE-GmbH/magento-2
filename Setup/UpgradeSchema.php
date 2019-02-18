@@ -31,6 +31,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Payone\Core\Setup\Tables\Api;
+use Payone\Core\Setup\Tables\CheckedAddresses;
 use Payone\Core\Setup\Tables\PaymentBan;
 use Payone\Core\Setup\Tables\Transactionstatus;
 use Payone\Core\Setup\Tables\SavedPaymentData;
@@ -88,6 +89,19 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES), 'checktype')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES),
+                'checktype',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 16,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Checktype used'
+                ]
+            );
+        }
     }
 
     /**
@@ -128,6 +142,27 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
             $setup->getConnection()->modifyColumn(
                 $setup->getTable('payone_protocol_api'),
                 'portalid', ['type' => Table::TYPE_INTEGER, 'default' => '0']
+            );
+        }
+
+        if (version_compare($context->getVersion(), '2.5.1', '<')) {
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable('payone_protocol_transactionstatus'),
+                'aid',
+                [
+                    'type' => Table::TYPE_INTEGER,
+                    'unsigned' => true,
+                    'default' => '0'
+                ]
+            );
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable('payone_protocol_transactionstatus'),
+                'portalid',
+                [
+                    'type' => Table::TYPE_INTEGER,
+                    'unsigned' => true,
+                    'default' => '0'
+                ]
             );
         }
     }

@@ -134,17 +134,19 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      *
      * @param  AddressInterface $oAddress
      * @param  array            $aResponse
+     * @param  string           $sChecktype
      * @param  bool             $blIsBonicheck
      * @return $this
      */
-    public function addCheckedAddress(AddressInterface $oAddress, $aResponse, $blIsBonicheck = false)
+    public function addCheckedAddress(AddressInterface $oAddress, $aResponse, $sChecktype, $blIsBonicheck = false)
     {
         $sHash = $this->getHashFromAddress($oAddress, $aResponse); // generate hash from given address
         $this->getConnection()->insert(
             $this->getMainTable(),
             [
                 'address_hash' => $sHash,
-                'is_bonicheck' => $blIsBonicheck
+                'is_bonicheck' => $blIsBonicheck,
+                'checktype' => $sChecktype,
             ]
         );
         return $this;
@@ -154,10 +156,11 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      * Check and return if this exact address has been checked before
      *
      * @param  AddressInterface $oAddress
+     * @param  string           $sChecktype
      * @param  bool             $blIsBonicheck
      * @return bool
      */
-    public function wasAddressCheckedBefore(AddressInterface $oAddress, $blIsBonicheck = false)
+    public function wasAddressCheckedBefore(AddressInterface $oAddress, $sChecktype, $blIsBonicheck = false)
     {
         $sGroup = 'address_check';
         if ($blIsBonicheck === true) {
@@ -173,11 +176,13 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             ->from($this->getMainTable(), ['checkdate'])
             ->where("address_hash = :hash")
             ->where("is_bonicheck = :isBoni")
+            ->where("checktype = :checkType")
             ->where('checkdate > DATE_SUB(NOW(), INTERVAL :lifetime DAY)');
 
         $aParams = [
             'hash' => $this->getHashFromAddress($oAddress),
             'isBoni' => $blIsBonicheck,
+            'checkType' => $sChecktype,
             'lifetime' => $sLifetime
         ];
 

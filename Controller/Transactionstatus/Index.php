@@ -27,6 +27,7 @@
 namespace Payone\Core\Controller\Transactionstatus;
 
 use Magento\Sales\Model\Order;
+use Magento\Framework\App\Request\Http;
 
 /**
  * TransactionStatus receiver
@@ -102,6 +103,14 @@ class Index extends \Magento\Framework\App\Action\Action
         $this->orderHelper = $orderHelper;
         $this->transactionStatusHandler = $transactionStatusHandler;
         $this->resultRawFactory = $resultRawFactory;
+
+        // Fix for Magento 2.3 CsrfValidator and backwards-compatibility to prior Magento 2 versions
+        if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
+            $request = $this->getRequest();
+            if ($request instanceof Http && $request->isPost()) {
+                $request->setParam('ajax', true);
+            }
+        }
     }
 
     /**
@@ -153,6 +162,10 @@ class Index extends \Magento\Framework\App\Action\Action
 
         $blWillBeHandled = true;
         $oOrder = $this->orderHelper->getOrderByTxid($this->getParam('txid'));
+        if (!$oOrder) {
+            return 'Order not found';
+        }
+
         if ($this->getParam('txaction') == 'appointed' && $oOrder->getStatus() == 'canceled') {
             $blWillBeHandled = false; // order was already canceled, status will be handled in substitute order mechanism, if order is finished
         }
