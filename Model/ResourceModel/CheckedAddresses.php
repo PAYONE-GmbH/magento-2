@@ -149,6 +149,7 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
                 'checktype' => $sChecktype,
             ]
         );
+        error_log(date('Y-m-d H:i:s - ')."A1 - Added checked address Hash: '".$sHash."'\n", 3, dirname(__FILE__).'/../../../../../../MAG2_74.log');
         return $this;
     }
 
@@ -169,14 +170,14 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
 
         $sDebugPath = '../../../../../../';
         error_log("###############################################################\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
-        error_log("1 - wasAddressCheckedBefore - Start\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ')."1 - wasAddressCheckedBefore - Start\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
         $sLifetime = $this->shopHelper->getConfigParam('result_lifetime', $sGroup, 'payone_protect');
-        error_log("2 - Lifetime config param: '".$sLifetime."'\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ')."2 - Lifetime config param: '".$sLifetime."'\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
         if (empty($sLifetime) || !is_numeric($sLifetime)) {
-            error_log("3 - Empty or not numeric - CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+            error_log(date('Y-m-d H:i:s - ')."3 - Empty or not numeric - CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
             return false; // no lifetime = check every time
         }
-        error_log("4 - Not empty and numeric - go further\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ')."4 - Not empty and numeric - go further\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
 
         $oSelect = $this->getConnection()->select()
             ->from($this->getMainTable(), ['checkdate'])
@@ -192,15 +193,24 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             'lifetime' => $sLifetime
         ];
 
-        error_log("5 - SQL assembled: ".$oSelect->assemble()."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
-        error_log(print_r($aParams, true)."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ')."5 - SQL assembled: ".$oSelect->assemble()."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ').print_r($aParams, true)."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
 
         $sDate = $this->getConnection()->fetchOne($oSelect, $aParams);
+
+        $oDebugSelect = $this->getConnection()->select()->from($this->getMainTable())->where("address_hash = :hash")->where("is_bonicheck = :isBoni")->where("checktype = :checkType");
+        unset($aParams['lifetime']);
+
         if ($sDate != false) {
-            error_log("6 - Got date: ".$sDate." - address was checked before - DONT CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+            error_log(date('Y-m-d H:i:s - ')."6 - Got date: ".$sDate." - address was checked before - DONT CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+            error_log(date('Y-m-d H:i:s - ')."6b - DebugSelect: ".print_r($this->getConnection()->fetchAll($oDebugSelect, $aParams), true)."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+
             return true;
         }
-        error_log("7 - Got no date: ".$sDate." - address was not checked before ?!? - CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ')."7 - Got no date: ".$sDate." - address was not checked before ?!? - CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ')."8b - DebugSelect: ".print_r($this->getConnection()->fetchAll($oDebugSelect, $aParams), true)."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+
+
         return false;
     }
 }
