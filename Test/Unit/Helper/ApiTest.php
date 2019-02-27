@@ -123,8 +123,8 @@ class ApiTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/global/request_type', ScopeInterface::SCOPE_STORE, null, 'authorization'],
-                    ['payone_general/invoicing/transmit_enabled', ScopeInterface::SCOPE_STORE, null, 1]
+                    ['payone_general/global/request_type', ScopeInterface::SCOPE_STORES, null, 'authorization'],
+                    ['payone_general/invoicing/transmit_enabled', ScopeInterface::SCOPE_STORES, null, 1]
                 ]
             );
         $this->payment->method('needsProductInfo')->willReturn(true);
@@ -139,8 +139,8 @@ class ApiTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/global/request_type', ScopeInterface::SCOPE_STORE, null, 'preauthorization'],
-                    ['payone_general/invoicing/transmit_enabled', ScopeInterface::SCOPE_STORE, null, 0]
+                    ['payone_general/global/request_type', ScopeInterface::SCOPE_STORES, null, 'preauthorization'],
+                    ['payone_general/invoicing/transmit_enabled', ScopeInterface::SCOPE_STORES, null, 0]
                 ]
             );
         $this->payment->method('needsProductInfo')->willReturn(false);

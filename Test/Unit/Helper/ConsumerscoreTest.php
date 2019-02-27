@@ -121,8 +121,8 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/sample_mode_frequency', ScopeInterface::SCOPE_STORE, null, 5],
-                    ['payone_protect/creditrating/sample_mode_enabled', ScopeInterface::SCOPE_STORE, null, 1]
+                    ['payone_protect/creditrating/sample_mode_frequency', ScopeInterface::SCOPE_STORES, null, 5],
+                    ['payone_protect/creditrating/sample_mode_enabled', ScopeInterface::SCOPE_STORES, null, 1]
                 ]
             );
         $result = $this->consumerscore->isSampleNeeded();
@@ -136,8 +136,8 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/sample_mode_frequency', ScopeInterface::SCOPE_STORE, null, 5],
-                    ['payone_protect/creditrating/sample_mode_enabled', ScopeInterface::SCOPE_STORE, null, 1]
+                    ['payone_protect/creditrating/sample_mode_frequency', ScopeInterface::SCOPE_STORES, null, 5],
+                    ['payone_protect/creditrating/sample_mode_enabled', ScopeInterface::SCOPE_STORES, null, 1]
                 ]
             );
         $result = $this->consumerscore->isSampleNeeded();
@@ -150,9 +150,9 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/payment_hint_enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORE, null, 'after_payment']
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/payment_hint_enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'after_payment']
                 ]
             );
         $result = $this->consumerscore->canShowPaymentHintText();
@@ -165,9 +165,9 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/payment_hint_enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORE, null, 'before_payment']
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/payment_hint_enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'before_payment']
                 ]
             );
         $result = $this->consumerscore->canShowPaymentHintText();
@@ -180,9 +180,9 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/agreement_enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORE, null, 'after_payment']
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/agreement_enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'after_payment']
                 ]
             );
         $result = $this->consumerscore->canShowAgreementMessage();
@@ -195,9 +195,9 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/agreement_enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORE, null, 'before_payment']
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/agreement_enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'before_payment']
                 ]
             );
         $result = $this->consumerscore->canShowAgreementMessage();
@@ -236,8 +236,8 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/allow_payment_methods_yellow', ScopeInterface::SCOPE_STORE, null, $yellowMethods],
-                    ['payone_protect/creditrating/allow_payment_methods_red', ScopeInterface::SCOPE_STORE, null, $redMethods]
+                    ['payone_protect/creditrating/allow_payment_methods_yellow', ScopeInterface::SCOPE_STORES, null, $yellowMethods],
+                    ['payone_protect/creditrating/allow_payment_methods_red', ScopeInterface::SCOPE_STORES, null, $redMethods]
                 ]
             );
         $result = $this->consumerscore->getAllowedMethodsForScore('Y');
@@ -272,8 +272,8 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/min_order_total', ScopeInterface::SCOPE_STORE, null, 10],
-                    ['payone_protect/creditrating/max_order_total', ScopeInterface::SCOPE_STORE, null, 1000]
+                    ['payone_protect/creditrating/min_order_total', ScopeInterface::SCOPE_STORES, null, 10],
+                    ['payone_protect/creditrating/max_order_total', ScopeInterface::SCOPE_STORES, null, 1000]
                 ]
             );
         $result = $this->consumerscore->isCheckNeededForPrice(500);
@@ -289,7 +289,7 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 0]
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 0]
                 ]
             );
         $result = $this->consumerscore->isCreditratingNeeded('after_payment', 500);
@@ -302,8 +302,8 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORE, null, 'before_payment']
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'before_payment']
                 ]
             );
         $result = $this->consumerscore->isCreditratingNeeded('after_payment', 500);
@@ -316,10 +316,10 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORE, null, 'before_payment'],
-                    ['payone_protect/creditrating/min_order_total', ScopeInterface::SCOPE_STORE, null, 10],
-                    ['payone_protect/creditrating/max_order_total', ScopeInterface::SCOPE_STORE, null, 1000]
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'before_payment'],
+                    ['payone_protect/creditrating/min_order_total', ScopeInterface::SCOPE_STORES, null, 10],
+                    ['payone_protect/creditrating/max_order_total', ScopeInterface::SCOPE_STORES, null, 1000]
                 ]
             );
         $result = $this->consumerscore->isCreditratingNeeded('before_payment', 5000);
@@ -333,12 +333,12 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORE, null, 'before_payment'],
-                    ['payone_protect/creditrating/min_order_total', ScopeInterface::SCOPE_STORE, null, 10],
-                    ['payone_protect/creditrating/max_order_total', ScopeInterface::SCOPE_STORE, null, 1000],
-                    ['payone_protect/creditrating/sample_mode_frequency', ScopeInterface::SCOPE_STORE, null, 5],
-                    ['payone_protect/creditrating/sample_mode_enabled', ScopeInterface::SCOPE_STORE, null, 1]
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'before_payment'],
+                    ['payone_protect/creditrating/min_order_total', ScopeInterface::SCOPE_STORES, null, 10],
+                    ['payone_protect/creditrating/max_order_total', ScopeInterface::SCOPE_STORES, null, 1000],
+                    ['payone_protect/creditrating/sample_mode_frequency', ScopeInterface::SCOPE_STORES, null, 5],
+                    ['payone_protect/creditrating/sample_mode_enabled', ScopeInterface::SCOPE_STORES, null, 1]
                 ]
             );
         $result = $this->consumerscore->isCreditratingNeeded('before_payment', 500);
@@ -352,12 +352,12 @@ class ConsumerscoreTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORE, null, 'before_payment'],
-                    ['payone_protect/creditrating/min_order_total', ScopeInterface::SCOPE_STORE, null, 10],
-                    ['payone_protect/creditrating/max_order_total', ScopeInterface::SCOPE_STORE, null, 1000],
-                    ['payone_protect/creditrating/sample_mode_frequency', ScopeInterface::SCOPE_STORE, null, 5],
-                    ['payone_protect/creditrating/sample_mode_enabled', ScopeInterface::SCOPE_STORE, null, 1]
+                    ['payone_protect/creditrating/enabled', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'before_payment'],
+                    ['payone_protect/creditrating/min_order_total', ScopeInterface::SCOPE_STORES, null, 10],
+                    ['payone_protect/creditrating/max_order_total', ScopeInterface::SCOPE_STORES, null, 1000],
+                    ['payone_protect/creditrating/sample_mode_frequency', ScopeInterface::SCOPE_STORES, null, 5],
+                    ['payone_protect/creditrating/sample_mode_enabled', ScopeInterface::SCOPE_STORES, null, 1]
                 ]
             );
         $result = $this->consumerscore->isCreditratingNeeded('before_payment', 500);

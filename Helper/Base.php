@@ -80,7 +80,7 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
             $sStoreCode = $this->storeManager->getStore()->getCode();
         }
         $sPath = $sSection."/".$sGroup."/".$sKey;
-        return $this->scopeConfig->getValue($sPath, ScopeInterface::SCOPE_STORE, $sStoreCode);
+        return $this->scopeConfig->getValue($sPath, ScopeInterface::SCOPE_STORES, $sStoreCode);
     }
 
     /**

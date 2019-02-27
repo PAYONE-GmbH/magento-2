@@ -101,13 +101,13 @@ class RequestTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/check_bankaccount', ScopeInterface::SCOPE_STORE, null, '1'],
-                    ['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/mode', ScopeInterface::SCOPE_STORE, null, 'live'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, null, '12345'],
-                    ['payone_general/global/aid', ScopeInterface::SCOPE_STORE, null, '54321'],
-                    ['payone_general/global/portalid', ScopeInterface::SCOPE_STORE, null, '0815'],
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, null, 'abcde'],
-                    ['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/bankaccountcheck_type', ScopeInterface::SCOPE_STORE, null, '1'],
+                    ['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/check_bankaccount', ScopeInterface::SCOPE_STORES, null, '1'],
+                    ['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/mode', ScopeInterface::SCOPE_STORES, null, 'live'],
+                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORES, null, '12345'],
+                    ['payone_general/global/aid', ScopeInterface::SCOPE_STORES, null, '54321'],
+                    ['payone_general/global/portalid', ScopeInterface::SCOPE_STORES, null, '0815'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, null, 'abcde'],
+                    ['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/bankaccountcheck_type', ScopeInterface::SCOPE_STORES, null, '1'],
                 ]
             );
 
@@ -135,7 +135,7 @@ class RequestTest extends BaseTestCase
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/check_bankaccount', ScopeInterface::SCOPE_STORE, null, '0']]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/check_bankaccount', ScopeInterface::SCOPE_STORES, null, '0']]);
         $result = $this->request->getBankaccountCheckRequest();
         $expected = '';
         $this->assertEquals($expected, $result);
@@ -147,11 +147,11 @@ class RequestTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/mode', ScopeInterface::SCOPE_STORE, null, 'live'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, null, '12345'],
-                    ['payone_general/global/aid', ScopeInterface::SCOPE_STORE, null, '54321'],
-                    ['payone_general/global/portalid', ScopeInterface::SCOPE_STORE, null, '0815'],
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, null, 'abcde'],
+                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/mode', ScopeInterface::SCOPE_STORES, null, 'live'],
+                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORES, null, '12345'],
+                    ['payone_general/global/aid', ScopeInterface::SCOPE_STORES, null, '54321'],
+                    ['payone_general/global/portalid', ScopeInterface::SCOPE_STORES, null, '0815'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, null, 'abcde'],
                 ]
             );
 

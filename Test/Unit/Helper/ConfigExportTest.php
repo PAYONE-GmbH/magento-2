@@ -119,8 +119,8 @@ class ConfigExportTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_payment/payone_creditcard/use_global', ScopeInterface::SCOPE_STORE, null, 0],
-                    ['payone_payment/payone_creditcard/mid', ScopeInterface::SCOPE_STORE, null, $expected]
+                    ['payone_payment/payone_creditcard/use_global', ScopeInterface::SCOPE_STORES, null, 0],
+                    ['payone_payment/payone_creditcard/mid', ScopeInterface::SCOPE_STORES, null, $expected]
                 ]
             );
         $result = $this->configExport->getPaymentConfig('mid', 'payone_creditcard', null, false);
@@ -137,9 +137,9 @@ class ConfigExportTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_payment/payone_creditcard/use_global', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_payment/payone_creditcard/mid', ScopeInterface::SCOPE_STORE, null, 'random_mid'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, null, $expected]
+                    ['payone_payment/payone_creditcard/use_global', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_payment/payone_creditcard/mid', ScopeInterface::SCOPE_STORES, null, 'random_mid'],
+                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORES, null, $expected]
                 ]
             );
         $result = $this->configExport->getPaymentConfig('mid', 'payone_creditcard', null, true);
@@ -154,14 +154,14 @@ class ConfigExportTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_payment/payone_creditcard/use_global', ScopeInterface::SCOPE_STORE, null, 0],
-                    ['payone_payment/payone_creditcard/allowspecific', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_payment/payone_creditcard/specificcountry', ScopeInterface::SCOPE_STORE, null, $expected],
-                    ['payone_payment/payone_invoice/use_global', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_general/global/allowspecific', ScopeInterface::SCOPE_STORE, null, 1],
-                    ['payone_general/global/specificcountry', ScopeInterface::SCOPE_STORE, null, $expected],
-                    ['payone_payment/payone_paypal/use_global', ScopeInterface::SCOPE_STORE, null, 0],
-                    ['payone_general/payone_paypal/allowspecific', ScopeInterface::SCOPE_STORE, null, 0]
+                    ['payone_payment/payone_creditcard/use_global', ScopeInterface::SCOPE_STORES, null, 0],
+                    ['payone_payment/payone_creditcard/allowspecific', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_payment/payone_creditcard/specificcountry', ScopeInterface::SCOPE_STORES, null, $expected],
+                    ['payone_payment/payone_invoice/use_global', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_general/global/allowspecific', ScopeInterface::SCOPE_STORES, null, 1],
+                    ['payone_general/global/specificcountry', ScopeInterface::SCOPE_STORES, null, $expected],
+                    ['payone_payment/payone_paypal/use_global', ScopeInterface::SCOPE_STORES, null, 0],
+                    ['payone_general/payone_paypal/allowspecific', ScopeInterface::SCOPE_STORES, null, 0]
                 ]
             );
 
@@ -193,7 +193,7 @@ class ConfigExportTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/statusmapping/payone_creditcard', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($config)]
+                    ['payone_general/statusmapping/payone_creditcard', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($config)]
                 ]
             );
 

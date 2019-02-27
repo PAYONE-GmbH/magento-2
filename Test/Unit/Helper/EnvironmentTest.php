@@ -100,8 +100,8 @@ class EnvironmentTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORE, null, $sWhitelist],
-                    ['payone_misc/processing/proxy_mode', ScopeInterface::SCOPE_STORE, null, 1]
+                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORES, null, $sWhitelist],
+                    ['payone_misc/processing/proxy_mode', ScopeInterface::SCOPE_STORES, null, 1]
                 ]
             );
 
@@ -117,7 +117,7 @@ class EnvironmentTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORE, null, $sWhitelist]
+                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORES, null, $sWhitelist]
                 ]
             );
 
@@ -133,7 +133,7 @@ class EnvironmentTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORE, null, $sWhitelist]
+                    ['payone_misc/processing/valid_ips', ScopeInterface::SCOPE_STORES, null, $sWhitelist]
                 ]
             );
 
