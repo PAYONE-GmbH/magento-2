@@ -185,7 +185,7 @@ class Database extends \Payone\Core\Helper\Base
             ->where("scope = :scope")
             ->where("scope_id = :scope_id");
         $sPath = $sSection."/".$sGroup."/".$sKey;
-        $sScope = ScopeInterface::SCOPE_STORE;
+        $sScope = ScopeInterface::SCOPE_STORES;
         if (!$sScopeId) {
             $sScopeId = $this->storeManager->getStore()->getId();
         }
