@@ -94,7 +94,6 @@ class Forwarding
      * @param  string $sUrl
      * @param  int    $iTimeout
      * @return void
-     * @throws \Exception
      */
     public function forwardRequest($aPostArray, $sUrl, $iTimeout)
     {
@@ -112,7 +111,6 @@ class Forwarding
             $this->log($sUrl.' Response: '.$this->curl->getBody(), $aPostArray);
         } catch(\Exception $exc) {
             $this->log($sUrl.' Exception: '.$exc->getMessage(), $aPostArray);
-            throw $exc;
         }
     }
 

@@ -83,8 +83,8 @@ class ForwardingTest extends BaseTestCase
         $exception = new \Exception();
         $this->curl->method('post')->willThrowException($exception);
 
-        $this->expectException(\Exception::class);
-        $this->classToTest->handleForwardings($post);
+        $result = $this->classToTest->handleForwardings($post);
+        $this->assertNull($result);
     }
 
     public function testForwardAsyncRequest()
