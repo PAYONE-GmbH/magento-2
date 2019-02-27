@@ -32,7 +32,7 @@ use Payone\Core\Model\TransactionStatus\Forwarding;
 use Magento\Framework\Controller\Result\RawFactory;
 
 /**
- * TransactionStatus receiver
+ * TransactionStatus decoupler
  */
 class Decouple extends \Magento\Framework\App\Action\Action
 {
