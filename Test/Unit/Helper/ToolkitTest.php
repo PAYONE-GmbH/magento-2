@@ -110,12 +110,12 @@ class ToolkitTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, 'de', '12345'],
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, 'en', '23456'],
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, 'fr', '12345'],
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, 'nl', '34567'],
-                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/use_global', ScopeInterface::SCOPE_STORE, 'nl', '0'],
-                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/key', ScopeInterface::SCOPE_STORE, 'nl', 'extra_payment_key'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, 'de', '12345'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, 'en', '23456'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, 'fr', '12345'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, 'nl', '34567'],
+                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/use_global', ScopeInterface::SCOPE_STORES, 'nl', '0'],
+                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/key', ScopeInterface::SCOPE_STORES, 'nl', 'extra_payment_key'],
                 ]
             );
         $result = $this->toolkit->getAllPayoneSecurityKeys();
@@ -130,12 +130,12 @@ class ToolkitTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, 'de', '12345'],
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, 'en', '23456'],
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, 'fr', '12345'],
-                    ['payone_general/global/key', ScopeInterface::SCOPE_STORE, 'nl', '34567'],
-                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/use_global', ScopeInterface::SCOPE_STORE, 'nl', '0'],
-                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/key', ScopeInterface::SCOPE_STORE, 'nl', $key],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, 'de', '12345'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, 'en', '23456'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, 'fr', '12345'],
+                    ['payone_general/global/key', ScopeInterface::SCOPE_STORES, 'nl', '34567'],
+                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/use_global', ScopeInterface::SCOPE_STORES, 'nl', '0'],
+                    ['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/key', ScopeInterface::SCOPE_STORES, 'nl', $key],
                 ]
             );
 
@@ -173,7 +173,7 @@ class ToolkitTest extends BaseTestCase
 
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_general/invoicing/invoice_appendix', ScopeInterface::SCOPE_STORE, null, $text]]);
+            ->willReturnMap([['payone_general/invoicing/invoice_appendix', ScopeInterface::SCOPE_STORES, null, $text]]);
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getIncrementId')->willReturn('0000000001');
@@ -190,7 +190,7 @@ class ToolkitTest extends BaseTestCase
 
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/narrative_text', ScopeInterface::SCOPE_STORE, null, $text]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/narrative_text', ScopeInterface::SCOPE_STORES, null, $text]]);
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getIncrementId')->willReturn('0000000001');

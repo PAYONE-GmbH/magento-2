@@ -87,7 +87,7 @@ class ConfigTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORE, null, null]
+                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORES, null, null]
                 ]
             );
         $result = $this->config->getForwardingUrls();
@@ -101,7 +101,7 @@ class ConfigTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize('string')]
+                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize('string')]
                 ]
             );
         $result = $this->config->getForwardingUrls();
@@ -117,7 +117,7 @@ class ConfigTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($expected)]
+                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($expected)]
                 ]
             );
         $result = $this->config->getForwardingUrls();
