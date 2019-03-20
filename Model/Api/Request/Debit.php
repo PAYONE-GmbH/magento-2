@@ -101,7 +101,23 @@ class Debit extends Base
      */
     protected function getInvoiceList(Order $oOrder, Creditmemo $oCreditmemo)
     {
-        $aCreditmemo = $this->getCreditmemoRequestParams();
+        $aCreditmemo = [
+            'items' => [],
+            'do_offline' => '0',
+            'comment_text' => '',
+            'shipping_amount' => '0',
+            'adjustment_positive' => '0',
+            'adjustment_negative' => '0'
+        ];
+
+        $items = [];
+        foreach ($oCreditmemo->getAllItems() as $item) {
+            if ($item->getQty() <= 0 || $item->getOrderItem()->isDummy()) continue;
+
+            $items[$item->getOrderItemId()] = ['qty' => $item->getQty()];
+        }
+
+        $aCreditmemo['items'] = $items;
 
         $aPositions = [];
         $blFull = true;
