@@ -78,6 +78,8 @@ class Decouple extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
+        $this->tmpLog('Start Decouple Controller');
+
         $aStatus = $this->getRequest()->getPostValue();
 
         $this->statusForwarding->handleForwardings($aStatus);
@@ -85,6 +87,13 @@ class Decouple extends \Magento\Framework\App\Action\Action
         $oResultRaw = $this->resultRawFactory->create();
         $oResultRaw->setContents('');
 
+        $this->tmpLog('Finished Decouple Controller');
+
         return $oResultRaw;
+    }
+
+    private function tmpLog($sMessage)
+    {
+        error_log(date('Y-m-d H:i:s - ').$sMessage."\n", 3, dirname(__FILE__).'/../../../../../../MAG2_94.log');
     }
 }

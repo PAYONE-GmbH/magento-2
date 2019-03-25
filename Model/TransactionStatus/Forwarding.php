@@ -97,6 +97,7 @@ class Forwarding
      */
     public function forwardRequest($aPostArray, $sUrl, $iTimeout)
     {
+        $this->tmpLog('Forward to: '.$sUrl);
         if ($iTimeout == 0) {
             $iTimeout = 45;
         }
@@ -174,15 +175,23 @@ class Forwarding
      */
     public function handleForwardings($aPostArray)
     {
+        $this->tmpLog('Start handleForwardings');
         $this->log('Handle StatusForwarding: '.$this->getStatusLogLine($aPostArray), $aPostArray);
         if (isset($aPostArray['txaction'])) {
             $aForwarding = $this->configHelper->getForwardingUrls();
             $sStatusAction = $aPostArray['txaction'];
+            $this->tmpLog('Got Forwarding Urls'.print_r($aForwarding, true));
             foreach ($aForwarding as $aForwardEntry) {
                 if (isset($aForwardEntry['txaction']) && !empty($aForwardEntry['txaction'])) {
                     $this->handleSingleForwarding($aPostArray, $aForwardEntry, $sStatusAction);
                 }
             }
         }
+        $this->tmpLog('Finished handleForwardings');
+    }
+
+    private function tmpLog($sMessage)
+    {
+        error_log(date('Y-m-d H:i:s - ').$sMessage."\n", 3, dirname(__FILE__).'/../../../../../../MAG2_94.log');
     }
 }

@@ -145,7 +145,9 @@ class TransactionStatus
 
             $this->statusMapping->handleMapping($oOrder, $sAction);
         }
+        $this->tmpLog('Send Async Decouple');
         $this->statusForwarding->forwardAsyncRequest($this->getStatus(), $this->urlBuilder->getUrl("payone/transactionstatus/decouple", ['_secure' => true]));
+        $this->tmpLog('Finished Async Decouple');
 
         $aParams = [
             'order' => $oOrder,
@@ -154,5 +156,10 @@ class TransactionStatus
 
         $this->eventManager->dispatch('payone_core_transactionstatus_all', $aParams);
         $this->eventManager->dispatch('payone_core_transactionstatus_'.$sAction, $aParams);
+    }
+
+    private function tmpLog($sMessage)
+    {
+        error_log(date('Y-m-d H:i:s - ').$sMessage."\n", 3, dirname(__FILE__).'/../../../../../../MAG2_94.log');
     }
 }

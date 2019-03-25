@@ -154,15 +154,19 @@ class Index extends \Magento\Framework\App\Action\Action
      */
     protected function handleTransactionStatus()
     {
+        $this->tmpLog('Start handleTransactionStatus');
         if (!$this->environmentHelper->isRemoteIpValid()) {
+            $this->tmpLog('Return Access denied');
             return 'Access denied';
         } elseif (!$this->toolkitHelper->isKeyValid($this->getParam('key'))) {
+            $this->tmpLog('Return Key wrong or missing!');
             return 'Key wrong or missing!';
         }
 
         $blWillBeHandled = true;
         $oOrder = $this->orderHelper->getOrderByTxid($this->getParam('txid'));
         if (!$oOrder) {
+            $this->tmpLog('Return Order not found');
             return 'Order not found';
         }
 
@@ -173,9 +177,11 @@ class Index extends \Magento\Framework\App\Action\Action
         $this->logTransactionStatus($oOrder, $this->getPostArray(), $blWillBeHandled);
 
         if ($blWillBeHandled === true) {
+            $this->tmpLog('Start Handle TransactionStatus');
             $this->transactionStatusHandler->handle($oOrder, $this->getPostArray());
+            $this->tmpLog('Finished Handle TransactionStatus');
         }
-
+        $this->tmpLog('Return TSOK');
         return 'TSOK';
     }
 
@@ -192,5 +198,10 @@ class Index extends \Magento\Framework\App\Action\Action
         $oResultRaw->setContents($sOutput);
 
         return $oResultRaw;
+    }
+
+    private function tmpLog($sMessage)
+    {
+        error_log(date('Y-m-d H:i:s - ').$sMessage."\n", 3, dirname(__FILE__).'/../../../../../../MAG2_94.log');
     }
 }
