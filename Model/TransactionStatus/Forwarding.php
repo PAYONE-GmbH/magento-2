@@ -127,10 +127,11 @@ class Forwarding
         $this->curl->setOption(CURLOPT_TIMEOUT_MS, 10);
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
         $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
-
+        $this->tmpLog('ForwardAsyncRequest to '.$sUrl);
         try {
             $this->curl->post($sUrl, $aPostArray);
         } catch (\Exception $exc) {
+            $this->tmpLog('Async Exception - Timeout would be ok - '.$exc->getMessage());
             // Async calls will always throw a timeout exception
         }
     }
