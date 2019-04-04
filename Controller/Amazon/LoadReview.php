@@ -47,11 +47,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     protected $resultJsonFactory;
 
     /**
-     * @var \Magento\Framework\App\ViewInterface
-     */
-    protected $view;
-
-    /**
      * @var \Payone\Core\Block\Onepage\Review
      */
     protected $reviewBlock;
@@ -160,7 +155,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      * @param \Magento\Framework\App\Action\Context                                  $context
      * @param \Magento\Framework\Controller\Result\JsonFactory                       $resultJsonFactory
      * @param \Payone\Core\Block\Onepage\Review                                      $reviewBlock
-     * @param \Magento\Framework\App\ViewInterface                                   $view
      * @param \Magento\Framework\View\Result\PageFactory                             $pageFactory
      * @param \Magento\Checkout\Model\Session                                        $checkoutSession
      * @param \Magento\Checkout\Model\Cart                                           $cart
@@ -178,7 +172,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Payone\Core\Block\Onepage\Review $reviewBlock,
-        \Magento\Framework\App\ViewInterface $view,
         \Magento\Framework\View\Result\PageFactory $pageFactory,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Checkout\Model\Cart $cart,
@@ -194,7 +187,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->view = $view;
         $this->reviewBlock = $reviewBlock;
         $this->pageFactory = $pageFactory;
         $this->checkoutSession = $checkoutSession;
@@ -322,9 +314,10 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      */
     protected function handleCouponRequest()
     {
-        $couponCode = $this->getRequest()->getParam('remove') == 1
-            ? ''
-            : trim($this->getRequest()->getParam('couponCode'));
+        $couponCode = '';
+        if ($this->getRequest()->getParam('remove') != 1) {
+            $couponCode = trim($this->getRequest()->getParam('couponCode'));
+        }
 
         $cartQuote = $this->checkoutSession->getQuote();
         $oldCouponCode = $cartQuote->getCouponCode();
@@ -345,7 +338,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
             }
 
             if ($codeLength) {
-                $escaper = $this->_objectManager->get('Magento\Framework\Escaper');
+                #$escaper = $this->_objectManager->get('Magento\Framework\Escaper');
                 if (!$itemsCount) {
                     if ($isCodeLengthValid) {
                         $coupon = $this->couponFactory->create();
@@ -420,10 +413,11 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      */
     protected function getErrorIdentifier($iErrorCode)
     {
+        $sIdentifier = 'UnknownError';
         if (isset($this->amazonErrors[$iErrorCode])) {
-            return $this->amazonErrors[$iErrorCode];
+            $sIdentifier = $this->amazonErrors[$iErrorCode];
         }
-        return 'UnknownError';
+        return $sIdentifier;
     }
 
     /**
@@ -477,7 +471,8 @@ class LoadReview extends \Magento\Framework\App\Action\Action
                 $this->unsetSessionVariables();
             }
         } catch (\Exception $e) {
-            // do nothing
+            //error_log($e->getMessage());
+            $aReturnData['errorMessage'] = __('There has been an error processing your request.');
         }
         return $aReturnData;
     }

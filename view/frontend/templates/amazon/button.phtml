@@ -22,8 +22,9 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-?>
 
+$buttonIdentifier = "LoginWithAmazon" . ($this->getCounter());
+?>
 <div class="amazonpay" style="text-align: center;margin-top:15px;">
-    <div id="LoginWithAmazon"></div>
+    <div id="<?php echo $buttonIdentifier; ?>"></div>
 </div>

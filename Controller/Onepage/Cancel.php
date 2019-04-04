@@ -100,21 +100,12 @@ class Cancel extends Action
             $orderId = $this->checkoutSession->getLastOrderId();
             $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
             if ($order) {
-                $sQuoteId = $order->getQuoteId();
-
                 $order->cancel()->save();
+                $this->checkoutSession->restoreQuote();
                 $this->checkoutSession
                     ->unsLastQuoteId()
                     ->unsLastSuccessQuoteId()
-                    ->unsLastOrderId()
-                    ->unsLastRealOrderId();
-
-                // Use the old quote/basket again
-                $this->checkoutSession->setQuoteId($sQuoteId);
-                $this->checkoutSession->setLoadInactive();
-                $oQuote = $this->checkoutSession->getQuote();
-                $oQuote->setIsActive(1)->setReservedOrderId(null)->save();
-                $this->checkoutSession->replaceQuote($oQuote);
+                    ->unsLastOrderId();
             }
         } catch (LocalizedException $e) {
             $this->messageManager->addExceptionMessage($e, $e->getMessage());

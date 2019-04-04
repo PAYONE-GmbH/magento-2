@@ -63,6 +63,6 @@ class SetOrderReferenceDetails extends Base
 
         $this->addParameter('currency', 'EUR'); // no currency given in admin-context
 
-        return $this->send();
+        return $this->send($oPayment);
     }
 }

@@ -24,7 +24,7 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Controller\Mandate;
+namespace Payone\Core\Test\Unit\Controller\Transactionstatus;
 
 use Payone\Core\Controller\Transactionstatus\Index as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -62,6 +62,21 @@ class IndexTest extends BaseTestCase
      */
     private $environmentHelper;
 
+    /**
+     * @var OrderCore|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $order;
+
+    /**
+     * @var Order|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $orderHelper;
+
+    /**
+     * @var Http
+     */
+    private $request;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
@@ -69,25 +84,23 @@ class IndexTest extends BaseTestCase
         $post = $this->getMockBuilder(self::class)->disableOriginalConstructor()->setMethods(['toArray'])->getMock();
         $post->method('toArray')->willReturn(['test' => 'array']);
 
-        $request = $this->getMockBuilder(Http::class)
+        $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->setMethods(['getParam', 'getPost'])
             ->getMock();
-        $request->method('getParam')->willReturn('Value');
-        $request->method('getPost')->willReturn($post);
+        $this->request->method('getPost')->willReturn($post);
 
         $eventManater = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()->getMock();
 
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $context->method('getRequest')->willReturn($request);
+        $context->method('getRequest')->willReturn($this->request);
         $context->method('getEventManager')->willReturn($eventManater);
 
         $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $this->environmentHelper = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
 
-        $order = $this->getMockBuilder(OrderCore::class)->disableOriginalConstructor()->getMock();
-        $orderHelper = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
-        $orderHelper->method('getOrderByTxid')->willReturn($order);
+        $this->order = $this->getMockBuilder(OrderCore::class)->disableOriginalConstructor()->getMock();
+        $this->orderHelper = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
         $rawResponse = $this->getMockBuilder(Raw::class)->disableOriginalConstructor()->getMock();
         $resultRawFactory = $this->getMockBuilder(RawFactory::class)
@@ -100,13 +113,14 @@ class IndexTest extends BaseTestCase
             'context' => $context,
             'toolkitHelper' => $this->toolkitHelper,
             'environmentHelper' => $this->environmentHelper,
-            'orderHelper' => $orderHelper,
+            'orderHelper' => $this->orderHelper,
             'resultRawFactory' => $resultRawFactory
         ]);
     }
 
     public function testExecuteIpInvalid()
     {
+        $this->request->method('getParam')->willReturn('Value');
         $this->environmentHelper->method('isRemoteIpValid')->willReturn(false);
 
         $result = $this->classToTest->execute();
@@ -115,6 +129,7 @@ class IndexTest extends BaseTestCase
 
     public function testExecuteKeyInvalid()
     {
+        $this->request->method('getParam')->willReturn('Value');
         $this->environmentHelper->method('isRemoteIpValid')->willReturn(true);
         $this->toolkitHelper->method('isKeyValid')->willReturn(false);
 
@@ -122,8 +137,34 @@ class IndexTest extends BaseTestCase
         $this->assertInstanceOf(Raw::class, $result);
     }
 
+    public function testExecuteCanceled()
+    {
+        $this->orderHelper->method('getOrderByTxid')->willReturn($this->order);
+
+        $this->request->method('getParam')->willReturn('appointed');
+        $this->order->method('getStatus')->willReturn('canceled');
+        $this->environmentHelper->method('isRemoteIpValid')->willReturn(true);
+        $this->toolkitHelper->method('isKeyValid')->willReturn(true);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Raw::class, $result);
+    }
+
+    public function testExecuteOrderNotFound()
+    {
+        $this->environmentHelper->method('isRemoteIpValid')->willReturn(true);
+        $this->toolkitHelper->method('isKeyValid')->willReturn(true);
+        $this->orderHelper->method('getOrderByTxid')->willReturn(null);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Raw::class, $result);
+    }
+
     public function testExecute()
     {
+        $this->orderHelper->method('getOrderByTxid')->willReturn($this->order);
+
+        $this->request->method('getParam')->willReturn('Value');
         $this->environmentHelper->method('isRemoteIpValid')->willReturn(true);
         $this->toolkitHelper->method('isKeyValid')->willReturn(true);
 

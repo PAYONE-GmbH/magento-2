@@ -66,6 +66,7 @@ class Ideal extends OnlineBankTransferBase
         'KNAB_BANK' => 'Knab Bank',
         'VAN_LANSCHOT_BANKIERS' => 'van Lanschot',
         'MONEYOU' => 'Moneyou',
+        'HANDELSBANKEN' => 'Handelsbanken',
     ];
 
     /**

@@ -231,6 +231,7 @@
                 <model>Payone\Core\Model\Methods\AmazonPay</model>
                 <order_status>pending</order_status>
                 <title>PAYONE - AmazonPay</title>
+                <request_type>preauthorization</request_type>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_amazonpay>

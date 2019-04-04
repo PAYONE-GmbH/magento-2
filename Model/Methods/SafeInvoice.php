@@ -190,9 +190,10 @@ class SafeInvoice extends PayoneMethod
      *
      * @param  array $aResponse
      * @param  Order $oOrder
-     * @return void
+     * @param  float $amount
+     * @return array
      */
-    protected function handleResponse($aResponse, Order $oOrder)
+    protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
         if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
             && isset($aResponse['errorcode']) && $aResponse['errorcode'] == '351'
@@ -208,5 +209,6 @@ class SafeInvoice extends PayoneMethod
                 $this->checkoutSession->setPayonePaymentBans($aBans);
             }
         }
+        return $aResponse;
     }
 }

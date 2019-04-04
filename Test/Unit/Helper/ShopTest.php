@@ -102,7 +102,7 @@ class ShopTest extends BaseTestCase
         $expected = 'de';
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['general/locale/code', ScopeInterface::SCOPE_STORE, null, $expected]]);
+            ->willReturnMap([['general/locale/code', ScopeInterface::SCOPE_STORES, null, $expected]]);
         $result = $this->shop->getLocale();
         $this->assertEquals($expected, $result);
     }

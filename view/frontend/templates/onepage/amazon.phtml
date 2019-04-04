@@ -233,8 +233,8 @@
                 complete: function(responseRaw) {
                     if (responseRaw.responseText.length !== 0) {
                         var oResponse = JSON.parse(responseRaw.responseText);
-                        console.log(oResponse);
                         if (oResponse.success === true && oResponse.successUrl !== undefined) {
+                            amazon.Login.logout();
                             window.location = oResponse.successUrl;
                             return true;
                         } else if(oResponse.errorUrl !== undefined) {

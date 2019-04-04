@@ -95,7 +95,7 @@ class HostedIframeTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize('string')]
+                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize('string')]
                 ]
             );
         $result = $this->hostedIframe->getHostedFieldConfig();
@@ -144,7 +144,7 @@ class HostedIframeTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($aHostedConfig)]
+                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($aHostedConfig)]
                 ]
             );
         $result = $this->hostedIframe->getHostedFieldConfig();

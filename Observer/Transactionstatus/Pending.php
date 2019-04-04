@@ -106,7 +106,7 @@ class Pending implements ObserverInterface
         /* @var $oOrder Order */
         $oOrder = $observer->getOrder();
 
-        if ($this->isSoftDeclineMailNeeded($oOrder, $observer->getTransactionstatus())) {
+        if ($oOrder && $this->isSoftDeclineMailNeeded($oOrder, $observer->getTransactionstatus())) {
             $this->sendSoftDeclineMail($oOrder);
         }
     }

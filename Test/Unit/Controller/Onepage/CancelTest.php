@@ -109,6 +109,7 @@ class CancelTest extends BaseTestCase
                 'setPayoneIsError',
                 'unsPayoneWorkorderId',
                 'unsIsPayonePayPalExpress',
+                'restoreQuote',
             ])
             ->getMock();
         $this->checkoutSession->method('getLastOrderId')->willReturn('12345');

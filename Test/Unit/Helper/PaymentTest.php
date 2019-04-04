@@ -97,7 +97,7 @@ class PaymentTest extends BaseTestCase
         ];
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/types', ScopeInterface::SCOPE_STORE, null, $creditcardTypes]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/types', ScopeInterface::SCOPE_STORES, null, $creditcardTypes]]);
 
         $result = $this->payment->getAvailableCreditcardTypes();
         $this->assertEquals($expected, $result);
@@ -107,7 +107,7 @@ class PaymentTest extends BaseTestCase
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/check_cvc', ScopeInterface::SCOPE_STORE, null, 1]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_CREDITCARD.'/check_cvc', ScopeInterface::SCOPE_STORES, null, 1]]);
         $result = $this->payment->isCheckCvcActive();
         $this->assertTrue($result);
     }
@@ -116,7 +116,7 @@ class PaymentTest extends BaseTestCase
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/sepa_mandate_enabled', ScopeInterface::SCOPE_STORE, null, 1]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/sepa_mandate_enabled', ScopeInterface::SCOPE_STORES, null, 1]]);
         $result = $this->payment->isMandateManagementActive();
         $this->assertTrue($result);
     }
@@ -125,7 +125,7 @@ class PaymentTest extends BaseTestCase
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/sepa_mandate_download_enabled', ScopeInterface::SCOPE_STORE, null, 1]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/sepa_mandate_download_enabled', ScopeInterface::SCOPE_STORES, null, 1]]);
         $result = $this->payment->isMandateManagementDownloadActive();
         $this->assertTrue($result);
     }
@@ -140,7 +140,7 @@ class PaymentTest extends BaseTestCase
         ];
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_general/statusmapping/'.PayoneConfig::METHOD_CREDITCARD, ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($mapping)]]);
+            ->willReturnMap([['payone_general/statusmapping/'.PayoneConfig::METHOD_CREDITCARD, ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($mapping)]]);
         $result = $this->payment->getStatusMappingByCode(PayoneConfig::METHOD_CREDITCARD);
         $expected = ['appointed' => 'processing'];
         $this->assertEquals($expected, $result);
@@ -150,7 +150,7 @@ class PaymentTest extends BaseTestCase
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/message_response_blocked/', ScopeInterface::SCOPE_STORE, null, '']]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_DEBIT.'/message_response_blocked/', ScopeInterface::SCOPE_STORES, null, '']]);
         $result = $this->payment->getBankaccountCheckBlockedMessage();
         $expected = 'Bankdata invalid.';
         $this->assertEquals($expected, $result);
@@ -160,7 +160,7 @@ class PaymentTest extends BaseTestCase
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_PAYPAL.'/express_active', ScopeInterface::SCOPE_STORE, null, 1]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_PAYPAL.'/express_active', ScopeInterface::SCOPE_STORES, null, 1]]);
         $result = $this->payment->isPayPalExpressActive();
         $this->assertTrue($result);
     }
@@ -182,7 +182,7 @@ class PaymentTest extends BaseTestCase
 
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORE, null, $this->toolkitHelper->serialize($storeIds)]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($storeIds)]]);
 
         $expected = ['DE' => '123', 'AT' => '123'];
         $result = $this->payment->getKlarnaStoreIds();

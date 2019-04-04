@@ -303,12 +303,13 @@ class Addresscheck
     /**
      *
      * @param AddressInterface $oAddress
-     * @return type
+     * @param bool             $blIsBillingAddress
+     * @return array
      * @throws LocalizedException
      */
-    protected function handleAddresscheck(AddressInterface $oAddress)
+    protected function handleAddresscheck(AddressInterface $oAddress, $blIsBillingAddress = false)
     {
-        $aResponse = $this->getResponse($oAddress);
+        $aResponse = $this->getResponse($oAddress, $blIsBillingAddress);
         if (is_array($aResponse)) {
             $sErrorMessage = $this->getErrorMessageByResponse($aResponse);
             if (!empty($sErrorMessage)) {
@@ -336,8 +337,8 @@ class Addresscheck
         $this->checkoutSession->unsPayoneShippingAddresscheckScore();
 
         if (!$sScore && empty($oAddress->getPayoneAddresscheckScore())) {
-            if ($this->isCheckNeededForQuote(false, $oQuote->isVirtual(), $oQuote->getSubtotal())) {
-                $aResponse = $this->handleAddresscheck($oAddress);
+            if ($this->isCheckNeededForQuote($blIsBillingAddress, $oQuote->isVirtual(), $oQuote->getSubtotal())) {
+                $aResponse = $this->handleAddresscheck($oAddress, $blIsBillingAddress);
                 if (isset($aResponse['status']) && $aResponse['status'] == 'VALID') {
                     $oAddress = $this->correctAddress($oAddress);
                 }

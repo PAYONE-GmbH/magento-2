@@ -95,4 +95,19 @@ class View extends \Magento\Backend\Block\Widget\Container
         );
         parent::_construct();
     }
+
+    /**
+     * Used to format the value for certain keys differently
+     *
+     * @param  string $sKey
+     * @param  string $sValue
+     * @return string
+     */
+    public function formatValue($sKey, $sValue)
+    {
+        if ($sKey == 'add_paydata[amazon_address_token]') {
+            return '<span title="'.$sValue.'">[...]</span>';
+        }
+        return $sValue;
+    }
 }
