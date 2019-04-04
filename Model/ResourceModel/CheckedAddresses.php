@@ -106,7 +106,7 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      * Generate a unique hash of an address
      *
      * @param  AddressInterface $oAddress
-     * @param  array            $aResponse
+     * @param  array|bool      $aResponse
      * @return string
      */
     protected function getHashFromAddress(AddressInterface $oAddress, $aResponse = false)
@@ -130,7 +130,27 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     }
 
     /**
-     * Save Api-log entry to database
+     * Insert checked address into database
+     *
+     * @param string $sHash
+     * @param bool $blIsBonicheck
+     * @param string $sChecktype
+     * @return void
+     */
+    protected function insertCheckedAddress($sHash, $blIsBonicheck, $sChecktype)
+    {
+        $this->getConnection()->insert(
+            $this->getMainTable(),
+            [
+                'address_hash' => $sHash,
+                'is_bonicheck' => $blIsBonicheck,
+                'checktype' => $sChecktype,
+            ]
+        );
+    }
+
+    /**
+     * Handle saving of checked addresses
      *
      * @param  AddressInterface $oAddress
      * @param  array            $aResponse
@@ -141,15 +161,15 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     public function addCheckedAddress(AddressInterface $oAddress, $aResponse, $sChecktype, $blIsBonicheck = false)
     {
         $sHash = $this->getHashFromAddress($oAddress, $aResponse); // generate hash from given address
-        $this->getConnection()->insert(
-            $this->getMainTable(),
-            [
-                'address_hash' => $sHash,
-                'is_bonicheck' => $blIsBonicheck,
-                'checktype' => $sChecktype,
-            ]
-        );
+        $this->insertCheckedAddress($sHash, $blIsBonicheck, $sChecktype);
+
         error_log(date('Y-m-d H:i:s - ')."A1 - Added checked address Hash: '".$sHash."'\n", 3, dirname(__FILE__).'/../../../../../../MAG2_74.log');
+
+        $sUncorrectedHash = $this->getHashFromAddress($oAddress);
+        if ($sHash !== $sUncorrectedHash) {
+            $this->insertCheckedAddress($sUncorrectedHash, $blIsBonicheck, $sChecktype);
+            error_log(date('Y-m-d H:i:s - ')."A2 - Added checked address Uncorrected Hash: '".$sUncorrectedHash."'\n", 3, dirname(__FILE__).'/../../../../../../MAG2_74.log');
+        }
         return $this;
     }
 
