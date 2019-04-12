@@ -109,7 +109,7 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      * @param  array|bool      $aResponse
      * @return string
      */
-    protected function getHashFromAddress(AddressInterface $oAddress, $aResponse = false)
+    public function getHashFromAddress(AddressInterface $oAddress, $aResponse = false)
     {
         $aAddressArray = $this->getAddressArray($oAddress); // collect data from the address object
 

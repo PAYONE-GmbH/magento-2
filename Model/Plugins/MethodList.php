@@ -75,26 +75,36 @@ class MethodList
     protected $addresscheck;
 
     /**
+     * Object of CheckedAddresses resource
+     *
+     * @var \Payone\Core\Model\ResourceModel\CheckedAddresses
+     */
+    protected $addressesChecked;
+
+    /**
      * Constructor
      *
-     * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
-     * @param \Payone\Core\Helper\Consumerscore            $consumerscoreHelper
-     * @param \Magento\Checkout\Model\Session              $checkoutSession
-     * @param \Payone\Core\Model\ResourceModel\PaymentBan  $paymentBan
-     * @param \Payone\Core\Model\Risk\Addresscheck         $addresscheck
+     * @param \Payone\Core\Model\Api\Request\Consumerscore      $consumerscore
+     * @param \Payone\Core\Helper\Consumerscore                 $consumerscoreHelper
+     * @param \Magento\Checkout\Model\Session                   $checkoutSession
+     * @param \Payone\Core\Model\ResourceModel\PaymentBan       $paymentBan
+     * @param \Payone\Core\Model\Risk\Addresscheck              $addresscheck
+     * @param \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\ResourceModel\PaymentBan $paymentBan,
-        \Payone\Core\Model\Risk\Addresscheck $addresscheck
+        \Payone\Core\Model\Risk\Addresscheck $addresscheck,
+        \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
     ) {
         $this->consumerscore = $consumerscore;
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->checkoutSession = $checkoutSession;
         $this->paymentBan = $paymentBan;
         $this->addresscheck = $addresscheck;
+        $this->addressesChecked = $addressesChecked;
     }
 
     /**
@@ -123,6 +133,25 @@ class MethodList
     }
 
     /**
+     * Checks for response in the session otherwise executes new Consumerscore
+     *
+     * @param AddressInterface $oAddress
+     * @return array|bool
+     */
+    protected function getResponse(AddressInterface $oAddress)
+    {
+        $aSessionResponse = $this->checkoutSession->getPayoneConsumerscoreResponse();
+        $sAddressHash = $this->addressesChecked->getHashFromAddress($oAddress).'s';
+        if (!empty($aSessionResponse) && $this->checkoutSession->getPayoneShippingConsumerscoreHash() == $sAddressHash) {
+            return $aSessionResponse;
+        }
+        $aResponse = $this->consumerscore->sendRequest($oAddress);
+        $this->checkoutSession->setPayoneConsumerscoreResponse($aResponse);
+        $this->checkoutSession->setPayoneShippingConsumerscoreHash($sAddressHash);
+        return $aResponse;
+    }
+
+    /**
      * Execute a consumerscore request to PAYONE or load an old score if its lifetime is still active
      *
      * @param  AddressInterface $oShipping
@@ -130,7 +159,7 @@ class MethodList
      */
     protected function getScoreByCreditrating(AddressInterface $oShipping)
     {
-        $aResponse = $this->consumerscore->sendRequest($oShipping);
+        $aResponse = $this->getResponse($oShipping);
         if ($aResponse === true) {// creditrating not executed because of a previous check
             $this->consumerscoreHelper->copyOldStatusToNewAddress($oShipping);
         }

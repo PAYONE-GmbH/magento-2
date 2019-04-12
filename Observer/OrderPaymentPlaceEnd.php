@@ -31,6 +31,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Payone\Core\Helper\Consumerscore;
 use Magento\Sales\Model\Order\Payment;
+use Magento\Checkout\Model\Session;
 
 /**
  * Event class to set the orderstatus to new and pending
@@ -45,13 +46,34 @@ class OrderPaymentPlaceEnd implements ObserverInterface
     protected $consumerscoreHelper;
 
     /**
+     * Checkout session object
+     *
+     * @var Session
+     */
+    protected $checkoutSession;
+
+    /**
      * Constructor
      *
      * @param Consumerscore $consumerscoreHelper
+     * @param Session       $checkoutSession
      */
-    public function __construct(Consumerscore $consumerscoreHelper)
+    public function __construct(Consumerscore $consumerscoreHelper, Session $checkoutSession)
     {
         $this->consumerscoreHelper = $consumerscoreHelper;
+        $this->checkoutSession = $checkoutSession;
+    }
+
+    /**
+     * Used to unset checkoutSession variables used during checkout
+     *
+     * @return void
+     */
+    protected function clearPayoneOrderSessionData()
+    {
+        $this->checkoutSession->unsPayoneConsumerscoreResponse();
+        $this->checkoutSession->unsPayoneBillingConsumerscoreHash();
+        $this->checkoutSession->unsPayoneShippingConsumerscoreHash();
     }
 
     /**
@@ -85,5 +107,7 @@ class OrderPaymentPlaceEnd implements ObserverInterface
 
         // increment counter for every order, needed for the A/B test feature
         $this->consumerscoreHelper->incrementConsumerscoreSampleCounter();
+
+        $this->clearPayoneOrderSessionData();
     }
 }

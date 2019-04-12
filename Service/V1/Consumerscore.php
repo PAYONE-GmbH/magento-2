@@ -72,6 +72,13 @@ class Consumerscore implements ConsumerscoreInterface
     protected $checkoutSession;
 
     /**
+     * Object of CheckedAddresses resource
+     *
+     * @var \Payone\Core\Model\ResourceModel\CheckedAddresses
+     */
+    protected $addressesChecked;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Risk\Addresscheck                      $addresscheck
@@ -79,19 +86,22 @@ class Consumerscore implements ConsumerscoreInterface
      * @param \Magento\Checkout\Model\Session                           $checkoutSession
      * @param \Payone\Core\Helper\Consumerscore                         $consumerscoreHelper
      * @param \Payone\Core\Model\Api\Request\Consumerscore              $consumerscore
+     * @param \Payone\Core\Model\ResourceModel\CheckedAddresses         $addressesChecked
      */
     public function __construct(
         \Payone\Core\Model\Risk\Addresscheck $addresscheck,
         \Payone\Core\Service\V1\Data\ConsumerscoreResponseFactory $responseFactory,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
-        \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
+        \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
+        \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
     ) {
         $this->addresscheck = $addresscheck;
         $this->responseFactory = $responseFactory;
         $this->checkoutSession = $checkoutSession;
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->consumerscore = $consumerscore;
+        $this->addressesChecked = $addressesChecked;
     }
 
     /**
@@ -176,6 +186,56 @@ class Consumerscore implements ConsumerscoreInterface
     }
 
     /**
+     * Return address hash
+     *
+     * @param bool $isBillingAddress
+     * @return string|null
+     */
+    protected function getAddressHashFromSession($isBillingAddress)
+    {
+        if ($isBillingAddress === true) {
+            return $this->checkoutSession->getPayoneBillingConsumerscoreHash();
+        }
+        return $this->checkoutSession->getPayoneShippingConsumerscoreHash();
+    }
+
+    /**
+     * Add address hash to session
+     *
+     * @param string $sAddressHash
+     * @param bool   $isBillingAddress
+     * @return void
+     */
+    protected function setAddressHashInSession($sAddressHash, $isBillingAddress)
+    {
+        if ($isBillingAddress === true) {
+            $this->checkoutSession->setPayoneBillingConsumerscoreHash($sAddressHash);
+        } else {
+            $this->checkoutSession->setPayoneShippingConsumerscoreHash($sAddressHash);
+        }
+    }
+
+    /**
+     * Checks for response in the session otherwise executes new Consumerscore
+     *
+     * @param AddressInterface $oAddress
+     * @param bool             $isBillingAddress
+     * @return array|bool
+     */
+    protected function getResponse(AddressInterface $oAddress, $isBillingAddress)
+    {
+        $aSessionResponse = $this->checkoutSession->getPayoneConsumerscoreResponse();
+        $sAddressHash = $this->addressesChecked->getHashFromAddress($oAddress).($isBillingAddress ? 'b' : 's');
+        if (!empty($aSessionResponse) && $this->getAddressHashFromSession($isBillingAddress) == $sAddressHash) {
+            return $aSessionResponse;
+        }
+        $aResponse = $this->consumerscore->sendRequest($oAddress);
+        $this->checkoutSession->setPayoneConsumerscoreResponse($aResponse);
+        $this->setAddressHashInSession($sAddressHash, $isBillingAddress);
+        return $aResponse;
+    }
+
+    /**
      * Send addresscheck request and handle the response object
      *
      * @param  ConsumerscoreResponse $oResponse
@@ -185,7 +245,7 @@ class Consumerscore implements ConsumerscoreInterface
      */
     protected function handleBonicheck(ConsumerscoreResponse $oResponse, AddressInterface $oAddress, $isBillingAddress)
     {
-        $aResponse = $this->consumerscore->sendRequest($oAddress);
+        $aResponse = $this->getResponse($oAddress, $isBillingAddress);
         if (is_array($aResponse)) { // is a real response existing?
             $this->addresscheck->setResponse($aResponse);
             $this->addScoreToSession($oAddress, $isBillingAddress);

@@ -36,6 +36,8 @@ use Payone\Core\Service\V1\Data\ConsumerscoreResponse;
 use Payone\Core\Service\V1\Data\ConsumerscoreResponseFactory;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Checkout\Model\Session;
+use Payone\Core\Model\ResourceModel\CheckedAddresses;
 
 class ConsumerscoreTest extends BaseTestCase
 {
@@ -55,9 +57,19 @@ class ConsumerscoreTest extends BaseTestCase
     private $consumerscore;
 
     /**
-     * @var AddresscheckResponse|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConsumerscoreResponse|\PHPUnit_Framework_MockObject_MockObject
      */
     private $response;
+
+    /**
+     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $checkoutSession;
+
+    /**
+     * @var CheckedAddresses|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $addressesChecked;
 
     protected function setUp()
     {
@@ -76,11 +88,29 @@ class ConsumerscoreTest extends BaseTestCase
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
+        $this->checkoutSession = $this->getMockBuilder(Session::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'setPayoneBillingAddresscheckScore',
+                'setPayoneShippingAddresscheckScore',
+                'setPayoneConsumerscoreResponse',
+                'setPayoneBillingConsumerscoreHash',
+                'setPayoneShippingConsumerscoreHash',
+                'getPayoneConsumerscoreResponse',
+                'getPayoneBillingConsumerscoreHash',
+                'getPayoneShippingConsumerscoreHash',
+            ])
+            ->getMock();
+
+        $this->addressesChecked = $this->getMockBuilder(CheckedAddresses::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'addresscheck' => $this->addresscheck,
             'responseFactory' => $responseFactory,
             'consumerscore' => $this->consumerscore,
-            'consumerscoreHelper' => $consumerscoreHelper
+            'consumerscoreHelper' => $consumerscoreHelper,
+            'checkoutSession' => $this->checkoutSession,
+            'addressesChecked' => $this->addressesChecked,
         ]);
     }
 
@@ -162,6 +192,33 @@ class ConsumerscoreTest extends BaseTestCase
         $this->addresscheck->method('isAddressCorrected')->willReturn(true);
 
         $result = $this->classToTest->executeConsumerscore($addressData, false, false, 100, 'test');
+        $result = $result->__toArray();
+        $this->assertTrue($result['success']);
+    }
+
+    public function testExecuteConsumerscoreCheckedBefore()
+    {
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+        $addressData->method('getFirstname')->willReturn('Paul');
+        $addressData->method('getLastname')->willReturn('Payer');
+        $addressData->method('getStreet')->willReturn('Teststr. 1');
+        $addressData->method('getPostcode')->willReturn('12345');
+        $addressData->method('getCity')->willReturn('Test');
+
+        $this->checkoutSession->method('getPayoneConsumerscoreResponse')->willReturn(['status' => 'VALID']);
+        $this->checkoutSession->method('getPayoneShippingConsumerscoreHash')->willReturn('12345s');
+        $this->checkoutSession->method('getPayoneBillingConsumerscoreHash')->willReturn('12345b');
+
+        $this->addressesChecked->method('getHashFromAddress')->willReturn('12345');
+
+        $this->addresscheck->method('correctAddress')->willReturn($addressData);
+        $this->addresscheck->method('isAddressCorrected')->willReturn(true);
+
+        $result = $this->classToTest->executeConsumerscore($addressData, false, false, 100, 'test');
+        $result = $result->__toArray();
+        $this->assertTrue($result['success']);
+
+        $result = $this->classToTest->executeConsumerscore($addressData, true, false, 100, 'test');
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
