@@ -124,7 +124,7 @@ class Forwarding
      */
     public function forwardAsyncRequest($aPostArray, $sUrl)
     {
-        $this->curl->setOption(CURLOPT_TIMEOUT_MS, 10);
+        $this->curl->setOption(CURLOPT_TIMEOUT_MS, 100);
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
         $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
         $this->tmpLog('ForwardAsyncRequest to '.$sUrl);
