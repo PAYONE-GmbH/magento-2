@@ -86,9 +86,10 @@ class IndexTest extends BaseTestCase
 
         $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getParam', 'getPost'])
+            ->setMethods(['getParam', 'getPost', 'isPost'])
             ->getMock();
         $this->request->method('getPost')->willReturn($post);
+        $this->request->method('isPost')->willReturn(true);
 
         $eventManater = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()->getMock();
 

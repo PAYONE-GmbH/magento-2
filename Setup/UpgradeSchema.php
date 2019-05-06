@@ -50,32 +50,6 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
      */
     protected function addNewColumns(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        if (version_compare($context->getVersion(), '1.3.0', '<')) {// pre update version is lower than 1.3.0
-            $this->addTable($setup, \Payone\Core\Setup\Tables\CheckedAddresses::getData());
-
-            $setup->getConnection('checkout')->addColumn(
-                $setup->getTable('quote_address'),
-                'payone_addresscheck_score',
-                [
-                    'type' => Table::TYPE_TEXT,
-                    'length' => 1,
-                    'nullable' => false,
-                    'default' => '',
-                    'comment' => 'AddressCheck Person Status Score (G, Y, R)'
-                ]
-            );
-            $setup->getConnection('checkout')->addColumn(
-                $setup->getTable('quote_address'),
-                'payone_protect_score',
-                [
-                    'type' => Table::TYPE_TEXT,
-                    'length' => 1,
-                    'nullable' => false,
-                    'default' => '',
-                    'comment' => 'Consumerscore Status Score (G, Y, R)'
-                ]
-            );
-        }
         if (!$setup->getConnection()->tableColumnExists($setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS), 'has_been_handled')) {
             $setup->getConnection()->addColumn(
                 $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
@@ -86,19 +60,6 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                     'nullable' => false,
                     'default' => 1,
                     'comment' => 'Has the status been handled already'
-                ]
-            );
-        }
-        if (!$setup->getConnection()->tableColumnExists($setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES), 'checktype')) {
-            $setup->getConnection()->addColumn(
-                $setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES),
-                'checktype',
-                [
-                    'type' => Table::TYPE_TEXT,
-                    'length' => 16,
-                    'nullable' => false,
-                    'default' => '',
-                    'comment' => 'Checktype used'
                 ]
             );
         }

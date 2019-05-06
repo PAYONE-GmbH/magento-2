@@ -44,6 +44,7 @@ use Magento\Sales\Model\Order\Payment;
 use Payone\Core\Helper\Database;
 use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\Entities\TransactionStatus;
+use Magento\Framework\App\Request\Http;
 
 class ReturnedTest extends BaseTestCase
 {
@@ -75,8 +76,12 @@ class ReturnedTest extends BaseTestCase
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
 
+        $request = $this->getMockBuilder(Http::class)->disableOriginalConstructor()->getMock();
+        $request->method('isPost')->willReturn(true);
+
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->method('getRedirect')->willReturn($redirect);
+        $context->method('getRequest')->willReturn($request);
         $context->method('getResponse')->willReturn($response);
         $context->method('getUrl')->willReturn($url);
 

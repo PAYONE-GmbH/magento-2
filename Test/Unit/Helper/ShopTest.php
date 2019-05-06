@@ -67,6 +67,7 @@ class ShopTest extends BaseTestCase
 
         $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
         $store->method('getId')->willReturn(1);
+        $store->method('getName')->willReturn('Name');
 
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
@@ -96,6 +97,14 @@ class ShopTest extends BaseTestCase
         $expected = 1;
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetStoreName()
+    {
+        $result = $this->shop->getStoreName();
+        $expected = 'Name';
+        $this->assertEquals($expected, $result);
+    }
+
 
     public function testGetLocale()
     {

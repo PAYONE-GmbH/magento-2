@@ -69,13 +69,6 @@ class Export extends \Payone\Core\Model\Export\Xml
     protected $paymentHelper;
 
     /**
-     * PAYONE addresscheck model
-     *
-     * @var \Payone\Core\Model\Risk\Addresscheck
-     */
-    protected $addresscheck;
-
-    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\ConfigExport           $configExportHelper
@@ -83,22 +76,19 @@ class Export extends \Payone\Core\Model\Export\Xml
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Payment                $paymentHelper
      * @param \Payone\Core\Helper\Shop                   $shopHelper
-     * @param \Payone\Core\Model\Risk\Addresscheck       $addresscheck
      */
     public function __construct(
         \Payone\Core\Helper\ConfigExport $configExportHelper,
         \Payone\Core\Model\ChecksumCheck $checksumCheck,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Payment $paymentHelper,
-        \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Model\Risk\Addresscheck $addresscheck
+        \Payone\Core\Helper\Shop $shopHelper
     ) {
         parent::__construct($shopHelper);
         $this->configExportHelper = $configExportHelper;
         $this->checksumCheck = $checksumCheck;
         $this->storeManager = $storeManager;
         $this->paymentHelper = $paymentHelper;
-        $this->addresscheck = $addresscheck;
     }
 
     /**
@@ -193,64 +183,6 @@ class Export extends \Payone\Core\Model\Export\Xml
     }
 
     /**
-     * Add addresscheck config to xml
-     *
-     * @param  string $sStoreCode
-     * @return void
-     */
-    protected function addAddresscheckConfig($sStoreCode)
-    {
-        $this->writeToXml('<addresscheck>', 3);
-        $this->writeNode("active", $this->configExportHelper->getConfigParam('enabled', 'address_check', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("mode", $this->configExportHelper->getConfigParam('mode', 'address_check', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("min_order_total", $this->configExportHelper->getConfigParam('min_order_total', 'address_check', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("max_order_total", $this->configExportHelper->getConfigParam('max_order_total', 'address_check', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("checkbilling", $this->configExportHelper->getConfigParam('check_billing', 'address_check', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("checkshipping", $this->configExportHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect', $sStoreCode), 4);
-        $this->writeToXml('<personstatusmapping>', 4);
-        $aMapping = $this->addresscheck->getPersonstatusMapping();
-        foreach ($aMapping as $sPersonstatus => $sScore) {
-            $this->writeNode($sPersonstatus, $sScore, 5);
-        }
-        $this->writeToXml('</personstatusmapping>', 4);
-        $this->writeToXml('</addresscheck>', 3);
-    }
-
-    /**
-     * Add consumerscore config to xml
-     *
-     * @param  string $sStoreCode
-     * @return void
-     */
-    protected function addConsumerscore($sStoreCode)
-    {
-        $this->writeToXml('<consumerscore>', 3);
-        $this->writeNode("active", $this->configExportHelper->getConfigParam('enabled', 'creditrating', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("mode", $this->configExportHelper->getConfigParam('mode', 'creditrating', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("min_order_total", $this->configExportHelper->getConfigParam('min_order_total', 'creditrating', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("max_order_total", $this->configExportHelper->getConfigParam('max_order_total', 'creditrating', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("consumerscoretype", $this->configExportHelper->getConfigParam('type', 'creditrating', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("red", $this->configExportHelper->getConfigParam('allow_payment_methods_red', 'creditrating', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("yellow", $this->configExportHelper->getConfigParam('allow_payment_methods_yellow', 'creditrating', 'payone_protect', $sStoreCode), 4);
-        $this->writeNode("duetime", $this->configExportHelper->getConfigParam('result_lifetime', 'creditrating', 'payone_protect', $sStoreCode), 4);
-        $this->writeToXml('</consumerscore>', 3);
-    }
-
-    /**
-     * Add shop protect config to xml
-     *
-     * @param  string $sStoreCode
-     * @return void
-     */
-    protected function addProtectConfig($sStoreCode)
-    {
-        $this->writeToXml('<protect>', 2);
-        $this->addAddresscheckConfig($sStoreCode);
-        $this->addConsumerscore($sStoreCode);
-        $this->writeToXml('</protect>', 2);
-    }
-
-    /**
      * Add shop misc config to xml
      *
      * @param  string $sStoreCode
@@ -285,7 +217,6 @@ class Export extends \Payone\Core\Model\Export\Xml
         $this->addShopSystemConfig();
         $this->addShopGlobalConfig($sStoreCode);
         $this->addShopClearingtypeConfig($sStoreCode);
-        $this->addProtectConfig($sStoreCode);
         $this->addShopMiscConfig($sStoreCode);
         $this->writeToXml('</shop>', 1);
     }

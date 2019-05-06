@@ -28,12 +28,13 @@ namespace Payone\Core\Test\Unit\Service\V1\Data;
 
 use Payone\Core\Service\V1\Addresscheck as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Payone\Core\Service\V1\Data\AddresscheckResponseFactory;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Model\SimpleProtect\SimpleProtectInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 class AddresscheckTest extends BaseTestCase
 {
@@ -43,20 +44,21 @@ class AddresscheckTest extends BaseTestCase
     private $classToTest;
 
     /**
-     * @var Addresscheck|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $addresscheck;
-
-    /**
      * @var AddresscheckResponse|\PHPUnit_Framework_MockObject_MockObject
      */
     private $response;
+
+    /**
+     * PAYONE Simple Protect implementation
+     *
+     * @var SimpleProtectInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $simpleProtect;
 
     protected function setUp()
     {
         $objectManager = $this->getObjectManager();
 
-        $this->addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $this->response = $objectManager->getObject(AddresscheckResponse::class);
         $responseFactory = $this->getMockBuilder(AddresscheckResponseFactory::class)
             ->disableOriginalConstructor()
@@ -64,113 +66,58 @@ class AddresscheckTest extends BaseTestCase
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
+        $this->simpleProtect = $this->getMockBuilder(SimpleProtectInterface::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
-            'addresscheck' => $this->addresscheck,
-            'responseFactory' => $responseFactory
+            'responseFactory' => $responseFactory,
+            'simpleProtect' => $this->simpleProtect
         ]);
     }
 
-    public function testCheckAddressFalse()
+    public function testCheckAddressBilling()
     {
-        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(false);
-
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
-        $result = $result->__toArray();
-        $this->assertFalse($result['success']);
-    }
-
-    public function testCheckAddressTrue()
-    {
-        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(true);
-        $this->addresscheck->method('getResponse')->willReturn(true);
-
-        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
-
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
-        $result = $result->__toArray();
-        $this->assertTrue($result['success']);
-    }
-
-    public function testCheckAddressInvalid()
-    {
-        $expected = 'invalid message';
-        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(true);
-        $this->addresscheck->method('getResponse')->willReturn(['status' => 'INVALID', 'customermessage' => $expected]);
-        $this->addresscheck->method('getScore')->willReturn('G');
-        $this->addresscheck->method('getInvalidMessage')->willReturn($expected);
-
-        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
-
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
-        $result = $result->__toArray();
-        $this->assertFalse($result['success']);
-        $this->assertEquals($expected, $result['errormessage']);
-    }
-
-    public function testCheckAddressErrorContinue()
-    {
-        $expected = 'invalid message';
-        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(true);
-        $this->addresscheck->method('getResponse')->willReturn(['status' => 'ERROR']);
-        $this->addresscheck->method('getScore')->willReturn('G');
-        $this->addresscheck->method('getConfigParam')->willReturn('continue_checkout');
-
-        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+        $this->simpleProtect->method('handleEnterOrChangeBillingAddress')->willReturn($addressData);
 
         $result = $this->classToTest->checkAddress($addressData, true, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
 
-    public function testCheckAddressErrorStop()
-    {
-        $expected = 'error message';
-        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(true);
-        $this->addresscheck->method('getResponse')->willReturn(['status' => 'ERROR']);
-        $this->addresscheck->method('getScore')->willReturn('G');
-        $this->addresscheck->method('getConfigParam')->willReturn('stop_checkout');
-        $this->addresscheck->method('getErrorMessage')->willReturn($expected);
-
-        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
-
-        $result = $this->classToTest->checkAddress($addressData, true, false, 100);
-        $result = $result->__toArray();
-        $this->assertFalse($result['success']);
-        $this->assertEquals($expected, $result['errormessage']);
-    }
-
-    public function testCheckAddressValid()
+    public function testCheckAddressShipping()
     {
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(true);
-        $this->addresscheck->method('getResponse')->willReturn(['status' => 'VALID']);
-        $this->addresscheck->method('getScore')->willReturn('G');
-        $this->addresscheck->method('isAddressCorrected')->willReturn(true);
-        $this->addresscheck->method('correctAddress')->willReturn($addressData);
+        $this->simpleProtect->method('handleEnterOrChangeShippingAddress')->willReturn($addressData);
 
-        $result = $this->classToTest->checkAddress($addressData, true, false, 100);
+        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
-        $this->assertNotEmpty($result['confirmMessage']);
     }
 
-    public function testCheckAddressValidStreetArray()
+    public function testCheckAddressShippingStreetArray()
     {
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
         $addressData->method('getStreet')->willReturn(['Teststr. 1', 'Additional info']);
 
-        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(true);
-        $this->addresscheck->method('getResponse')->willReturn(['status' => 'VALID']);
-        $this->addresscheck->method('getScore')->willReturn('G');
-        $this->addresscheck->method('isAddressCorrected')->willReturn(true);
-        $this->addresscheck->method('correctAddress')->willReturn($addressData);
+        $this->simpleProtect->method('handleEnterOrChangeShippingAddress')->willReturn($addressData);
 
-        $result = $this->classToTest->checkAddress($addressData, true, false, 100);
+        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
-        $this->assertNotEmpty($result['confirmMessage']);
+    }
+
+    public function testCheckAddressException()
+    {
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+
+        $exception = new LocalizedException(__('Error'));
+
+        $this->simpleProtect->method('handleEnterOrChangeShippingAddress')->willThrowException($exception);
+
+        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
+        $result = $result->__toArray();
+        $this->assertFalse($result['success']);
     }
 }

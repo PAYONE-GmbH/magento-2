@@ -64,4 +64,19 @@ class CreditratingCheckType implements ArrayInterface
             ],
         ];
     }
+
+    /**
+     * Return array with all available options
+     *
+     * @return array
+     */
+    public static function getAvailableOptions()
+    {
+        return [
+            self::INFOSCORE_HARD,
+            self::INFOSCORE_ALL,
+            self::INFOSCORE_ALL_BONI,
+            self::BONIVERSUM_VERITA
+        ];
+    }
 }

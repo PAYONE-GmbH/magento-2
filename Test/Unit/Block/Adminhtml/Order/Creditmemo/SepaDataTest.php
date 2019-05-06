@@ -48,15 +48,19 @@ class SepaDataTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var Creditcard|PayoneObjectManager
+     */
+    private $methodInstance;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
 
-        $methodInstance = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
-        $methodInstance->method('needsSepaDataOnDebit')->willReturn(false);
+        $this->methodInstance = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getMethodInstance')->willReturn($methodInstance);
+        $payment->method('getMethodInstance')->willReturn($this->methodInstance);
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
@@ -89,11 +93,20 @@ class SepaDataTest extends BaseTestCase
         $this->assertInstanceOf(Order::class, $result);
     }
 
+    public function testDontShowPayoneSepaDataFields()
+    {
+        $this->methodInstance->method('needsSepaDataOnDebit')->willReturn(false);
+
+        $result = $this->classToTest->showPayoneSepaDataFields();
+        $this->assertFalse($result);
+    }
+
     public function testShowPayoneSepaDataFields()
     {
+        $this->methodInstance->method('needsSepaDataOnDebit')->willReturn(true);
+
         $result = $this->classToTest->showPayoneSepaDataFields();
-        $expected = false;
-        $this->assertEquals($expected, $result);
+        $this->assertTrue($result);
     }
 
     public function testGetPrefilledIban()

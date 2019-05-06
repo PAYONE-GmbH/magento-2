@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Service\V1;
 
+use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Api\AddresscheckInterface;
 use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Magento\Quote\Api\Data\AddressInterface;
@@ -36,13 +37,6 @@ use Magento\Quote\Api\Data\AddressInterface;
 class Addresscheck implements AddresscheckInterface
 {
     /**
-     * PAYONE addresscheck request model
-     *
-     * @var \Payone\Core\Model\Risk\Addresscheck
-     */
-    protected $addresscheck;
-
-    /**
      * Factory for the response object
      *
      * @var \Payone\Core\Service\V1\Data\AddresscheckResponseFactory
@@ -50,27 +44,24 @@ class Addresscheck implements AddresscheckInterface
     protected $responseFactory;
 
     /**
-     * Checkout session object
+     * PAYONE Simple Protect implementation
      *
-     * @var \Magento\Checkout\Model\Session
+     * @var \Payone\Core\Model\SimpleProtect\SimpleProtectInterface
      */
-    protected $checkoutSession;
+    protected $simpleProtect;
 
     /**
      * Constructor
      *
-     * @param \Payone\Core\Model\Risk\Addresscheck                  $addresscheck
      * @param \Payone\Core\Service\V1\Data\AddresscheckResponseFactory $responseFactory
-     * @param \Magento\Checkout\Model\Session                       $checkoutSession
+     * @param \Payone\Core\Model\SimpleProtect\SimpleProtectInterface  $simpleProtect
      */
     public function __construct(
-        \Payone\Core\Model\Risk\Addresscheck $addresscheck,
         \Payone\Core\Service\V1\Data\AddresscheckResponseFactory $responseFactory,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
     ) {
-        $this->addresscheck = $addresscheck;
         $this->responseFactory = $responseFactory;
-        $this->checkoutSession = $checkoutSession;
+        $this->simpleProtect = $simpleProtect;
     }
 
     /**
@@ -96,84 +87,6 @@ class Addresscheck implements AddresscheckInterface
     }
 
     /**
-     * Add the score to the correct session variable
-     *
-     * @param  AddressInterface $oAddress
-     * @param  bool             $blIsBillingAddress
-     * @return void
-     */
-    protected function addScoreToSession(AddressInterface $oAddress, $blIsBillingAddress)
-    {
-        $sScore = $this->addresscheck->getScore($oAddress);
-        if ($blIsBillingAddress === true) { // is billing address?
-            $this->checkoutSession->setPayoneBillingAddresscheckScore($sScore);
-        } else {
-            $this->checkoutSession->setPayoneShippingAddresscheckScore($sScore);
-        }
-    }
-
-    /**
-     * Set error message if checkout is configured to stop on error or set success = true instead
-     *
-     * @param  AddresscheckResponse $oResponse
-     * @return AddresscheckResponse
-     */
-    protected function handleErrorCase(AddresscheckResponse $oResponse)
-    {
-        $sHandleError = $this->addresscheck->getConfigParam('handle_response_error');
-        if ($sHandleError == 'stop_checkout') {
-            $oResponse->setData('errormessage', __($this->addresscheck->getErrorMessage())); // stop checkout with errormsg
-        } elseif ($sHandleError == 'continue_checkout') {
-            $oResponse->setData('success', true); // continue anyways
-        }
-        return $oResponse;
-    }
-
-    /**
-     * Handle the response according to its return status
-     *
-     * @param  AddresscheckResponse $oResponse
-     * @param  AddressInterface     $oAddress
-     * @param  array                $aResponse
-     * @return AddresscheckResponse
-     */
-    protected function handleResponse(AddresscheckResponse $oResponse, AddressInterface $oAddress, $aResponse)
-    {
-        if ($aResponse['status'] == 'VALID') { // data was checked successfully
-            $oAddress = $this->addresscheck->correctAddress($oAddress);
-            if ($this->addresscheck->isAddressCorrected() === true) { // was address changed?
-                $oResponse->setData('correctedAddress', $oAddress);
-                $oResponse->setData('confirmMessage', $this->getConfirmMessage($oAddress));
-            }
-            $oResponse->setData('success', true);
-        } elseif ($aResponse['status'] == 'INVALID') { // given data invalid
-            $oResponse->setData('errormessage', $this->addresscheck->getInvalidMessage($aResponse['customermessage']));
-        } elseif ($aResponse['status'] == 'ERROR') { // an error occured in the API
-            $oResponse = $this->handleErrorCase($oResponse);
-        }
-        return $oResponse;
-    }
-
-    /**
-     * Send addresscheck request and handle the response object
-     *
-     * @param  AddresscheckResponse $oResponse
-     * @param  AddressInterface     $oAddress
-     * @param  bool                 $blIsBillingAddress
-     * @return AddresscheckResponse
-     */
-    protected function handleAddresscheck(AddresscheckResponse $oResponse, AddressInterface $oAddress, $blIsBillingAddress) {
-        $aResponse = $this->addresscheck->getResponse($oAddress, $blIsBillingAddress);
-        if (is_array($aResponse)) { // is a real response existing?
-            $this->addScoreToSession($oAddress, $blIsBillingAddress);
-            $oResponse = $this->handleResponse($oResponse, $oAddress, $aResponse);
-        } elseif ($aResponse === true) { // check lifetime still valid, set success to true
-            $oResponse->setData('success', true);
-        }
-        return $oResponse;
-    }
-
-    /**
      * PAYONE addresscheck
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
@@ -186,11 +99,28 @@ class Addresscheck implements AddresscheckInterface
      */
     public function checkAddress(\Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal)
     {
+        /** @var AddresscheckResponse $oResponse */
         $oResponse = $this->responseFactory->create();
-        $oResponse->setData('success', false); // set success to false as default, set to true later if true
-        if ($this->addresscheck->isCheckNeededForQuote($isBillingAddress, $isVirtual, $dTotal)) {
-            $oResponse = $this->handleAddresscheck($oResponse, $addressData, $isBillingAddress);
+        $oResponse->setData('success', false);
+
+        try {
+            if ($isBillingAddress === true) {
+                $mResponse = $this->simpleProtect->handleEnterOrChangeBillingAddress($addressData, $isBillingAddress, $dTotal);
+            } else {
+                $mResponse = $this->simpleProtect->handleEnterOrChangeShippingAddress($addressData, $isBillingAddress, $dTotal);
+            }
+
+            if (!empty($mResponse)) {
+                $oResponse->setData('success', true);
+            }
+            if ($mResponse instanceof AddressInterface) {
+                $oResponse->setData('correctedAddress', $mResponse);
+                $oResponse->setData('confirmMessage', $this->getConfirmMessage($mResponse));
+            }
+        } catch (LocalizedException $exc) {
+            $oResponse->setData('errormessage', $exc->getMessage());
         }
+
         return $oResponse;
     }
 }

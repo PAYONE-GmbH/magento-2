@@ -161,4 +161,15 @@ class SuccessTest extends BaseTestCase
         $expected = '';
         $this->assertEquals($expected, $result);
     }
+
+    public function testToHtmlAmazonPending()
+    {
+        $this->paymentHelper->method('isMandateManagementDownloadActive')->willReturn(false);
+        $this->checkoutSession->method('getPayoneInstructionNotes')->willReturn(null);
+        $this->checkoutSession->method('getShowAmazonPendingNotice')->willReturn(true);
+
+        $result = $this->classToTest->toHtml();
+        $expected = '';
+        $this->assertEquals($expected, $result);
+    }
 }

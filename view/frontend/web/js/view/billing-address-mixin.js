@@ -31,7 +31,7 @@ define([
 
     var mixin = {
         payoneCheckAddress: function () {
-            if (window.checkoutConfig.payment.payone.addresscheckEnabled && window.checkoutConfig.payment.payone.addresscheckBillingEnabled) {
+            if (window.checkoutConfig.payment.payone.addresscheckBillingEnabled) {
                 return true;
             }
             return false;

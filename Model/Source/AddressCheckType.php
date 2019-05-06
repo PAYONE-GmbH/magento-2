@@ -69,4 +69,20 @@ class AddressCheckType implements ArrayInterface
             ],
         ];
     }
+
+    /**
+     * Return array with all available options
+     *
+     * @return array
+     */
+    public static function getAvailableOptions()
+    {
+        return [
+            self::NONE,
+            self::BASIC,
+            self::PERSON,
+            self::BONIVERSUM_BASIC,
+            self::BONIVERSUM_PERSON
+        ];
+    }
 }

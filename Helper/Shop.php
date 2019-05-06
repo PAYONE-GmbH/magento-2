@@ -89,7 +89,7 @@ class Shop extends \Payone\Core\Helper\Base
     /**
      * Return the name of the current store
      *
-     * @return int
+     * @return string
      */
     public function getStoreName()
     {

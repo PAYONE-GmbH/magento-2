@@ -191,10 +191,6 @@ class UpgradeData implements UpgradeDataInterface
             $this->convertSerializedDataToJson($setup, $serializedRows);
         }
 
-        if (version_compare($context->getVersion(), '2.2.0', '<=')) {// pre update version is less than or equal to 2.2.1
-            $this->convertPersonstatusMappingConfig($setup);
-        }
-
         $setup->endSetup();
     }
 
@@ -232,18 +228,5 @@ class UpgradeData implements UpgradeDataInterface
             $where = ['config_id = ?' => $id];
             $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
         }
-    }
-
-    /**
-     * Change config path of personstatus mapping configuration
-     *
-     * @param  ModuleDataSetupInterface $setup
-     * @return void
-     */
-    protected function convertPersonstatusMappingConfig(ModuleDataSetupInterface $setup)
-    {
-        $data = ['path' => 'payone_protect/personstatus/mapping'];
-        $where = ['path = ?' => 'payone_protect/address_check/mapping_personstatus'];
-        $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
     }
 }

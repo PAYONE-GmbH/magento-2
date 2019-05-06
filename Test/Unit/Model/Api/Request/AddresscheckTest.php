@@ -30,7 +30,6 @@ use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Model\Api\Request\Addresscheck as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
-use Payone\Core\Model\ResourceModel\CheckedAddresses;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -48,11 +47,6 @@ class AddresscheckTest extends BaseTestCase
     private $apiHelper;
 
     /**
-     * @var CheckedAddresses|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $addressesChecked;
-
-    /**
      * @var Shop|\PHPUnit_Framework_MockObject_MockObject
      */
     private $shopHelper;
@@ -62,92 +56,15 @@ class AddresscheckTest extends BaseTestCase
         $objectManager = $this->getObjectManager();
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
-
-        $this->addressesChecked = $this->getMockBuilder(CheckedAddresses::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'apiHelper' => $this->apiHelper,
             'shopHelper' => $this->shopHelper,
-            'addressesChecked' => $this->addressesChecked
         ]);
     }
 
-    public function testSendRequestTrueNotEnabled()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-
-        $this->shopHelper->method('getConfigParam')->willReturn(false);
-
-        $result = $this->classToTest->sendRequest($address, true);
-        $this->assertTrue($result);
-    }
-
-    public function testSendRequestTrueNoBilling()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-
-        $this->shopHelper->expects($this->any())
-            ->method('getConfigParam')
-            ->willReturnMap([
-                ['enabled', 'address_check', 'payone_protect', null, true],
-                ['check_billing', 'address_check', 'payone_protect', null, 'NO']
-            ]);
-
-        $result = $this->classToTest->sendRequest($address, true);
-        $this->assertTrue($result);
-    }
-
-    public function testSendRequestTrueNoShipping()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-
-        $this->shopHelper->expects($this->any())
-            ->method('getConfigParam')
-            ->willReturnMap([
-                ['enabled', 'address_check', 'payone_protect', null, true],
-                ['check_shipping', 'address_check', 'payone_protect', null, 'NO']
-            ]);
-
-        $result = $this->classToTest->sendRequest($address, false);
-        $this->assertTrue($result);
-    }
-
-    public function testSendRequestInvalidTypePE()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-        $address->method('getCountryId')->willReturn('FR');
-
-        $this->shopHelper->expects($this->any())
-            ->method('getConfigParam')
-            ->willReturnMap([
-                ['enabled', 'address_check', 'payone_protect', null, true],
-                ['check_shipping', 'address_check', 'payone_protect', null, 'PE']
-            ]);
-
-        $result = $this->classToTest->sendRequest($address, false);
-        $expected = ['wrongCountry' => true];
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testSendRequestInvalidTypeBA()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-        $address->method('getCountryId')->willReturn('XY');
-
-        $this->shopHelper->expects($this->any())
-            ->method('getConfigParam')
-            ->willReturnMap([
-                ['enabled', 'address_check', 'payone_protect', null, true],
-                ['check_shipping', 'address_check', 'payone_protect', null, 'BA']
-            ]);
-
-        $result = $this->classToTest->sendRequest($address, false);
-        $expected = ['wrongCountry' => true];
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testSendRequestNotChecked()
+    public function testSendRequest()
     {
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
         $address->method('getCountryId')->willReturn('DE');
@@ -162,45 +79,13 @@ class AddresscheckTest extends BaseTestCase
         $this->shopHelper->expects($this->any())
             ->method('getConfigParam')
             ->willReturnMap([
-                ['enabled', 'address_check', 'payone_protect', null, true],
-                ['check_shipping', 'address_check', 'payone_protect', null, 'PE'],
-                ['mode', 'address_check', 'payone_protect', null, 'test'],
-                ['aid', 'global', 'payone_general', null, 'PE']
+                ['aid', 'global', 'payone_general', null, '12345']
             ]);
-
-        $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(false);
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($address, false);
+        $result = $this->classToTest->sendRequest($address, 'test', 'PE');
         $this->assertEquals($response, $result);
-    }
-
-    public function testSendRequestChecked()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-        $address->method('getCountryId')->willReturn('DE');
-        $address->method('getFirstname')->willReturn('Paul');
-        $address->method('getLastname')->willReturn('Paytest');
-        $address->method('getCompany')->willReturn('Testcompany Ltd.');
-        $address->method('getStreet')->willReturn(['Teststr. 5', '1st floor']);
-        $address->method('getPostcode')->willReturn('12345');
-        $address->method('getCity')->willReturn('Berlin');
-        $address->method('getRegionCode')->willReturn('Berlin');
-
-        $this->shopHelper->expects($this->any())
-            ->method('getConfigParam')
-            ->willReturnMap([
-                ['enabled', 'address_check', 'payone_protect', null, true],
-                ['check_shipping', 'address_check', 'payone_protect', null, 'PE'],
-                ['mode', 'address_check', 'payone_protect', null, 'test'],
-                ['aid', 'global', 'payone_general', null, 'PE']
-            ]);
-
-        $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(true);
-
-        $result = $this->classToTest->sendRequest($address, false);
-        $this->assertTrue($result);
     }
 }

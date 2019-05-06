@@ -19,39 +19,29 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2019 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Source;
-
-use Magento\Framework\Option\ArrayInterface;
+namespace Payone\Core\Model\Api\Response;
 
 /**
- * Source class for existing operation modes
+ * Class for the PAYONE Server API response of the "consumerscore" request
+ *
+ * @method string getCity()
+ * @method string getCountry()
+ * @method string getFirstname()
+ * @method string getLastname()
+ * @method string getPersonstatus()
+ * @method string getScore()
+ * @method string getScorevalue()
+ * @method string getSecscore()
+ * @method string getStatus()
+ * @method string getStreet()
+ * @method string getZip()
  */
-class Mode implements ArrayInterface
+class ConsumerscoreResponse extends \Magento\Framework\DataObject
 {
-    const MODE_LIVE = 'live';
-    const MODE_TEST = 'test';
 
-    /**
-     * Return existing operation modes
-     *
-     * @return array
-     */
-    public function toOptionArray()
-    {
-        return [
-            [
-                'value' => self::MODE_LIVE,
-                'label' => __('Live'),
-            ],
-            [
-                'value' => self::MODE_TEST,
-                'label' => __('Test')
-            ]
-        ];
-    }
 }

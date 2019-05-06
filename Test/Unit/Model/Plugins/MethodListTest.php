@@ -31,7 +31,6 @@ use Payone\Core\Model\Plugins\MethodList as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Model\MethodList;
 use Payone\Core\Model\Api\Request\Consumerscore;
-use Payone\Core\Helper\Consumerscore as ConsumerscoreHelper;
 use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
@@ -39,7 +38,7 @@ use Magento\Payment\Model\MethodInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\ResourceModel\PaymentBan;
-use Payone\Core\Model\Risk\Addresscheck;
+use Payone\Core\Model\SimpleProtect\SimpleProtectInterface;
 
 class MethodListTest extends BaseTestCase
 {
@@ -59,11 +58,6 @@ class MethodListTest extends BaseTestCase
     private $consumerscore;
 
     /**
-     * @var ConsumerscoreHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $consumerscoreHelper;
-
-    /**
      * @var PaymentBan|\PHPUnit_Framework_MockObject_MockObject
      */
     private $paymentBan;
@@ -73,21 +67,16 @@ class MethodListTest extends BaseTestCase
      */
     private $quote;
 
+    /**
+     * @var SimpleProtectInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $simpleProtect;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
 
         $this->consumerscore = $this->getMockBuilder(Consumerscore::class)->disableOriginalConstructor()->getMock();
-        $this->consumerscoreHelper = $this->getMockBuilder(ConsumerscoreHelper::class)->disableOriginalConstructor()->getMock();
-        $this->consumerscoreHelper->method('isCreditratingNeeded')->willReturn(true);
-        $this->consumerscoreHelper->method('getConfigParam')->willReturn(true);
-        $this->consumerscoreHelper->expects($this->any())
-            ->method('getAllowedMethodsForScore')
-            ->willReturnMap([
-                    ['Y', [PayoneConfig::METHOD_CREDITCARD, PayoneConfig::METHOD_ADVANCE_PAYMENT]],
-                    ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CASH_ON_DELIVERY, PayoneConfig::METHOD_AMAZONPAY]],
-                ]);
-
 
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
@@ -112,30 +101,29 @@ class MethodListTest extends BaseTestCase
         $checkoutSession->method('getQuote')->willReturn($this->quote);
         $checkoutSession->method('getPayonePaymentBans')->willReturn([PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00']);
 
-        $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
-        $addresscheck->method('getPersonstatusMapping')->willReturn(['PPV' => 'R']);
-
         $this->paymentBan = $this->getMockBuilder(PaymentBan::class)->disableOriginalConstructor()->getMock();
+
+        $this->simpleProtect = $this->getMockBuilder(SimpleProtectInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'consumerscore' => $this->consumerscore,
-            'consumerscoreHelper' => $this->consumerscoreHelper,
             'checkoutSession' => $checkoutSession,
             'paymentBan' => $this->paymentBan,
-            'addresscheck' => $addresscheck,
+            'simpleProtect' => $this->simpleProtect
         ]);
     }
 
     public function testAfterGetAvailableMethodsPreviousCheck()
     {
         $this->consumerscore->method('sendRequest')->willReturn(true);
-        $this->consumerscoreHelper->method('getWorstScore')->willReturn('Y');
 
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_DEBIT);
+        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_ADVANCE_PAYMENT);
         $paymentMethods = [$payment];
+
+        $this->simpleProtect->method('handlePrePaymentSelection')->willReturn($paymentMethods);
 
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
@@ -147,13 +135,14 @@ class MethodListTest extends BaseTestCase
     public function testAfterGetAvailableMethods()
     {
         $this->consumerscore->method('sendRequest')->willReturn(['score' => 'Y']);
-        $this->consumerscoreHelper->method('getWorstScore')->willReturn('R');
 
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_CASH_ON_DELIVERY);
         $paymentMethods = [$payment];
+
+        $this->simpleProtect->method('handlePrePaymentSelection')->willReturn($paymentMethods);
 
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
@@ -165,13 +154,14 @@ class MethodListTest extends BaseTestCase
     public function testAfterGetAvailableMethodsEmpty()
     {
         $this->consumerscore->method('sendRequest')->willReturn(['score' => 'Y', 'personstatus' => 'PPV']);
-        $this->consumerscoreHelper->method('getWorstScore')->willReturn('R');
 
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_BARZAHLEN);
         $paymentMethods = [$payment];
+
+        $this->simpleProtect->method('handlePrePaymentSelection')->willReturn([]);
 
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
@@ -183,13 +173,14 @@ class MethodListTest extends BaseTestCase
     public function testAfterGetAvailableMethodsBanRegistered()
     {
         $this->consumerscore->method('sendRequest')->willReturn(true);
-        $this->consumerscoreHelper->method('getWorstScore')->willReturn('Y');
 
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_DEBIT);
         $paymentMethods = [$payment];
+
+        $this->simpleProtect->method('handlePrePaymentSelection')->willReturn($paymentMethods);
 
         $this->quote->method('getCustomerId')->willReturn('5');
         $ban = [PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00'];
@@ -202,13 +193,14 @@ class MethodListTest extends BaseTestCase
     public function testAfterGetAvailableMethodsBanGuest()
     {
         $this->consumerscore->method('sendRequest')->willReturn(true);
-        $this->consumerscoreHelper->method('getWorstScore')->willReturn('Y');
 
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_DEBIT);
         $paymentMethods = [$payment];
+
+        $this->simpleProtect->method('handlePrePaymentSelection')->willReturn($paymentMethods);
 
         $this->quote->method('getCustomerId')->willReturn(null);
 
@@ -219,13 +211,14 @@ class MethodListTest extends BaseTestCase
     public function testAfterGetAvailableMethodsRemoveAmazonPay()
     {
         $this->consumerscore->method('sendRequest')->willReturn(true);
-        $this->consumerscoreHelper->method('getWorstScore')->willReturn('Y');
 
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_AMAZONPAY);
         $paymentMethods = [$payment];
+
+        $this->simpleProtect->method('handlePrePaymentSelection')->willReturn($paymentMethods);
 
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);

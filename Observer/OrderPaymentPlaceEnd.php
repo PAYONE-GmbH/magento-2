@@ -38,23 +38,6 @@ use Magento\Sales\Model\Order\Payment;
 class OrderPaymentPlaceEnd implements ObserverInterface
 {
     /**
-     * PAYONE payment helper
-     *
-     * @var Consumerscore
-     */
-    protected $consumerscoreHelper;
-
-    /**
-     * Constructor
-     *
-     * @param Consumerscore $consumerscoreHelper
-     */
-    public function __construct(Consumerscore $consumerscoreHelper)
-    {
-        $this->consumerscoreHelper = $consumerscoreHelper;
-    }
-
-    /**
      * Handle order status
      *
      * @param  Observer $observer
@@ -82,8 +65,5 @@ class OrderPaymentPlaceEnd implements ObserverInterface
     {
         // set status to new - pending on new orders
         $this->handleOrderStatus($observer);
-
-        // increment counter for every order, needed for the A/B test feature
-        $this->consumerscoreHelper->incrementConsumerscoreSampleCounter();
     }
 }

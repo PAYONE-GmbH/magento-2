@@ -40,175 +40,21 @@ use Payone\Core\Model\Source\PersonStatus;
 class CheckoutSubmitBefore implements ObserverInterface
 {
     /**
-     * PAYONE consumerscore request model
+     * PAYONE Simple Protect implementation
      *
-     * @var \Payone\Core\Model\Api\Request\Consumerscore
+     * @var \Payone\Core\Model\SimpleProtect\SimpleProtectInterface
      */
-    protected $consumerscore;
-
-    /**
-     * Consumerscore helper
-     *
-     * @var \Payone\Core\Helper\Consumerscore
-     */
-    protected $consumerscoreHelper;
-
-    /**
-     * Addresscheck management object
-     *
-     * @var \Payone\Core\Model\Risk\Addresscheck
-     */
-    protected $addresscheck;
+    protected $simpleProtect;
 
     /**
      * Constructor
      *
-     * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
-     * @param \Payone\Core\Helper\Consumerscore            $consumerscoreHelper
-     * @param \Payone\Core\Model\Risk\Addresscheck         $addresscheck
+     * @param \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
      */
     public function __construct(
-        \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
-        \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
-        \Payone\Core\Model\Risk\Addresscheck $addresscheck
+        \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
     ) {
-        $this->consumerscore = $consumerscore;
-        $this->consumerscoreHelper = $consumerscoreHelper;
-        $this->addresscheck = $addresscheck;
-    }
-
-    /**
-     * Get parameter from config
-     *
-     * @param  string $sParam
-     * @param  bool   $blIsAddresscheck
-     * @return string
-     */
-    public function getConfigParam($sParam, $blIsAddresscheck = false)
-    {
-        $sGroup = 'creditrating';
-        if ($blIsAddresscheck === true) {
-            $sGroup = 'address_check';
-        }
-        return $this->consumerscoreHelper->getConfigParam($sParam, $sGroup, 'payone_protect');
-    }
-
-    /**
-     * Determine if creditrating is needed
-     *
-     * @param  Quote $oQuote
-     * @return bool
-     */
-    public function isCreditratingNeeded(Quote $oQuote)
-    {
-        if (!$this->consumerscoreHelper->isCreditratingNeeded(Event::AFTER_PAYMENT, $oQuote->getGrandTotal())) {
-            return false;
-        }
-
-        $oMethodInstance = $oQuote->getPayment()->getMethodInstance();
-        $sPaymentCode = $oMethodInstance->getCode();
-        $sPaymentTypesToCheck = $this->getConfigParam('enabled_for_payment_methods');
-        $aPaymentTypesToCheck = explode(',', $sPaymentTypesToCheck);
-        if (array_search($sPaymentCode, $aPaymentTypesToCheck) === false) {
-            return false;
-        }
-
-        if ($oMethodInstance->getInfoInstance()->getAdditionalInformation('payone_boni_agreement') === false) {
-            return false; // agreement checkbox was not checked by the customer
-        }
-
-        return true;
-    }
-
-    /**
-     * Determine if the payment type can be used with this score
-     *
-     * @param  Quote $oQuote
-     * @param  string $sScore
-     * @return bool
-     */
-    public function isPaymentApplicableForScore(Quote $oQuote, $sScore)
-    {
-        if ($sScore == 'G') {
-            return true;
-        }
-
-        $sPaymentCode = $oQuote->getPayment()->getMethodInstance()->getCode();
-
-        $aYellowMethods = $this->consumerscoreHelper->getAllowedMethodsForScore('Y');
-        $aRedMethods = $this->consumerscoreHelper->getAllowedMethodsForScore('R');
-
-        if ($sScore == 'Y' && (array_search($sPaymentCode, $aYellowMethods) !== false ||
-                array_search($sPaymentCode, $aRedMethods) !== false)) {
-            return true;
-        } elseif ($sScore == 'R' && array_search($sPaymentCode, $aRedMethods) !== false) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     *
-     * @param  array $aResponse
-     * @return bool
-     */
-    public function checkoutNeedsToBeStopped($aResponse)
-    {
-        if (!$aResponse || (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
-                && $this->getConfigParam('handle_response_error') == 'stop_checkout')) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Filter payment methods by the creditrating result if applicable
-     *
-     * @param  AddressInterface $oBilling
-     * @return string
-     * @throws LocalizedException
-     */
-    public function getScoreByCreditrating(AddressInterface $oBilling)
-    {
-        $aResponse = $this->consumerscore->sendRequest($oBilling);
-        if ($aResponse === true) { // creditrating not executed because of a previous check
-            $this->consumerscoreHelper->copyOldStatusToNewAddress($oBilling);
-        }
-
-        if ($this->checkoutNeedsToBeStopped($aResponse)) {
-            $sErrorMsg = $this->getConfigParam('stop_checkout_message');
-            if (empty($sErrorMsg)) {
-                $sErrorMsg = 'An error occured during the credit check.';
-            }
-            throw new LocalizedException(__($sErrorMsg));
-        }
-
-        if (isset($aResponse['score'])) {
-            $oBilling->setPayoneProtectScore($aResponse['score'])->save();
-        }
-
-        $sScore = $oBilling->getPayoneProtectScore();
-        if (isset($aResponse['personstatus']) && $aResponse['personstatus'] !== PersonStatus::NONE) {
-            $aMapping = $this->addresscheck->getPersonstatusMapping();
-            if (array_key_exists($aResponse['personstatus'], $aMapping)) {
-                $sScore = $this->consumerscoreHelper->getWorstScore([$sScore, $aMapping[$aResponse['personstatus']]]);
-            }
-        }
-        return $sScore;
-    }
-
-    /**
-     * Get error message for when the creditrating failed because the score is insufficient
-     *
-     * @return string
-     */
-    public function getInsufficientScoreMessage()
-    {
-        $sErrorMsg = $this->getConfigParam('insufficient_score_message');
-        if (empty($sErrorMsg)) {
-            $sErrorMsg = 'An error occured during the credit check.';
-        }
-        return $sErrorMsg;
+        $this->simpleProtect = $simpleProtect;
     }
 
     /**
@@ -226,23 +72,8 @@ class CheckoutSubmitBefore implements ObserverInterface
             return;
         }
 
-        $oBilling = $oQuote->getBillingAddress();
-        $oShipping = $oQuote->getShippingAddress();
-
-        $aScores = [];
-        if ($this->getConfigParam('enabled', true)) { // is addresscheck active
-            $aScores[] = $oBilling->getPayoneAddresscheckScore();
-            $aScores[] = $oShipping->getPayoneAddresscheckScore();
-        }
-
-        if ($this->isCreditratingNeeded($oQuote) === true) {
-            $aScores[] = $this->getScoreByCreditrating($oBilling);
-        }
-
-        $sScore = $this->consumerscoreHelper->getWorstScore($aScores);
-        $blSuccess = $this->isPaymentApplicableForScore($oQuote, $sScore);
-        if ($blSuccess === false) {
-            throw new LocalizedException(__($this->getInsufficientScoreMessage()));
-        }
+        // Send code execution to simple protect custom implementation
+        // Only possible interaction in there is throwing an exception to stop order creation
+        $this->simpleProtect->handlePostPaymentSelection($oQuote);
     }
 }

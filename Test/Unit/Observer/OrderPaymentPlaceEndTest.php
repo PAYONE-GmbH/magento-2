@@ -54,17 +54,7 @@ class OrderPaymentPlaceEndTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $consumerscoreHelper = $this->getMockBuilder(Consumerscore::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalDataEntry', 'getConsumerscoreSampleCounter', 'incrementConsumerscoreSampleCounter'])
-            ->getMock();
-        $consumerscoreHelper->method('getAdditionalDataEntry')->willReturn(true);
-        $consumerscoreHelper->method('getConsumerscoreSampleCounter')->willReturn(0);
-        $consumerscoreHelper->method('incrementConsumerscoreSampleCounter')->willReturn(1);
-
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'consumerscoreHelper' => $consumerscoreHelper
-        ]);
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, []);
     }
 
     public function testExecute()

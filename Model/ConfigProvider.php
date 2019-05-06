@@ -84,13 +84,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @var \Magento\Framework\Escaper
      */
     protected $escaper;
-    
-    /**
-     * PAYONE request helper
-     *
-     * @var \Payone\Core\Helper\Consumerscore
-     */
-    protected $consumerscoreHelper;
 
     /**
      * Privacy declaration object
@@ -121,21 +114,28 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $savedPaymentData;
 
     /**
+     * PAYONE Simple Protect implementation
+     *
+     * @var \Payone\Core\Model\SimpleProtect\SimpleProtectInterface
+     */
+    protected $simpleProtect;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Payment\Model\CcConfig                      $ccConfig
-     * @param \Magento\Payment\Helper\Data                         $dataHelper
-     * @param \Payone\Core\Helper\Country                          $countryHelper
-     * @param \Payone\Core\Helper\Customer                         $customerHelper
-     * @param \Payone\Core\Helper\Payment                          $paymentHelper
-     * @param \Payone\Core\Helper\HostedIframe                     $hostedIframeHelper
-     * @param \Payone\Core\Helper\Request                          $requestHelper
-     * @param \Magento\Framework\Escaper                           $escaper
-     * @param \Payone\Core\Helper\Consumerscore                    $consumerscoreHelper
-     * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
-     * @param \Magento\Checkout\Model\Session                      $checkoutSession
-     * @param \Payone\Core\Helper\Shop                             $shopHelper
-     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData    $savedPaymentData
+     * @param \Magento\Payment\Model\CcConfig                         $ccConfig
+     * @param \Magento\Payment\Helper\Data                            $dataHelper
+     * @param \Payone\Core\Helper\Country                             $countryHelper
+     * @param \Payone\Core\Helper\Customer                            $customerHelper
+     * @param \Payone\Core\Helper\Payment                             $paymentHelper
+     * @param \Payone\Core\Helper\HostedIframe                        $hostedIframeHelper
+     * @param \Payone\Core\Helper\Request                             $requestHelper
+     * @param \Magento\Framework\Escaper                              $escaper
+     * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration    $privacyDeclaration
+     * @param \Magento\Checkout\Model\Session                         $checkoutSession
+     * @param \Payone\Core\Helper\Shop                                $shopHelper
+     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData       $savedPaymentData
+     * @param \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -146,11 +146,11 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Payone\Core\Helper\HostedIframe $hostedIframeHelper,
         \Payone\Core\Helper\Request $requestHelper,
         \Magento\Framework\Escaper $escaper,
-        \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
+        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
+        \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -160,11 +160,11 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->hostedIframeHelper = $hostedIframeHelper;
         $this->requestHelper = $requestHelper;
         $this->escaper = $escaper;
-        $this->consumerscoreHelper = $consumerscoreHelper;
         $this->privacyDeclaration = $privacyDeclaration;
         $this->checkoutSession = $checkoutSession;
         $this->shopHelper = $shopHelper;
         $this->savedPaymentData = $savedPaymentData;
+        $this->simpleProtect = $simpleProtect;
     }
 
     /**
@@ -229,14 +229,9 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'idealBankGroups' => Ideal::getBankGroups(),
             'customerHasGivenGender' => $this->customerHelper->customerHasGivenGender(),
             'customerBirthday' => $this->customerHelper->getCustomerBirthday(),
-            'addresscheckEnabled' => (int)$this->requestHelper->getConfigParam('enabled', 'address_check', 'payone_protect'),
-            'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
-            'addresscheckShippingEnabled' => $this->requestHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,
-            'addresscheckConfirmCorrection' => (int)$this->requestHelper->getConfigParam('confirm_address_correction', 'address_check', 'payone_protect'),
-            'canShowPaymentHintText' => $this->consumerscoreHelper->canShowPaymentHintText(),
-            'paymentHintText' => $this->requestHelper->getConfigParam('payment_hint_text', 'creditrating', 'payone_protect'),
-            'canShowAgreementMessage' => $this->consumerscoreHelper->canShowAgreementMessage(),
-            'agreementMessage' => $this->requestHelper->getConfigParam('agreement_message', 'creditrating', 'payone_protect'),
+            'addresscheckBillingEnabled' => $this->simpleProtect->isAddresscheckBillingEnabled(),
+            'addresscheckShippingEnabled' => $this->simpleProtect->isAddresscheckShippingEnabled(),
+            'addresscheckConfirmCorrection' => $this->simpleProtect->isAddresscheckCorrectionConfirmationNeeded(),
             'payolution' => $this->getPayolutionConfig(),
             'canceledPaymentMethod' => $this->getCanceledPaymentMethod(),
             'isError' => $this->checkoutSession->getPayoneIsError(),
