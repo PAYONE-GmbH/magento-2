@@ -57,9 +57,10 @@ class PersonStatusMappingTest extends BaseTestCase
 
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setForm', 'getForm', 'setName', 'setHtmlId', 'setValues'])
+            ->setMethods(['setForm', 'getForm', 'setName', 'setHtmlId', 'setValues', 'getElementHtml'])
             ->getMock();
         $element->method('getForm')->willReturn($form);
+        $element->method('getElementHtml')->willReturn('html');
 
         $elementFactory = $this->getMockBuilder(Factory::class)->disableOriginalConstructor()->getMock();
         $elementFactory->method('create')->willReturn($element);

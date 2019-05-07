@@ -165,6 +165,22 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+
+        if (version_compare($context->getVersion(), '2.5.2', '<')) {
+            // Magento 2.3.0 changed Table::TYPE_FLOAT to have no decimals.. so type has to be changed
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'price', ['type' => Table::TYPE_DECIMAL, 'length' => '20,4', 'default' => '0']
+            );
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'balance', ['type' => Table::TYPE_DECIMAL, 'length' => '20,4', 'default' => '0']
+            );
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'receivable', ['type' => Table::TYPE_DECIMAL, 'length' => '20,4', 'default' => '0']
+            );
+        }
     }
 
     /**
@@ -197,8 +213,8 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
      */
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        $this->addNewColumns($setup, $context);
         $this->addNewTables($setup, $context);
+        $this->addNewColumns($setup, $context);
         $this->modifyColumns($setup, $context);
         $this->addIndexes($setup, $context);
     }
