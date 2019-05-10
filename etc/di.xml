@@ -76,4 +76,7 @@
     <type name="Magento\Sales\Model\Service\CreditmemoService">
         <plugin name="Payone_Core_plugin_CreditmemoService" type="Payone\Core\Model\Plugins\CreditmemoService" sortOrder="1" />
     </type>
+    <type name="Magento\Framework\Webapi\ErrorProcessor">
+        <plugin name="Payone_Core_plugin_WebapiErrorProcessor" type="Payone\Core\Model\Plugins\WebapiErrorProcessor" sortOrder="1"/>
+    </type>
 </config>

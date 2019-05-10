@@ -29,6 +29,7 @@ namespace Payone\Core\Model\SimpleProtect;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\Exception\LocalizedException;
+use Payone\Core\Model\Exception\FilterMethodListException;
 use Magento\Quote\Api\Data\AddressInterface;
 
 class SimpleProtect implements SimpleProtectInterface
@@ -52,7 +53,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be extended for individual custom behaviour
+     * This method can be implemented for individual custom behaviour
      *
      * Extending this method gives the following possibilities:
      * 1. Filtering out payment methods based on your own rule set
@@ -68,15 +69,18 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be extended for individual custom behaviour
+     * This method can be implemented for individual custom behaviour
      *
      * Extending this method gives the following possibilities:
      * 1. Throwing a LocalizedException will stop the order creation and throw the user back to payment selection with the given thrown message
-     * 2. Finishing the method - so throwing no Exception will finish the order creation
+     * 2. Throwing a FilterMethodListException with an array of safe payment methods will stop the order creation and
+     *    throw the user back to payment selection with the given thrown message and remove all other payment methods except for the given ones
+     * 3. Finishing the method - so throwing no Exception will finish the order creation
      *
      * @param  Quote $oQuote
      * @return void
      * @throws LocalizedException
+     * @throws FilterMethodListException
      */
     public function handlePostPaymentSelection(Quote $oQuote)
     {
@@ -84,7 +88,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be extended for individual custom behaviour
+     * This method can be implemented for individual custom behaviour
      *
      * Extending this method gives the following possibilities:
      * 1. Returning true will just continue the process without changing anything
@@ -103,7 +107,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be extended for individual custom behaviour
+     * This method can be implemented for individual custom behaviour
      *
      * Extending this method gives the following possibilities:
      * 1. Returning true will just continue the process without changing anything
@@ -122,7 +126,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be extended for individual custom behaviour
+     * This method can be implemented for individual custom behaviour
      *
      * Extend this method to return true to enable addresscheck frontend ajax calls for billing address
      *
@@ -134,7 +138,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be extended for individual custom behaviour
+     * This method can be implemented for individual custom behaviour
      *
      * Extend this method to return true to enable addresscheck frontend ajax calls for shipping address
      *
@@ -146,7 +150,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be extended for individual custom behaviour
+     * This method can be implemented for individual custom behaviour
      *
      * Extend this method to return false to disable address correction confirmation
      *
