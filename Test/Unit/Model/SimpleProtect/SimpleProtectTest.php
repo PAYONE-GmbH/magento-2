@@ -84,6 +84,14 @@ class SimpleProtectTest extends BaseTestCase
         $this->assertTrue($result);
     }
 
+    public function testHandlePreCheckout()
+    {
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->handlePreCheckout($quote);
+        $this->assertCount(2, $result);
+    }
+
     public function testIsAddresscheckBillingEnabled()
     {
         $result = $this->classToTest->isAddresscheckBillingEnabled();
