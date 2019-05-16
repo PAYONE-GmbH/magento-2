@@ -46,7 +46,7 @@ class Addresscheck implements AddresscheckInterface
     /**
      * PAYONE Simple Protect implementation
      *
-     * @var \Payone\Core\Model\SimpleProtect\SimpleProtectInterface
+     * @var \Payone\Core\Model\SimpleProtect\SimpleProtect
      */
     protected $simpleProtect;
 
@@ -54,11 +54,11 @@ class Addresscheck implements AddresscheckInterface
      * Constructor
      *
      * @param \Payone\Core\Service\V1\Data\AddresscheckResponseFactory $responseFactory
-     * @param \Payone\Core\Model\SimpleProtect\SimpleProtectInterface  $simpleProtect
+     * @param \Payone\Core\Model\SimpleProtect\SimpleProtect           $simpleProtect
      */
     public function __construct(
         \Payone\Core\Service\V1\Data\AddresscheckResponseFactory $responseFactory,
-        \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
+        \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
     ) {
         $this->responseFactory = $responseFactory;
         $this->simpleProtect = $simpleProtect;

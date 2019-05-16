@@ -116,26 +116,26 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     /**
      * PAYONE Simple Protect implementation
      *
-     * @var \Payone\Core\Model\SimpleProtect\SimpleProtectInterface
+     * @var \Payone\Core\Model\SimpleProtect\SimpleProtect
      */
     protected $simpleProtect;
 
     /**
      * Constructor
      *
-     * @param \Magento\Payment\Model\CcConfig                         $ccConfig
-     * @param \Magento\Payment\Helper\Data                            $dataHelper
-     * @param \Payone\Core\Helper\Country                             $countryHelper
-     * @param \Payone\Core\Helper\Customer                            $customerHelper
-     * @param \Payone\Core\Helper\Payment                             $paymentHelper
-     * @param \Payone\Core\Helper\HostedIframe                        $hostedIframeHelper
-     * @param \Payone\Core\Helper\Request                             $requestHelper
-     * @param \Magento\Framework\Escaper                              $escaper
-     * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration    $privacyDeclaration
-     * @param \Magento\Checkout\Model\Session                         $checkoutSession
-     * @param \Payone\Core\Helper\Shop                                $shopHelper
-     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData       $savedPaymentData
-     * @param \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
+     * @param \Magento\Payment\Model\CcConfig                      $ccConfig
+     * @param \Magento\Payment\Helper\Data                         $dataHelper
+     * @param \Payone\Core\Helper\Country                          $countryHelper
+     * @param \Payone\Core\Helper\Customer                         $customerHelper
+     * @param \Payone\Core\Helper\Payment                          $paymentHelper
+     * @param \Payone\Core\Helper\HostedIframe                     $hostedIframeHelper
+     * @param \Payone\Core\Helper\Request                          $requestHelper
+     * @param \Magento\Framework\Escaper                           $escaper
+     * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
+     * @param \Magento\Checkout\Model\Session                      $checkoutSession
+     * @param \Payone\Core\Helper\Shop                             $shopHelper
+     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData    $savedPaymentData
+     * @param \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -150,7 +150,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
-        \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
+        \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;

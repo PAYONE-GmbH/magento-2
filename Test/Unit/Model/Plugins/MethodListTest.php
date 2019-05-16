@@ -38,7 +38,7 @@ use Magento\Payment\Model\MethodInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Model\ResourceModel\PaymentBan;
-use Payone\Core\Model\SimpleProtect\SimpleProtectInterface;
+use Payone\Core\Model\SimpleProtect\SimpleProtect;
 
 class MethodListTest extends BaseTestCase
 {
@@ -68,7 +68,7 @@ class MethodListTest extends BaseTestCase
     private $quote;
 
     /**
-     * @var SimpleProtectInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SimpleProtect|\PHPUnit_Framework_MockObject_MockObject
      */
     private $simpleProtect;
 
@@ -103,7 +103,7 @@ class MethodListTest extends BaseTestCase
 
         $this->paymentBan = $this->getMockBuilder(PaymentBan::class)->disableOriginalConstructor()->getMock();
 
-        $this->simpleProtect = $this->getMockBuilder(SimpleProtectInterface::class)->disableOriginalConstructor()->getMock();
+        $this->simpleProtect = $this->getMockBuilder(SimpleProtect::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'consumerscore' => $this->consumerscore,

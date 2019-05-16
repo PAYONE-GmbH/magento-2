@@ -42,17 +42,17 @@ class CheckoutSubmitBefore implements ObserverInterface
     /**
      * PAYONE Simple Protect implementation
      *
-     * @var \Payone\Core\Model\SimpleProtect\SimpleProtectInterface
+     * @var \Payone\Core\Model\SimpleProtect\SimpleProtect
      */
     protected $simpleProtect;
 
     /**
      * Constructor
      *
-     * @param \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
+     * @param \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
      */
     public function __construct(
-        \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
+        \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
     ) {
         $this->simpleProtect = $simpleProtect;
     }

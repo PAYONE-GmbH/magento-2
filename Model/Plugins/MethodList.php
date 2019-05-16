@@ -53,21 +53,21 @@ class MethodList
     /**
      * PAYONE Simple Protect implementation
      *
-     * @var \Payone\Core\Model\SimpleProtect\SimpleProtectInterface
+     * @var \Payone\Core\Model\SimpleProtect\SimpleProtect
      */
     protected $simpleProtect;
 
     /**
      * Constructor
      *
-     * @param \Magento\Checkout\Model\Session                         $checkoutSession
-     * @param \Payone\Core\Model\ResourceModel\PaymentBan             $paymentBan
-     * @param \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
+     * @param \Magento\Checkout\Model\Session                $checkoutSession
+     * @param \Payone\Core\Model\ResourceModel\PaymentBan    $paymentBan
+     * @param \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\ResourceModel\PaymentBan $paymentBan,
-        \Payone\Core\Model\SimpleProtect\SimpleProtectInterface $simpleProtect
+        \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->paymentBan = $paymentBan;

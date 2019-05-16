@@ -33,7 +33,7 @@ use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Payone\Core\Service\V1\Data\AddresscheckResponseFactory;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-use Payone\Core\Model\SimpleProtect\SimpleProtectInterface;
+use Payone\Core\Model\SimpleProtect\SimpleProtect;
 use Magento\Framework\Exception\LocalizedException;
 
 class AddresscheckTest extends BaseTestCase
@@ -51,7 +51,7 @@ class AddresscheckTest extends BaseTestCase
     /**
      * PAYONE Simple Protect implementation
      *
-     * @var SimpleProtectInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SimpleProtect|\PHPUnit_Framework_MockObject_MockObject
      */
     private $simpleProtect;
 
@@ -66,7 +66,7 @@ class AddresscheckTest extends BaseTestCase
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
-        $this->simpleProtect = $this->getMockBuilder(SimpleProtectInterface::class)->disableOriginalConstructor()->getMock();
+        $this->simpleProtect = $this->getMockBuilder(SimpleProtect::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'responseFactory' => $responseFactory,

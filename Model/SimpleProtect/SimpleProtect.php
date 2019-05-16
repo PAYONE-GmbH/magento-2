@@ -31,8 +31,9 @@ use Magento\Quote\Model\Quote;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Model\Exception\FilterMethodListException;
 use Magento\Quote\Api\Data\AddressInterface;
+use Payone\Core\Model\PayoneConfig;
 
-class SimpleProtect implements SimpleProtectInterface
+class SimpleProtect
 {
     /**
      * PAYONE Protect model providing access to consumerscore and addresscheck requests
@@ -53,7 +54,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be implemented for individual custom behaviour
+     * This method can be extended for individual custom behaviour
      *
      * Extending this method gives the following possibilities:
      * 1. Filtering out payment methods based on your own rule set
@@ -69,7 +70,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be implemented for individual custom behaviour
+     * This method can be extended for individual custom behaviour
      *
      * Extending this method gives the following possibilities:
      * 1. Throwing a LocalizedException will stop the order creation and throw the user back to payment selection with the given thrown message
@@ -88,12 +89,12 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be implemented for individual custom behaviour
+     * This method can be extended for individual custom behaviour
      *
      * Extending this method gives the following possibilities:
      * 1. Returning true will just continue the process without changing anything
      * 2. Returning a (changed) address object instance of AddressInterface will show an address correction prompt to the customer
-     * 3. Throwing a LocalizedException will show the given exception message to the customer
+     * 3. Throwing a LocalizedException will show the given exception message to the customer with a javascript alert
      *
      * @param AddressInterface $oAddressData
      * @param bool             $blIsVirtual
@@ -107,12 +108,12 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be implemented for individual custom behaviour
+     * This method can be extended for individual custom behaviour
      *
      * Extending this method gives the following possibilities:
      * 1. Returning true will just continue the process without changing anything
      * 2. Returning a (changed) address object instance of AddressInterface will show an address correction prompt to the customer
-     * 3. Throwing a LocalizedException will show the given exception message to the customer
+     * 3. Throwing a LocalizedException will show the given exception message to the customer with a javascript alert
      *
      * @param AddressInterface $oAddressData
      * @param bool             $blIsVirtual
@@ -126,7 +127,25 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be implemented for individual custom behaviour
+     * This method can be extended for individual custom behaviour
+     *
+     * Extending this method gives the following possibilities:
+     * 1. Return all allowed express checkout types to show them in your shop
+     * 2. Express checkout types there are not returned, won't be shown in your shop
+     *
+     * @param  Quote $oQuote
+     * @return string[]
+     */
+    public function handlePreCheckout(Quote $oQuote)
+    {
+        return [
+            PayoneConfig::EXPRESS_PAYPAL,
+            PayoneConfig::EXPRESS_AMAZONPAY,
+        ];
+    }
+
+    /**
+     * This method can be extended for individual custom behaviour
      *
      * Extend this method to return true to enable addresscheck frontend ajax calls for billing address
      *
@@ -138,7 +157,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be implemented for individual custom behaviour
+     * This method can be extended for individual custom behaviour
      *
      * Extend this method to return true to enable addresscheck frontend ajax calls for shipping address
      *
@@ -150,7 +169,7 @@ class SimpleProtect implements SimpleProtectInterface
     }
 
     /**
-     * This method can be implemented for individual custom behaviour
+     * This method can be extended for individual custom behaviour
      *
      * Extend this method to return false to disable address correction confirmation
      *
