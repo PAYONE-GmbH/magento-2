@@ -226,7 +226,7 @@ class MethodList
     public function removeAmazonPay($aPaymentMethods)
     {
         for($i = 0; $i < count($aPaymentMethods); $i++) {
-            if ($aPaymentMethods[$i]->getCode() == PayoneConfig::METHOD_AMAZONPAY) {
+            if (isset($aPaymentMethods[$i]) && $aPaymentMethods[$i]->getCode() == PayoneConfig::METHOD_AMAZONPAY) {
                 unset($aPaymentMethods[$i]);
             }
         }
