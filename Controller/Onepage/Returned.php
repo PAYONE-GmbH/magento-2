@@ -196,10 +196,10 @@ class Returned extends \Magento\Framework\App\Action\Action
     protected function getCanceledOrder()
     {
         $order = $this->checkoutSession->getLastRealOrder();
-        if (!$order->getId() && !empty($this->checkoutSession->getPayoneCanceledOrder())) {
-            $order->loadByIncrementId($this->checkoutSession->getPayoneCanceledOrder());
+        if (!$order->getId() && !empty($this->getRequest()->getParam('incrementId'))) {
+            $order->loadByIncrementId($this->getRequest()->getParam('incrementId'));
         }
-        $this->checkoutSession->unsPayoneCanceledOrder();
+
         if ($order->getStatus() == Order::STATE_CANCELED) {
             return $order;
         }

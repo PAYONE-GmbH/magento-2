@@ -227,11 +227,16 @@ abstract class PayoneMethod extends BaseMethod
     /**
      * Return success url for redirect payment types
      *
+     * @param  Order $oOrder
      * @return string
      */
-    public function getSuccessUrl()
+    public function getSuccessUrl(Order $oOrder = null)
     {
-        return $this->url->getUrl('payone/onepage/returned');
+        $sAddedParams = '';
+        if ($oOrder !== null) {
+            $sAddedParams = '?incrementId='.$oOrder->getIncrementId();
+        }
+        return $this->url->getUrl('payone/onepage/returned').$sAddedParams;
     }
 
     /**

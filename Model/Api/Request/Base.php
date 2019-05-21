@@ -28,6 +28,7 @@ namespace Payone\Core\Model\Api\Request;
 
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\PayoneMethod;
+use Magento\Sales\Model\Order;
 
 /**
  * Base class for all PAYONE API requests
@@ -293,11 +294,12 @@ abstract class Base
      * Add the redirect urls to the request
      *
      * @param  PayoneMethod $oPayment
+     * @param  Order        $oOrder
      * @return void
      */
-    protected function addRedirectUrls(PayoneMethod $oPayment)
+    protected function addRedirectUrls(PayoneMethod $oPayment, Order $oOrder = null)
     {
-        $this->addParameter('successurl', $oPayment->getSuccessUrl());
+        $this->addParameter('successurl', $oPayment->getSuccessUrl($oOrder));
         $this->addParameter('errorurl', $oPayment->getErrorUrl());
         $this->addParameter('backurl', $oPayment->getCancelUrl());
     }
