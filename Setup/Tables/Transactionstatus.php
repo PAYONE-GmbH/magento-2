@@ -78,18 +78,18 @@ class Transactionstatus
                 'option' => ['nullable' => false]
             ],
             'price' => [
-                'type' => Table::TYPE_FLOAT,
-                'length' => null,
+                'type' => Table::TYPE_DECIMAL,
+                'length' => '20,4',
                 'option' => ['default' => '0']
             ],
             'balance' => [
-                'type' => Table::TYPE_FLOAT,
-                'length' => null,
+                'type' => Table::TYPE_DECIMAL,
+                'length' => '20,4',
                 'option' => ['default' => '0']
             ],
             'receivable' => [
-                'type' => Table::TYPE_FLOAT,
-                'length' => null,
+                'type' => Table::TYPE_DECIMAL,
+                'length' => '20,4',
                 'option' => ['default' => '0']
             ],
             'currency' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
