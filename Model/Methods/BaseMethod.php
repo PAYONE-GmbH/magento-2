@@ -289,8 +289,10 @@ abstract class BaseMethod extends AbstractMethod
     public function authorize(InfoInterface $payment, $amount)
     {
         $oReturn = parent::authorize($payment, $amount); // execute Magento parent authorization
-        if (!$this->checkoutSession->getPayoneCreatingSubstituteOrder()) {
+        if (!$this->_registry->registry('payone_creating_substitute_order')) {
             $this->sendPayoneAuthorization($payment, $amount); // send auth request to PAYONE
+        } else {
+            $payment->getOrder()->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
         }
         return $oReturn; // return magento parent auth value
     }

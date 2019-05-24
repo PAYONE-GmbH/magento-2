@@ -42,25 +42,11 @@ class Returned extends \Magento\Framework\App\Action\Action
     protected $checkoutSession;
 
     /**
-     * Quote management object
+     * PAYONE substitute order handler
      *
-     * @var \Magento\Quote\Model\QuoteManagement
+     * @var \Payone\Core\Model\Handler\SubstituteOrder\Proxy
      */
-    protected $quoteManagement;
-
-    /**
-     * Order repository
-     *
-     * @var \Magento\Sales\Api\OrderRepositoryInterface
-     */
-    protected $orderRepository;
-
-    /**
-     * Order repository
-     *
-     * @var \Magento\Quote\Api\CartRepositoryInterface
-     */
-    protected $quoteRepository;
+    protected $substituteOrder;
 
     /**
      * PAYONE database helper
@@ -70,49 +56,23 @@ class Returned extends \Magento\Framework\App\Action\Action
     protected $databaseHelper;
 
     /**
-     * TransactionStatus factory
-     *
-     * @var \Payone\Core\Model\Entities\TransactionStatusFactory
-     */
-    protected $statusFactory;
-
-    /**
-     * TransactionStatus handler
-     *
-     * @var \Payone\Core\Model\Handler\TransactionStatus
-     */
-    protected $transactionStatusHandler;
-
-    /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Action\Context                $context
-     * @param \Magento\Checkout\Model\Session                      $checkoutSession
-     * @param \Magento\Quote\Model\QuoteManagement                 $quoteManagement
-     * @param \Magento\Sales\Api\OrderRepositoryInterface          $orderRepository
-     * @param \Magento\Quote\Api\CartRepositoryInterface           $quoteRepository
-     * @param \Payone\Core\Helper\Database                         $databaseHelper
-     * @param \Payone\Core\Model\Entities\TransactionStatusFactory $statusFactory
-     * @param \Payone\Core\Model\Handler\TransactionStatus         $transactionStatusHandler
+     * @param \Magento\Framework\App\Action\Context            $context
+     * @param \Magento\Checkout\Model\Session                  $checkoutSession
+     * @param \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder
+     * @param \Payone\Core\Helper\Database                     $databaseHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Quote\Model\QuoteManagement $quoteManagement,
-        \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
-        \Payone\Core\Helper\Database $databaseHelper,
-        \Payone\Core\Model\Entities\TransactionStatusFactory $statusFactory,
-        \Payone\Core\Model\Handler\TransactionStatus $transactionStatusHandler
+        \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder,
+        \Payone\Core\Helper\Database $databaseHelper
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
-        $this->quoteManagement = $quoteManagement;
-        $this->orderRepository = $orderRepository;
+        $this->substituteOrder = $substituteOrder;
         $this->databaseHelper = $databaseHelper;
-        $this->quoteRepository = $quoteRepository;
-        $this->statusFactory = $statusFactory;
-        $this->transactionStatusHandler = $transactionStatusHandler;
 
         // Fix for Magento 2.3 CsrfValidator and backwards-compatibility to prior Magento 2 versions
         if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
@@ -120,69 +80,6 @@ class Returned extends \Magento\Framework\App\Action\Action
             if ($request instanceof Http && $request->isPost()) {
                 $request->setParam('ajax', true);
             }
-        }
-    }
-
-    /**
-     * Order was canceled before because of multi-tab browsing or back-button cancelling
-     * Create a clean order for the payment
-     *
-     * @param  Order $canceledOrder
-     * @return void
-     */
-    protected function createSubstituteOrder(Order $canceledOrder)
-    {
-        $this->checkoutSession->setPayoneCreatingSubstituteOrder(true);
-
-        $oOldQuote = $this->quoteRepository->get($canceledOrder->getQuoteId());
-        $oOldQuote->setIsActive(true);
-        $oOldQuote->setReservedOrderId(null);
-        $oOldQuote->save();
-
-        $orderId = $this->quoteManagement->placeOrder($oOldQuote->getId());
-        $newOrder = $this->orderRepository->get($orderId);
-
-        $oldData = $canceledOrder->getData();
-        foreach ($oldData as $sKey => $sValue) {
-            if (stripos($sKey, 'payone') !== false) {
-                $newOrder->setData($sKey, $sValue);
-            }
-        }
-
-        $newOrder->setPayoneCancelSubstituteIncrementId($canceledOrder->getIncrementId());
-        $newOrder->save();
-
-        $this->checkoutSession->setLastOrderId($newOrder->getId());
-        $this->checkoutSession->setLastRealOrderId($newOrder->getIncrementId());
-        $this->checkoutSession->getQuote()->setIsActive(false)->save();
-
-        $this->databaseHelper->relabelTransaction($canceledOrder->getId(), $newOrder->getId(), $newOrder->getPayment()->getId());
-        $this->databaseHelper->relabelApiProtocol($canceledOrder->getIncrementId(), $newOrder->getIncrementId());
-        $this->databaseHelper->relabelOrderPayment($canceledOrder->getIncrementId(), $newOrder->getId());
-
-        $this->handleTransactionStatus($canceledOrder, $newOrder);
-
-        $this->checkoutSession->unsPayoneCreatingSubstituteOrder();
-    }
-
-    /**
-     * Handle stored TransactionStatus
-     *
-     * @param  Order $canceledOrder
-     * @param  Order $newOrder
-     * @return void
-     */
-    protected function handleTransactionStatus(Order $canceledOrder, Order $newOrder)
-    {
-        $aTransactionStatusIds = $this->databaseHelper->getNotHandledTransactionsByOrderId($canceledOrder->getIncrementId());
-        foreach ($aTransactionStatusIds as $aRow) {
-            $oTransactionStatus = $this->statusFactory->create();
-            $oTransactionStatus->load($aRow['id']);
-
-            $this->transactionStatusHandler->handle($newOrder, $oTransactionStatus->getRawStatusArray());
-
-            $oTransactionStatus->setHasBeenHandled(true);
-            $oTransactionStatus->save();
         }
     }
 
@@ -197,7 +94,14 @@ class Returned extends \Magento\Framework\App\Action\Action
     {
         $order = $this->checkoutSession->getLastRealOrder();
         if (!$order->getId() && !empty($this->getRequest()->getParam('incrementId'))) {
-            $order->loadByIncrementId($this->getRequest()->getParam('incrementId'));
+            $sSubstituteIncrementId = $this->databaseHelper->getSubstituteOrderIncrementId($this->getRequest()->getParam('incrementId'));
+            if (!empty($sSubstituteIncrementId)) {
+                $order->loadByIncrementId($sSubstituteIncrementId);
+                $this->substituteOrder->updateCheckoutSession($order);
+                return false;
+            } else {
+                $order->loadByIncrementId($this->getRequest()->getParam('incrementId'));
+            }
         }
 
         if ($order->getStatus() == Order::STATE_CANCELED) {
@@ -218,7 +122,7 @@ class Returned extends \Magento\Framework\App\Action\Action
 
         $canceledOrder = $this->getCanceledOrder();
         if ($canceledOrder !== false) {
-            $this->createSubstituteOrder($canceledOrder);
+            $this->substituteOrder->createSubstituteOrder($canceledOrder);
         }
 
         $this->_redirect($this->_url->getUrl('checkout/onepage/success'));

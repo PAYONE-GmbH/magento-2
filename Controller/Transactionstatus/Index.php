@@ -77,6 +77,13 @@ class Index extends \Magento\Framework\App\Action\Action
     protected $resultRawFactory;
 
     /**
+     * PAYONE substitute order handler
+     *
+     * @var \Payone\Core\Model\Handler\SubstituteOrder\Proxy
+     */
+    protected $substituteOrder;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context              $context
@@ -86,6 +93,7 @@ class Index extends \Magento\Framework\App\Action\Action
      * @param \Payone\Core\Helper\Order                          $orderHelper
      * @param \Payone\Core\Model\Handler\TransactionStatus       $transactionStatusHandler,
      * @param \Magento\Framework\Controller\Result\RawFactory    $resultRawFactory
+     * @param \Payone\Core\Model\Handler\SubstituteOrder\Proxy   $substituteOrder
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -94,7 +102,8 @@ class Index extends \Magento\Framework\App\Action\Action
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Order $orderHelper,
         \Payone\Core\Model\Handler\TransactionStatus $transactionStatusHandler,
-        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
+        \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
+        \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder
     ) {
         parent::__construct($context);
         $this->transactionStatus = $transactionStatus;
@@ -103,6 +112,7 @@ class Index extends \Magento\Framework\App\Action\Action
         $this->orderHelper = $orderHelper;
         $this->transactionStatusHandler = $transactionStatusHandler;
         $this->resultRawFactory = $resultRawFactory;
+        $this->substituteOrder = $substituteOrder;
 
         // Fix for Magento 2.3 CsrfValidator and backwards-compatibility to prior Magento 2 versions
         if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
@@ -160,21 +170,19 @@ class Index extends \Magento\Framework\App\Action\Action
             return 'Key wrong or missing!';
         }
 
-        $blWillBeHandled = true;
         $oOrder = $this->orderHelper->getOrderByTxid($this->getParam('txid'));
         if (!$oOrder) {
             return 'Order not found';
         }
 
         if ($this->getParam('txaction') == 'appointed' && $oOrder->getStatus() == 'canceled') {
-            $blWillBeHandled = false; // order was already canceled, status will be handled in substitute order mechanism, if order is finished
+            // order was canceled in checkout, probably due to browser-back-button usage -> create a new order for incoming payment
+            $oOrder = $this->substituteOrder->createSubstituteOrder($oOrder, false);
         }
 
-        $this->logTransactionStatus($oOrder, $this->getPostArray(), $blWillBeHandled);
+        $this->logTransactionStatus($oOrder, $this->getPostArray(), true);
 
-        if ($blWillBeHandled === true) {
-            $this->transactionStatusHandler->handle($oOrder, $this->getPostArray());
-        }
+        $this->transactionStatusHandler->handle($oOrder, $this->getPostArray());
 
         return 'TSOK';
     }
