@@ -143,6 +143,14 @@ class SuccessTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testShowAmazonPendingMessage()
+    {
+        $this->checkoutSession->method('getShowAmazonPendingNotice')->willReturn(true);
+
+        $result = $this->classToTest->showAmazonPendingMessage();
+        $this->assertTrue($result);
+    }
+
     public function testToHtml()
     {
         $this->checkoutSession->method('getPayoneInstructionNotes')->willReturn('Dummy text');
