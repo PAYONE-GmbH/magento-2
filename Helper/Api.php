@@ -150,7 +150,7 @@ class Api extends Base
 
         if (!array_key_exists('status', $aResponse)) {
             $aResponse['status'] = 'ERROR';
-            $aResponse['errorcode'] = '903';
+            $aResponse['errorcode'] = '0';
             $aResponse['customermessage'] = 'No connection to external service provider possible (timeout)';
         }
 
