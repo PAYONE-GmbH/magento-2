@@ -45,6 +45,7 @@ use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection as InvoiceCollection;
+use Magento\Framework\Registry;
 
 class BaseMethodTest extends BaseTestCase
 {
@@ -85,6 +86,11 @@ class BaseMethodTest extends BaseTestCase
      */
     private $captureRequest;
 
+    /**
+     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $registry;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
@@ -94,13 +100,15 @@ class BaseMethodTest extends BaseTestCase
         $this->authorizationRequest = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
         $this->debitRequest = $this->getMockBuilder(Debit::class)->disableOriginalConstructor()->getMock();
         $this->captureRequest = $this->getMockBuilder(Capture::class)->disableOriginalConstructor()->getMock();
+        $this->registry = $this->getMockBuilder(Registry::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'shopHelper' => $this->shopHelper,
             'scopeConfig' => $this->scopeConfig,
             'authorizationRequest' => $this->authorizationRequest,
             'debitRequest' => $this->debitRequest,
-            'captureRequest' => $this->captureRequest
+            'captureRequest' => $this->captureRequest,
+            'registry' => $this->registry
         ]);
     }
 
@@ -160,6 +168,19 @@ class BaseMethodTest extends BaseTestCase
 
         $this->expectException(LocalizedException::class);
         $this->classToTest->authorize($paymentInfo, 100);
+    }
+
+    public function testAuthorizeCreateSubstitute()
+    {
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $paymentInfo->method('getOrder')->willReturn($order);
+
+        $this->registry->method('registry')->willReturn(true);
+
+        $this->classToTest->authorize($paymentInfo, 100);
+        $this->assertNull(null);
     }
 
     public function testRefund()

@@ -188,4 +188,39 @@ class PaymentTest extends BaseTestCase
         $result = $this->payment->getKlarnaStoreIds();
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetKlarnaStoreIdsEmpty()
+    {
+        $storeIds = '';
+
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($storeIds)]]);
+
+        $expected = [];
+        $result = $this->payment->getKlarnaStoreIds();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testIsPaymentMethodActive()
+    {
+        $code = 'payone_creditcard';
+
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([['payment/'.$code.'/active', ScopeInterface::SCOPE_STORES, null, true]]);
+
+        $result = $this->payment->isPaymentMethodActive($code);
+        $this->assertTrue($result);
+    }
+
+    public function testGetAmazonPayWidgetUrl()
+    {
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_AMAZONPAY.'/mode', ScopeInterface::SCOPE_STORES, null, 'test']]);
+
+        $result = $this->payment->getAmazonPayWidgetUrl();
+        $this->assertNotEmpty($result);
+    }
 }

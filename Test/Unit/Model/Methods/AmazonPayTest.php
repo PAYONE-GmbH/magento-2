@@ -162,4 +162,14 @@ class AmazonPayTest extends BaseTestCase
         $this->expectException(LocalizedException::class);
         $this->classToTest->authorize($paymentInfo, 100);
     }
+
+    public function testGetAuthorizationMode()
+    {
+        $expected = 'test';
+
+        $this->shopHelper->method('getConfigParam')->willReturn($expected);
+
+        $result = $this->classToTest->getAuthorizationMode();
+        $this->assertEquals($expected, $result);
+    }
 }

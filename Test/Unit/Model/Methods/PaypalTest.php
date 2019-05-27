@@ -46,22 +46,26 @@ class PaypalTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var Session
+     */
+    private $checkoutSession;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
 
-        $checkoutSession = $this->getMockBuilder(Session::class)
+        $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->setMethods(['getPayoneWorkorderId', 'getIsPayonePayPalExpress'])
             ->getMock();
-        $checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
-        $checkoutSession->method('getIsPayonePayPalExpress')->willReturn(true);
+        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
 
         $url = $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
         $url->method('getUrl')->willReturn('http://testdomain.org');
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'checkoutSession' => $checkoutSession,
+            'checkoutSession' => $this->checkoutSession,
             'url' => $url
         ]);
     }
@@ -69,6 +73,7 @@ class PaypalTest extends BaseTestCase
     public function testGetPaymentSpecificParameters()
     {
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $this->checkoutSession->method('getIsPayonePayPalExpress')->willReturn(true);
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
         $expected = ['wallettype' => 'PPE', 'workorderid' => '12345'];
@@ -77,12 +82,22 @@ class PaypalTest extends BaseTestCase
 
     public function testGetSuccessUrl()
     {
+        $this->checkoutSession->method('getIsPayonePayPalExpress')->willReturn(true);
         $expected = 'http://testdomain.org';
 
         $result = $this->classToTest->getSuccessUrl();
         $this->assertEquals($expected, $result);
+    }
 
-        $result = $this->classToTest->getSuccessUrl();
+    public function testGetSuccessUrlParent()
+    {
+        $this->checkoutSession->method('getIsPayonePayPalExpress')->willReturn(false);
+        $expected = 'http://testdomain.org?incrementId=12345';
+
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getIncrementId')->willReturn('12345');
+
+        $result = $this->classToTest->getSuccessUrl($order);
         $this->assertEquals($expected, $result);
     }
 
