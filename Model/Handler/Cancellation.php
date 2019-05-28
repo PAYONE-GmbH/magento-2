@@ -98,8 +98,6 @@ class Cancellation
                         ->unsLastSuccessQuoteId()
                         ->unsLastOrderId()
                         ->unsLastRealOrderId();
-
-                    $this->checkoutSession->setPayoneCanceledOrder($order->getIncrementId());
                 }
             } catch (LocalizedException $e) {
                 // catch and continue - do something when needed

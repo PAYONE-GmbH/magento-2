@@ -318,4 +318,19 @@ class Database extends \Payone\Core\Helper\Base
             ->order('id ASC');
         return $this->getDb()->fetchAll($oSelect, ['orderId' => $sOrderId]);
     }
+
+    /**
+     * Will search the DB for the incrementId of a substitute order by the given incrementId of the canceled order
+     *
+     * @param  string $sIncrementId
+     * @return string
+     */
+    public function getSubstituteOrderIncrementId($sIncrementId)
+    {
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('sales_order'), ['increment_id'])
+            ->where("payone_cancel_substitute_increment_id = :incrementId");
+        return $this->getDb()->fetchOne($oSelect, ['incrementId' => $sIncrementId]);
+    }
 }

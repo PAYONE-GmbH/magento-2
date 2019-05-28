@@ -59,14 +59,15 @@ class Paypal extends PayoneMethod
     /**
      * Return success url for redirect payment types
      *
+     * @param  Order $oOrder
      * @return string
      */
-    public function getSuccessUrl()
+    public function getSuccessUrl(Order $oOrder = null)
     {
         if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
             return $this->url->getUrl('payone/paypal/returned');
         }
-        return parent::getSuccessUrl();
+        return parent::getSuccessUrl($oOrder);
     }
 
     /**
