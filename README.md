@@ -28,6 +28,8 @@ As of 05/07/2018 this seems, however, broken. For the time being, Unit Tests are
 ## Magento Version Support
 We follow Magento's version lifetime according to their [Enterprise Agreement](https://magento.com/legal/terms/enterprise-agreement#support). In theory, Magento 2.0 is still supported, but not actively tested.
 
+Support for Magento 2.1 will be phased out in June 2019. From that date, we will discontinue actively testing Magento 2.1.
+
 ## More information
 *	For documentation see: https://github.com/PAYONE-GmbH/docs
 
