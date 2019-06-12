@@ -39,9 +39,10 @@ class Addresscheck extends AddressRequest
      * @param  AddressInterface $oAddress
      * @param  string           $sMode
      * @param  string           $sAddresscheckType
+     * @param  string|null      $sSimpleProtectVersion
      * @return array|bool
      */
-    public function sendRequest(AddressInterface $oAddress, $sMode, $sAddresscheckType)
+    public function sendRequest(AddressInterface $oAddress, $sMode, $sAddresscheckType, $sSimpleProtectVersion = null)
     {
         $this->addParameter('request', 'addresscheck');
         $this->addParameter('mode', $sMode); //Operationmode live or test
@@ -49,6 +50,11 @@ class Addresscheck extends AddressRequest
         $this->addParameter('addresschecktype', $sAddresscheckType);
         $this->addParameter('language', $this->shopHelper->getLocale());
         $this->addAddress($oAddress);
+
+        if ($sSimpleProtectVersion !== null) {
+            $this->addParameter('sdk_type', 'simple-protect');
+            $this->addParameter('sdk_version', $sSimpleProtectVersion);
+        }
 
         return $this->send();
     }

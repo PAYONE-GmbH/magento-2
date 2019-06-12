@@ -85,7 +85,7 @@ class AddresscheckTest extends BaseTestCase
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($address, 'test', 'PE');
+        $result = $this->classToTest->sendRequest($address, 'test', 'PE', 'SimpleProtect-1.0');
         $this->assertEquals($response, $result);
     }
 }

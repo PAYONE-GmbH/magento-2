@@ -179,4 +179,15 @@ class SimpleProtect
     {
         return true;
     }
+
+    /**
+     * This method can be extended to transfer the version of your Simple-Protect implementation to Payone
+     * It is recommended to transfer a version, otherwise Payone doesn't know that it a Simple-Protect call
+     *
+     * @return string|null
+     */
+    public function getModuleVersion()
+    {
+        return null;
+    }
 }

@@ -109,11 +109,12 @@ class ProtectFunnel
      * Validates input parameters and executes an addresscheck
      *
      * @param  AddressInterface $oAddress
-     * @param  string           $sAddresscheckType
      * @param  string           $sMode
+     * @param  string           $sAddresscheckType
+     * @param  string|null      $sSimpleProtectVersion
      * @return AddresscheckResponse|bool
      */
-    public function executeAddresscheck(AddressInterface $oAddress, $sMode, $sAddresscheckType)
+    public function executeAddresscheck(AddressInterface $oAddress, $sMode, $sAddresscheckType, $sSimpleProtectVersion = null)
     {
         if ($sAddresscheckType == AddressCheckType::PERSON && $oAddress->getCountryId() != 'DE') {
             return false; //AddressCheck Person only available for german addresses
@@ -124,7 +125,7 @@ class ProtectFunnel
 
         $this->validateAddresscheckType($sAddresscheckType);
 
-        $aResponse =  $this->addresscheck->sendRequest($oAddress, $sMode, $sAddresscheckType);
+        $aResponse =  $this->addresscheck->sendRequest($oAddress, $sMode, $sAddresscheckType, $sSimpleProtectVersion);
 
         return new AddresscheckResponse($aResponse);
     }
@@ -136,9 +137,10 @@ class ProtectFunnel
      * @param  string           $sMode
      * @param  string           $sConsumerscoreType
      * @param  string           $sAddresscheckType
+     * @param  string|null      $sSimpleProtectVersion
      * @return ConsumerscoreResponse|bool
      */
-    public function executeConsumerscore(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType = AddressCheckType::NONE)
+    public function executeConsumerscore(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType = AddressCheckType::NONE, $sSimpleProtectVersion = null)
     {
         if ($oAddress->getCountryId() != 'DE') {
             return true; // Consumerscore is only available for german addresses
@@ -151,7 +153,7 @@ class ProtectFunnel
         $this->validateConsumerscoreType($sConsumerscoreType);
         $this->validateAddresscheckType($sAddresscheckType);
 
-        $aResponse = $this->consumerscore->sendRequest($oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType);
+        $aResponse = $this->consumerscore->sendRequest($oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion);
 
         return new ConsumerscoreResponse($aResponse);
     }

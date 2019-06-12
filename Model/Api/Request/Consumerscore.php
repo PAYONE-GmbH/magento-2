@@ -40,9 +40,10 @@ class Consumerscore extends AddressRequest
      * @param  string           $sMode
      * @param  string           $sConsumerscoreType
      * @param  string           $sAddresscheckType
+     * @param  string|null      $sSimpleProtectVersion
      * @return array|bool
      */
-    public function sendRequest(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType)
+    public function sendRequest(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion = null)
     {
         $this->addParameter('request', 'consumerscore');
         $this->addParameter('mode', $sMode); //Operationmode live or test
@@ -51,6 +52,11 @@ class Consumerscore extends AddressRequest
         $this->addParameter('consumerscoretype', $sConsumerscoreType);
         $this->addParameter('language', $this->shopHelper->getLocale());
         $this->addAddress($oAddress);
+
+        if ($sSimpleProtectVersion !== null) {
+            $this->addParameter('sdk_type', 'simple-protect');
+            $this->addParameter('sdk_version', $sSimpleProtectVersion);
+        }
 
         return $this->send();
     }

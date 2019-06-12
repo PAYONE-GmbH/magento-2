@@ -109,4 +109,10 @@ class SimpleProtectTest extends BaseTestCase
         $result = $this->classToTest->isAddresscheckCorrectionConfirmationNeeded();
         $this->assertTrue($result);
     }
+
+    public function testGetModuleVersion()
+    {
+        $result = $this->classToTest->getModuleVersion();
+        $this->assertNull($result);
+    }
 }

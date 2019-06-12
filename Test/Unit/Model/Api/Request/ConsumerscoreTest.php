@@ -95,7 +95,7 @@ class ConsumerscoreTest extends BaseTestCase
                 ['aid', 'global', 'payone_general', null, '12345'],
             ]);
 
-        $result = $this->classToTest->sendRequest($address, 'test', 'test', 'test');
+        $result = $this->classToTest->sendRequest($address, 'test', 'test', 'test', 'SimpleProtect-1.0');
         $this->assertArrayHasKey('status', $result);
     }
 }
