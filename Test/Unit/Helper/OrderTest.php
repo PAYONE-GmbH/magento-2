@@ -237,30 +237,6 @@ class OrderTestTest extends BaseTestCase
         $this->assertInstanceOf(Quote::class, $result);
     }
 
-    public function testFillSingleAddressNoRegion()
-    {
-        $address = $this->objectManager->getObject(Address::class);
-        $firstname = 'Paul';
-        $lastname = 'Tester';
-        $street = 'Washington Blvd 13';
-        $city = 'San Diego';
-        $zip = '12345';
-        $country = 'US';
-        $state = 'CA';
-        $regionCode = null;
-
-        $this->customerHelper->method('getRegion')->willReturn(null);
-
-        $result = $this->order->fillSingleAddress($address, $firstname, $lastname, $street, $city, $zip, $country, $state);
-        $this->assertEquals($firstname, $result->getFirstname());
-        $this->assertEquals($lastname, $result->getLastname());
-        $this->assertEquals($street, $result->getStreet()[0]);
-        $this->assertEquals($city, $result->getCity());
-        $this->assertEquals($zip, $result->getPostcode());
-        $this->assertEquals($country, $result->getCountryId());
-        $this->assertEquals($regionCode, $result->getRegionCode());
-    }
-
     public function testFillSingleAddressByResponse()
     {
         $address = $this->objectManager->getObject(Address::class);
@@ -296,44 +272,5 @@ class OrderTestTest extends BaseTestCase
 
         $result = $this->order->fillSingleAddress($address, $firstname, 'Tester', 'Washington Blvd 13', 'San Diego', '12345', 'US', 'CA');
         $this->assertEquals($firstname, $result->getFirstname());
-    }
-
-    public function testUpdateAddresses()
-    {
-        $rate = $this->getMockBuilder(Rate::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getPrice', 'getCode'])
-            ->getMock();
-        $rate->method('getPrice')->willReturn('0.00');
-        $rate->method('getCode')->willReturn('free_free');
-        $rates = ['key' => [$rate]];
-
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-        $address->method('getGroupedAllShippingRates')->willReturn($rates);
-        $address->method('getShippingMethod')->willReturn('free_free');
-
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('getIsVirtual')->willReturn(false);
-        $quote->method('getBillingAddress')->willReturn($address);
-        $quote->method('getShippingAddress')->willReturn($address);
-
-        $aResponse = [
-            'add_paydata[billing_firstname]' => 'Paul',
-            'add_paydata[billing_lastname]' => 'Test',
-            'add_paydata[billing_street]' => 'Washington Blvd 13',
-            'add_paydata[billing_city]' => 'San Diego',
-            'add_paydata[billing_zip]' => '12345',
-            'add_paydata[billing_country]' => 'US',
-            'add_paydata[shipping_firstname]' => 'Paul',
-            'add_paydata[shipping_lastname]' => 'Test',
-            'add_paydata[shipping_street]' => 'Washington Blvd 13',
-            'add_paydata[shipping_city]' => 'San Diego',
-            'add_paydata[shipping_zip]' => '12345',
-            'add_paydata[shipping_country]' => 'US',
-            'add_paydata[email]' => 'test@test.de',
-        ];
-
-        $result = $this->order->updateAddresses($quote, $aResponse, true);
-        $this->assertInstanceOf(Quote::class, $result);
     }
 }
