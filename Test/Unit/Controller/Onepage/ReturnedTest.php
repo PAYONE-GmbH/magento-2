@@ -63,6 +63,11 @@ class ReturnedTest extends BaseTestCase
      */
     private $checkoutSession;
 
+    /**
+     * @var Database|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $databaseHelper;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
@@ -71,6 +76,10 @@ class ReturnedTest extends BaseTestCase
 
         $redirect = $this->getMockBuilder(RedirectResponse::class)->disableOriginalConstructor()->getMock();
         $redirect->method('redirect')->willReturn($redirectResponse);
+
+        $request = $this->getMockBuilder(Http::class)->disableOriginalConstructor()->getMock();
+        $request->method('getParam')->willReturn('test');
+        $request->method('isPost')->willReturn(true);
 
         $response = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
 
@@ -90,8 +99,6 @@ class ReturnedTest extends BaseTestCase
             ->setMethods([
                 'getLastRealOrder',
                 'setLastRealOrderId',
-                'getPayoneCanceledOrder',
-                'unsPayoneCanceledOrder',
                 'unsPayoneCustomerIsRedirected',
                 'setPayoneCreatingSubstituteOrder',
                 'unsPayoneCreatingSubstituteOrder',
@@ -114,8 +121,8 @@ class ReturnedTest extends BaseTestCase
         $orderRepository = $this->getMockBuilder(OrderRepository::class)->disableOriginalConstructor()->getMock();
         $orderRepository->method('get')->willReturn($order);
 
-        $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
-        $databaseHelper->method('getNotHandledTransactionsByOrderId')->willReturn([['id' => 5]]);
+        $this->databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
+        $this->databaseHelper->method('getNotHandledTransactionsByOrderId')->willReturn([['id' => 5]]);
 
         $status = $this->getMockBuilder(TransactionStatus::class)->disableOriginalConstructor()->getMock();
 
@@ -130,7 +137,7 @@ class ReturnedTest extends BaseTestCase
             'checkoutSession' => $this->checkoutSession,
             'quoteRepository' => $quoteRepository,
             'orderRepository' => $orderRepository,
-            'databaseHelper' => $databaseHelper,
+            'databaseHelper' => $this->databaseHelper,
             'statusFactory' => $statusFactory
         ]);
     }
@@ -142,7 +149,18 @@ class ReturnedTest extends BaseTestCase
         $order->method('getStatus')->willReturn(OrderCore::STATE_COMPLETE);
 
         $this->checkoutSession->method('getLastRealOrder')->willReturn($order);
-        $this->checkoutSession->method('getPayoneCanceledOrder')->willReturn(null);
+
+        $result = $this->classToTest->execute();
+        $this->assertNull($result);
+    }
+
+    public function testExecuteClosed()
+    {
+        $order = $this->getMockBuilder(OrderCore::class)->disableOriginalConstructor()->getMock();
+        $order->method('getId')->willReturn('12345');
+        $order->method('getStatus')->willReturn(OrderCore::STATE_CANCELED);
+
+        $this->checkoutSession->method('getLastRealOrder')->willReturn($order);
 
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -160,8 +178,9 @@ class ReturnedTest extends BaseTestCase
         $quote->method('setIsActive')->willReturn($quote);
 
         $this->checkoutSession->method('getLastRealOrder')->willReturn($order);
-        $this->checkoutSession->method('getPayoneCanceledOrder')->willReturn(123);
         $this->checkoutSession->method('getQuote')->willReturn($quote);
+
+        $this->databaseHelper->method('getSubstituteOrderIncrementId')->willReturn('12345');
 
         $result = $this->classToTest->execute();
         $this->assertNull($result);

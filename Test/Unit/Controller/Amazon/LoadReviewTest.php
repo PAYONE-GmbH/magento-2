@@ -372,6 +372,20 @@ class LoadReviewTest extends BaseTestCase
         $this->assertInstanceOf(Json::class, $result);
     }
 
+    public function testExecuteUpdateCouponEmpty()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, ''],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('');
+        $this->quote->method('getItemsCount')->willReturn(false);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
     public function testExecuteUpdateCouponValid()
     {
         $this->request->method('getParam')->willReturnMap([

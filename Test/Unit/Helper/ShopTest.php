@@ -37,6 +37,7 @@ use Magento\Store\Model\ScopeInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+
 class ShopTest extends BaseTestCase
 {
     /**
