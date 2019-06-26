@@ -154,7 +154,7 @@ class Forwarding
     }
 
     /**
-     *
+     * Converts post array to a single-line string for output in log
      *
      * @param  array $aPostArray
      * @return string
@@ -163,6 +163,9 @@ class Forwarding
     {
         $sLine = '';
         foreach ($aPostArray as $sKey => $sValue) {
+            if (is_array($sValue)) {
+                $sValue = '['.$this->getStatusLogLine($sValue).']';
+            }
             $sLine .= $sKey.'='.$sValue.';';
         }
         return $sLine;
