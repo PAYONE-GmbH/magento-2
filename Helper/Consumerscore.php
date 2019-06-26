@@ -100,7 +100,7 @@ class Consumerscore extends \Payone\Core\Helper\Base
         $this->configWriter->save(
             'payone_protect/creditrating/'.self::CONFIG_KEY_CONSUMERSCORE_SAMPLE_COUNTER,
             $iCount,
-            ScopeInterface::SCOPE_STORE,
+            ScopeInterface::SCOPE_STORES,
             $this->storeManager->getStore()->getId()
         );
         return true;

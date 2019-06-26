@@ -27,7 +27,7 @@
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
     <group id="payone_obt_sofortueberweisung" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>SOFORT Überweisung</label>
-        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Enabled</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <config_path>payment/payone_obt_sofortueberweisung/active</config_path>
@@ -36,11 +36,11 @@
             <label>Title</label>
             <config_path>payment/payone_obt_sofortueberweisung/title</config_path>
         </field>
-        <field id="show_iban" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="show_iban" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Show IBAN/BIC fields</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
-        <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>New Order Status</label>
             <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
             <config_path>payment/payone_obt_sofortueberweisung/order_status</config_path>
@@ -49,15 +49,15 @@
             <label>Instructions</label>
             <config_path>payment/payone_obt_sofortueberweisung/instructions</config_path>
         </field>
-        <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Minimum Order Total</label>
             <config_path>payment/payone_obt_sofortueberweisung/min_order_total</config_path>
         </field>
-        <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Maximum Order Total</label>
             <config_path>payment/payone_obt_sofortueberweisung/max_order_total</config_path>
         </field>
-        <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+        <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Sort Order</label>
             <config_path>payment/payone_obt_sofortueberweisung/sort_order</config_path>
         </field>

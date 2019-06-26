@@ -148,6 +148,12 @@ class Api extends Base
 
         $aResponse = $this->formatOutputByResponse($aResponse);
 
+        if (!array_key_exists('status', $aResponse)) {
+            $aResponse['status'] = 'ERROR';
+            $aResponse['errorcode'] = '0';
+            $aResponse['customermessage'] = 'No connection to external service provider possible (timeout)';
+        }
+
         return $aResponse;
     }
 

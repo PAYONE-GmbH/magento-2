@@ -15,30 +15,31 @@ The PAYONE payment extension for MAGENTO 2 is massively reworked since the first
 
 ## Installation
 *	Go to your installation directory of Magento 2 and perform the following commands
-*	composer require payone-gmbh/magento-2
-*	php bin/magento setup:upgrade
-*	php bin/magento setup:di:compile
-*	php bin/magento cache:clean
+*	`composer require payone-gmbh/magento-2`
+*	`php bin/magento setup:upgrade`
+*	`php bin/magento setup:di:compile`
+*	`php bin/magento cache:clean`
 
 ## Compatibility issues
 To make this extension Magento 2.2 compatible, all Unit Tests have been modified to work with PHPUnit 6, which breaks compatibility towards older versions of PHPUnit. Please run all Unit Tests in PHPUnit 6, regardless of your Magento version.
 
-As of 05/07/2018 this seems, however, broken. For the time being, Unit Tests are carried out on Magento 2.2 alone during the Travis build.
+As of 05/07/2018 this seems, however, broken. For the time being, Unit Tests are carried out on Magento 2.2 and 2.3 alone during the Travis build.
 
 ## Magento Version Support
 We follow Magento's version lifetime according to their [Enterprise Agreement](https://magento.com/legal/terms/enterprise-agreement#support). In theory, Magento 2.0 is still supported, but not actively tested.
+
+Support for Magento 2.1 will be phased out in June 2019. From that date, we will discontinue actively testing Magento 2.1.
 
 ## More information
 *	For documentation see: https://github.com/PAYONE-GmbH/docs
 
 ## Contact
-PAYONE GmbH<br>
+BS PAYONE GmbH<br>
 Office Kiel<br>
 Fraunhoferstraße 2-4<br>
 24118 Kiel, Germany<br>
 Phone +49 431 25968-400 Fax +49 431 25968-1400<br>
 magento@payone.com<br>
-www.payone.com/magento
 
 ## License
 See our License Agreement at: https://www.payone.de/fileadmin/downloads/sonstiges/PAYONE_Haftungs_und_Lizenzvereinbarung_Extensions.pdf

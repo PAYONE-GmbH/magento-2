@@ -104,7 +104,7 @@ class CountryTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_payment/payone_debit/sepa_country', ScopeInterface::SCOPE_STORE, null, null]
+                    ['payone_payment/payone_debit/sepa_country', ScopeInterface::SCOPE_STORES, null, null]
                 ]
             );
         $result = $this->country->getDebitSepaCountries();
@@ -119,7 +119,7 @@ class CountryTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_payment/payone_debit/sepa_country', ScopeInterface::SCOPE_STORE, null, 'DE']
+                    ['payone_payment/payone_debit/sepa_country', ScopeInterface::SCOPE_STORES, null, 'DE']
                 ]
             );
         $result = $this->country->getDebitSepaCountries();

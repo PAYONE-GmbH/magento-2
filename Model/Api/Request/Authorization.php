@@ -188,7 +188,7 @@ class Authorization extends AddressRequest
         $aPaymentParams = $oPayment->getPaymentSpecificParameters($oOrder); // get payment params specific to the payment type
         $this->aParameters = array_merge($this->aParameters, $aPaymentParams); // merge payment params with other params
         if ($oPayment->needsRedirectUrls() === true) {// does the used payment type need redirect urls?
-            $this->addRedirectUrls($oPayment); // add needed redirect urls
+            $this->addRedirectUrls($oPayment, $oOrder); // add needed redirect urls
         }
     }
 }

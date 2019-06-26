@@ -90,7 +90,7 @@ class BaseTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/global/request_type', ScopeInterface::SCOPE_STORE, null, $expected]
+                    ['payone_general/global/request_type', ScopeInterface::SCOPE_STORES, null, $expected]
                 ]
             );
         $result = $this->base->getConfigParam('request_type');
@@ -103,10 +103,10 @@ class BaseTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'de', '12345'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'en', '23456'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'fr', '12345'],
-                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORE, 'nl', '34567'],
+                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORES, 'de', '12345'],
+                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORES, 'en', '23456'],
+                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORES, 'fr', '12345'],
+                    ['payone_general/global/mid', ScopeInterface::SCOPE_STORES, 'nl', '34567'],
                 ]
             );
         $result = $this->base->getConfigParamAllStores('mid');

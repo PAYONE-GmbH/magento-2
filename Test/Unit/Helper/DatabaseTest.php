@@ -264,4 +264,14 @@ class DatabaseTest extends BaseTestCase
         $result = $this->database->getNotHandledTransactionsByOrderId(5);
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetSubstituteOrderIncrementId()
+    {
+        $expected = '54321';
+
+        $this->connection->method('fetchOne')->willReturn($expected);
+
+        $result = $this->database->getSubstituteOrderIncrementId('12345');
+        $this->assertEquals($expected, $result);
+    }
 }
