@@ -173,7 +173,6 @@ class Index extends \Magento\Framework\App\Action\Action
             return 'Key wrong or missing!';
         }
 
-        $blWillBeHandled = true;
         $oOrder = $this->orderHelper->getOrderByTxid($this->getParam('txid'));
         if (!$oOrder) {
             $this->tmpLog('Return Order not found');
@@ -206,6 +205,8 @@ class Index extends \Magento\Framework\App\Action\Action
 
         $oResultRaw = $this->resultRawFactory->create();
         $oResultRaw->setContents($sOutput);
+        
+        return $oResultRaw;
     }
 
     private function tmpLog($sMessage)
