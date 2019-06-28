@@ -46,14 +46,45 @@ class Forwarding
     protected $curl;
 
     /**
-     * Constructor
+     * Logger object
      *
-     * @param \Payone\Core\Helper\Config $configHelper
+     * @var \Psr\Log\LoggerInterface
      */
-    public function __construct(\Payone\Core\Helper\Config $configHelper, \Magento\Framework\HTTP\Client\Curl $curl)
-    {
+    protected $logger;
+
+    /**
+     * Constructor.
+     *
+     * @param \Payone\Core\Helper\Config            $configHelper
+     * @param \Magento\Framework\HTTP\Client\Curl   $curl
+     * @param \Psr\Log\LoggerInterface              $logger
+     */
+    public function __construct(
+        \Payone\Core\Helper\Config $configHelper,
+        \Magento\Framework\HTTP\Client\Curl $curl,
+        \Psr\Log\LoggerInterface $logger
+    ) {
         $this->configHelper = $configHelper;
         $this->curl = $curl;
+        $this->logger = $logger;
+    }
+
+    /**
+     * Log to log-file if configured
+     *
+     * @param  string $sMessage
+     * @param  array $aPostArray
+     * @return void
+     */
+    protected function log($sMessage, $aPostArray)
+    {
+        if ((bool)$this->configHelper->getConfigParam('log_active', 'forwarding', 'payone_misc') === true) {
+            $sIdent = '';
+            if (isset($aPostArray['txid'])) {
+                $sIdent = $aPostArray['txid'].' - ';
+            }
+            $this->logger->info($sIdent.$sMessage);
+        }
     }
 
     /**
@@ -64,16 +95,45 @@ class Forwarding
      * @param  int    $iTimeout
      * @return void
      */
-    protected function forwardRequest($aPostArray, $sUrl, $iTimeout)
+    public function forwardRequest($aPostArray, $sUrl, $iTimeout)
     {
+        $this->tmpLog('Forward to: '.$sUrl);
         if ($iTimeout == 0) {
             $iTimeout = 45;
         }
 
+        $this->log($sUrl.' Forward with timeout of '.$iTimeout.' seconds', $aPostArray);
+
         $this->curl->setTimeout($iTimeout);
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
         $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
-        $this->curl->post($sUrl, $aPostArray);
+        try {
+            $this->curl->post($sUrl, $aPostArray);
+            $this->log($sUrl.' Response: '.$this->curl->getBody(), $aPostArray);
+        } catch(\Exception $exc) {
+            $this->log($sUrl.' Exception: '.$exc->getMessage(), $aPostArray);
+        }
+    }
+
+    /**
+     * Forward a request and dont wait for a response
+     *
+     * @param  array  $aPostArray
+     * @param  string $sUrl
+     * @return void
+     */
+    public function forwardAsyncRequest($aPostArray, $sUrl)
+    {
+        $this->curl->setOption(CURLOPT_TIMEOUT_MS, 100);
+        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
+        $this->tmpLog('ForwardAsyncRequest to '.$sUrl);
+        try {
+            $this->curl->post($sUrl, $aPostArray);
+        } catch (\Exception $exc) {
+            $this->tmpLog('Async Exception - Timeout would be ok - '.$exc->getMessage());
+            // Async calls will always throw a timeout exception
+        }
     }
 
     /**
@@ -94,6 +154,24 @@ class Forwarding
     }
 
     /**
+     * Converts post array to a single-line string for output in log
+     *
+     * @param  array $aPostArray
+     * @return string
+     */
+    protected function getStatusLogLine($aPostArray)
+    {
+        $sLine = '';
+        foreach ($aPostArray as $sKey => $sValue) {
+            if (is_array($sValue)) {
+                $sValue = '['.$this->getStatusLogLine($sValue).']';
+            }
+            $sLine .= $sKey.'='.$sValue.';';
+        }
+        return $sLine;
+    }
+
+    /**
      * Handle TransactionStatus forwarding
      *
      * @param  array $aPostArray
@@ -101,12 +179,23 @@ class Forwarding
      */
     public function handleForwardings($aPostArray)
     {
-        $aForwarding = $this->configHelper->getForwardingUrls();
-        $sStatusAction = $aPostArray['txaction'];
-        foreach ($aForwarding as $aForwardEntry) {
-            if (isset($aForwardEntry['txaction']) && !empty($aForwardEntry['txaction'])) {
-                $this->handleSingleForwarding($aPostArray, $aForwardEntry, $sStatusAction);
+        $this->tmpLog('Start handleForwardings');
+        $this->log('Handle StatusForwarding: '.$this->getStatusLogLine($aPostArray), $aPostArray);
+        if (isset($aPostArray['txaction'])) {
+            $aForwarding = $this->configHelper->getForwardingUrls();
+            $sStatusAction = $aPostArray['txaction'];
+            $this->tmpLog('Got Forwarding Urls'.print_r($aForwarding, true));
+            foreach ($aForwarding as $aForwardEntry) {
+                if (isset($aForwardEntry['txaction']) && !empty($aForwardEntry['txaction'])) {
+                    $this->handleSingleForwarding($aPostArray, $aForwardEntry, $sStatusAction);
+                }
             }
         }
+        $this->tmpLog('Finished handleForwardings');
+    }
+
+    private function tmpLog($sMessage)
+    {
+        error_log(date('Y-m-d H:i:s - ').$sMessage."\n", 3, dirname(__FILE__).'/../../../../../../MAG2_94.log');
     }
 }

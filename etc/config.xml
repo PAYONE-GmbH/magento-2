@@ -407,6 +407,9 @@
                 <valid_ips><![CDATA[185.60.20.*]]></valid_ips>
                 <proxy_mode>0</proxy_mode>
             </processing>
+            <forwarding>
+                <log_active>0</log_active>
+            </forwarding>
             <costs>
                 <sku>delivery</sku>
             </costs>

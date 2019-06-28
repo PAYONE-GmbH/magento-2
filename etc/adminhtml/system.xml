@@ -454,6 +454,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusForwarding</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
+                <field id="log_active" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Logging active</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Logfile can be found in /var/log/payone_transaction_forwarding.log</comment>
+                </field>
            </group>
             <group id="discount" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Invoicing Data - Discount</label>

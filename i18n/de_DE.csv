@@ -204,6 +204,8 @@
 "Miscellaneous","Sonstiges"
 "Transaction-Status Processing","Verarbeitung des Transaktionsstatus"
 "Transaction-Status Forwarding","Weiterleitung des Transaktionsstatus"
+"Logfile can be found in /var/log/payone_transaction_forwarding.log","Log-Datei liegt hier: /var/log/payone_transaction_forwarding.log"
+"Logging active","Logging aktiv"
 "payone_core_cronjob_transactionstatus_process", "Payone: Verarbeitung von Transaktions-Status"
 "Valid PAYONE IPs","Gültige PAYONE IPs"
 "Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use * ","Tragen Sie hier gültige PAYONE IPs ein (Format xxx.xxx.xxx.xxx). Als Wildcard können Sie * verwenden"

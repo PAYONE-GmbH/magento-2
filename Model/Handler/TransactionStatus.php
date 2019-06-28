@@ -63,20 +63,30 @@ class TransactionStatus
     protected $eventManager;
 
     /**
+     * Url builder object
+     *
+     * @var \Magento\Framework\UrlInterface
+     */
+    protected $urlBuilder;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\TransactionStatus\Mapping $statusMapping
      * @param \Payone\Core\Model\TransactionStatus\Forwarding $statusForwarding
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
+     * @param \Magento\Framework\UrlInterface $urlBuilder
      */
     public function __construct(
         \Payone\Core\Model\TransactionStatus\Mapping $statusMapping,
         \Payone\Core\Model\TransactionStatus\Forwarding $statusForwarding,
-        \Magento\Framework\Event\ManagerInterface $eventManager
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Framework\UrlInterface $urlBuilder
     ) {
         $this->statusMapping = $statusMapping;
         $this->statusForwarding = $statusForwarding;
         $this->eventManager = $eventManager;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -135,7 +145,9 @@ class TransactionStatus
 
             $this->statusMapping->handleMapping($oOrder, $sAction);
         }
-        $this->statusForwarding->handleForwardings($this->getStatus());
+        $this->tmpLog('Send Async Decouple');
+        $this->statusForwarding->forwardAsyncRequest($this->getStatus(), $this->urlBuilder->getUrl("payone/transactionstatus/decouple", ['_secure' => true]));
+        $this->tmpLog('Finished Async Decouple');
 
         $aParams = [
             'order' => $oOrder,
@@ -144,5 +156,10 @@ class TransactionStatus
 
         $this->eventManager->dispatch('payone_core_transactionstatus_all', $aParams);
         $this->eventManager->dispatch('payone_core_transactionstatus_'.$sAction, $aParams);
+    }
+
+    private function tmpLog($sMessage)
+    {
+        error_log(date('Y-m-d H:i:s - ').$sMessage."\n", 3, dirname(__FILE__).'/../../../../../../MAG2_94.log');
     }
 }
