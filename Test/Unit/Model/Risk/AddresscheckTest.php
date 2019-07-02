@@ -37,6 +37,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Framework\Exception\LocalizedException;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Quote\Api\CartRepositoryInterface;
 
 class AddresscheckTest extends BaseTestCase
 {
@@ -70,6 +71,11 @@ class AddresscheckTest extends BaseTestCase
      */
     private $toolkitHelper;
 
+    /**
+     * @var CartRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $quoteRepository;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
@@ -98,11 +104,15 @@ class AddresscheckTest extends BaseTestCase
             ->getMock();
         $checkoutSession->method('getPayoneShippingAddresscheckScore')->willReturn(null);
 
+        $this->quoteRepository = $this->getMockBuilder(CartRepositoryInterface::class)->disableOriginalConstructor()->getMock();
+        $this->quoteRepository->method('getActive')->willReturn($this->quote);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'addresscheck' => $this->addresscheck,
             'databaseHelper' => $this->databaseHelper,
             'toolkitHelper' => $this->toolkitHelper,
-            'checkoutSession' => $checkoutSession
+            'checkoutSession' => $checkoutSession,
+            'quoteRepository' => $this->quoteRepository
         ]);
     }
 

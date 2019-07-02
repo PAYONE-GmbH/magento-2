@@ -35,6 +35,7 @@ use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Model\BillingAddressManagement;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Helper\Addresscheck as AddresscheckHelper;
 
 class BillingAddressManagementTest extends BaseTestCase
 {
@@ -62,9 +63,13 @@ class BillingAddressManagementTest extends BaseTestCase
         $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $addresscheck->method('handleAddressManagement')->willReturn($address);
 
+        $addresscheckHelper = $this->getMockBuilder(AddresscheckHelper::class)->disableOriginalConstructor()->getMock();
+        $addresscheckHelper->method('isCheckEnabled')->willReturn(true);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'quoteRepository' => $quoteRepository,
-            'addresscheck' => $addresscheck
+            'addresscheck' => $addresscheck,
+            'addresscheckHelper' => $addresscheckHelper
         ]);
     }
 

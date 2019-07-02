@@ -35,13 +35,6 @@ use Magento\Quote\Model\BillingAddressManagement as BillingAddressManagementOrig
 class BillingAddressManagement
 {
     /**
-     * Quote repository.
-     *
-     * @var \Magento\Quote\Api\CartRepositoryInterface
-     */
-    protected $quoteRepository;
-
-    /**
      * PAYONE addresscheck request model
      *
      * @var \Payone\Core\Model\Risk\Addresscheck
@@ -49,17 +42,24 @@ class BillingAddressManagement
     protected $addresscheck;
 
     /**
+     * PAYONE Addresscheck helper
+     *
+     * @var \Payone\Core\Helper\Addresscheck
+     */
+    protected $addresscheckHelper;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
      * @param \Payone\Core\Model\Risk\Addresscheck       $addresscheck
+     * @param \Payone\Core\Helper\Addresscheck           $addresscheckHelper
      */
     public function __construct(
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
-        \Payone\Core\Model\Risk\Addresscheck $addresscheck
+        \Payone\Core\Model\Risk\Addresscheck $addresscheck,
+        \Payone\Core\Helper\Addresscheck $addresscheckHelper
     ) {
-        $this->quoteRepository = $quoteRepository;
         $this->addresscheck = $addresscheck;
+        $this->addresscheckHelper = $addresscheckHelper;
     }
 
     /**
@@ -73,8 +73,9 @@ class BillingAddressManagement
      */
     public function beforeAssign(BillingAddressManagementOrig $oSource, $sCartId, AddressInterface $oAddress, $useForShipping = false)
     {
-        $oQuote = $this->quoteRepository->getActive($sCartId);
-        $oAddress = $this->addresscheck->handleAddressManagement($oAddress, $oQuote);
+        if ($this->addresscheckHelper->isCheckEnabled(true)) {
+            $oAddress = $this->addresscheck->handleAddressManagement($oAddress, $sCartId);
+        }
         return [$sCartId, $oAddress, $useForShipping];
     }
 }

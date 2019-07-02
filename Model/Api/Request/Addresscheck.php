@@ -67,6 +67,13 @@ class Addresscheck extends AddressRequest
     protected $addressesChecked;
 
     /**
+     * PAYONE Addresscheck helper
+     *
+     * @var \Payone\Core\Helper\Addresscheck
+     */
+    protected $addresscheckHelper;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                          $shopHelper
@@ -75,6 +82,7 @@ class Addresscheck extends AddressRequest
      * @param \Payone\Core\Model\ResourceModel\ApiLog           $apiLog
      * @param \Payone\Core\Helper\Customer                      $customerHelper
      * @param \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
+     * @param \Payone\Core\Helper\Addresscheck                  $addresscheckHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
@@ -82,10 +90,12 @@ class Addresscheck extends AddressRequest
         \Payone\Core\Helper\Api $apiHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
         \Payone\Core\Helper\Customer $customerHelper,
-        \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
+        \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked,
+        \Payone\Core\Helper\Addresscheck $addresscheckHelper
     ) {
         parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
         $this->addressesChecked = $addressesChecked;
+        $this->addresscheckHelper = $addresscheckHelper;
     }
 
     /**
@@ -124,26 +134,6 @@ class Addresscheck extends AddressRequest
     }
 
     /**
-     * Check enabled status
-     *
-     * @param  bool $blIsBillingAddress
-     * @return bool
-     */
-    protected function isCheckEnabled($blIsBillingAddress)
-    {
-        if (!$this->shopHelper->getConfigParam('enabled', 'address_check', 'payone_protect')) {
-            return false; // address check was disabled
-        }
-        if ($blIsBillingAddress && $this->shopHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO') {
-            return false; // address check was disabled for the billing address
-        }
-        if (!$blIsBillingAddress && $this->shopHelper->getConfigParam('check_shipping', 'address_check', 'payone_protect') == 'NO') {
-            return false; // address check was disabled for the shipping address
-        }
-        return true;
-    }
-
-    /**
      * Send request "addresscheck" to PAYONE server API
      *
      * @param  \Magento\Quote\Api\Data\AddressInterface $oAddress
@@ -152,7 +142,7 @@ class Addresscheck extends AddressRequest
      */
     public function sendRequest(\Magento\Quote\Api\Data\AddressInterface $oAddress, $blIsBillingAddress = false)
     {
-        if (!$this->isCheckEnabled($blIsBillingAddress)) { // check not needed because of configuration
+        if (!$this->addresscheckHelper->isCheckEnabled($blIsBillingAddress)) { // check not needed because of configuration
             return true;
         }
 
