@@ -35,6 +35,7 @@ before_script:
   --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo
   --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin
 - composer require payone-gmbh/magento-2 dev-master
+- rm -rf /tmp/build/vendor/payone-gmbh/magento-2/*
 - cp -R /home/travis/build/PAYONE-GmbH/magento-2/* /tmp/build/vendor/payone-gmbh/magento-2
 - php bin/magento setup:upgrade
 - php bin/magento setup:di:compile
