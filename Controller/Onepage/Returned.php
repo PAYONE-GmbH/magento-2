@@ -32,7 +32,7 @@ use Magento\Framework\App\Request\Http;
 /**
  * Controller for handling return from payment provider
  */
-class Returned extends \Magento\Framework\App\Action\Action
+class Returned extends \Payone\Core\Controller\ExternalAction
 {
     /**
      * Checkout session
@@ -59,28 +59,22 @@ class Returned extends \Magento\Framework\App\Action\Action
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context            $context
+     * @param \Magento\Framework\Data\Form\FormKey             $formKey
      * @param \Magento\Checkout\Model\Session                  $checkoutSession
      * @param \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder
      * @param \Payone\Core\Helper\Database                     $databaseHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\Data\Form\FormKey $formKey,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder,
         \Payone\Core\Helper\Database $databaseHelper
     ) {
-        parent::__construct($context);
+        parent::__construct($context, $formKey);
         $this->checkoutSession = $checkoutSession;
         $this->substituteOrder = $substituteOrder;
         $this->databaseHelper = $databaseHelper;
-
-        // Fix for Magento 2.3 CsrfValidator and backwards-compatibility to prior Magento 2 versions
-        if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
-            $request = $this->getRequest();
-            if ($request instanceof Http && $request->isPost()) {
-                $request->setParam('ajax', true);
-            }
-        }
     }
 
     /**
