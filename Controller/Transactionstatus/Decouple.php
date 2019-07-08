@@ -58,22 +58,18 @@ class Decouple extends \Magento\Framework\App\Action\Action
      * @param RawFactory $resultRawFactory
      */
     public function __construct(Context $context, Forwarding $statusForwarding, RawFactory $resultRawFactory) {
-        $this->tmpLog('Constructor Decouple Controller 1');
         parent::__construct($context);
-        $this->tmpLog('Constructor Decouple Controller 2');
+
         $this->statusForwarding = $statusForwarding;
         $this->resultRawFactory = $resultRawFactory;
 
         // Fix for Magento 2.3 CsrfValidator and backwards-compatibility to prior Magento 2 versions
         if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
-            $this->tmpLog('Constructor Decouple Controller 3');
             $request = $this->getRequest();
             if ($request instanceof Http && $request->isPost()) {
-                $this->tmpLog('Constructor Decouple Controller 4');
                 $request->setParam('ajax', true);
             }
         }
-        $this->tmpLog('Constructor Decouple Controller 5');
     }
 
     /**
@@ -83,8 +79,6 @@ class Decouple extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $this->tmpLog('Start Decouple Controller');
-
         $aStatus = $this->getRequest()->getPostValue();
 
         $this->statusForwarding->handleForwardings($aStatus);
@@ -92,13 +86,6 @@ class Decouple extends \Magento\Framework\App\Action\Action
         $oResultRaw = $this->resultRawFactory->create();
         $oResultRaw->setContents('');
 
-        $this->tmpLog('Finished Decouple Controller');
-
         return $oResultRaw;
-    }
-
-    private function tmpLog($sMessage)
-    {
-        error_log(date('Y-m-d H:i:s - ').$sMessage."\n", 3, dirname(__FILE__).'/../../../../../../MAG2_94.log');
     }
 }
