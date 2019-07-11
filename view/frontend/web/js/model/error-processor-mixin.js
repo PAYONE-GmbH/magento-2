@@ -27,32 +27,45 @@ define(
     [
         'jquery',
         'mage/url',
-        'Magento_Ui/js/model/messageList'
+        'mage/utils/wrapper',
+        'Magento_Ui/js/model/messageList',
+        'Magento_Checkout/js/model/payment/method-list'
     ],
-    function ($, url, globalMessageList) {
+    function ($, url, wrapper, globalMessageList, methodList) {
         'use strict';
 
         return function (targetModule) {
+            targetModule.disablePaymentType = function (sPaymentType) {
+                $('INPUT#' + sPaymentType).parents('.payment-method').fadeOut(2000, function() {
+                    $('INPUT#' + sPaymentType).parents('.payment-method').remove();
+                });
+            };
+
+            targetModule.process = wrapper.wrap(targetModule.process, function (originalAction, response, messageContainer) {
+                var origReturn = originalAction(response, messageContainer);
+
+                if (response.responseJSON.hasOwnProperty('parameters') && response.responseJSON.parameters.hasOwnProperty('paymentMethodWhitelist') && response.responseJSON.parameters.paymentMethodWhitelist.length > 0) {
+                    $.each(methodList(), function( key, value ) {
+                        if (response.responseJSON.parameters.paymentMethodWhitelist.includes(value.method) === false) {
+                            targetModule.disablePaymentType(value.method);
+                        }
+                    });
+                }
+                return origReturn;
+            });
+
             // only extend if the option was enabled
             if (window.checkoutConfig.payment.payone.disableSafeInvoice === true) {
-                targetModule.process = function (response, messageContainer) {
-                    messageContainer = messageContainer || globalMessageList;
-                    if (response.status == 401) {
-                        window.location.replace(url.build('customer/account/login/'));
-                    } else {
-                        var error = JSON.parse(response.responseText);
-                        messageContainer.addErrorMessage(error);
+                targetModule.process = wrapper.wrap(targetModule.process, function (originalAction, response, messageContainer) {
+                    var origReturn = originalAction(response, messageContainer);
 
+                    if (response.status != 401) {
                         if(response.responseJSON.message.indexOf('351 -') !== -1) {
-                            this.disableSafeInvoice();
+                            targetModule.disablePaymentType('payone_safe_invoice');
                         }
                     }
-                };
-                targetModule.disableSafeInvoice = function () {
-                    $('INPUT#payone_safe_invoice').parents('.payment-method').fadeOut(2000, function() {
-                        $('INPUT#payone_safe_invoice').parents('.payment-method').remove();
-                    });
-                };
+                    return origReturn;
+                });
             }
             return targetModule;
         };

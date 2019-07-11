@@ -32,6 +32,8 @@ use Magento\Framework\Event\Observer;
 use Magento\Paypal\Block\Express\Shortcut;
 use Magento\Store\Model\StoreManagerInterface;
 use Payone\Core\Model\PayoneConfig;
+use Payone\Core\Model\SimpleProtect\SimpleProtect;
+use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 
 /**
  * Event class to add the Amazon Pay buttons to the frontend
@@ -53,14 +55,37 @@ class AddAmazonPayButton implements ObserverInterface
     protected $storeManager;
 
     /**
+     * PAYONE Simple Protect implementation
+     *
+     * @var SimpleProtect
+     */
+    protected $simpleProtect;
+
+    /**
+     * Checkout session object
+     *
+     * @var CheckoutSession
+     */
+    protected $checkoutSession;
+
+    /**
      * Constructor
      *
-     * @param Payment $paymentHelper
+     * @param Payment               $paymentHelper
+     * @param StoreManagerInterface $storeManager
+     * @param SimpleProtect         $simpleProtect
+     * @param CheckoutSession       $checkoutSession
      */
-    public function __construct(Payment $paymentHelper, StoreManagerInterface $storeManager)
-    {
+    public function __construct(
+        Payment $paymentHelper,
+        StoreManagerInterface $storeManager,
+        SimpleProtect $simpleProtect,
+        CheckoutSession $checkoutSession
+    ) {
         $this->paymentHelper = $paymentHelper;
         $this->storeManager = $storeManager;
+        $this->simpleProtect = $simpleProtect;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -80,6 +105,11 @@ class AddAmazonPayButton implements ObserverInterface
 
         $blIsSsl = $this->storeManager->getStore()->isCurrentlySecure();
         if (!$blIsSsl || in_array($shortcutButtons->getNameInLayout(), ['addtocart.shortcut.buttons', 'addtocart.shortcut.buttons.additional', 'map.shortcut.buttons'])) {
+            return;
+        }
+
+        $oQuote = $this->checkoutSession->getQuote();
+        if (!in_array(PayoneConfig::EXPRESS_AMAZONPAY, $this->simpleProtect->handlePreCheckout($oQuote))) {
             return;
         }
 

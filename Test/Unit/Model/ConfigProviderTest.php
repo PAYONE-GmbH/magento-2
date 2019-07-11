@@ -36,7 +36,6 @@ use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\HostedIframe;
 use Payone\Core\Helper\Request;
 use Magento\Framework\Escaper;
-use Payone\Core\Helper\Consumerscore;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -90,9 +89,6 @@ class ConfigProviderTest extends BaseTestCase
         $requestHelper->method('getBankaccountCheckRequest')->willReturn(['request' => 'bankaccountcheck']);
         $escaper = $this->getMockBuilder(Escaper::class)->disableOriginalConstructor()->getMock();
         $escaper->method('escapeHtml')->willReturn('html');
-        $consumerscoreHelper = $this->getMockBuilder(Consumerscore::class)->disableOriginalConstructor()->getMock();
-        $consumerscoreHelper->method('canShowPaymentHintText')->willReturn(true);
-        $consumerscoreHelper->method('canShowAgreementMessage')->willReturn(true);
         $savedPaymentData = $this->getMockBuilder(SavedPaymentData::class)->disableOriginalConstructor()->getMock();
         $savedPaymentData->method('getSavedPaymentData')->willReturn([]);
 
@@ -116,7 +112,6 @@ class ConfigProviderTest extends BaseTestCase
             'hostedIframeHelper' => $hostedIframeHelper,
             'requestHelper' => $requestHelper,
             'escaper' => $escaper,
-            'consumerscoreHelper' => $consumerscoreHelper,
             'checkoutSession' => $this->checkoutSession,
             'savedPaymentData' => $savedPaymentData
         ]);

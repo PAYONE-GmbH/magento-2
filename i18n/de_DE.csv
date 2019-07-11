@@ -143,8 +143,6 @@
 "Check Billing Address for virtual orders","Prüfe Rechnungsadresse für virtuelle Bestellungen"
 "Please note that you can use these options only, if you subscribe to the invoicing module of PAYONE.","Bitte beachten Sie, dass Sie diese Optionen nur dann nutzen können, wenn Sie das Modul Invoicing von PAYONE beauftragt haben."
 "Please note that you can only use this option, if you subscribe to the invoicing module of PAYONE.","Bitte beachten Sie, dass Sie diese Option nur dann nutzen können, wenn Sie das Modul Invoicing von PAYONE beauftragt haben."
-"Personstatus Mapping","Personstatusmapping"
-"Add Personstatus Mapping","Füge Personstatusmapping hinzu"
 "Personstatus","Personstatus"
 "Score","Ergebnis"
 
@@ -808,7 +806,6 @@
 "Define a minimal cart value for address checks. Is the cart value below this, the address check will not be executed.","Der hier zu konfigurierende Wert ist der Wert ab dem eine Adressprüfung durchgeführt wird. Ist der Gesamtwarenkorbwert unterhalb dieses Wertes wird keine Adressprüfung ausgeführt.",
 "Maximal cart value","Höchstwert für Gesamtbestellung"
 "Define a maximal cart value for address checks. Is the cart value above this, the address check will not be executed.","Der hier zu konfigurierende Wert ist der Wert bis zu dem eine Adressprüfung durchgeführt wird. Ist der Gesamtwarenkorbwert oberhalb dieses Wertes wird keine Adressprüfung ausgeführt.",
-"Mapping of person status","Personstatusmapping"
 "If the address is validated with a person check, the return values can be mapped to traffic light scores. Traffic light scores control which payment methods are available to the customer. In the ""Creditrating"" area, you can configure which payment methods are available for the individual traffic light scores. (""Allowed methods for traffic light store YELLOW"" and ""Allowed methods for traffic light score RED""). Even with credit checks disabled this traffic score values will be taken into account when determining which payment methods are available to the customer during checkout.","Bei der Konfiguration der Adressprüfung auf die Detailtiefe _Person_ können hier zu jedem Rückgabewert Ampelwerte festgelegt werden. Diese Ampelwerte haben im weiteren Zahlungsprozess Einfluss auf die Anzeige der Zahlarten. Die Einstellung welche Zahlarten bei welchem Score angezeigt werden befindet sich in dem Bereich ""Bonitätsprüfung"". (""Erlaubte Zahlarten bei Ampelwert GELB"" und ""Erlaubte Zahlarten bei Ampelwert ROT"") Auch bei deaktivierter Bonitätsprüfung, werden unter Berücksichtigung des Adresssprüfungs-Scores die erlaubten Zahlarten von der Bonitätsprüfung verwendet.",
 "Person status","Personstatus"
 "First and last name known","Vor & Nachname bekannt"

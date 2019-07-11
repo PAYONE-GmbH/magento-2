@@ -49,15 +49,18 @@ class SepaDataTest extends BaseTestCase
     private $objectManager;
 
     /**
-     * @var Payment
+     * @var Creditcard|PayoneObjectManager
      */
-    private $payment;
+    private $methodInstance;
 
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $this->methodInstance = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
+
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getMethodInstance')->willReturn($this->methodInstance);
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
@@ -65,7 +68,7 @@ class SepaDataTest extends BaseTestCase
             ->getMock();
         $order->method('getPayoneRefundIban')->willReturn('DE85123456782599100003');
         $order->method('getPayoneRefundBic')->willReturn('TESTTEST');
-        $order->method('getPayment')->willReturn($this->payment);
+        $order->method('getPayment')->willReturn($payment);
 
         $creditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
         $creditmemo->method('getOrder')->willReturn($order);
@@ -90,23 +93,17 @@ class SepaDataTest extends BaseTestCase
         $this->assertInstanceOf(Order::class, $result);
     }
 
-    public function testShowPayoneSepaDataFields()
+    public function testDontShowPayoneSepaDataFields()
     {
-        $methodInstance = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
-        $methodInstance->method('needsSepaDataOnDebit')->willReturn(false);
-
-        $this->payment->method('getMethodInstance')->willReturn($methodInstance);
+        $this->methodInstance->method('needsSepaDataOnDebit')->willReturn(false);
 
         $result = $this->classToTest->showPayoneSepaDataFields();
         $this->assertFalse($result);
     }
 
-    public function testShowPayoneSepaDataFieldsNeedsSepaData()
+    public function testShowPayoneSepaDataFields()
     {
-        $methodInstance = $this->getMockBuilder(Creditcard::class)->disableOriginalConstructor()->getMock();
-        $methodInstance->method('needsSepaDataOnDebit')->willReturn(true);
-
-        $this->payment->method('getMethodInstance')->willReturn($methodInstance);
+        $this->methodInstance->method('needsSepaDataOnDebit')->willReturn(true);
 
         $result = $this->classToTest->showPayoneSepaDataFields();
         $this->assertTrue($result);

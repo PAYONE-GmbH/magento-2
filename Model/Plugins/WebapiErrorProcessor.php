@@ -19,39 +19,25 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2019 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Source;
+namespace Payone\Core\Model\Plugins;
 
-use Magento\Framework\Option\ArrayInterface;
+use Payone\Core\Model\Exception\FilterMethodListException;
+use Magento\Framework\Webapi\ErrorProcessor;
 
-/**
- * Source class for existing operation modes
- */
-class Mode implements ArrayInterface
+class WebapiErrorProcessor
 {
-    const MODE_LIVE = 'live';
-    const MODE_TEST = 'test';
-
-    /**
-     * Return existing operation modes
-     *
-     * @return array
-     */
-    public function toOptionArray()
+    public function beforeMaskException(ErrorProcessor $subject, \Exception $e)
     {
-        return [
-            [
-                'value' => self::MODE_LIVE,
-                'label' => __('Live'),
-            ],
-            [
-                'value' => self::MODE_TEST,
-                'label' => __('Test')
-            ]
-        ];
+        $oPreviousException = $e->getPrevious();
+        if ($oPreviousException && $oPreviousException instanceof FilterMethodListException) {
+            return [$oPreviousException];
+        }
+
+        return null;
     }
 }

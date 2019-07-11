@@ -37,6 +37,7 @@ use Magento\Store\Model\ScopeInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
+
 class ShopTest extends BaseTestCase
 {
     /**
@@ -67,7 +68,7 @@ class ShopTest extends BaseTestCase
 
         $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
         $store->method('getId')->willReturn(1);
-        $store->method('getName')->willReturn('test');
+        $store->method('getName')->willReturn('Name');
 
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
@@ -101,9 +102,10 @@ class ShopTest extends BaseTestCase
     public function testGetStoreName()
     {
         $result = $this->shop->getStoreName();
-        $expected = 'test';
+        $expected = 'Name';
         $this->assertEquals($expected, $result);
     }
+
 
     public function testGetLocale()
     {

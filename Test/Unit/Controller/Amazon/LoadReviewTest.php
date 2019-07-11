@@ -344,20 +344,6 @@ class LoadReviewTest extends BaseTestCase
         $this->assertInstanceOf(Json::class, $result);
     }
 
-    public function testExecuteUpdateCouponNoItemCountLengthInvalid()
-    {
-        $this->request->method('getParam')->willReturnMap([
-            ['action', null, 'updateCoupon'],
-            ['remove', null, null],
-            ['couponCode', null, '123456789012345678911234567892123456789312345678941234567895123456789612345678971234567898123456789912345678901234567891123456789212345678931234567894123456789512345678961234567897123456789812345678991234567890123456789112345678921234567893123456789412345678951234567896123456789712345678981234567899'],
-        ]);
-        $this->quote->method('getCouponCode')->willReturn('12345');
-        $this->quote->method('getItemsCount')->willReturn(false);
-
-        $result = $this->classToTest->execute();
-        $this->assertInstanceOf(Json::class, $result);
-    }
-
     public function testExecuteUpdateCouponEmpty()
     {
         $this->request->method('getParam')->willReturnMap([
@@ -366,6 +352,20 @@ class LoadReviewTest extends BaseTestCase
             ['couponCode', null, ''],
         ]);
         $this->quote->method('getCouponCode')->willReturn('');
+        $this->quote->method('getItemsCount')->willReturn(5);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteUpdateCouponNoItemCountLengthInvalid()
+    {
+        $this->request->method('getParam')->willReturnMap([
+            ['action', null, 'updateCoupon'],
+            ['remove', null, null],
+            ['couponCode', null, '123456789012345678911234567892123456789312345678941234567895123456789612345678971234567898123456789912345678901234567891123456789212345678931234567894123456789512345678961234567897123456789812345678991234567890123456789112345678921234567893123456789412345678951234567896123456789712345678981234567899'],
+        ]);
+        $this->quote->method('getCouponCode')->willReturn('12345');
         $this->quote->method('getItemsCount')->willReturn(false);
 
         $result = $this->classToTest->execute();

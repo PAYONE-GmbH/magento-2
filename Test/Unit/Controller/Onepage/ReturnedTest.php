@@ -85,6 +85,9 @@ class ReturnedTest extends BaseTestCase
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
 
+        $request = $this->getMockBuilder(Http::class)->disableOriginalConstructor()->getMock();
+        $request->method('isPost')->willReturn(true);
+
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->method('getRedirect')->willReturn($redirect);
         $context->method('getRequest')->willReturn($request);

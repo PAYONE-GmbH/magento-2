@@ -33,7 +33,6 @@ use Payone\Core\Model\ChecksumCheck;
 use Magento\Store\Model\StoreManagerInterface;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Model\PayoneConfig;
-use Payone\Core\Model\Risk\Addresscheck;
 use Magento\Store\Api\Data\StoreInterface;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -87,9 +86,6 @@ class ExportTest extends BaseTestCase
         $paymentHelper->method('getAvailablePaymentTypes')->willReturn([PayoneConfig::METHOD_CREDITCARD]);
         $paymentHelper->method('getPaymentAbbreviation')->willReturn('cc');
 
-        $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
-        $addresscheck->method('getPersonstatusMapping')->willReturn(['ABC' => 'G', 'NONE' => 'R']);
-
         $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $shopHelper->method('getMagentoVersion')->willReturn('2.0.0');
         $shopHelper->method('getMagentoEdition')->willReturn('CE');
@@ -100,8 +96,7 @@ class ExportTest extends BaseTestCase
             'configExportHelper' => $configExportHelper,
             'checksumCheck' => $this->checksumCheck,
             'storeManager' => $storeManager,
-            'paymentHelper' => $paymentHelper,
-            'addresscheck' => $addresscheck
+            'paymentHelper' => $paymentHelper
         ]);
     }
 

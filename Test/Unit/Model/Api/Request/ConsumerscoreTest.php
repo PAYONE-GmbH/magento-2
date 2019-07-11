@@ -33,9 +33,6 @@ use Payone\Core\Model\Api\Request\Consumerscore as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
-use Payone\Core\Model\ResourceModel\CheckedAddresses;
-use Payone\Core\Model\Source\AddressCheckType;
-use Payone\Core\Model\Source\CreditratingCheckType;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -56,11 +53,6 @@ class ConsumerscoreTest extends BaseTestCase
      */
     private $shopHelper;
 
-    /**
-     * @var CheckedAddresses|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $addressesChecked;
-
     protected function setUp()
     {
         $objectManager = $this->getObjectManager();
@@ -70,13 +62,11 @@ class ConsumerscoreTest extends BaseTestCase
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
-        $this->addressesChecked = $this->getMockBuilder(CheckedAddresses::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'databaseHelper' => $databaseHelper,
             'apiHelper' => $this->apiHelper,
-            'shopHelper' => $this->shopHelper,
-            'addressesChecked' => $this->addressesChecked
+            'shopHelper' => $this->shopHelper
         ]);
     }
 
@@ -93,8 +83,6 @@ class ConsumerscoreTest extends BaseTestCase
         $address->method('getCity')->willReturn('Berlin');
         $address->method('getRegionCode')->willReturn('Berlin');
 
-        $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(false);
-
         $response = [
             'status' => 'VALID',
             'score'  => 'G',
@@ -104,94 +92,10 @@ class ConsumerscoreTest extends BaseTestCase
         $this->shopHelper->expects($this->any())
             ->method('getConfigParam')
             ->willReturnMap([
-                ['enabled', 'creditrating', 'payone_protect', null, true],
-                ['mode', 'creditrating', 'payone_protect', null, 'test'],
                 ['aid', 'global', 'payone_general', null, '12345'],
-                ['addresscheck', 'creditrating', 'payone_protect', null, 'test'],
-                ['type', 'creditrating', 'payone_protect', null, 'test'],
             ]);
 
-        $result = $this->classToTest->sendRequest($address);
+        $result = $this->classToTest->sendRequest($address, 'test', 'test', 'test', 'SimpleProtect-1.0');
         $this->assertArrayHasKey('status', $result);
-    }
-
-    public function testSendRequestBoniversum()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-        $address->method('getCountryId')->willReturn('DE');
-
-        $address->method('getFirstname')->willReturn('Paul');
-        $address->method('getLastname')->willReturn('Paytest');
-        $address->method('getCompany')->willReturn('Testcompany Ltd.');
-        $address->method('getStreet')->willReturn(['Teststr. 5', '1st floor']);
-        $address->method('getPostcode')->willReturn('12345');
-        $address->method('getCity')->willReturn('Berlin');
-        $address->method('getRegionCode')->willReturn('Berlin');
-
-        $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(false);
-
-        $response = [
-            'status' => 'VALID',
-            'score'  => 'U',
-        ];
-        $this->apiHelper->method('sendApiRequest')->willReturn($response);
-
-        $this->shopHelper->expects(ConsumerscoreTest::any())
-            ->method('getConfigParam')
-            ->willReturnMap([
-                ['enabled', 'creditrating', 'payone_protect', null, true],
-                ['mode', 'creditrating', 'payone_protect', null, 'test'],
-                ['aid', 'global', 'payone_general', null, '12345'],
-                ['addresscheck', 'creditrating', 'payone_protect', null, 'test'],
-                ['type', 'creditrating', 'payone_protect', null, CreditratingCheckType::BONIVERSUM_VERITA],
-            ]);
-
-        /** @var AddressInterface $address */
-        $result = $this->classToTest->sendRequest($address);
-        ConsumerscoreTest::assertArrayHasKey('status', $result);
-        ConsumerscoreTest::assertEquals(
-            AddressCheckType::BONIVERSUM_PERSON,
-            $this->classToTest->getParameter('addresschecktype'),
-            'Check types do not match!'
-        );
-    }
-
-    public function testSendRequestTrue()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-        $address->method('getCountryId')->willReturn('DE');
-
-        $address->method('getFirstname')->willReturn('Paul');
-        $address->method('getLastname')->willReturn('Paytest');
-        $address->method('getCompany')->willReturn('Testcompany Ltd.');
-        $address->method('getStreet')->willReturn(['Teststr. 5', '1st floor']);
-        $address->method('getPostcode')->willReturn('12345');
-        $address->method('getCity')->willReturn('Berlin');
-        $address->method('getRegionCode')->willReturn('Berlin');
-
-        $this->addressesChecked->method('wasAddressCheckedBefore')->willReturn(true);
-
-        $this->shopHelper->expects($this->any())
-            ->method('getConfigParam')
-            ->willReturnMap([
-                ['enabled', 'creditrating', 'payone_protect', null, true],
-                ['mode', 'creditrating', 'payone_protect', null, 'test'],
-                ['aid', 'global', 'payone_general', null, '12345'],
-                ['addresscheck', 'creditrating', 'payone_protect', null, 'test'],
-                ['type', 'creditrating', 'payone_protect', null, 'test'],
-            ]);
-
-        $result = $this->classToTest->sendRequest($address);
-        $this->assertTrue($result);
-    }
-
-    public function testSendRequestNotNeeded()
-    {
-        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-
-        $this->shopHelper->method('getConfigParam')->willReturn(false);
-
-        $result = $this->classToTest->sendRequest($address);
-        $this->assertTrue($result);
     }
 }

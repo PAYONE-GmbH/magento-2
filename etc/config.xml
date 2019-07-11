@@ -281,47 +281,6 @@
                 <send_invoice_email>0</send_invoice_email>
             </emails>
         </payone_general>
-        <payone_protect>
-            <personstatus>
-                <mapping></mapping>
-            </personstatus>
-            <address_check>
-                <enabled>0</enabled>
-                <mode>live</mode>
-                <check_billing>NO</check_billing>
-                <check_shipping>NO</check_shipping>
-                <check_billing_for_virtual_order>0</check_billing_for_virtual_order>
-                <confirm_address_correction>0</confirm_address_correction>
-                <message_response_invalid></message_response_invalid>
-                <handle_response_error>continue_checkout</handle_response_error>
-                <stop_checkout_message></stop_checkout_message>
-                <min_order_total></min_order_total>
-                <max_order_total></max_order_total>
-                <result_lifetime></result_lifetime>
-            </address_check>
-            <creditrating>
-                <enabled>0</enabled>
-                <mode>live</mode>
-                <integration_event>before_payment</integration_event>
-                <enabled_for_payment_methods></enabled_for_payment_methods>
-                <payment_hint_enabled>0</payment_hint_enabled>
-                <payment_hint_text></payment_hint_text>
-                <agreement_enabled>0</agreement_enabled>
-                <agreement_message></agreement_message>
-                <type>IH</type>
-                <addresscheck>NO</addresscheck>
-                <allow_payment_methods_yellow></allow_payment_methods_yellow>
-                <allow_payment_methods_red></allow_payment_methods_red>
-                <sample_mode_enabled>0</sample_mode_enabled>
-                <sample_mode_frequency></sample_mode_frequency>
-                <handle_response_error>continue_checkout</handle_response_error>
-                <stop_checkout_message></stop_checkout_message>
-                <insufficient_score_message></insufficient_score_message>
-                <min_order_total></min_order_total>
-                <max_order_total></max_order_total>
-                <result_lifetime></result_lifetime>
-            </creditrating>
-        </payone_protect>
         <payone_payment>
             <payone_cash_on_delivery>
                 <use_global>1</use_global>

@@ -33,11 +33,15 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\LayoutInterface;
 use Magento\Paypal\Block\Express\Shortcut;
 use Payone\Core\Helper\Payment;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Observer\AddAmazonPayButton as ClassToTest;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
+use Magento\Quote\Model\Quote;
+use Payone\Core\Model\SimpleProtect\SimpleProtect;
 
 class AddAmazonPayButtonTest extends BaseTestCase
 {
@@ -56,6 +60,16 @@ class AddAmazonPayButtonTest extends BaseTestCase
      */
     private $paymentHelper;
 
+    /**
+     * @var CheckoutSession|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $checkoutSession;
+
+    /**
+     * @var SimpleProtect|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $simpleProtect;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
@@ -71,9 +85,14 @@ class AddAmazonPayButtonTest extends BaseTestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
+        $this->checkoutSession = $this->getMockBuilder(CheckoutSession::class)->disableOriginalConstructor()->getMock();
+        $this->simpleProtect = $this->getMockBuilder(SimpleProtect::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'paymentHelper' => $this->paymentHelper,
-            'storeManager' => $storeManager
+            'storeManager' => $storeManager,
+            'checkoutSession' => $this->checkoutSession,
+            'simpleProtect' => $this->simpleProtect
         ]);
     }
 
@@ -107,6 +126,10 @@ class AddAmazonPayButtonTest extends BaseTestCase
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);
 
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
+        $this->simpleProtect->method('handlePreCheckout')->willReturn([PayoneConfig::EXPRESS_AMAZONPAY]);
+
         $executed = false;
 
         /** @var Observer $observer */
@@ -136,6 +159,39 @@ class AddAmazonPayButtonTest extends BaseTestCase
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);
+
+        $executed = false;
+
+        /** @var Observer $observer */
+        $this->classToTest->execute($observer);
+        $executed = true;
+        $this->assertTrue($executed);
+    }
+
+    public function testExecuteSimpleProtectDeactivated()
+    {
+        $this->paymentHelper->method('isPaymentMethodActive')->willReturn(true);
+
+        $shortcut = $this->getMockBuilder(Shortcut::class)->disableOriginalConstructor()->getMock();
+
+        $layout = $this->getMockBuilder(LayoutInterface::class)->disableOriginalConstructor()->getMock();
+        $layout->method('createBlock')->willReturn($shortcut);
+
+        $shortcutButtons = $this->getMockBuilder(ShortcutButtons::class)->disableOriginalConstructor()->getMock();
+        $shortcutButtons->method('getLayout')->willReturn($layout);
+
+        $event = $this->getMockBuilder(Event::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getContainer'])
+            ->getMock();
+        $event->method('getContainer')->willReturn($shortcutButtons);
+
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
+        $observer->method('getEvent')->willReturn($event);
+
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
+        $this->simpleProtect->method('handlePreCheckout')->willReturn([PayoneConfig::EXPRESS_PAYPAL]);
 
         $executed = false;
 

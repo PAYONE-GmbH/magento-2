@@ -30,6 +30,9 @@ use Magento\Framework\Event\ObserverInterface;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\Event\Observer;
 use Magento\Paypal\Block\Express\Shortcut;
+use Payone\Core\Model\PayoneConfig;
+use Payone\Core\Model\SimpleProtect\SimpleProtect;
+use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
 
 /**
  * Event class to add the PayPal Express buttons to the frontend
@@ -44,13 +47,34 @@ class AddPaypalExpressButtons implements ObserverInterface
     protected $paymentHelper;
 
     /**
+     * PAYONE Simple Protect implementation
+     *
+     * @var SimpleProtect
+     */
+    protected $simpleProtect;
+
+    /**
+     * Checkout session object
+     *
+     * @var CheckoutSession
+     */
+    protected $checkoutSession;
+
+    /**
      * Constructor
      *
-     * @param Payment $paymentHelper
+     * @param Payment         $paymentHelper
+     * @param SimpleProtect   $simpleProtect
+     * @param CheckoutSession $checkoutSession
      */
-    public function __construct(Payment $paymentHelper)
-    {
+    public function __construct(
+        Payment $paymentHelper,
+        SimpleProtect $simpleProtect,
+        CheckoutSession $checkoutSession
+    ) {
         $this->paymentHelper = $paymentHelper;
+        $this->simpleProtect = $simpleProtect;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -69,6 +93,11 @@ class AddPaypalExpressButtons implements ObserverInterface
         $shortcutButtons = $observer->getEvent()->getContainer();
 
         if (in_array($shortcutButtons->getNameInLayout(), ['addtocart.shortcut.buttons', 'addtocart.shortcut.buttons.additional'])) {
+            return;
+        }
+
+        $oQuote = $this->checkoutSession->getQuote();
+        if (!in_array(PayoneConfig::EXPRESS_PAYPAL, $this->simpleProtect->handlePreCheckout($oQuote))) {
             return;
         }
 

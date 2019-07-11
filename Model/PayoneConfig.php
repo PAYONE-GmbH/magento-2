@@ -86,6 +86,10 @@ abstract class PayoneConfig
     const METHOD_ALIPAY = 'payone_alipay';
     const METHOD_AMAZONPAY = 'payone_amazonpay';
 
+    /* Express checkout types */
+    const EXPRESS_PAYPAL = self::METHOD_PAYPAL;
+    const EXPRESS_AMAZONPAY = self::METHOD_AMAZONPAY;
+
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
     const METHOD_GROUP_PAYOLUTION = 'payone_payolution';

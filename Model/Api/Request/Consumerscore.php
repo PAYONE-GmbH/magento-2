@@ -27,106 +27,37 @@
 namespace Payone\Core\Model\Api\Request;
 
 use Magento\Quote\Api\Data\AddressInterface;
-use Payone\Core\Model\Source\AddressCheckType;
-use Payone\Core\Model\Source\CreditratingCheckType;
 
 /**
  * Class for the PAYONE Server API request "consumerscore"
  */
 class Consumerscore extends AddressRequest
 {
-
-    /**
-     * Object of CheckedAddresses resource
-     *
-     * @var \Payone\Core\Model\ResourceModel\CheckedAddresses
-     */
-    protected $addressesChecked;
-
-    /**
-     * Constructor
-     *
-     * @param \Payone\Core\Helper\Shop                          $shopHelper
-     * @param \Payone\Core\Helper\Environment                   $environmentHelper
-     * @param \Payone\Core\Helper\Api                           $apiHelper
-     * @param \Payone\Core\Model\ResourceModel\ApiLog           $apiLog
-     * @param \Payone\Core\Helper\Customer                      $customerHelper
-     * @param \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
-     */
-    public function __construct(
-        \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Helper\Environment $environmentHelper,
-        \Payone\Core\Helper\Api $apiHelper,
-        \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
-        \Payone\Core\Helper\Customer $customerHelper,
-        \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
-    ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
-        $this->addressesChecked = $addressesChecked;
-    }
-
-    /**
-     * Check enabled status
-     *
-     * @return bool
-     */
-    protected function isCheckEnabled()
-    {
-        if (!$this->shopHelper->getConfigParam('enabled', 'creditrating', 'payone_protect')) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Get check type for combined address checks but enforce 'Boniversum Person'
-     * if the configured credit rating check type is 'Boniversum VERITA'
-     *
-     * @return string
-     */
-    protected function getCombinedAdressCheckType()
-    {
-        $creditRatingCheckType = $this->shopHelper->getConfigParam('type', 'creditrating', 'payone_protect');
-        if ($creditRatingCheckType == CreditratingCheckType::BONIVERSUM_VERITA) {
-            return AddressCheckType::BONIVERSUM_PERSON;
-        }
-        return $this->shopHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect');
-    }
-
     /**
      * Send request "addresscheck" to PAYONE server API
      *
      * @param  AddressInterface $oAddress
+     * @param  string           $sMode
+     * @param  string           $sConsumerscoreType
+     * @param  string           $sAddresscheckType
+     * @param  string|null      $sSimpleProtectVersion
      * @return array|bool
      */
-    public function sendRequest(AddressInterface $oAddress)
+    public function sendRequest(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion = null)
     {
-        if (!$this->isCheckEnabled() || $oAddress->getCountryId() != 'DE') {
-            return true;
-        }
-
-        $sType = $this->shopHelper->getConfigParam('type', 'creditrating', 'payone_protect');
-
         $this->addParameter('request', 'consumerscore');
-        $this->addParameter('mode', $this->shopHelper->getConfigParam('mode', 'creditrating', 'payone_protect')); //Operationmode live or test
+        $this->addParameter('mode', $sMode); //Operationmode live or test
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); //ID of PayOne Sub-Account
-        $this->addParameter('addresschecktype', $this->getCombinedAdressCheckType());
-        $this->addParameter('consumerscoretype', $sType);
+        $this->addParameter('addresschecktype', $sAddresscheckType);
+        $this->addParameter('consumerscoretype', $sConsumerscoreType);
         $this->addParameter('language', $this->shopHelper->getLocale());
-
         $this->addAddress($oAddress);
-        if ($this->addressesChecked->wasAddressCheckedBefore($oAddress, $sType,true) === false) {
-            $aResponse = $this->send();
-            if (isset($aResponse['score']) && $aResponse['score'] === 'U') {
-                $unknownDefault = $this->shopHelper->getConfigParam('unknown_value', 'creditrating', 'payone_protect');
-                $aResponse['score'] = empty($unknownDefault) ? 'G' : $unknownDefault;
-            }
-            if ($aResponse['status'] == 'VALID') {
-                $this->addressesChecked->addCheckedAddress($oAddress, $aResponse, $sType,true);
-            }
 
-            return $aResponse;
+        if ($sSimpleProtectVersion !== null) {
+            $this->addParameter('sdk_type', 'simple-protect');
+            $this->addParameter('sdk_version', $sSimpleProtectVersion);
         }
-        return true;
+
+        return $this->send();
     }
 }
