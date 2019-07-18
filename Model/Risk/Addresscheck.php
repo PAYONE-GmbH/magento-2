@@ -85,23 +85,33 @@ class Addresscheck
     protected $checkoutSession;
 
     /**
+     * Quote repository.
+     *
+     * @var \Magento\Quote\Api\CartRepositoryInterface
+     */
+    protected $quoteRepository;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Addresscheck $addresscheck
      * @param \Payone\Core\Helper\Database                $databaseHelper
      * @param \Payone\Core\Helper\Toolkit                 $toolkitHelper
      * @param \Magento\Checkout\Model\Session             $checkoutSession
+     * @param \Magento\Quote\Api\CartRepositoryInterface  $quoteRepository
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Addresscheck $addresscheck,
         \Payone\Core\Helper\Database $databaseHelper,
         \Payone\Core\Helper\Toolkit $toolkitHelper,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
     ) {
         $this->addresscheck = $addresscheck;
         $this->databaseHelper = $databaseHelper;
         $this->toolkitHelper = $toolkitHelper;
         $this->checkoutSession = $checkoutSession;
+        $this->quoteRepository = $quoteRepository;
     }
 
     /**
@@ -323,12 +333,14 @@ class Addresscheck
      * Get score from session or from a new addresscheck and add it to the address
      *
      * @param  AddressInterface $oAddress
-     * @param  Quote            $oQuote
+     * @param  int              $iCartId
      * @param  bool             $blIsBillingAddress
      * @return AddressInterface
      */
-    public function handleAddressManagement(AddressInterface $oAddress, Quote $oQuote, $blIsBillingAddress = true)
+    public function handleAddressManagement(AddressInterface $oAddress, $iCartId, $blIsBillingAddress = true)
     {
+        $oQuote = $this->quoteRepository->getActive($iCartId);
+
         $sScore = $this->checkoutSession->getPayoneBillingAddresscheckScore();
         if ($blIsBillingAddress === false) {
             $sScore = $this->checkoutSession->getPayoneShippingAddresscheckScore();

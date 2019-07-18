@@ -70,7 +70,7 @@ class ForwardingTest extends BaseTestCase
 
     public function testHandleForwardings()
     {
-        $post = ['txid' => '12345', 'txaction' => 'appointed'];
+        $post = ['txid' => '12345', 'txaction' => 'appointed', 'array' => ['te' => 'st']];
 
         $result = $this->classToTest->handleForwardings($post);
         $this->assertNull($result);
