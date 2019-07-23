@@ -73,7 +73,7 @@ class Paydirekt extends PayoneMethod
     {
         $aParams = ['wallettype' => 'PDT'];
         if ($this->checkoutSession->getPayoneExpressType() == $this->_code) {
-            $aParams['add_paydata[device_id]'] = '1';
+            $aParams['add_paydata[device_fingerprint]'] = $this->checkoutSession->getPayoneDeviceFingerprint();
             $aParams['add_paydata[device_name]'] = $this->checkoutSession->getPayoneUserAgent();
             $aParams['customer_is_present'] = 'no';
             $aParams['recurrence'] = 'oneclick';

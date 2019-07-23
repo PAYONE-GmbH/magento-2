@@ -309,6 +309,39 @@ class Review extends \Magento\Framework\View\Element\Template
         return false;
     }
 
+    /**
+     * Check if paypal express is used
+     *
+     * @return bool
+     */
+    public function isPaydirekt()
+    {
+        if ($this->_quote->getPayment()->getMethod() == PayoneConfig::METHOD_PAYDIREKT) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Generate URL to the fingerprint.js Javascript file
+     *
+     * @return string
+     */
+    public function getFingerprintJsUrl()
+    {
+        $params = [
+            'theme' => 'Magento/luma',
+            'area' => 'frontend',
+        ];
+        $asset = $this->_assetRepo->createAsset('Payone_Core::js/fingerprint2.min.js', $params);
+        return $asset->getUrl();
+    }
+
+    /**
+     * Check if paydirekt email message has to be shown
+     *
+     * @return bool
+     */
     public function showPaydirektEmailMessage()
     {
         if ($this->_quote->getPayment()->getMethod() == PayoneConfig::METHOD_PAYDIREKT && $this->databaseHelper->getPaydirektOneklickOrderCount($this->_quote->getCustomerId()) == 0) {

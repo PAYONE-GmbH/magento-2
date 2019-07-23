@@ -119,12 +119,15 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
 
         $this->checkoutSession->setPayoneUserAgent($this->getRequest()->getHeader('user-agent'));
         $this->checkoutSession->setPayoneExpressType($oQuote->getPayment()->getMethod());
+        if ($this->getRequest()->getParam('fingerprint')) {
+            $this->checkoutSession->setPayoneDeviceFingerprint($this->getRequest()->getParam('fingerprint'));
+        }
 
         $this->cartManagement->placeOrder($oQuote->getId());
 
         // "last successful quote"
         $sQuoteId = $oQuote->getId();
-        $this->checkoutSession->setLastQuoteId($sQuoteId)->setLastSuccessQuoteId($sQuoteId)->unsPayoneWorkorderId()->unsIsPayonePayPalExpress();
+        $this->checkoutSession->setLastQuoteId($sQuoteId)->setLastSuccessQuoteId($sQuoteId)->unsPayoneWorkorderId()->unsIsPayonePayPalExpress()->unsPayoneUserAgent()->unsPayoneDeviceFingerprint();
 
         $oQuote->setIsActive(false)->save();
     }

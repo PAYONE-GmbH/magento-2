@@ -41,26 +41,16 @@ class OneklickButton extends Template implements \Magento\Catalog\Block\Shortcut
     protected $alias = 'payone.block.paydirekt.oneklick';
 
     /**
-     * Asset repository object
-     *
-     * @var \Magento\Framework\View\Asset\Repository
-     */
-    protected $assetRepo;
-
-    /**
      * Constructor
      *
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Magento\Framework\View\Asset\Repository         $assetRepo
      * @param array                                            $data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \Magento\Framework\View\Asset\Repository $assetRepo,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->assetRepo = $assetRepo;
         $this->setTemplate('paydirekt/oneklick_button.phtml');
     }
 
