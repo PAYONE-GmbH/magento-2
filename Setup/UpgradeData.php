@@ -31,6 +31,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Sales\Setup\SalesSetupFactory;
 use Payone\Core\Helper\Shop;
+use Magento\Customer\Setup\CustomerSetupFactory;
 
 /**
  * Class UpgradeData
@@ -52,15 +53,24 @@ class UpgradeData implements UpgradeDataInterface
     protected $shopHelper;
 
     /**
+     * Eav setup factory
+     *
+     * @var CustomerSetupFactory
+     */
+    protected $customerSetupFactory;
+
+    /**
      * Constructor
      *
      * @param SalesSetupFactory $salesSetupFactory
      * @param Shop              $shopHelper
+     * @param CustomerSetupFactory   $customerSetupFactory
      */
-    public function __construct(SalesSetupFactory $salesSetupFactory, Shop $shopHelper)
+    public function __construct(SalesSetupFactory $salesSetupFactory, Shop $shopHelper, CustomerSetupFactory $customerSetupFactory)
     {
         $this->salesSetupFactory = $salesSetupFactory;
         $this->shopHelper = $shopHelper;
+        $this->customerSetupFactory = $customerSetupFactory;
     }
 
     /**
@@ -193,6 +203,43 @@ class UpgradeData implements UpgradeDataInterface
 
         if (version_compare($context->getVersion(), '2.2.0', '<=')) {// pre update version is less than or equal to 2.2.1
             $this->convertPersonstatusMappingConfig($setup);
+        }
+
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_installment_duration')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_installment_duration',
+                ['type' => 'integer', 'length' => null]
+            );
+        }
+
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_express_type')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_express_type',
+                ['type' => 'varchar', 'length' => 64, 'default' => '']
+            );
+        }
+
+        $customerInstaller = $this->customerSetupFactory->create(['setup' => $setup]);
+        if (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_oneclick_registered', 'attribute_id')) {
+            $customerInstaller->addAttribute(
+                'customer',
+                'payone_paydirekt_oneclick_registered',
+                [
+                    'type'         => 'int',
+                    'label'        => 'Payone paydirekt OneClick is registered',
+                    'input'        => 'text',
+                    'required'     => false,
+                    'visible'      => false,
+                    'user_defined' => true,
+                    'sort_order'   => 999,
+                    'position'     => 999,
+                    'system'       => 0,
+                ]
+            );
         }
 
         $setup->endSetup();

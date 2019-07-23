@@ -27,6 +27,13 @@
  * @var \Payone\Core\Block\Onepage\Review $block
  */
 ?>
+<?php if ($block->showPaydirektEmailMessage() === true): ?>
+<div class="messages">
+    <div class="message message-error notice">
+        <div><?php echo __('Please check your email account for the paydirekt registration email before continuing.'); ?></div>
+    </div><br>
+</div>
+<?php endif; ?>
 <div class="paypal-review view">
     <div class="block block-order-details-view">
         <div class="block-content">
@@ -78,8 +85,9 @@
                 <strong class="box-title"><span><?php echo $block->escapeHtml(__('Payment Method')); ?></span></strong>
                 <div class="box-content">
                     <?php echo $block->escapeHtml($block->getPaymentMethodTitle()); ?><br>
-                    <?php echo $block->escapeHtml($block->getEmail()); ?> <br>
-                    <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" alt="<?php echo $block->escapeHtml(__('Buy now with PayPal')); ?>"/>
+                    <?php if ($block->isPayPalExpress() === true): ?>
+                        <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" alt="<?php echo $block->escapeHtml(__('Buy now with PayPal')); ?>"/>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

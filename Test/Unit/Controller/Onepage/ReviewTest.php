@@ -40,9 +40,10 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Quote\Api\Data\CartExtension;
 use Magento\Quote\Model\ShippingAssignment;
 use Magento\Quote\Model\Shipping;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-
+use Magento\Quote\Model\Quote\Payment;
 
 class ReviewTest extends BaseTestCase
 {
@@ -65,6 +66,11 @@ class ReviewTest extends BaseTestCase
      * @var Redirect|\PHPUnit_Framework_MockObject_MockObject
      */
     private $request;
+
+    /**
+     * @var Payment|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $payment;
 
     protected function setUp()
     {
@@ -101,11 +107,14 @@ class ReviewTest extends BaseTestCase
             ->getMock();
         $cartExtension->method('getShippingAssignments')->willReturn([$assignment]);
 
+        $this->payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
         $quote->method('getBillingAddress')->willReturn($address);
         $quote->method('getShippingAddress')->willReturn($address);
         $quote->method('getIsVirtual')->willReturn(false);
         $quote->method('getExtensionAttributes')->willReturn($cartExtension);
+        $quote->method('getPayment')->willReturn($this->payment);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -127,19 +136,21 @@ class ReviewTest extends BaseTestCase
 
     public function testExecute()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn(null);
-
-        $this->request->method('getBeforeForwardInfo')->willReturn(false);
-        $result = $this->classToTest->execute();
-        $this->assertInstanceOf(Redirect::class, $result);
-    }
-
-    public function testExecuteRedirect()
-    {
         $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $this->payment->method('getMethod')->willReturn('payone_paypal');
 
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Page::class, $result);
+    }
+
+    public function testExecuteRedirect()
+    {
+        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn(null);
+        $this->payment->method('getMethod')->willReturn(null);
+
+        $this->request->method('getBeforeForwardInfo')->willReturn(false);
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Redirect::class, $result);
     }
 }

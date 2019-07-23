@@ -90,7 +90,14 @@ class PlaceOrderTest extends BaseTestCase
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
 
-        $this->request = $this->getMockBuilder(Http::class)->disableOriginalConstructor()->setMethods(['getBeforeForwardInfo'])->getMock();
+        $this->request = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getBeforeForwardInfo',
+                'getHeader',
+            ])
+            ->getMock();
+        $this->request->method('getHeader')->willReturn('HTTP_USER_AGENT');
 
         $messageManager = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()->getMock();
 

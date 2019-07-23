@@ -47,6 +47,9 @@
                 <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
+        <!-- ko if: isPaydirektOneKlickDisplayable() -->
+            <button data-bind="click: redirectToOneKlickController"><!-- ko i18n: 'Register for paydirekt oneKlick'--><!-- /ko --></button>
+        <!--/ko-->
         <div class="actions-toolbar">
             <div class="primary">
                 <button class="action primary checkout"

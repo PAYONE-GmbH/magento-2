@@ -31,11 +31,10 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Framework\DataObject;
+use Payone\Core\Model\PayoneConfig;
 
 /**
- * Paypal Express Onepage checkout block
- *
- * @author      Magento Core Team <core@magentocommerce.com>
+ * Order review block
  */
 class Review extends \Magento\Framework\View\Element\Template
 {
@@ -93,11 +92,23 @@ class Review extends \Magento\Framework\View\Element\Template
     protected $checkoutSession;
 
     /**
+     * @var \Payone\Core\Helper\Shop
+     */
+    protected $shopHelper;
+
+    /**
+     * @var \Payone\Core\Helper\Database
+     */
+    protected $databaseHelper;
+
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Tax\Helper\Data $taxHelper
      * @param \Magento\Customer\Model\Address\Config $addressConfig
      * @param PriceCurrencyInterface $priceCurrency
      * @param Session $checkoutSession
+     * @param \Payone\Core\Helper\Shop $shopHelper
+     * @param \Payone\Core\Helper\Database $databaseHelper
      * @param array $data
      */
     public function __construct(
@@ -106,6 +117,8 @@ class Review extends \Magento\Framework\View\Element\Template
         \Magento\Customer\Model\Address\Config $addressConfig,
         PriceCurrencyInterface $priceCurrency,
         Session $checkoutSession,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Helper\Database $databaseHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -113,6 +126,8 @@ class Review extends \Magento\Framework\View\Element\Template
         $this->_taxHelper = $taxHelper;
         $this->_addressConfig = $addressConfig;
         $this->checkoutSession = $checkoutSession;
+        $this->shopHelper = $shopHelper;
+        $this->databaseHelper = $databaseHelper;
         $this->getQuote(); // fill quote property
     }
 
@@ -136,7 +151,8 @@ class Review extends \Magento\Framework\View\Element\Template
      */
     public function getBillingAddress()
     {
-        return $this->_quote->getBillingAddress();
+        $oBillingAddress = $this->_quote->getBillingAddress();
+        return $oBillingAddress;
     }
 
     /**
@@ -271,15 +287,43 @@ class Review extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Returns payment method display title
+     *
+     * @return string
+     */
+    public function getPaymentMethodTitle()
+    {
+        return $this->shopHelper->getConfigParam('title', $this->_quote->getPayment()->getMethod(), 'payment');
+    }
+
+    /**
+     * Check if paypal express is used
+     *
+     * @return bool
+     */
+    public function isPayPalExpress()
+    {
+        if ($this->_quote->getPayment()->getMethod() == PayoneConfig::METHOD_PAYPAL) {
+            return true;
+        }
+        return false;
+    }
+
+    public function showPaydirektEmailMessage()
+    {
+        if ($this->_quote->getPayment()->getMethod() == PayoneConfig::METHOD_PAYDIREKT && $this->databaseHelper->getPaydirektOneklickOrderCount($this->_quote->getCustomerId()) == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Retrieve payment method and assign additional template values
      *
      * @return $this
      */
     protected function _beforeToHtml()
     {
-        $methodInstance = $this->_quote->getPayment()->getMethodInstance();
-        $this->setPaymentMethodTitle($methodInstance->getTitle());
-
         $this->setShippingRateRequired(true);
         if ($this->_quote->getIsVirtual()) {
             $this->setShippingRateRequired(false);
