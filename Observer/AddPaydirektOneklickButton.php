@@ -93,7 +93,7 @@ class AddPaydirektOneklickButton implements ObserverInterface
             return;
         }
 
-        if ($this->customerSession->isLoggedIn() === false || (bool)$this->customerSession->getCustomer()->getPayonePaydirektOneclickRegistered() === false) {
+        if ($this->customerSession->isLoggedIn() === false || (bool)$this->customerSession->getCustomer()->getPayonePaydirektRegistered() === false) {
             return;
         }
 

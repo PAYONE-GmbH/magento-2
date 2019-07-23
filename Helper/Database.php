@@ -345,7 +345,7 @@ class Database extends \Payone\Core\Helper\Base
     public function markUserAsRegisteredWithPaydirekt($iCustomerId)
     {
         $table = $this->databaseResource->getTableName('customer_entity');
-        $data = ['payone_paydirekt_oneclick_registered' => 1];
+        $data = ['payone_paydirekt_registered' => 1];
         $where = ['entity_id = ?' => $iCustomerId];
         return $this->getDb()->update($table, $data, $where);
     }

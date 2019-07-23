@@ -299,7 +299,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      */
     protected function isPaydirektOneKlickDisplayable()
     {
-        if ($this->customerSession->isLoggedIn() && (bool)$this->customerSession->getCustomer()->getPayonePaydirektOneclickRegistered() === false) {
+        if ($this->customerSession->isLoggedIn() && (bool)$this->customerSession->getCustomer()->getPayonePaydirektRegistered() === false) {
             return (bool)$this->requestHelper->getConfigParam('oneklick_active', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment');
         }
         return false;

@@ -224,10 +224,10 @@ class UpgradeData implements UpgradeDataInterface
         }
 
         $customerInstaller = $this->customerSetupFactory->create(['setup' => $setup]);
-        if (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_oneclick_registered', 'attribute_id')) {
+        if (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_registered', 'attribute_id')) {
             $customerInstaller->addAttribute(
                 'customer',
-                'payone_paydirekt_oneclick_registered',
+                'payone_paydirekt_registered',
                 [
                     'type'         => 'int',
                     'label'        => 'Payone paydirekt OneClick is registered',

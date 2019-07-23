@@ -103,10 +103,10 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
             );
         }
 
-        if (!$setup->getConnection()->tableColumnExists($setup->getTable('customer_entity'), 'payone_paydirekt_oneclick_registered')) {
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('customer_entity'), 'payone_paydirekt_registered')) {
             $setup->getConnection()->addColumn(
                 $setup->getTable('customer_entity'),
-                'payone_paydirekt_oneclick_registered',
+                'payone_paydirekt_registered',
                 [
                     'type' => Table::TYPE_INTEGER,
                     'length' => 1,

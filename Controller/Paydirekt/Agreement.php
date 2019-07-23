@@ -126,11 +126,11 @@ class Agreement extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         $oCustomer = $this->customerSession->getCustomer();
-        if ($this->getRequest()->getParam('return') && (bool)$oCustomer->getPayonePaydirektOneclickRegistered() === false) {
-            $oCustomer->setPayonePaydirektOneclickRegistered(1);
+        if ($this->getRequest()->getParam('return') && (bool)$oCustomer->getPayonePaydirektRegistered() === false) {
+            $oCustomer->setPayonePaydirektRegistered(1);
             $this->databaseHelper->markUserAsRegisteredWithPaydirekt($oCustomer->getId());
         }
-        if ((bool)$oCustomer->getPayonePaydirektOneclickRegistered() === true) {
+        if ((bool)$oCustomer->getPayonePaydirektRegistered() === true) {
             $this->prepareQuote();
             $this->_redirect($this->_url->getUrl('payone/onepage/review'));
             return;
