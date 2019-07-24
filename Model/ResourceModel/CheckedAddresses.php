@@ -106,10 +106,10 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      * Generate a unique hash of an address
      *
      * @param  AddressInterface $oAddress
-     * @param  array            $aResponse
+     * @param  array|bool      $aResponse
      * @return string
      */
-    protected function getHashFromAddress(AddressInterface $oAddress, $aResponse = false)
+    public function getHashFromAddress(AddressInterface $oAddress, $aResponse = false)
     {
         $aAddressArray = $this->getAddressArray($oAddress); // collect data from the address object
 
@@ -130,7 +130,27 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     }
 
     /**
-     * Save Api-log entry to database
+     * Insert checked address into database
+     *
+     * @param string $sHash
+     * @param bool $blIsBonicheck
+     * @param string $sChecktype
+     * @return void
+     */
+    protected function insertCheckedAddress($sHash, $blIsBonicheck, $sChecktype)
+    {
+        $this->getConnection()->insert(
+            $this->getMainTable(),
+            [
+                'address_hash' => $sHash,
+                'is_bonicheck' => $blIsBonicheck,
+                'checktype' => $sChecktype,
+            ]
+        );
+    }
+
+    /**
+     * Handle saving of checked addresses
      *
      * @param  AddressInterface $oAddress
      * @param  array            $aResponse
@@ -141,14 +161,15 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     public function addCheckedAddress(AddressInterface $oAddress, $aResponse, $sChecktype, $blIsBonicheck = false)
     {
         $sHash = $this->getHashFromAddress($oAddress, $aResponse); // generate hash from given address
-        $this->getConnection()->insert(
-            $this->getMainTable(),
-            [
-                'address_hash' => $sHash,
-                'is_bonicheck' => $blIsBonicheck,
-                'checktype' => $sChecktype,
-            ]
-        );
+        $this->insertCheckedAddress($sHash, $blIsBonicheck, $sChecktype);
+
+        error_log(date('Y-m-d H:i:s - ')."A1 - Added checked address Hash: '".$sHash."'\n", 3, dirname(__FILE__).'/../../../../../../MAG2_74.log');
+
+        $sUncorrectedHash = $this->getHashFromAddress($oAddress);
+        if ($sHash !== $sUncorrectedHash) {
+            $this->insertCheckedAddress($sUncorrectedHash, $blIsBonicheck, $sChecktype);
+            error_log(date('Y-m-d H:i:s - ')."A2 - Added checked address Uncorrected Hash: '".$sUncorrectedHash."'\n", 3, dirname(__FILE__).'/../../../../../../MAG2_74.log');
+        }
         return $this;
     }
 
@@ -167,10 +188,16 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             $sGroup = 'creditrating';
         }
 
+        $sDebugPath = '../../../../../../';
+        error_log("###############################################################\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ')."1 - wasAddressCheckedBefore - Start\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
         $sLifetime = $this->shopHelper->getConfigParam('result_lifetime', $sGroup, 'payone_protect');
+        error_log(date('Y-m-d H:i:s - ')."2 - Lifetime config param: '".$sLifetime."'\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
         if (empty($sLifetime) || !is_numeric($sLifetime)) {
+            error_log(date('Y-m-d H:i:s - ')."3 - Empty or not numeric - CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
             return false; // no lifetime = check every time
         }
+        error_log(date('Y-m-d H:i:s - ')."4 - Not empty and numeric - go further\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
 
         $oSelect = $this->getConnection()->select()
             ->from($this->getMainTable(), ['checkdate'])
@@ -186,10 +213,24 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             'lifetime' => $sLifetime
         ];
 
+        error_log(date('Y-m-d H:i:s - ')."5 - SQL assembled: ".$oSelect->assemble()."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ').print_r($aParams, true)."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+
         $sDate = $this->getConnection()->fetchOne($oSelect, $aParams);
+
+        $oDebugSelect = $this->getConnection()->select()->from($this->getMainTable())->where("address_hash = :hash")->where("is_bonicheck = :isBoni")->where("checktype = :checkType");
+        unset($aParams['lifetime']);
+
         if ($sDate != false) {
+            error_log(date('Y-m-d H:i:s - ')."6 - Got date: ".$sDate." - address was checked before - DONT CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+            error_log(date('Y-m-d H:i:s - ')."6b - DebugSelect: ".print_r($this->getConnection()->fetchAll($oDebugSelect, $aParams), true)."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+
             return true;
         }
+        error_log(date('Y-m-d H:i:s - ')."7 - Got no date: ".$sDate." - address was not checked before ?!? - CHECK\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+        error_log(date('Y-m-d H:i:s - ')."8b - DebugSelect: ".print_r($this->getConnection()->fetchAll($oDebugSelect, $aParams), true)."\n", 3, dirname(__FILE__).'/'.$sDebugPath.'MAG2_74.log');
+
+
         return false;
     }
 }

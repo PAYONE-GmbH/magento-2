@@ -26,7 +26,13 @@
 
 namespace Payone\Core\Service\V1;
 
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Exception\State\InitException;
 use Payone\Core\Api\EditAddressInterface;
+use Psr\Log\LoggerInterface as Logger;
+use Magento\Framework\Exception\InputException;
+use Magento\Quote\Model\QuoteIdMask;
+use Magento\Quote\Model\QuoteIdMaskFactory;
 
 /**
  * Web API model for the PAYONE addresscheck
@@ -48,17 +54,45 @@ class EditAddress implements EditAddressInterface
     protected $addressRepository;
 
     /**
+     * Quote repository.
+     *
+     * @var \Magento\Quote\Api\CartRepositoryInterface
+     */
+    protected $quoteRepository;
+
+    /**
+     * Logger.
+     *
+     * @var Logger
+     */
+    protected $logger;
+
+    /**
+     * @var QuoteIdMaskFactory
+     */
+    protected $quoteIdMaskFactory;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Service\V1\Data\EditAddressResponseFactory $responseFactory
      * @param \Magento\Customer\Api\AddressRepositoryInterface        $addressRepository
+     * @param \Magento\Quote\Api\CartRepositoryInterface              $quoteRepository
+     * @param Logger                                                  $logger
+     * @param QuoteIdMaskFactory                                      $quoteIdMaskFactory
      */
     public function __construct(
         \Payone\Core\Service\V1\Data\EditAddressResponseFactory $responseFactory,
-        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
+        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository,
+        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
+        Logger $logger,
+        QuoteIdMaskFactory $quoteIdMaskFactory
     ) {
         $this->responseFactory = $responseFactory;
         $this->addressRepository = $addressRepository;
+        $this->quoteRepository = $quoteRepository;
+        $this->logger = $logger;
+        $this->quoteIdMaskFactory = $quoteIdMaskFactory;
     }
 
     /**
@@ -66,28 +100,43 @@ class EditAddress implements EditAddressInterface
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
      *
+     * @param  mixed $cartId
      * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
      * @return \Payone\Core\Service\V1\Data\EditAddressResponse
+     * @throws InputException
      */
-    public function editAddress(\Magento\Quote\Api\Data\AddressInterface $addressData)
+    public function editAddress($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData)
     {
-        $address = $this->addressRepository->getById($addressData->getCustomerAddressId());
-        $address->setPostcode($addressData->getPostcode());
-        $address->setFirstname($addressData->getFirstname());
-        $address->setLastname($addressData->getLastname());
-        $address->setCity($addressData->getCity());
-        $address->setCountryId($addressData->getCountryId());
-
-        $street = $addressData->getStreet();
-        if (!is_array($street)) {
-            $street = [$street];
+        /** @var \Magento\Quote\Model\Quote $quote */
+        $quote = $this->quoteRepository->get($cartId);
+        $quote->setShippingAddress($addressData);
+        try {
+            $this->quoteRepository->save($quote);
+        } catch (\Exception $e) {
+            $this->logger->critical($e);
+            throw new InputException(__('Unable to save shipping information. Please check input data.'));
         }
-        $address->setStreet($street);
-
-        $this->addressRepository->save($address);
 
         $oResponse = $this->responseFactory->create();
         $oResponse->setData('success', true);
         return $oResponse;
+    }
+
+    /**
+     * PAYONE editAddress script
+     * The full class-paths must be given here otherwise the Magento 2 WebApi
+     * cant handle this with its fake type system!
+     *
+     * @param  mixed $cartId
+     * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
+     * @return \Payone\Core\Service\V1\Data\EditAddressResponse
+     * @throws InputException
+     */
+    public function editAddressGuest($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData)
+    {
+        /** @var $quoteIdMask QuoteIdMask */
+        $quoteIdMask = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
+
+        return $this->editAddress($quoteIdMask->getQuoteId(), $addressData);
     }
 }

@@ -29,41 +29,50 @@ define([
     'mage/storage',
     'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/model/quote',
-    'Magento_Customer/js/model/customer',
-    'mage/url'
-], function ($, urlBuilder, storage, fullScreenLoader, quote, customer, buildUrl) {
+    'Magento_Customer/js/model/customer'
+], function ($, urlBuilder, storage, fullScreenLoader, quote, customer) {
     'use strict';
 
-    return function (addressData, useAsync) {
+    /** Override default place order action and add agreement_ids to request */
+    return function (addressData, isBillingAddress, baseView, type) {
         var serviceUrl;
-        var request = {
-            addressData: addressData
-        };
 
         if (!customer.isLoggedIn()) {
-            serviceUrl = urlBuilder.createUrl('/guest-carts/:quoteId/payone-editAddressGuest', {
+            serviceUrl = urlBuilder.createUrl('/guest-carts/:quoteId/payone-consumerscore', {
                 quoteId: quote.getQuoteId()
             });
         } else {
-            serviceUrl = urlBuilder.createUrl('/carts/mine/payone-editAddress', {});
-            request.cartId = quote.getQuoteId();
+            serviceUrl = urlBuilder.createUrl('/carts/mine/payone-consumerscore', {});
         }
+        var request = {
+            addressData: addressData,
+            isBillingAddress: isBillingAddress,
+            isVirtual: quote.isVirtual(),
+            dTotal: window.checkoutConfig.quoteData.subtotal,
+            sIntegrationEvent: 'before_payment'
+        };
 
         fullScreenLoader.startLoader();
 
-        $.ajax({
-            url: buildUrl.build(serviceUrl),
-            type: 'POST',
-            data: JSON.stringify(request),
-            global: true,
-            contentType: 'application/json',
-            async: useAsync
-        }).done(
+        return storage.post(
+            serviceUrl,
+            JSON.stringify(request)
+        ).done(
             function (response) {
+                if (response.success == true) {
+                    if (response.corrected_address != null) {
+                        if (!window.checkoutConfig.payment.payone.addresscheckConfirmCorrection || confirm(response.confirm_message)) {
+                            baseView.payoneUpdateAddress(response.corrected_address);
+                        }
+                    }
+                    baseView.payoneContinue(type);
+                }
                 fullScreenLoader.stopLoader();
             }
         ).fail(
             function (response) {
+                //errorProcessor.process(response, messageContainer);
+                alert('An error occured.');
                 fullScreenLoader.stopLoader();
             }
         );

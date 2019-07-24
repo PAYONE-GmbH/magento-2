@@ -24,29 +24,35 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Api;
+namespace Payone\Core\Api\Data;
 
-interface EditAddressInterface
+interface ConsumerscoreResponseInterface
 {
     /**
-     * PAYONE editAddress script
-     * The full class-paths must be given here otherwise the Magento 2 WebApi
-     * cant handle this with its fake type system!
+     * Returns the shipping carrier title.
      *
-     * @param  mixed $cartId
-     * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
-     * @return \Payone\Core\Service\V1\Data\EditAddressResponse
+     * @return bool
      */
-    public function editAddress($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData);
+    public function getSuccess();
 
     /**
-     * PAYONE editAddress script
-     * The full class-paths must be given here otherwise the Magento 2 WebApi
-     * cant handle this with its fake type system!
+     * Returns the corrected address
      *
-     * @param  mixed $cartId
-     * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
-     * @return \Payone\Core\Service\V1\Data\EditAddressResponse
+     * @return \Magento\Quote\Api\Data\AddressInterface
      */
-    public function editAddressGuest($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData);
+    public function getCorrectedAddress();
+
+    /**
+     * Returns errormessage
+     *
+     * @return string
+     */
+    public function getErrormessage();
+
+    /**
+     * Return confirm message
+     *
+     * @return string
+     */
+    public function getConfirmMessage();
 }

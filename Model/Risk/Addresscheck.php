@@ -407,4 +407,15 @@ class Addresscheck
         }
         return $this->aResponse;
     }
+
+    /**
+     * Set response property
+     *
+     * @param  $aResponse
+     * @return void
+     */
+    public function setResponse($aResponse)
+    {
+        $this->aResponse = $aResponse;
+    }
 }

@@ -37,6 +37,7 @@ use Payone\Core\Helper\Database;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Model\Source\AddressCheckType;
 
 class ConsumerscoreTest extends BaseTestCase
 {
@@ -362,5 +363,19 @@ class ConsumerscoreTest extends BaseTestCase
             );
         $result = $this->consumerscore->isCreditratingNeeded('before_payment', 500);
         $this->assertTrue($result);
+    }
+
+    public function testIsBonicheckAddressEnabled()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(1);
+        $result = $this->consumerscore->isBonicheckAddressEnabled();
+        $this->assertTrue($result);
+    }
+
+    public function testIsBonicheckAddressDisabled()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(0);
+        $result = $this->consumerscore->isBonicheckAddressEnabled();
+        $this->assertFalse($result);
     }
 }

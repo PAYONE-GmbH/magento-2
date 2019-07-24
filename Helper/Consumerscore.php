@@ -28,6 +28,7 @@ namespace Payone\Core\Helper;
 
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Store\Model\ScopeInterface;
+use Payone\Core\Model\Source\AddressCheckType;
 
 /**
  * Helper class for everything that has to do with the consumerscore request
@@ -135,6 +136,20 @@ class Consumerscore extends \Payone\Core\Helper\Base
             }
         }
         return true;
+    }
+
+    /**
+     * Determine if shop is configured to do a consumerscore with included addresscheck
+     *
+     * @return bool
+     */
+    public function isBonicheckAddressEnabled()
+    {
+        if ($this->getConfigParam('addresscheck', 'creditrating', 'payone_protect') != AddressCheckType::NONE &&
+            $this->getConfigParam('enabled', 'creditrating', 'payone_protect') == 1) {
+            return true;
+        }
+        return false;
     }
 
     /**

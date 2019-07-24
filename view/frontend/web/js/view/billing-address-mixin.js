@@ -25,8 +25,9 @@
 /*global alert*/
 define([
     'jquery',
-    'Payone_Core/js/action/addresscheck'
-], function ($, addresscheck) {
+    'Payone_Core/js/action/addresscheck',
+    'Magento_Customer/js/model/customer',
+], function ($, addresscheck, customer) {
     'use strict';
 
     var mixin = {
@@ -37,10 +38,10 @@ define([
             return false;
         },
         updateAddress: function () {
-            if (!this.payoneCheckAddress() || !(this.selectedAddress() && this.selectedAddress() != this.newAddressOption)) {
+            if (customer.isLoggedIn() && (!this.payoneCheckAddress() || !(this.selectedAddress() && this.selectedAddress() != this.newAddressOption))) {
                 return this._super();
             }
-            
+
             var addressChecked = this.source.get('payone_address_checked');
             if (!addressChecked) {
                 var address = this.source.get(this.dataScopePrefix);

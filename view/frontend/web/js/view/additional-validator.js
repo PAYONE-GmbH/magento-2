@@ -1,5 +1,3 @@
-<?php
-
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,30 +21,15 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-
-namespace Payone\Core\Api;
-
-interface EditAddressInterface
-{
-    /**
-     * PAYONE editAddress script
-     * The full class-paths must be given here otherwise the Magento 2 WebApi
-     * cant handle this with its fake type system!
-     *
-     * @param  mixed $cartId
-     * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
-     * @return \Payone\Core\Service\V1\Data\EditAddressResponse
-     */
-    public function editAddress($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData);
-
-    /**
-     * PAYONE editAddress script
-     * The full class-paths must be given here otherwise the Magento 2 WebApi
-     * cant handle this with its fake type system!
-     *
-     * @param  mixed $cartId
-     * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
-     * @return \Payone\Core\Service\V1\Data\EditAddressResponse
-     */
-    public function editAddressGuest($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData);
-}
+define(
+    [
+        'uiComponent',
+        'Magento_Checkout/js/model/payment/additional-validators',
+        'Payone_Core/js/model/bonicheck-validator'
+    ],
+    function (Component, additionalValidators, yourValidator) {
+        'use strict';
+        additionalValidators.registerValidator(yourValidator);
+        return Component.extend({});
+    }
+);

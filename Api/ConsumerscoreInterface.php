@@ -26,27 +26,19 @@
 
 namespace Payone\Core\Api;
 
-interface EditAddressInterface
+interface ConsumerscoreInterface
 {
     /**
-     * PAYONE editAddress script
+     * PAYONE consumerscore
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
      *
-     * @param  mixed $cartId
      * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
-     * @return \Payone\Core\Service\V1\Data\EditAddressResponse
+     * @param  bool                                     $isBillingAddress
+     * @param  bool                                     $isVirtual
+     * @param  double                                   $dTotal
+     * @param  string                                   $sIntegrationEvent
+     * @return \Payone\Core\Service\V1\Data\ConsumerscoreResponse
      */
-    public function editAddress($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData);
-
-    /**
-     * PAYONE editAddress script
-     * The full class-paths must be given here otherwise the Magento 2 WebApi
-     * cant handle this with its fake type system!
-     *
-     * @param  mixed $cartId
-     * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
-     * @return \Payone\Core\Service\V1\Data\EditAddressResponse
-     */
-    public function editAddressGuest($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData);
+    public function executeConsumerscore(\Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal, $sIntegrationEvent);
 }

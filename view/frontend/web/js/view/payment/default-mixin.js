@@ -44,7 +44,7 @@ define([
             }
             return parentReturn;
         }
-    }
+    };
 
     return function (payment) {
         return payment.extend(mixin);
