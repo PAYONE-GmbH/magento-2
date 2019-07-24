@@ -67,7 +67,7 @@ class PaydirektAgreement extends AddressRequest
         $this->addParameter('mode', $this->paydirekt->getOperationMode());
         $this->addParameter('clearingtype', $this->paydirekt->getClearingtype());
         $this->addParameter('wallettype', 'PDT');
-        $this->addParameter('currency', 'EUR'); ///@TODO checken - variabel machen?
+        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
         $this->addParameter('amount', '1');
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // add sub account id
         $this->addParameter('customerid', $oCustomer->getId());
@@ -106,19 +106,5 @@ class PaydirektAgreement extends AddressRequest
         $this->addParameter('successurl', $this->url->getUrl('payone/paydirekt/agreement?return=1'));
         $this->addParameter('errorurl', $this->url->getUrl('payone/onepage/cancel?error=1'));
         $this->addParameter('backurl', $this->url->getUrl('payone/onepage/cancel'));
-    }
-
-    /**
-     * Validate if all general required parameters are set
-     *
-     * @return bool
-     */
-    protected function validateParameters()
-    {
-        if ($this->getParameter('mid') === false || $this->getParameter('portalid') === false ||
-            $this->getParameter('key') === false || $this->getParameter('mode') === false) {
-            return false;
-        }
-        return true;
     }
 }

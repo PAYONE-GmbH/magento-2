@@ -116,14 +116,15 @@ class Review extends \Magento\Framework\App\Action\Action
      */
     protected function canReviewBeShown()
     {
+        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+        if ($this->checkoutSession->getQuote()->getPayment()->getMethod() == PayoneConfig::METHOD_PAYPAL && empty($sWorkorderId)) {
+            return false;
+        }
+
         if (in_array($this->checkoutSession->getQuote()->getPayment()->getMethod(), $this->availableReviewMethods)) {
             return true;
         }
 
-        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
-        if (!empty($sWorkorderId)) {
-            return true;
-        }
         return false;
     }
 

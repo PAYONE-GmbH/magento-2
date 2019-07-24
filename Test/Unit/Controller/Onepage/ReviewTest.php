@@ -146,8 +146,17 @@ class ReviewTest extends BaseTestCase
 
     public function testExecuteRedirect()
     {
-        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn(null);
         $this->payment->method('getMethod')->willReturn(null);
+
+        $this->request->method('getBeforeForwardInfo')->willReturn(false);
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Redirect::class, $result);
+    }
+
+    public function testExecuteRedirectPayPalNoWorkorder()
+    {
+        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn(null);
+        $this->payment->method('getMethod')->willReturn('payone_paypal');
 
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();

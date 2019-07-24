@@ -44,6 +44,7 @@ use Magento\Quote\Model\Quote\Payment;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\Event\ManagerInterface;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\View\Element\Template\File\Resolver;
@@ -52,6 +53,10 @@ use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\View\Element\Template\File\Validator;
 use Magento\Framework\View\TemplateEnginePool;
 use Magento\Framework\View\TemplateEngineInterface;
+use Payone\Core\Helper\Shop;
+use Payone\Core\Helper\Database;
+use Magento\Framework\View\Asset\Repository;
+use Magento\Framework\View\Asset\File;
 
 class ReviewTest extends BaseTestCase
 {
@@ -95,6 +100,16 @@ class ReviewTest extends BaseTestCase
      */
     private $urlBuilder;
 
+    /**
+     * @var Shop|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $shopHelper;
+
+    /**
+     * @var Payment|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $payment;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
@@ -126,6 +141,12 @@ class ReviewTest extends BaseTestCase
         $enginePool = $this->getMockBuilder(TemplateEnginePool::class)->disableOriginalConstructor()->getMock();
         $enginePool->method('get')->willReturn($templateEngine);
 
+        $asset = $this->getMockBuilder(File::class)->disableOriginalConstructor()->getMock();
+        $asset->method('getUrl')->willReturn('expected');
+
+        $assetRepo = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->getMock();
+        $assetRepo->method('createAsset')->willReturn($asset);
+
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->method('getScopeConfig')->willReturn($this->scopeConfig);
         $context->method('getEscaper')->willReturn($escaper);
@@ -135,11 +156,15 @@ class ReviewTest extends BaseTestCase
         $context->method('getFilesystem')->willReturn($filesystem);
         $context->method('getValidator')->willReturn($validator);
         $context->method('getEnginePool')->willReturn($enginePool);
+        $context->method('getAssetRepository')->willReturn($assetRepo);
 
         $this->store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
 
+        $this->payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+
         $this->quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
         $this->quote->method('getStore')->willReturn($this->store);
+        $this->quote->method('getPayment')->willReturn($this->payment);
 
         $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
         $checkoutSession->method('getQuote')->willReturn($this->quote);
@@ -159,12 +184,19 @@ class ReviewTest extends BaseTestCase
 
         $this->priceCurrency = $this->getMockBuilder(PriceCurrencyInterface::class)->disableOriginalConstructor()->getMock();
 
+        $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+
+        $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
+        $databaseHelper->method('getPaydirektOneklickOrderCount')->willReturn(0);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $checkoutSession,
             'addressConfig' => $addressConfig,
             'taxHelper' => $this->taxHelper,
-            'priceCurrency' => $this->priceCurrency
+            'priceCurrency' => $this->priceCurrency,
+            'shopHelper' => $this->shopHelper,
+            'databaseHelper' => $databaseHelper,
         ]);
         #$this->classToTest->setCacheLifetime(1);
     }
@@ -279,13 +311,70 @@ class ReviewTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetPaymentMethodTitle()
+    {
+        $expected = 'Payone Test';
+        $this->shopHelper->method('getConfigParam')->willReturn($expected);
+        $result = $this->classToTest->getPaymentMethodTitle();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testIsPayPalExpressTrue()
+    {
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYPAL);
+        $result = $this->classToTest->isPayPalExpress();
+        $this->assertTrue($result);
+    }
+
+    public function testIsPayPalExpressFalse()
+    {
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYDIREKT);
+        $result = $this->classToTest->isPayPalExpress();
+        $this->assertFalse($result);
+    }
+
+    public function testIsPaydirektTrue()
+    {
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYDIREKT);
+        $result = $this->classToTest->isPaydirekt();
+        $this->assertTrue($result);
+    }
+
+    public function testIsPaydirektFalse()
+    {
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYPAL);
+        $result = $this->classToTest->isPaydirekt();
+        $this->assertFalse($result);
+    }
+
+    public function testGetFingerprintJsUrl()
+    {
+        $expected = 'expected';
+        $result = $this->classToTest->getFingerprintJsUrl();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testShowPaydirektEmailMessageTrue()
+    {
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYDIREKT);
+        $result = $this->classToTest->showPaydirektEmailMessage();
+        $this->assertTrue($result);
+    }
+
+    public function testShowPaydirektEmailMessageFalse()
+    {
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYPAL);
+        $result = $this->classToTest->showPaydirektEmailMessage();
+        $this->assertFalse($result);
+    }
+
     public function testToHtml()
     {
         $infoInstance = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $infoInstance->method('getTitle')->willReturn('Payone');
 
-        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getMethodInstance')->willReturn($infoInstance);
+        $this->payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $this->payment->method('getMethodInstance')->willReturn($infoInstance);
 
         $rate = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->setMethods(['getCode'])->getMock();
         $rate->method('getCode')->willReturn('free');
@@ -297,7 +386,6 @@ class ReviewTest extends BaseTestCase
         $address->method('getGroupedAllShippingRates')->willReturn([[$rate2, $rate]]);
         $address->method('getShippingMethod')->willReturn('free');
 
-        $this->quote->method('getPayment')->willReturn($payment);
         $this->quote->method('getIsVirtual')->willReturn(false);
         $this->quote->method('getShippingAddress')->willReturn($address);
 
@@ -313,10 +401,9 @@ class ReviewTest extends BaseTestCase
         $infoInstance = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $infoInstance->method('getTitle')->willReturn('Payone');
 
-        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getMethodInstance')->willReturn($infoInstance);
+        $this->payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $this->payment->method('getMethodInstance')->willReturn($infoInstance);
 
-        $this->quote->method('getPayment')->willReturn($payment);
         $this->quote->method('getIsVirtual')->willReturn(true);
 
         $this->classToTest->setArea('frontend');

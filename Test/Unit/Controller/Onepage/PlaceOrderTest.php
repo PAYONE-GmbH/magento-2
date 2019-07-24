@@ -41,6 +41,7 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Quote\Model\Quote\Payment;
 
 class PlaceOrderTest extends BaseTestCase
 {
@@ -95,9 +96,11 @@ class PlaceOrderTest extends BaseTestCase
             ->setMethods([
                 'getBeforeForwardInfo',
                 'getHeader',
+                'getParam',
             ])
             ->getMock();
         $this->request->method('getHeader')->willReturn('HTTP_USER_AGENT');
+        $this->request->method('getParam')->willReturn('123');
 
         $messageManager = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()->getMock();
 
@@ -110,6 +113,9 @@ class PlaceOrderTest extends BaseTestCase
 
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
 
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getMethod')->willReturn('payone_paypal');
+
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->setMethods([
@@ -119,6 +125,7 @@ class PlaceOrderTest extends BaseTestCase
                 'getId',
                 'setIsActive',
                 'getSubtotal',
+                'getPayment',
                 'save'
             ])
             ->getMock();
@@ -128,15 +135,30 @@ class PlaceOrderTest extends BaseTestCase
         $quote->method('getId')->willReturn('12345');
         $quote->method('setIsActive')->willReturn($quote);
         $quote->method('getSubtotal')->willReturn(100);
+        $quote->method('getPayment')->willReturn($payment);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote', 'setLastQuoteId', 'setLastSuccessQuoteId', 'unsPayoneWorkorderId', 'unsIsPayonePayPalExpress', 'getPayoneGenericpaymentSubtotal'])
+            ->setMethods([
+                'getQuote',
+                'setLastQuoteId',
+                'setLastSuccessQuoteId',
+                'unsPayoneWorkorderId',
+                'unsIsPayonePayPalExpress',
+                'getPayoneGenericpaymentSubtotal',
+                'setPayoneDeviceFingerprint',
+                'unsPayoneDeviceFingerprint',
+                'setPayoneUserAgent',
+                'unsPayoneUserAgent',
+                'setPayoneExpressType',
+            ])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
         $this->checkoutSession->method('setLastQuoteId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('setLastSuccessQuoteId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('unsPayoneWorkorderId')->willReturn($this->checkoutSession);
+        $this->checkoutSession->method('unsIsPayonePayPalExpress')->willReturn($this->checkoutSession);
+        $this->checkoutSession->method('unsPayoneUserAgent')->willReturn($this->checkoutSession);
 
         $this->agreementValidator = $this->getMockBuilder(AgreementsValidatorInterface::class)->disableOriginalConstructor()->getMock();
         $this->agreementValidator->method('isValid')->willReturn(false);
