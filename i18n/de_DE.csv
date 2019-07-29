@@ -90,6 +90,8 @@
 "Countries","Länder"
 "Fee","Gebühr"
 "Use Global Settings","Nutze Globale-Einstellungen"
+"Auto Cardtype Detection","Automatische Kartentyp Erkennung"
+"Enables the cardtype auto-detection and disables the manual cardtype selection for customers.","Aktiviert die automatische Erkennung des Kreditkartentyps und deaktiviert die manuelle Kartentyp-Auswahl für den Kunden."
 "Creditcard-Type","Kartentyp"
 "Request BIC","BIC abfrage"
 "Check Card Validation Code","Prüfe Kartenprüfziffer"
