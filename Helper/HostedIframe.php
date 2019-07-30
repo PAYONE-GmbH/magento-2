@@ -213,6 +213,13 @@ class HostedIframe extends \Payone\Core\Helper\Base
         if (!empty($aHostedParams)) { // hosted iframe config existing?
             $aFieldConfig['fields'] = $this->getFieldConfig(); // generate config for all field types
             $aFieldConfig['defaultStyle'] = $this->getDefaultStyles($aHostedParams);
+
+            // Add auto cardtype detection config (if enabled in the settings).
+            $autoCardtypeDetectionConfig = $this->getAutoCardtypeDetectionConfig();
+            if ($autoCardtypeDetectionConfig) {
+                $aFieldConfig['autoCardtypeDetection'] = $autoCardtypeDetectionConfig;
+            }
+
             if ($aHostedParams['Errors_active'] == "true") {
                 $aFieldConfig['error'] = 'errorOutput'; // area to display error-messages (optional)
                 $aFieldConfig['language'] = $aHostedParams['Errors_lang']; // has to be defined in javascript
