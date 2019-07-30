@@ -76,6 +76,14 @@ define(
             },
 
             handleIframes: function () {
+
+                // Configure auto cardtype detection (if enabled).
+                if (window.checkoutConfig.payment.payone.fieldConfig.autoCardtypeDetection) {
+                    window.checkoutConfig.payment.payone.fieldConfig.autoCardtypeDetection.callback = function (t) {
+                        console.debug('auto-cc-detection: ' + t);
+                    };
+                }
+
                 var fieldconfig = window.checkoutConfig.payment.payone.fieldConfig;
                 if (typeof fieldconfig.language != 'undefined') {
                     if (fieldconfig.language == 'de') {
