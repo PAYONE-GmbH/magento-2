@@ -115,6 +115,9 @@ define(
                 }
                 return window.checkoutConfig.payment.payone.saveCCDataEnabled;
             },
+            isAutoCardtypeDetectionEnabled: function () {
+                return window.checkoutConfig.payment.payone.fieldConfig.hasOwnProperty('autoCardtypeDetection');
+            },
             getSavedPaymentData: function () {
                 return window.checkoutConfig.payment.payone.savedPaymentData;
             },
