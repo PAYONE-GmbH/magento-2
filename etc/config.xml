@@ -42,6 +42,7 @@
                 <model>Payone\Core\Model\Methods\Creditcard</model>
                 <order_status>pending</order_status>
                 <title>PAYONE - Creditcard</title>
+                <auto_cardtype_detection>0</auto_cardtype_detection>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_creditcard>
