@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Helper;
 
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Source\CreditcardTypes;
 
 /**
@@ -170,6 +171,33 @@ class HostedIframe extends \Payone\Core\Helper\Base
             'height' => $aHostedParams['Iframe_height'],
         ];
         return $aDefaultStyle;
+    }
+
+    /**
+     * Returns the auto cardtype detection config.
+     *
+     * @return array|null The auto cardtype detection config or null if auto cardtype detection is disabled.
+     */
+    protected function getAutoCardtypeDetectionConfig()
+    {
+        // Get enabled state of auto cardtype detection.
+        $autoCcDetection = $this->getConfigParam('auto_cardtype_detection', PayoneConfig::METHOD_CREDITCARD, 'payment') === '1';
+
+        if ($autoCcDetection) {
+            // Get a flat CC type array like (e.g. ["V", "M", "J", "U", "P"]).
+            $availableCcTypes = array_map(function ($type) { return $type['id']; }, $this->paymentHelper->getAvailableCreditcardTypes());
+
+            // Return the auto cardtype detection config with enabled CC types.
+            return [
+                'supportedCardtypes' => $availableCcTypes,
+
+                // This is just a placeholder and will be set in JS code later.
+                'callback' => false,
+            ];
+        }
+
+        // Indicates disabled auto-detection setting.
+        return null;
     }
 
     /**
