@@ -119,6 +119,14 @@
                         </div>
                     </div>
 
+                    <!-- ko if: isAutoCardtypeDetectionEnabled() -->
+                    <div>
+                        <!-- ko foreach: getCreditcardTypes() -->
+                        <img data-bind="attr: {src: 'https://cdn.pay1.de/cc/' + id.toLowerCase() + '/s/default.png'}"/>
+                        <!--/ko-->
+                    </div>
+                    <!--/ko-->
+
                     <div class="field number required">
                         <label data-bind="attr: {for: getCode() + '_cc_number'}" class="label">
                             <span><!-- ko i18n: 'Credit Card Number'--><!-- /ko --></span>
