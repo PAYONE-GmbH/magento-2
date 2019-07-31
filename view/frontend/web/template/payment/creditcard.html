@@ -124,7 +124,7 @@
                             <span><!-- ko i18n: 'Credit Card Number'--><!-- /ko --></span>
                             <!-- ko if: isAutoCardtypeDetectionEnabled() -->
                             <!-- ko foreach: getCreditcardTypes() -->
-                            <img class="cc-icon" data-bind="attr: {id: getCode() + '_cc_icon_' + id.toLowerCase(), src: 'https://cdn.pay1.de/cc/' + id.toLowerCase() + '/s/default.png'}"/>
+                            <img class="cc-icon" data-bind="attr: {id: $parent.getCode() + '_cc_icon_' + id.toLowerCase(), src: 'https://cdn.pay1.de/cc/' + id.toLowerCase() + '/s/default.png'}"/>
                             <!--/ko-->
                             <!--/ko-->
                         </label>
