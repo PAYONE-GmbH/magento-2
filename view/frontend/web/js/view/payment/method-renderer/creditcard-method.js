@@ -93,6 +93,12 @@ define(
                         if (activeIcon) {
                             activeIcon.classList.add('cc-icon--show');
                         }
+
+                        var ccTypeInput = document.getElementById(_this.getCode() + '_credit_card_type');
+
+                        if (ccTypeInput) {
+                            ccTypeInput.value = t.toUpperCase();
+                        }
                     };
                 }
 

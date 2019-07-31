@@ -71,6 +71,10 @@
                 </div>
                 <!--/ko-->
                 <div data-bind="attr: {id: getCode() + '_new_data_container'}" class="fieldset ccard">
+                    <!-- ko if: isAutoCardtypeDetectionEnabled() -->
+                    <input name="payment[cc_type]" type="hidden" value="" data-bind="attr: {id: getCode() + '_credit_card_type', 'data-container': getCode() + '_credit_card_type'}" />
+                    <!--/ko-->
+                    <!-- ko if: !isAutoCardtypeDetectionEnabled() -->
                     <div class="field">
                         <label data-bind="attr: {for: getCode() + '_credit_card_type'}" class="label">
                             <span><!-- ko i18n: 'Credit Card Type'--><!-- /ko --></span>
@@ -87,6 +91,7 @@
                             </select>
                         </div>
                     </div>
+                    <!--/ko-->
 
                     <div class="field number required">
                         <label data-bind="attr: {for: getCode() + '_firstname'}" class="label">
