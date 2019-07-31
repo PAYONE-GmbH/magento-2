@@ -76,11 +76,23 @@ define(
             },
 
             handleIframes: function () {
+                var _this = this;
 
                 // Configure auto cardtype detection (if enabled).
                 if (window.checkoutConfig.payment.payone.fieldConfig.autoCardtypeDetection) {
                     window.checkoutConfig.payment.payone.fieldConfig.autoCardtypeDetection.callback = function (t) {
                         console.debug('auto-cc-detection: ' + t);
+
+                        var allIcons = document.querySelectorAll('.ccard .cc-icon');
+                        var activeIcon = document.getElementById(_this.getCode() + '_cc_icon_' + t.toLowerCase());
+
+                        allIcons.forEach(function (icon) {
+                            icon.classList.remove('cc-icon--show');
+                        });
+
+                        if (activeIcon) {
+                            activeIcon.classList.add('cc-icon--show');
+                        }
                     };
                 }
 

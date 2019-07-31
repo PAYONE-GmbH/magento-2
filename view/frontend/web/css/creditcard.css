@@ -33,3 +33,15 @@
     min-width: 120px;
     margin: 0 15px 0 15px;
 }
+
+.ccard .cc-icon {
+    max-height: 20px;
+    max-width: 40px;
+    width: auto;
+    height: auto;
+    display: none;
+}
+
+.ccard .cc-icon--show {
+    display: inline;
+}
