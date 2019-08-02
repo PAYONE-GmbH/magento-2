@@ -54,6 +54,8 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_POSTFINANCE_CARD,
         PayoneConfig::METHOD_OBT_IDEAL,
         PayoneConfig::METHOD_OBT_PRZELEWY,
+        PayoneConfig::METHOD_BILLSAFE,
+        PayoneConfig::METHOD_KLARNA,
         PayoneConfig::METHOD_BARZAHLEN,
         PayoneConfig::METHOD_PAYDIREKT,
         PayoneConfig::METHOD_SAFE_INVOICE,
