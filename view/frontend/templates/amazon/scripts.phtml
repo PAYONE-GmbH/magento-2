@@ -28,31 +28,29 @@
     window.onAmazonLoginReady = function() {
         amazon.Login.setClientId('<?php echo $this->getClientId(); ?>');
     };
-    window.onAmazonPaymentsReady = function(){
-        var authRequest;
-        OffAmazonPayments.Button('LoginWithAmazon1', '<?php echo $this->getSellerId(); ?>', {
+
+    window.onAmazonPaymentsReady = function() {
+        initializeAmazonPayButton('LoginWithAmazon1');
+        if (document.getElementById('LoginWithAmazon2') !== null) {
+            initializeAmazonPayButton('LoginWithAmazon2');
+        }
+        if (document.getElementById('LoginWithAmazon3') !== null) {
+            initializeAmazonPayButton('LoginWithAmazon3');
+        }
+    };
+
+    function initializeAmazonPayButton(sElementId) {
+        OffAmazonPayments.Button(sElementId, '<?php echo $this->getSellerId(); ?>', {
             type: '<?php echo $this->getButtonType(); ?>',
             color: '<?php echo $this->getButtonColor(); ?>',
             language: '<?php echo $this->getButtonLanguage(); ?>',
             size: 'medium',
             authorization: function() {
                 var loginOptions = {scope: 'profile payments:widget payments:shipping_address payments:billing_address', popup: true};
-                authRequest = amazon.Login.authorize (loginOptions, '<?php echo $this->getRedirectUrl(); ?>');
+                var authRequest = amazon.Login.authorize (loginOptions, '<?php echo $this->getRedirectUrl(); ?>');
             }
         });
-        if (document.getElementById('LoginWithAmazon2') !== null) {
-            OffAmazonPayments.Button('LoginWithAmazon2', '<?php echo $this->getSellerId(); ?>', {
-                type: '<?php echo $this->getButtonType(); ?>',
-                color: '<?php echo $this->getButtonColor(); ?>',
-                language: '<?php echo $this->getButtonLanguage(); ?>',
-                size: 'medium',
-                authorization: function() {
-                    var loginOptions = {scope: 'profile payments:widget payments:shipping_address payments:billing_address', popup: true};
-                    authRequest = amazon.Login.authorize (loginOptions, '<?php echo $this->getRedirectUrl(); ?>');
-                }
-            });
-        }
-    };
+    }
 
     function checkForMiniBasketExistance() {
         if (document.getElementById('LoginWithAmazon1') === null) {
