@@ -106,6 +106,16 @@ class Amazon extends Template
     }
 
     /**
+     * Returns error url
+     *
+     * @return string
+     */
+    public function getErrorUrl()
+    {
+        return $this->_urlBuilder->getUrl('payone/amazon/confirmOrderError');
+    }
+
+    /**
      * Get amazon widget url
      *
      * @return string

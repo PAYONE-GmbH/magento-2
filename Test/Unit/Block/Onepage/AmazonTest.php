@@ -125,6 +125,16 @@ class AmazonTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetErrorUrl()
+    {
+        $expected = 'https://test.com';
+
+        $this->urlBuilder->method('getUrl')->willReturn($expected);
+
+        $result = $this->classToTest->getErrorUrl();
+        $this->assertEquals($expected, $result);
+    }
+
     public function testGetWidgetUrl()
     {
         $expected = 'https://test.com';

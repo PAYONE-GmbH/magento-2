@@ -44,6 +44,7 @@ use Magento\Checkout\Model\Session;
 use Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration;
 use Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails;
 use Payone\Core\Model\Api\Request\Genericpayment\SetOrderReferenceDetails;
+use Payone\Core\Model\Api\Request\Genericpayment\ConfirmOrderReference;
 use Magento\Quote\Model\Quote\Payment;
 use Payone\Core\Helper\Order;
 use Payone\Core\Helper\Checkout;
@@ -81,6 +82,11 @@ class LoadReviewTest extends BaseTestCase
      * @var SetOrderReferenceDetails
      */
     private $setOrderReferenceDetails;
+
+    /**
+     * @var ConfirmOrderReference
+     */
+    private $confirmOrderReference;
 
     /**
      * @var CartManagementInterface
@@ -228,6 +234,8 @@ class LoadReviewTest extends BaseTestCase
 
         $this->setOrderReferenceDetails = $this->getMockBuilder(SetOrderReferenceDetails::class)->disableOriginalConstructor()->getMock();
 
+        $this->confirmOrderReference = $this->getMockBuilder(ConfirmOrderReference::class)->disableOriginalConstructor()->getMock();
+
         $orderHelper = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $orderHelper->method('updateAddresses')->willReturn($this->quote);
 
@@ -252,6 +260,7 @@ class LoadReviewTest extends BaseTestCase
             'getConfiguration' => $getConfiguration,
             'getOrderReferenceDetails' => $getOrderReferenceDetails,
             'setOrderReferenceDetails' => $this->setOrderReferenceDetails,
+            'confirmOrderReference' => $this->confirmOrderReference,
             'orderHelper' => $orderHelper,
             'checkoutHelper' => $checkoutHelper,
             'cartManagement' => $this->cartManagement,
@@ -267,21 +276,32 @@ class LoadReviewTest extends BaseTestCase
         $this->assertInstanceOf(Json::class, $result);
     }
 
-    public function testExecutePlaceOrderNotOk()
-    {
-        $this->request->method('getParam')->willReturn('placeOrder');
-
-        $this->setOrderReferenceDetails->method('sendRequest')->willReturn(['status' => 'ERROR']);
-
-        $result = $this->classToTest->execute();
-        $this->assertInstanceOf(Json::class, $result);
-    }
-
     public function testExecutePlaceOrderOk()
     {
         $this->request->method('getParam')->willReturn('placeOrder');
 
         $this->setOrderReferenceDetails->method('sendRequest')->willReturn(['status' => 'OK']);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+    }
+
+    public function testExecuteConfirmOrderReferenceOk()
+    {
+        $this->request->method('getParam')->willReturn('confirmOrderReference');
+
+        $this->setOrderReferenceDetails->method('sendRequest')->willReturn(['status' => 'OK']);
+        $this->confirmOrderReference->method('sendRequest')->willReturn(['status' => 'OK']);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testExecuteConfirmOrderReferenceSetReferenceError()
+    {
+        $this->request->method('getParam')->willReturn('confirmOrderReference');
+
+        $this->setOrderReferenceDetails->method('sendRequest')->willReturn(['status' => 'ERROR']);
 
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Json::class, $result);
@@ -291,10 +311,20 @@ class LoadReviewTest extends BaseTestCase
     {
         $this->request->method('getParam')->willReturn('placeOrder');
 
-        $this->setOrderReferenceDetails->method('sendRequest')->willReturn(['status' => 'OK']);
-
         $exception = $this->getMockBuilder(AuthorizationException::class)->disableOriginalConstructor()->getMock();
         $exception->method('getResponse')->willReturn(['status' => 'ERROR', 'errorcode' => 982]);
+        $this->cartManagement->method('placeOrder')->willThrowException($exception);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+    }
+
+    public function testExecutePlaceOrderAuthExceptionDifferent()
+    {
+        $this->request->method('getParam')->willReturn('placeOrder');
+
+        $exception = $this->getMockBuilder(AuthorizationException::class)->disableOriginalConstructor()->getMock();
+        $exception->method('getResponse')->willReturn(['status' => 'ERROR', 'errorcode' => 966]);
         $this->cartManagement->method('placeOrder')->willThrowException($exception);
 
         $result = $this->classToTest->execute();
@@ -311,7 +341,7 @@ class LoadReviewTest extends BaseTestCase
         $this->cartManagement->method('placeOrder')->willThrowException($exception);
 
         $result = $this->classToTest->execute();
-        $this->assertInstanceOf(Json::class, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
     }
 
     public function testExecuteUpdateShipping()
