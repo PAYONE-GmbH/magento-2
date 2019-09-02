@@ -72,7 +72,7 @@
                 <!--/ko-->
                 <div data-bind="attr: {id: getCode() + '_new_data_container'}" class="fieldset ccard">
                     <!-- ko if: isAutoCardtypeDetectionEnabled() -->
-                    <input name="payment[cc_type]" type="hidden" value="" data-bind="attr: {id: getCode() + '_credit_card_type', 'data-container': getCode() + '_credit_card_type'}" />
+                    <input name="payment[cc_type]" type="hidden" value="" data-bind="attr: {id: getCode() + '_credit_card_type', value: getCreditcardTypes()[0].id, 'data-container': getCode() + '_credit_card_type'}" />
                     <!--/ko-->
                     <!-- ko if: !isAutoCardtypeDetectionEnabled() -->
                     <div class="field">
