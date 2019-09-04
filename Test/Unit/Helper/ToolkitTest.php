@@ -257,4 +257,11 @@ class ToolkitTest extends BaseTestCase
         $result = $this->toolkit->getAdditionalDataEntry($dataObject, 'key2');
         $this->assertNull($result);
     }
+
+    public function testMaskIban()
+    {
+        $expected = 'DE 85xx xxxx xxxx xxxx 0003';
+        $result = $this->toolkit->maskIban('DE85123456782599100003');
+        $this->assertEquals($expected, $result);
+    }
 }
