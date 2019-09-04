@@ -497,9 +497,14 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         } catch (AuthorizationException $e) {
             $aResponse = $e->getResponse();
             $aReturnData['errorMessage'] = $this->getErrorIdentifier($aResponse['errorcode']);
-            if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [980, 982])) {
-                $aReturnData['redirectUrl'] = $this->_url->getUrl('payone/amazon/loadReview', ['action' => 'cancelToBasket']);
-                $this->unsetSessionVariables();
+            if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR') {
+                if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [981, 985])) { // trigger onAmazonPaymentsInvalidPayment in template
+                    $aReturnData['redirectUrl'] = $this->_url->getUrl("payone/onepage/amazon", ['_secure' => true, 'invalidPayment' => true]);
+                    $this->checkoutSession->setIsAmazonOrderLocked(true);
+                } elseif (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [980, 982])) {
+                    $aReturnData['redirectUrl'] = $this->_url->getUrl('payone/amazon/loadReview', ['action' => 'cancelToBasket']);
+                    $this->unsetSessionVariables();
+                }
             }
         } catch (\Exception $e) {
             //error_log($e->getMessage());

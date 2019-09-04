@@ -120,6 +120,7 @@ abstract class PayoneMethod extends BaseMethod
         $this->checkoutSession->unsPayoneIsError();
         $this->checkoutSession->unsShowAmazonPendingNotice();
         $this->checkoutSession->unsAmazonRetryAsync();
+        $this->checkoutSession->unsIsAmazonOrderLocked();
     }
 
     /**

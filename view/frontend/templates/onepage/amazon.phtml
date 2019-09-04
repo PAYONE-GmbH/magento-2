@@ -33,8 +33,20 @@
     if (window.location.hash.substring(1)) {
         initiatedByPopup = false;
     }
+
+    var rendered = false;
+    <?php if ($this->isAmazonOrderLocked() === true): ?>
+        window.amazonOrderReferenceId = '<?php echo $this->getOrderReferenceId(); ?>';
+    <?php endif; ?>
+
     window.onAmazonLoginReady = function() {amazon.Login.setClientId('<?php echo $this->getClientId(); ?>'); };
     window.onAmazonPaymentsReady = function() {
+        if (rendered === true) {
+            return;
+        }
+        if (window.amazonOrderReferenceId !== undefined && window.amazonOrderReferenceId !== null) {
+            return window.onAmazonPaymentsInvalidPayment();
+        }
         new OffAmazonPayments.Widgets.AddressBook({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
@@ -64,8 +76,12 @@
                 console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
             }
         }).bind("walletWidgetDiv");
+        rendered = true;
     };
     window.onAmazonPaymentsInvalidPayment = function () {
+        if (rendered === true) {
+            return;
+        }
         jQuery('#placeOrder').attr('disabled', true);
         jQuery('#checkoutStepInitContent, #chooseMethod').addClass('locked');
         jQuery('#addressBookWidgetDiv, #walletWidgetDiv').empty();
@@ -98,6 +114,7 @@
                 console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
             }
         }).bind('walletWidgetDiv').renderRequested = initiatedByPopup;
+        rendered = true;
         payoneShowInitStep();
     };
     window.onAmazonPaymentsError = function (error) {
@@ -237,7 +254,7 @@
                 },
                 showLoader: true,
                 complete: function (responseRaw) {
-                    amazon.Login.logout();
+                    //amazon.Login.logout();
                     var oResponse = JSON.parse(responseRaw.responseText);
                     if (oResponse.request !== undefined && oResponse.request == 'confirmOrderReference') {
                         if (oResponse.success === true) {

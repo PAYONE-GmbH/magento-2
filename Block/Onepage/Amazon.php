@@ -124,4 +124,37 @@ class Amazon extends Template
     {
         return $this->paymentHelper->getAmazonPayWidgetUrl();
     }
+
+    /**
+     * Check if request param invalidPayment is set
+     *
+     * @return bool
+     */
+    public function isInvalidPaymentTriggered()
+    {
+        if ($this->getRequest()->getParam('invalidPayment')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns amazon order reference id
+     *
+     * @return string
+     */
+    public function getOrderReferenceId()
+    {
+        return $this->checkoutSession->getAmazonReferenceId();
+    }
+
+    /**
+     * Returns if amazon order is locked because of an error
+     *
+     * @return bool
+     */
+    public function isAmazonOrderLocked()
+    {
+        return $this->checkoutSession->getIsAmazonOrderLocked();
+    }
 }
