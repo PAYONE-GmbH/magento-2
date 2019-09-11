@@ -147,14 +147,4 @@ class Amazon extends Template
     {
         return $this->checkoutSession->getAmazonReferenceId();
     }
-
-    /**
-     * Returns if amazon order is locked because of an error
-     *
-     * @return bool
-     */
-    public function isAmazonOrderLocked()
-    {
-        return $this->checkoutSession->getIsAmazonOrderLocked();
-    }
 }

@@ -35,17 +35,11 @@
     }
 
     var rendered = false;
-    <?php if ($this->isAmazonOrderLocked() === true): ?>
-        window.amazonOrderReferenceId = '<?php echo $this->getOrderReferenceId(); ?>';
-    <?php endif; ?>
 
     window.onAmazonLoginReady = function() {amazon.Login.setClientId('<?php echo $this->getClientId(); ?>'); };
     window.onAmazonPaymentsReady = function() {
         if (rendered === true) {
             return;
-        }
-        if (window.amazonOrderReferenceId !== undefined && window.amazonOrderReferenceId !== null) {
-            return window.onAmazonPaymentsInvalidPayment();
         }
         new OffAmazonPayments.Widgets.AddressBook({
             sellerId: '<?php echo $this->getSellerId(); ?>',
@@ -254,7 +248,7 @@
                 },
                 showLoader: true,
                 complete: function (responseRaw) {
-                    //amazon.Login.logout();
+                    amazon.Login.logout();
                     var oResponse = JSON.parse(responseRaw.responseText);
                     if (oResponse.request !== undefined && oResponse.request == 'confirmOrderReference') {
                         if (oResponse.success === true) {

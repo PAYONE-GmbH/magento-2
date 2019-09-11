@@ -319,6 +319,18 @@ class LoadReviewTest extends BaseTestCase
         $this->assertInstanceOf(ResponseInterface::class, $result);
     }
 
+    public function testExecutePlaceOrderAuthExceptionInvalidPaymentType()
+    {
+        $this->request->method('getParam')->willReturn('placeOrder');
+
+        $exception = $this->getMockBuilder(AuthorizationException::class)->disableOriginalConstructor()->getMock();
+        $exception->method('getResponse')->willReturn(['status' => 'ERROR', 'errorcode' => 981]);
+        $this->cartManagement->method('placeOrder')->willThrowException($exception);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+    }
+
     public function testExecutePlaceOrderAuthExceptionDifferent()
     {
         $this->request->method('getParam')->willReturn('placeOrder');
