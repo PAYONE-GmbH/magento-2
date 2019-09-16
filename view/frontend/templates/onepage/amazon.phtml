@@ -33,8 +33,14 @@
     if (window.location.hash.substring(1)) {
         initiatedByPopup = false;
     }
+
+    var rendered = false;
+
     window.onAmazonLoginReady = function() {amazon.Login.setClientId('<?php echo $this->getClientId(); ?>'); };
     window.onAmazonPaymentsReady = function() {
+        if (rendered === true) {
+            return;
+        }
         new OffAmazonPayments.Widgets.AddressBook({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
@@ -64,8 +70,12 @@
                 console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
             }
         }).bind("walletWidgetDiv");
+        rendered = true;
     };
     window.onAmazonPaymentsInvalidPayment = function () {
+        if (rendered === true) {
+            return;
+        }
         jQuery('#placeOrder').attr('disabled', true);
         jQuery('#checkoutStepInitContent, #chooseMethod').addClass('locked');
         jQuery('#addressBookWidgetDiv, #walletWidgetDiv').empty();
@@ -98,6 +108,7 @@
                 console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
             }
         }).bind('walletWidgetDiv').renderRequested = initiatedByPopup;
+        rendered = true;
         payoneShowInitStep();
     };
     window.onAmazonPaymentsError = function (error) {
@@ -221,7 +232,45 @@
                 }
             });
         };
-        window.payonePlaceOrder = function() {
+        window.payonePlaceOrder = function () {
+            event.preventDefault();
+            OffAmazonPayments.initConfirmationFlow('<?php echo $this->getSellerId(); ?>', window.amazonOrderReferenceId, function(confirmationFlow) {
+                window.payoneConfirmOrderReference(confirmationFlow);
+            });
+        };
+        window.payoneConfirmOrderReference = function (confirmationFlow) {
+            $.ajax({
+                url: '<?php echo $this->getLoadReviewUrl(); ?>',
+                type: 'POST',
+                dataType: 'html',
+                data: {
+                    action: 'confirmOrderReference'
+                },
+                showLoader: true,
+                complete: function (responseRaw) {
+                    amazon.Login.logout();
+                    var oResponse = JSON.parse(responseRaw.responseText);
+                    if (oResponse.request !== undefined && oResponse.request == 'confirmOrderReference') {
+                        if (oResponse.success === true) {
+                            confirmationFlow.success();
+                        } else {
+                            confirmationFlow.error();
+                            window.location.href = '<?php echo $this->getErrorUrl(); ?>';
+                        }
+                    }
+                },
+                error: function (responseRaw) {
+                    amazon.Login.logout();
+                    var oResponse = JSON.parse(responseRaw.responseText);
+                    if (oResponse.request !== undefined && oResponse.request == 'confirmOrderReference') {
+                        confirmationFlow.error();
+                        window.location.href = '<?php echo $this->getErrorUrl(); ?>';
+                    }
+                },
+                timeout: "30000" //specify your timeout value (for example, 3000)
+            });
+        };
+        window.payonePlaceOrderFinal = function() {
             $.ajax({
                 url: '<?php echo $this->getLoadReviewUrl(); ?>',
                 type: 'POST',
@@ -251,7 +300,7 @@
                     alert('An error occured. ' + status);
                 }
             });
-        }
+        };
         window.payoneUpdateContent = function(response) {
             if (response.responseText.length !== 0) {
                 var oResponse = JSON.parse(response.responseText);

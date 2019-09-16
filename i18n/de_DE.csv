@@ -1094,6 +1094,11 @@
 
 "Payment information is transmitted using the selected currency","Zahlungsinformation wird in dieser Währung übermittelt"
 
+"There was a problem with your payment. Your order hasn't been placed, and you haven't been charged.","Beim Zahlungsvorgang ist ein Problem aufgetreten. Ihre Bestellung wurde nicht aufgegeben und Ihr Konto nicht belastet."
+"Something's wrong with your payment method. To place your order, try another.","Mit dieser Zahlungsart ist ein Problem aufgetreten. Um Ihre Bestellung abzuschließen, wählen Sie bitte eine andere aus."
+
+"Please choose another payment method.","Entschuldigung, die Transaktion mit Amazon Pay war nicht erfolgreich. Bitte Überprüfen Sie Ihre Daten und wählen Sie eine anderen Zahlungsart."
+
 "Creditcard management","Kreditkarten-Verwaltung"
 "You have no saved creditcard data.","Sie haben noch keine gespeicherten Kreditkarten-Daten."
 "Save the payment data for future use.","Daten für zukünftige Nutzung speichern."
