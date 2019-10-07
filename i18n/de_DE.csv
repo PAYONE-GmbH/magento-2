@@ -107,7 +107,7 @@
 "Your mandate as PDF","Ihr Mandat als PDF"
 "Bank code validation type", "Art der Bankverbindungsprüfung"
 "Banktransfer-Type","Überweisungsart"
-"Requires PAYONE API access.","Benötigt PAYONE API-Zugang"
+"Requires PAYONE Riskmanagement Module","Benötigt PAYONE Riskmanagement Modul"
 "PaymentMethod-Config was successfully saved.","Zahlart-Konfiguration erfolgreich gespeichert."
 "Unable to find PaymentMethod-Config to save.","Zahlart-Konfiguration wurde nicht gefunden."
 "PaymentMethod-Config does not exist.","Zahlart-Konfiguration existiert nicht."
