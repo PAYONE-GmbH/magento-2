@@ -161,6 +161,7 @@ abstract class PayoneMethod extends BaseMethod
 
     /**
      * Perform certain actions with the response
+     * Extension hook for certain payment methods
      *
      * @param  array $aResponse
      * @param  Order $oOrder
@@ -169,10 +170,12 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
-        // hook for certain payment methods
+        $aAddData = $oOrder->getPayment()->getAdditionalInformation();
+        if (!empty($aAddData['iban'])) {
+            $oOrder->getPayment()->setAdditionalInformation('iban', $this->toolkitHelper->maskIban($aAddData['iban']));
+        }
         return $aResponse;
     }
-
 
     /**
      * Convert DataObject to needed array format

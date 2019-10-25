@@ -180,6 +180,29 @@ class Toolkit extends \Payone\Core\Helper\Base
     }
 
     /**
+     * Masks IBAN
+     *
+     * @param string $sUnmasked
+     * @return string
+     */
+    public function maskIban($sUnmasked)
+    {
+        $sMasked = '';
+        for ($i = 0; $i < strlen($sUnmasked); $i++) {
+            if ($i == 2 || ((strlen($sUnmasked) - 2) % 4 == 0 && (($i - 2) % 4 == 0))) {
+                $sMasked .= ' ';
+            }
+
+            if ($i < 4 || $i >= (strlen($sUnmasked) - 4)) {
+                $sMasked .= $sUnmasked[$i];
+            } else {
+                $sMasked .= 'x';
+            }
+        }
+        return $sMasked;
+    }
+
+    /**
      * Checks if given string is utf8 encoded
      *
      * @param  string $sString
