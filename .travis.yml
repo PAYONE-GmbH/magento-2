@@ -5,6 +5,7 @@ php:
 - '7.0'
 - '7.1'
 - '7.2'
+- '7.3'
 env:
 - MAGEVER=2.1
 - MAGEVER=2.2
@@ -18,6 +19,10 @@ matrix:
     - php: '7.2'
       env: MAGEVER=2.1
     - php: '7.2'
+      env: MAGEVER=2.2
+    - php: '7.3'
+      env: MAGEVER=2.1
+    - php: '7.3'
       env: MAGEVER=2.2
   allow_failures:
     - env: MAGEVER=2.1
