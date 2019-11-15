@@ -81,6 +81,9 @@
     <type name="Magento\Sales\Model\Service\CreditmemoService">
         <plugin name="Payone_Core_plugin_CreditmemoService" type="Payone\Core\Model\Plugins\CreditmemoService" sortOrder="1" />
     </type>
+    <type name="Magento\Sales\Model\ResourceModel\Order\Handler\State">
+        <plugin name="Payone_Core_Plugin_State" type="Payone\Core\Model\Plugins\State" sortOrder="1" />
+    </type>
     <type name="Payone\Core\Model\Logger\Info">
         <arguments>
             <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
