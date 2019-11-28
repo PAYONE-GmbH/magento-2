@@ -87,7 +87,7 @@ class StateTest extends BaseTestCase
         $order->method('canInvoice')->willReturn(false);
         $order->method('canCreditmemo')->willReturn(false);
         $order->method('canShip')->willReturn(false);
-        $order->method('getIsVirtual')->willReturn(false);
+        $order->method('getIsVirtual')->willReturn(1);
         $order->method('getConfig')->willReturn($orderConfig);
 
         $subject = $this->getMockBuilder(State::class)->disableOriginalConstructor()->getMock();
@@ -124,7 +124,7 @@ class StateTest extends BaseTestCase
         $order->method('canInvoice')->willReturn(false);
         $order->method('canCreditmemo')->willReturn(true);
         $order->method('canShip')->willReturn(false);
-        $order->method('getIsVirtual')->willReturn(false);
+        $order->method('getIsVirtual')->willReturn(1);
         $order->method('getConfig')->willReturn($orderConfig);
 
         $subject = $this->getMockBuilder(State::class)->disableOriginalConstructor()->getMock();

@@ -53,13 +53,16 @@ class State
      * So if the used payment method is not a Payone method or the shop-version is 2.3.0 or lower, the original method can be used
      * Version-condition must be completed with an endversion when the problem is solved in Mage2 core!
      *
+     * Plugin method will only be used for virtual orders payed with Payone for Magento2 shops 2.3.1 and higher
+     * Otherwise the core method is used
+     *
      * @param  OrigState $subject
      * @param  callable  $proceed
      * @param  Order     $order
      * @return OrigState
      */
     public function aroundCheck(OrigState $subject, callable $proceed, Order $order) {
-        if (version_compare($this->shopHelper->getMagentoVersion(), '2.3.0', '<=') || !$order->getPayment()->getMethodInstance() instanceof PayoneMethod) {
+        if (version_compare($this->shopHelper->getMagentoVersion(), '2.3.0', '<=') || !$order->getPayment()->getMethodInstance() instanceof PayoneMethod || !$order->getIsVirtual()) {
             return $proceed($order);
         }
 
@@ -70,12 +73,9 @@ class State
         }
 
         if (!$order->isCanceled() && !$order->canUnhold() && !$order->canInvoice()) {
-            // Adding !$order->getIsVirtual() to both if-clauses here
-            // Virtual orders are being falsely set to closed here for authorization orders when the appointed status arrived because canCreditmemo is faulty in Mage 2.3.1 and 2.3.2
-            // and because canShip will return false when the order is virtual
-            if (in_array($currentState, [Order::STATE_PROCESSING, Order::STATE_COMPLETE]) && !$order->canCreditmemo() && !$order->canShip() && !$order->getIsVirtual()) {
-                $order->setState(Order::STATE_CLOSED)->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_CLOSED));
-            } elseif ($currentState === Order::STATE_PROCESSING && !$order->canShip() && !$order->getIsVirtual()) { // added !$order->getIsVirtual()
+            // Virtual orders were being falsely set to closed here for authorization orders when the appointed status arrived because canCreditmemo is faulty in Mage 2.3.1 and 2.3.2
+            // and because canShip will return false when the order is virtual therefore setStatus(Closed) was removed here for virtual orders
+            if ($currentState === Order::STATE_PROCESSING && !$order->canShip()) { // added !$order->getIsVirtual()
                 $order->setState(Order::STATE_COMPLETE)->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_COMPLETE));
             }
         }
