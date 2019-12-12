@@ -162,7 +162,7 @@
                         data-bind="
                         click: placeOrder,
                         attr: {id: getCode() + '_submit', title: $t('Place Order')},
-                        enable: (getCode() == isChecked()),
+                        enable: (getCode() == isChecked() && isPlaceOrderActionAllowed()),
                         css: {disabled: !isPlaceOrderActionAllowed()}
                         "
                         disabled>
