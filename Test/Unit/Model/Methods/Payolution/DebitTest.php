@@ -92,8 +92,11 @@ class DebitTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
-        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder', 'getAdditionalInformation'])->getMock();
         $payment->method('getOrder')->willReturn($order);
+        $payment->method('getAdditionalInformation')->willReturn(['iban' => '12345']);
+
+        $order->method('getPayment')->willReturn($payment);
 
         $result = $this->classToTest->authorize($payment, 100);
         $this->assertInstanceOf(ClassToTest::class, $result);

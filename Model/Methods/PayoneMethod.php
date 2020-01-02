@@ -57,7 +57,10 @@ abstract class PayoneMethod extends BaseMethod
     {
         $sRequestType = $this->shopHelper->getConfigParam('request_type');
         if ($this->hasCustomConfig()) {
-            $sRequestType = $this->getCustomConfigParam('request_type');
+            $sCustomRequestType = $this->getCustomConfigParam('request_type');
+            if (!empty($sCustomRequestType)) {
+                $sRequestType = $sCustomRequestType;
+            }
         }
         return $sRequestType;
     }
@@ -161,6 +164,7 @@ abstract class PayoneMethod extends BaseMethod
 
     /**
      * Perform certain actions with the response
+     * Extension hook for certain payment methods
      *
      * @param  array $aResponse
      * @param  Order $oOrder
@@ -169,10 +173,12 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
-        // hook for certain payment methods
+        $aAddData = $oOrder->getPayment()->getAdditionalInformation();
+        if (!empty($aAddData['iban'])) {
+            $oOrder->getPayment()->setAdditionalInformation('iban', $this->toolkitHelper->maskIban($aAddData['iban']));
+        }
         return $aResponse;
     }
-
 
     /**
      * Convert DataObject to needed array format
@@ -294,11 +300,46 @@ abstract class PayoneMethod extends BaseMethod
      * Get config parameter for this payment type
      *
      * @param  string $sParam
+     * @param  string $sStoreCode
      * @return string
      */
-    public function getCustomConfigParam($sParam)
+    public function getCustomConfigParam($sParam, $sStoreCode = null)
     {
-        return $this->shopHelper->getConfigParam($sParam, $this->getCode(), 'payone_payment');
+        if ($sStoreCode === null) {
+            $sStoreCode = $this->getStoreCode();
+        }
+        return $this->shopHelper->getConfigParam($sParam, $this->getCode(), 'payone_payment', $sStoreCode);
+    }
+
+    /**
+     * Trys to retrieve the storecode from the order
+     *
+     * @return string|null
+     */
+    protected function getStoreCode()
+    {
+        try {
+            $oInfoInstance = $this->getInfoInstance();
+            if (empty($oInfoInstance)) {
+                return null;
+            }
+        } catch (\Exception $oExc) {
+            return null;
+        }
+
+        $oOrder = $oInfoInstance->getOrder();
+        if (empty($oOrder)) {
+            $oOrder = $oInfoInstance->getQuote();
+            if (empty($oOrder)) {
+                return null;
+            }
+        }
+
+        $oStore = $oOrder->getStore();
+        if (empty($oStore)) {
+            return null;
+        }
+        return $oStore->getCode();
     }
 
     /**

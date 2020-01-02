@@ -97,17 +97,6 @@ class ApiTest extends BaseTestCase
         $this->connCurlCli = $this->getMockBuilder(CurlCli::class)->disableOriginalConstructor()->getMock();
         $this->connFsockopen = $this->getMockBuilder(Fsockopen::class)->disableOriginalConstructor()->getMock();
 
-        $sendOutput = [
-            'status=APPROVED',
-            'txid=42',
-            'userid=0815',
-            'test',
-            ''
-        ];
-        $this->connCurlPhp->method('sendCurlPhpRequest')->willReturn($sendOutput);
-        $this->connCurlCli->method('sendCurlCliRequest')->willReturn($sendOutput);
-        $this->connFsockopen->method('sendSocketRequest')->willReturn($sendOutput);
-
         $this->api = $this->objectManager->getObject(Api::class, [
             'context' => $context,
             'storeManager' => $storeManager,
@@ -221,6 +210,15 @@ class ApiTest extends BaseTestCase
     {
         $this->connCurlPhp->method('isApplicable')->willReturn(true);
 
+        $sendOutput = [
+            'status=APPROVED',
+            'txid=42',
+            'userid=0815',
+            'test',
+            ''
+        ];
+        $this->connCurlPhp->method('sendCurlPhpRequest')->willReturn($sendOutput);
+
         $return = $this->api->sendApiRequest("http://payone.de");
         $expected = [
             'status' => 'APPROVED',
@@ -231,10 +229,35 @@ class ApiTest extends BaseTestCase
         $this->assertEquals($expected, $return);
     }
 
+    public function testSendApiRequestReturnValueCurlPhpError()
+    {
+        $this->connCurlPhp->method('isApplicable')->willReturn(true);
+
+        $sendOutput = [];
+        $this->connCurlPhp->method('sendCurlPhpRequest')->willReturn($sendOutput);
+
+        $return = $this->api->sendApiRequest("http://payone.de");
+        $expected = [
+            'status' => 'ERROR',
+            'errorcode' => '0',
+            'customermessage' => 'No connection to external service provider possible (timeout)',
+        ];
+        $this->assertEquals($expected, $return);
+    }
+
     public function testSendApiRequestReturnValueCurlCli()
     {
         $this->connCurlPhp->method('isApplicable')->willReturn(false);
         $this->connCurlCli->method('isApplicable')->willReturn(true);
+
+        $sendOutput = [
+            'status=APPROVED',
+            'txid=42',
+            'userid=0815',
+            'test',
+            ''
+        ];
+        $this->connCurlCli->method('sendCurlCliRequest')->willReturn($sendOutput);
 
         $return = $this->api->sendApiRequest("http://payone.de");
         $expected = [
@@ -250,6 +273,15 @@ class ApiTest extends BaseTestCase
     {
         $this->connCurlPhp->method('isApplicable')->willReturn(false);
         $this->connCurlCli->method('isApplicable')->willReturn(false);
+
+        $sendOutput = [
+            'status=APPROVED',
+            'txid=42',
+            'userid=0815',
+            'test',
+            ''
+        ];
+        $this->connFsockopen->method('sendSocketRequest')->willReturn($sendOutput);
 
         $return = $this->api->sendApiRequest("http://payone.de");
         $expected = [

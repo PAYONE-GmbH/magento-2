@@ -34,6 +34,7 @@ use Magento\Framework\UrlInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Payment;
+use Magento\Framework\App\RequestInterface;
 
 class AmazonTest extends BaseTestCase
 {
@@ -58,6 +59,11 @@ class AmazonTest extends BaseTestCase
     private $checkoutSession;
 
     /**
+     * @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $request;
+
+    /**
      * @var Payment
      */
     private $paymentHelper;
@@ -68,12 +74,15 @@ class AmazonTest extends BaseTestCase
 
         $this->urlBuilder = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
 
+        $this->request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
+
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->method('getUrlBuilder')->willReturn($this->urlBuilder);
+        $context->method('getRequest')->willReturn($this->request);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError'])
+            ->setMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError', 'getAmazonReferenceId'])
             ->getMock();
 
         $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
@@ -125,6 +134,16 @@ class AmazonTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetErrorUrl()
+    {
+        $expected = 'https://test.com';
+
+        $this->urlBuilder->method('getUrl')->willReturn($expected);
+
+        $result = $this->classToTest->getErrorUrl();
+        $this->assertEquals($expected, $result);
+    }
+
     public function testGetWidgetUrl()
     {
         $expected = 'https://test.com';
@@ -132,6 +151,31 @@ class AmazonTest extends BaseTestCase
         $this->paymentHelper->method('getAmazonPayWidgetUrl')->willReturn($expected);
 
         $result = $this->classToTest->getWidgetUrl();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testIsInvalidPaymentTriggered()
+    {
+        $this->request->method('getParam')->willReturn(true);
+
+        $result = $this->classToTest->isInvalidPaymentTriggered();
+        $this->assertTrue($result);
+    }
+
+    public function testIsInvalidPaymentTriggeredFalse()
+    {
+        $this->request->method('getParam')->willReturn(false);
+
+        $result = $this->classToTest->isInvalidPaymentTriggered();
+        $this->assertFalse($result);
+    }
+
+    public function testGetOrderReferenceId()
+    {
+        $expected = '12345';
+        $this->checkoutSession->method('getAmazonReferenceId')->willReturn($expected);
+
+        $result = $this->classToTest->getOrderReferenceId();
         $this->assertEquals($expected, $result);
     }
 }
