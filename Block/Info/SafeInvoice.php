@@ -47,17 +47,17 @@ class SafeInvoice extends Base
             $data[(string)__('Payment has not been processed yet.')] = '';
         } else {
             $oStatus = $this->getAppointedStatus();
-            $data[(string)__('Payment reference:')] = $sTransId;
-            $data[(string)__('Accountholder:')] = $oStatus->getClearingBankaccountholder();
-            $data[(string)__('Accountnumber:')] = $oStatus->getClearingBankaccount();
-            $data[(string)__('Bank code:')] = $oStatus->getClearingBankcode();
-            $data[(string)__('IBAN:')] = $oStatus->getClearingBankiban();
-            $data[(string)__('BIC:')] = $oStatus->getClearingBankbic();
-            $data[(string)__('Bank:')] = $oStatus->getClearingBankname();
-            $data[(string)__('Payment Reference:')] = $oStatus->getClearingReference();
-            $data[(string)__('Legal note:')] = $oStatus->getClearingLegalnote();
-            $data[(string)__('Instruction note:')] = $oStatus->getClearingInstructionnote();
-            $data[(string)__('Due date:')] = $oStatus->getClearingDuedate();
+            $data[(string)__('Payment reference')] = $sTransId;
+            $data[(string)__('Accountholder')] = $oStatus->getClearingBankaccountholder();
+            $data[(string)__('Accountnumber')] = $oStatus->getClearingBankaccount();
+            $data[(string)__('Bank code')] = $oStatus->getClearingBankcode();
+            $data[(string)__('IBAN')] = $oStatus->getClearingBankiban();
+            $data[(string)__('BIC')] = $oStatus->getClearingBankbic();
+            $data[(string)__('Bank')] = $oStatus->getClearingBankname();
+            $data[(string)__('Payment Reference')] = $oStatus->getClearingReference();
+            $data[(string)__('Legal note')] = $oStatus->getClearingLegalnote();
+            $data[(string)__('Instruction note')] = $oStatus->getClearingInstructionnote();
+            $data[(string)__('Due date')] = $oStatus->getClearingDuedate();
         }
         return $transport->setData(array_merge($data, $transport->getData()));
     }

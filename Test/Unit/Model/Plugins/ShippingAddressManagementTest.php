@@ -36,6 +36,7 @@ use Magento\Quote\Model\ShippingAddressManagement;
 use Magento\Framework\App\Request\Http;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Helper\Addresscheck as AddresscheckHelper;
 
 class ShippingAddressManagementTest extends BaseTestCase
 {
@@ -66,10 +67,14 @@ class ShippingAddressManagementTest extends BaseTestCase
         $request = $this->getMockBuilder(Http::class)->disableOriginalConstructor()->getMock();
         $request->method('getPathInfo')->willReturn('/rest/default/V1/carts/mine/shipping-information');
 
+        $addresscheckHelper = $this->getMockBuilder(AddresscheckHelper::class)->disableOriginalConstructor()->getMock();
+        $addresscheckHelper->method('isCheckEnabled')->willReturn(true);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'quoteRepository' => $quoteRepository,
             'addresscheck' => $addresscheck,
-            'request' => $request
+            'request' => $request,
+            'addresscheckHelper' => $addresscheckHelper
         ]);
     }
 

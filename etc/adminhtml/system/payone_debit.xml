@@ -63,7 +63,7 @@
         </field>
         <field id="check_bankaccount" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Validate bank code</label>
-            <comment>Requires PAYONE API access.</comment>
+            <comment>Requires PAYONE Riskmanagement Module</comment>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <field id="bankaccountcheck_type" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">

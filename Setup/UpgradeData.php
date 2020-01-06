@@ -30,8 +30,12 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Sales\Setup\SalesSetupFactory;
+use Magento\Framework\App\Config\Storage\WriterInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Payone\Core\Helper\Shop;
 use Magento\Customer\Setup\CustomerSetupFactory;
+use Payone\Core\Helper\Payment;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Class UpgradeData
@@ -44,6 +48,20 @@ class UpgradeData implements UpgradeDataInterface
      * @var SalesSetupFactory
      */
     protected $salesSetupFactory;
+
+    /**
+     * Config writer resource
+     *
+     * @var WriterInterface
+     */
+    protected $configWriter;
+
+    /**
+     * Store manager object
+     *
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
 
     /**
      * PAYONE shop helper object
@@ -60,16 +78,35 @@ class UpgradeData implements UpgradeDataInterface
     protected $customerSetupFactory;
 
     /**
+     * PAYONE payment helper object
+     *
+     * @var Payment
+     */
+    protected $paymentHelper;
+
+    /**
      * Constructor
      *
-     * @param SalesSetupFactory $salesSetupFactory
-     * @param Shop              $shopHelper
-     * @param CustomerSetupFactory   $customerSetupFactory
+     * @param SalesSetupFactory     $salesSetupFactory
+     * @param Shop                  $shopHelper
+     * @param Payment               $paymentHelper
+     * @param WriterInterface       $configWriter
+     * @param StoreManagerInterface $storeManager
+     * @param CustomerSetupFactory  $customerSetupFactory
      */
-    public function __construct(SalesSetupFactory $salesSetupFactory, Shop $shopHelper, CustomerSetupFactory $customerSetupFactory)
-    {
+    public function __construct(
+        SalesSetupFactory $salesSetupFactory,
+        Shop $shopHelper,
+        Payment $paymentHelper,
+        WriterInterface $configWriter,
+        StoreManagerInterface $storeManager,
+        CustomerSetupFactory $customerSetupFactory
+    ) {
         $this->salesSetupFactory = $salesSetupFactory;
         $this->shopHelper = $shopHelper;
+        $this->paymentHelper = $paymentHelper;
+        $this->configWriter = $configWriter;
+        $this->storeManager = $storeManager;
         $this->customerSetupFactory = $customerSetupFactory;
     }
 
@@ -242,6 +279,8 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
+        $this->deactivateNewPaymentMethods($setup);
+
         $setup->endSetup();
     }
 
@@ -292,5 +331,52 @@ class UpgradeData implements UpgradeDataInterface
         $data = ['path' => 'payone_protect/personstatus/mapping'];
         $where = ['path = ?' => 'payone_protect/address_check/mapping_personstatus'];
         $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
+    }
+
+    /**
+     * Adds a config entry to the database to set the payment method to inactive
+     *
+     * @param  string $methodCode
+     * @return void
+     */
+    protected function addPaymentInactiveConfig($methodCode)
+    {
+        $this->configWriter->save('payment/'.$methodCode.'/active', 0);
+    }
+
+    /**
+     * Checks if there is a active config entry for the given payment method
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @param  string                   $methodCode
+     * @return bool
+     */
+    protected function isPaymentConfigExisting(ModuleDataSetupInterface $setup, $methodCode)
+    {
+        $select = $setup->getConnection()
+            ->select()
+            ->from($setup->getTable('core_config_data'), ['config_id', 'value'])
+            ->where('path LIKE "%'.$methodCode.'/active"');
+
+        $result = $setup->getConnection()->fetchAssoc($select);
+        if (!empty($result)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Deactivates new payment methods, since they have to be marked as active in the config.xml files to be shown in payment method select backend elements
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @return void
+     */
+    protected function deactivateNewPaymentMethods(ModuleDataSetupInterface $setup)
+    {
+        foreach ($this->paymentHelper->getAvailablePaymentTypes() as $methodCode) {
+            if ($this->isPaymentConfigExisting($setup, $methodCode) === false) {
+                $this->addPaymentInactiveConfig($methodCode);
+            }
+        }
     }
 }

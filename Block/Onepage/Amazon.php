@@ -106,6 +106,16 @@ class Amazon extends Template
     }
 
     /**
+     * Returns error url
+     *
+     * @return string
+     */
+    public function getErrorUrl()
+    {
+        return $this->_urlBuilder->getUrl('payone/amazon/confirmOrderError');
+    }
+
+    /**
      * Get amazon widget url
      *
      * @return string
@@ -113,5 +123,28 @@ class Amazon extends Template
     public function getWidgetUrl()
     {
         return $this->paymentHelper->getAmazonPayWidgetUrl();
+    }
+
+    /**
+     * Check if request param invalidPayment is set
+     *
+     * @return bool
+     */
+    public function isInvalidPaymentTriggered()
+    {
+        if ($this->getRequest()->getParam('invalidPayment')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns amazon order reference id
+     *
+     * @return string
+     */
+    public function getOrderReferenceId()
+    {
+        return $this->checkoutSession->getAmazonReferenceId();
     }
 }

@@ -35,13 +35,6 @@ use Magento\Quote\Model\ShippingAddressManagement as ShippingAddressManagementOr
 class ShippingAddressManagement
 {
     /**
-     * Quote repository.
-     *
-     * @var \Magento\Quote\Api\CartRepositoryInterface
-     */
-    protected $quoteRepository;
-
-    /**
      * PAYONE addresscheck request model
      *
      * @var \Payone\Core\Model\Risk\Addresscheck
@@ -54,19 +47,27 @@ class ShippingAddressManagement
     protected $request;
 
     /**
+     * PAYONE Addresscheck helper
+     *
+     * @var \Payone\Core\Helper\Addresscheck
+     */
+    protected $addresscheckHelper;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
      * @param \Payone\Core\Model\Risk\Addresscheck       $addresscheck
+     * @param \Magento\Framework\App\Request\Http        $request
+     * @param \Payone\Core\Helper\Addresscheck           $addresscheckHelper
      */
     public function __construct(
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
         \Payone\Core\Model\Risk\Addresscheck $addresscheck,
-        \Magento\Framework\App\Request\Http $request
+        \Magento\Framework\App\Request\Http $request,
+        \Payone\Core\Helper\Addresscheck $addresscheckHelper
     ) {
-        $this->quoteRepository = $quoteRepository;
         $this->addresscheck = $addresscheck;
         $this->request = $request;
+        $this->addresscheckHelper = $addresscheckHelper;
     }
 
     /**
@@ -80,8 +81,9 @@ class ShippingAddressManagement
     public function beforeAssign(ShippingAddressManagementOrig $oSource, $sCartId, AddressInterface $oAddress)
     {
         if (stripos($this->request->getPathInfo(), 'shipping-information') !== false) { // only check for the checkout ajax calls
-            $oQuote = $this->quoteRepository->getActive($sCartId);
-            $oAddress = $this->addresscheck->handleAddressManagement($oAddress, $oQuote, false);
+            if ($this->addresscheckHelper->isCheckEnabled(false)) {
+                $oAddress = $this->addresscheck->handleAddressManagement($oAddress, $sCartId, false);
+            }
         }
         return [$sCartId, $oAddress];
     }

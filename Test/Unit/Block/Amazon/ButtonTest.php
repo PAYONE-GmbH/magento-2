@@ -140,9 +140,27 @@ class ButtonTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetCounter()
+    public function testGetCounterMiniBasket()
     {
+        $this->classToTest->setData('payoneLayoutName', 'shortcutbuttons_0');
+
         $result = $this->classToTest->getCounter();
-        $this->assertGreaterThan(0, $result);
+        $this->assertEquals(1, $result);
+    }
+
+    public function testGetCounterBasketPage()
+    {
+        $this->classToTest->setData('payoneLayoutName', 'checkout.cart.shortcut.buttons');
+
+        $result = $this->classToTest->getCounter();
+        $this->assertEquals(2, $result);
+    }
+
+    public function testGetCounterOther()
+    {
+        $this->classToTest->setData('payoneLayoutName', 'other');
+
+        $result = $this->classToTest->getCounter();
+        $this->assertEquals(3, $result);
     }
 }

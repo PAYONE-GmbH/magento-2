@@ -47,27 +47,27 @@ class Debit extends Base
         $aRaw = $oStatus->getRawStatusArray();
 
         if (!empty($oInfo->getAdditionalInformation('iban'))) {
-            $data[(string)__('IBAN:')] = $oInfo->getAdditionalInformation('iban');
+            $data[(string)__('IBAN')] = $oInfo->getAdditionalInformation('iban');
         } elseif (isset($aRaw['iban'])) {
-            $data[(string)__('IBAN:')] = $aRaw['iban'];
+            $data[(string)__('IBAN')] = $aRaw['iban'];
         }
         if (!empty($oInfo->getAdditionalInformation('bic'))) {
-            $data[(string)__('BIC:')] = $oInfo->getAdditionalInformation('bic');
+            $data[(string)__('BIC')] = $oInfo->getAdditionalInformation('bic');
         } elseif (isset($aRaw['bic'])) {
-            $data[(string)__('BIC:')] = $aRaw['bic'];
+            $data[(string)__('BIC')] = $aRaw['bic'];
         }
         if (isset($aRaw['bankaccount'])) {
-            $data[(string)__('Account number:')] = $aRaw['bankaccount'];
+            $data[(string)__('Account number')] = $aRaw['bankaccount'];
         }
         if (isset($aRaw['bankcode'])) {
-            $data[(string)__('Bank code:')] = $aRaw['bankcode'];
+            $data[(string)__('Bank code')] = $aRaw['bankcode'];
         }
 
         $sTransId = $oInfo->getLastTransId();
         if ($sTransId == '') {
             $data[(string)__('Payment has not been processed yet.')] = '';
         } else {
-            $data[(string)__('Payment reference:')] = $sTransId;
+            $data[(string)__('Payment reference')] = $sTransId;
         }
         return $transport->setData(array_merge($data, $transport->getData()));
     }

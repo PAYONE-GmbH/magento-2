@@ -42,11 +42,6 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
     protected $alias = 'payone.block.amazon.button';
 
     /**
-     * @var int $counter
-     */
-    public static $counter = 0;
-
-    /**
      * @var \Payone\Core\Helper\Base
      */
     protected $baseHelper;
@@ -145,6 +140,12 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
      */
     public function getCounter()
     {
-        return ++$this::$counter;
+        if (stripos($this->getData('payoneLayoutName'), 'shortcutbuttons') !== false) { // Mini basket
+            return 1;
+        } elseif ($this->getData('payoneLayoutName') == 'checkout.cart.shortcut.buttons') { // Basket page
+            return 2;
+        } else { // Unknown
+            return 3;
+        }
     }
 }

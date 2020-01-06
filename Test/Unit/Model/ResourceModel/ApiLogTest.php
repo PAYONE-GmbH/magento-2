@@ -76,6 +76,7 @@ class ApiLogTest extends BaseTestCase
             'request' => 'authorization',
             'mid' => '12345',
             'ip' => '192.168.0.1',
+            'iban' => 'DE99123456782221234567',
         ];
         $orderId = '12345';
 
