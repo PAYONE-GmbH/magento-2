@@ -107,6 +107,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $checkoutSession;
 
     /**
+     * Customer session
+     *
+     * @var \Magento\Customer\Model\Session
+     */
+    protected $customerSession;
+
+    /**
      * PAYONE shop helper
      *
      * @var \Payone\Core\Helper\Shop
@@ -134,6 +141,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @param \Payone\Core\Helper\Consumerscore                    $consumerscoreHelper
      * @param \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration
      * @param \Magento\Checkout\Model\Session                      $checkoutSession
+     * @param \Magento\Customer\Model\Session                      $customerSession
      * @param \Payone\Core\Helper\Shop                             $shopHelper
      * @param \Payone\Core\Model\ResourceModel\SavedPaymentData    $savedPaymentData
      */
@@ -149,6 +157,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Payone\Core\Model\Api\Payolution\PrivacyDeclaration $privacyDeclaration,
         \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Customer\Model\Session $customerSession,
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
     ) {
@@ -163,6 +172,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->privacyDeclaration = $privacyDeclaration;
         $this->checkoutSession = $checkoutSession;
+        $this->customerSession = $customerSession;
         $this->shopHelper = $shopHelper;
         $this->savedPaymentData = $savedPaymentData;
     }
@@ -244,6 +254,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>='),
             'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId()),
+            'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
         ];
     }
 
@@ -277,6 +288,19 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->checkoutSession->unsPayoneCanceledPaymentMethod();
         if ($sPaymentMethod) {
             return $sPaymentMethod;
+        }
+        return false;
+    }
+
+    /**
+     * Check if paydirekt oneklick is enabled, user is logged in and not yet marked as registered with paydirekt
+     *
+     * @return bool
+     */
+    protected function isPaydirektOneKlickDisplayable()
+    {
+        if ($this->customerSession->isLoggedIn() && (bool)$this->customerSession->getCustomer()->getPayonePaydirektRegistered() === false) {
+            return (bool)$this->requestHelper->getConfigParam('oneklick_active', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment');
         }
         return false;
     }

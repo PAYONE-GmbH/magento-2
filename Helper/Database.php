@@ -29,6 +29,7 @@ namespace Payone\Core\Helper;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Store\Model\ScopeInterface;
+use Payone\Core\Model\PayoneConfig;
 
 /**
  * Helper class for everything that has to do with database connections
@@ -332,5 +333,40 @@ class Database extends \Payone\Core\Helper\Base
             ->from($this->databaseResource->getTableName('sales_order'), ['increment_id'])
             ->where("payone_cancel_substitute_increment_id = :incrementId");
         return $this->getDb()->fetchOne($oSelect, ['incrementId' => $sIncrementId]);
+    }
+
+    /**
+     * Writes the registered flag to the customer entity
+     * I'm sure there is a way to do this correctly with the entity object, but Mage2 did everything to prevent this
+     *
+     * @param  int $iCustomerId
+     * @return int
+     */
+    public function markUserAsRegisteredWithPaydirekt($iCustomerId)
+    {
+        $table = $this->databaseResource->getTableName('customer_entity');
+        $data = ['payone_paydirekt_registered' => 1];
+        $where = ['entity_id = ?' => $iCustomerId];
+        return $this->getDb()->update($table, $data, $where);
+    }
+
+    /**
+     * Selects count of paydirekt oneclick orders from database
+     *
+     * @param  int $iCustomerId
+     * @return int
+     */
+    public function getPaydirektOneklickOrderCount($iCustomerId)
+    {
+        $oSelect = $this->getDb()
+            ->select()
+            ->from($this->databaseResource->getTableName('sales_order'), ['COUNT(entity_id)'])
+            ->where("customer_id = :customerId")
+            ->where("payone_express_type = :expressType");
+        $iCount = $this->getDb()->fetchOne($oSelect, ['customerId' => $iCustomerId, 'expressType' => PayoneConfig::METHOD_PAYDIREKT]);
+        if ($iCount === null) {
+            return 0;
+        }
+        return $iCount;
     }
 }

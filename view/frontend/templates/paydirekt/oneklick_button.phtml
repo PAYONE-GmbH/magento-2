@@ -1,3 +1,4 @@
+<?php
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,33 +18,13 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2019 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-define(
-    [
-        'Payone_Core/js/view/payment/method-renderer/base',
-        'Magento_Customer/js/model/customer',
-        'mage/url'
-    ],
-    function (Component, customer, url) {
-        'use strict';
-        return Component.extend({
-            defaults: {
-                template: 'Payone_Core/payment/paydirekt'
-            },
-
-            /** Returns payment method instructions */
-            getInstructions: function () {
-                return window.checkoutConfig.payment.instructions[this.item.method];
-            },
-            isPaydirektOneKlickDisplayable: function () {
-                return customer.isLoggedIn() && window.checkoutConfig.payment.payone.isPaydirektOneKlickDisplayable;
-            },
-            redirectToOneKlickController: function () {
-                window.location.replace(url.build('payone/paydirekt/agreement/'));
-            }
-        });
-    }
-);
+?>
+<div class="paydirekt" style="text-align: center;margin-top:15px;">
+    <a href="<?php echo $block->getReviewLink(); ?>" style="text-align: center;">
+        <img title="<?php echo __('Checkout with paydirekt oneKlick'); ?>" alt="<?php echo __('Checkout with paydirekt oneKlick'); ?>" src="<?php echo $block->getLogoUrl(); ?>">
+    </a>
+</div>

@@ -28,5 +28,6 @@
     <event name="shortcut_buttons_container">
         <observer name="payone_paypalexpress_shortcuts" instance="Payone\Core\Observer\AddPaypalExpressButtons" />
         <observer name="payone_amazonpay_shortcuts" instance="Payone\Core\Observer\AddAmazonPayButton" />
+        <observer name="payone_paydirektoneklick_shortcuts" instance="Payone\Core\Observer\AddPaydirektOneklickButton" />
     </event>
 </config>

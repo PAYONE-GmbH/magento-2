@@ -40,7 +40,6 @@ class PayPalExpress extends Base
      *
      * @param Quote       $oQuote
      * @param Paypal      $oPayment
-     * @param float       $dAmount  order sum amount
      * @param string|bool $sWorkorderId
      * @return array Response
      */

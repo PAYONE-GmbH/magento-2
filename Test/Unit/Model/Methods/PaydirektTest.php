@@ -29,8 +29,11 @@ namespace Payone\Core\Test\Unit\Model\Methods;
 use Payone\Core\Model\Methods\Paydirekt as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Checkout\Model\Session;
+use Payone\Core\Helper\Shop;
 
 class PaydirektTest extends BaseTestCase
 {
@@ -48,7 +51,23 @@ class PaydirektTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $checkoutSession = $this->getMockBuilder(Session::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getPayoneExpressType',
+                'getPayoneDeviceFingerprint',
+                'getPayoneUserAgent'
+            ])
+            ->getMock();
+        $checkoutSession->method('getPayoneExpressType')->willReturn(PayoneConfig::METHOD_PAYDIREKT);
+
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getConfigParam')->willReturn('test');
+        
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'checkoutSession' => $checkoutSession,
+            'shopHelper' => $shopHelper,
+        ]);
     }
 
     public function testGetPaymentSpecificParameters()
@@ -56,8 +75,8 @@ class PaydirektTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
-        $expected = ['wallettype' => 'PDT'];
-        $this->assertEquals($expected, $result);
+        $expected = 'PDT';
+        $this->assertEquals($expected, $result['wallettype']);
     }
 
     public function testFormatReferenceNumber()

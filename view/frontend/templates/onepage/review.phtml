@@ -27,6 +27,13 @@
  * @var \Payone\Core\Block\Onepage\Review $block
  */
 ?>
+<?php if ($block->showPaydirektEmailMessage() === true): ?>
+<div class="messages">
+    <div class="message message-error notice">
+        <div><?php echo __('Please check your email account for the paydirekt registration email before continuing.'); ?></div>
+    </div><br>
+</div>
+<?php endif; ?>
 <div class="paypal-review view">
     <div class="block block-order-details-view">
         <div class="block-content">
@@ -78,8 +85,9 @@
                 <strong class="box-title"><span><?php echo $block->escapeHtml(__('Payment Method')); ?></span></strong>
                 <div class="box-content">
                     <?php echo $block->escapeHtml($block->getPaymentMethodTitle()); ?><br>
-                    <?php echo $block->escapeHtml($block->getEmail()); ?> <br>
-                    <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" alt="<?php echo $block->escapeHtml(__('Buy now with PayPal')); ?>"/>
+                    <?php if ($block->isPayPalExpress() === true): ?>
+                        <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" alt="<?php echo $block->escapeHtml(__('Buy now with PayPal')); ?>"/>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -99,8 +107,8 @@
 
         <?php echo $block->getChildHtml('details') ?>
 
-        <form method="post" id="order-review-form" action="<?php echo $block->escapeUrl($block->getPlaceOrderUrl()); ?>"
-              class="form order-review-form">
+        <form method="post" id="order-review-form" action="<?php echo $block->escapeUrl($block->getPlaceOrderUrl()); ?>" class="form order-review-form">
+
             <?php echo $block->getChildHtml('agreements'); ?>
             <div class="actions-toolbar" id="review-buttons-container">
                 <div class="primary">
@@ -111,6 +119,24 @@
                    <span><?php echo $block->escapeHtml(__('Submitting order information...')); ?></span>
                 </span>
             </div>
+            <?php if ($block->isPaydirekt()): ?>
+                <input type="hidden" name="fingerprint" id="payone_fingerprint" value="123">
+                <script src="<?php echo $block->getFingerprintJsUrl(); ?>"></script>
+                <script type="text/javascript">
+                    function checkReady(callback) {
+                        if (/in/.test(document.readyState)) {
+                            setTimeout('checkReady('+callback+')', 9);
+                        } else {
+                            callback();
+                        }
+                    }
+                    checkReady(function() {
+                        Fingerprint2.get(function (components) {
+                            document.getElementById('payone_fingerprint').value = Fingerprint2.x64hash128(components.map(function (pair) { return pair.value }).join(), 31);
+                        });
+                    });
+                </script>
+            <?php endif; ?>
         </form>
     </div>
 </div>
