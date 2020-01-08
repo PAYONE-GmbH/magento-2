@@ -1,7 +1,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/PAYONE-GmbH/magento-2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/PAYONE-GmbH/magento-2/?branch=master) [![Build Status](https://travis-ci.org/PAYONE-GmbH/magento-2.svg?branch=master)](https://travis-ci.org/PAYONE-GmbH/magento-2)
 
 # PAYMENT FOR YOUR MAGENTO 2-SHOP
-The PAYONE payment extension for MAGENTO 2 is massively reworked since the first version. The Github-Community was important for this development. Take a look at our last released version and send us commits or other feedback to take care for the best possible solution. Your feedback is very important to us to ensure a flawless code and rapid development.
+The PAYONE payment extension for Magento 2 is massively reworked since the first version. The Github-Community was important for this development. Take a look at our last released version and send us commits or other feedback to take care for the best possible solution. Your feedback is very important to us to ensure a flawless code and rapid development.
 
 ## Important functions for Magento 2
 *	Seamless integration of Magento's OnePage Checkout
@@ -19,11 +19,6 @@ The PAYONE payment extension for MAGENTO 2 is massively reworked since the first
 *	`php bin/magento setup:upgrade`
 *	`php bin/magento setup:di:compile`
 *	`php bin/magento cache:clean`
-
-## Compatibility issues
-To make this extension Magento 2.2 compatible, all Unit Tests have been modified to work with PHPUnit 6, which breaks compatibility towards older versions of PHPUnit. Please run all Unit Tests in PHPUnit 6, regardless of your Magento version.
-
-As of 05/07/2018 this seems, however, broken. For the time being, Unit Tests are carried out on Magento 2.2 and 2.3 alone during the Travis build.
 
 ## Magento Version Support
 We follow Magento's version lifetime according to their [Enterprise Agreement](https://magento.com/legal/terms/enterprise-agreement#support). In theory, Magento 2.0 is still supported, but not actively tested.
