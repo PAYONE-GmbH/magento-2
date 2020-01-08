@@ -31,10 +31,10 @@ We follow Magento's version lifetime according to their [Enterprise Agreement](h
 Support for Magento 2.1 will be phased out in June 2019. From that date, we will discontinue actively testing Magento 2.1.
 
 ## More information
-*	For documentation see: https://github.com/PAYONE-GmbH/docs
+*	For documentation see: https://docs.payone.com/display/public/INT/Magento+2+Plugin
 
 ## Contact
-BS PAYONE GmbH<br>
+PAYONE GmbH<br>
 Office Kiel<br>
 Fraunhoferstraße 2-4<br>
 24118 Kiel, Germany<br>
