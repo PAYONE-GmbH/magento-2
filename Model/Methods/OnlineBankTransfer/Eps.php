@@ -134,7 +134,7 @@ class Eps extends OnlineBankTransferBase
         foreach (self::$aBankGroups as $sKey => $sTitle) {
             $aReturn[] = [
                 'id' => $sKey,
-                'title' => utf8_encode($sTitle),
+                'title' => $sTitle,
             ];
         }
 
