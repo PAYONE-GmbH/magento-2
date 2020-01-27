@@ -29,8 +29,7 @@ define(
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/url-builder',
         'Payone_Core/js/action/installmentplan',
-        'Magento_Checkout/js/model/payment/additional-validators',
-        'prototype'
+        'Magento_Checkout/js/model/payment/additional-validators'
     ],
     function (Component, $, $t, quote, urlBuilder, installmentplan, additionalValidators) {
         'use strict';
@@ -151,16 +150,8 @@ define(
                 }
             },
             switchInstallmentPlan: function (sKey, sCode, iInstallments) {
-                $$('.payolution_installmentplans').each(
-                    function (e) {
-                        e.hide();
-                    }
-                );
-                $$('.payolution_installment_overview').each(
-                    function (e) {
-                        e.hide();
-                    }
-                );
+                $('.payolution_installmentplans').hide();
+                $('.payolution_installment_overview').hide();
 
                 $('#payolution_installmentplan_' + sKey).show();
                 $('#payolution_installment_overview_' + sKey).show();
