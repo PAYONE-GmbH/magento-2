@@ -227,12 +227,26 @@ class Export extends \Payone\Core\Model\Export\Xml
         $this->writeToXml('<consumerscore>', 3);
         $this->writeNode("active", $this->configExportHelper->getConfigParam('enabled', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeNode("mode", $this->configExportHelper->getConfigParam('mode', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("integration_event", $this->configExportHelper->getConfigParam('integration_event', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("enabled_for_payment_methods", $this->configExportHelper->getConfigParam('enabled_for_payment_methods', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("payment_hint_enabled", $this->configExportHelper->getConfigParam('payment_hint_enabled', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("payment_hint_text", $this->configExportHelper->getConfigParam('payment_hint_text', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("agreement_enabled", $this->configExportHelper->getConfigParam('agreement_enabled', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("agreement_message", $this->configExportHelper->getConfigParam('agreement_message', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeNode("min_order_total", $this->configExportHelper->getConfigParam('min_order_total', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeNode("max_order_total", $this->configExportHelper->getConfigParam('max_order_total', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeNode("consumerscoretype", $this->configExportHelper->getConfigParam('type', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("addresschecktype", $this->configExportHelper->getConfigParam('addresscheck', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("score_when_unknown", $this->configExportHelper->getConfigParam('unknown_value', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeNode("red", $this->configExportHelper->getConfigParam('allow_payment_methods_red', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeNode("yellow", $this->configExportHelper->getConfigParam('allow_payment_methods_yellow', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeNode("duetime", $this->configExportHelper->getConfigParam('result_lifetime', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("sample_mode_enabled", $this->configExportHelper->getConfigParam('sample_mode_enabled', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("sample_mode_frequency", $this->configExportHelper->getConfigParam('sample_mode_frequency', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("handle_response_error", $this->configExportHelper->getConfigParam('handle_response_error', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("stop_checkout_message", $this->configExportHelper->getConfigParam('stop_checkout_message', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("insufficient_score_message", $this->configExportHelper->getConfigParam('insufficient_score_message', 'creditrating', 'payone_protect', $sStoreCode), 4);
+        $this->writeNode("result_lifetime", $this->configExportHelper->getConfigParam('result_lifetime', 'creditrating', 'payone_protect', $sStoreCode), 4);
         $this->writeToXml('</consumerscore>', 3);
     }
 

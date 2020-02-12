@@ -147,33 +147,43 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
                 'address_hash' => $sHash,
                 'is_bonicheck' => $blIsBonicheck,
                 'checktype' => $sChecktype,
+                'score' => isset($aResponse['score']) ? $aResponse['score'] : ''
             ]
         );
         return $this;
     }
 
     /**
-     * Check and return if this exact address has been checked before
+     * Get lifetime config
      *
-     * @param  AddressInterface $oAddress
-     * @param  string           $sChecktype
-     * @param  bool             $blIsBonicheck
-     * @return bool
+     * @param  string $sConfigField
+     * @param  bool   $blIsBonicheck
+     * @return string
      */
-    public function wasAddressCheckedBefore(AddressInterface $oAddress, $sChecktype, $blIsBonicheck = false)
+    protected function getConfigValue($sConfigField, $blIsBonicheck)
     {
         $sGroup = 'address_check';
         if ($blIsBonicheck === true) {
             $sGroup = 'creditrating';
         }
+        return $this->shopHelper->getConfigParam($sConfigField, $sGroup, 'payone_protect');
+    }
 
-        $sLifetime = $this->shopHelper->getConfigParam('result_lifetime', $sGroup, 'payone_protect');
-        if (empty($sLifetime) || !is_numeric($sLifetime)) {
-            return false; // no lifetime = check every time
-        }
-
+    /**
+     * Executes a select on the checked addresses table
+     *
+     * @param  AddressInterface $oAddress
+     * @param  string           $sChecktype
+     * @param  bool             $blIsBonicheck
+     * @param  string           $sLifetime
+     * @param  array            $aSelectFields
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    protected function selectAddressesChecked(AddressInterface $oAddress, $sChecktype, $blIsBonicheck, $sLifetime, $aSelectFields)
+    {
         $oSelect = $this->getConnection()->select()
-            ->from($this->getMainTable(), ['checkdate'])
+            ->from($this->getMainTable(), $aSelectFields)
             ->where("address_hash = :hash")
             ->where("is_bonicheck = :isBoni")
             ->where("checktype = :checkType")
@@ -186,7 +196,41 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             'lifetime' => $sLifetime
         ];
 
-        $sDate = $this->getConnection()->fetchOne($oSelect, $aParams);
+        return $this->getConnection()->fetchOne($oSelect, $aParams);
+    }
+
+    /**
+     * Returns score for the given address
+     *
+     * @param AddressInterface $oAddress
+     * @param bool $blIsBonicheck
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getLatestScoreForAddress(AddressInterface $oAddress, $blIsBonicheck)
+    {
+        $sLifetime = $this->getConfigValue('result_lifetime', $blIsBonicheck);
+        $sChecktype = $this->getConfigValue('type', $blIsBonicheck);
+        return $this->selectAddressesChecked($oAddress, $sChecktype, $blIsBonicheck, $sLifetime, ['score']);
+    }
+
+    /**
+     * Check and return if this exact address has been checked before
+     *
+     * @param  AddressInterface $oAddress
+     * @param  string           $sChecktype
+     * @param  bool             $blIsBonicheck
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function wasAddressCheckedBefore(AddressInterface $oAddress, $sChecktype, $blIsBonicheck = false)
+    {
+        $sLifetime = $this->getConfigValue('result_lifetime', $blIsBonicheck);
+        if (empty($sLifetime) || !is_numeric($sLifetime)) {
+            return false; // no lifetime = check every time
+        }
+
+        $sDate = $this->selectAddressesChecked($oAddress, $sChecktype, $blIsBonicheck, $sLifetime, ['checkdate']);
         if ($sDate != false) {
             return true;
         }

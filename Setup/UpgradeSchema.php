@@ -116,6 +116,20 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES), 'score')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES),
+                'score',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 16,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Score'
+                ]
+            );
+        }
     }
 
     /**

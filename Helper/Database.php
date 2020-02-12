@@ -44,21 +44,31 @@ class Database extends \Payone\Core\Helper\Base
     protected $databaseResource;
 
     /**
+     * Object of CheckedAddresses resource
+     *
+     * @var \Payone\Core\Model\ResourceModel\CheckedAddresses
+     */
+    protected $addressesChecked;
+
+    /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Helper\Context      $context
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Payone\Core\Helper\Shop                   $shopHelper
-     * @param \Magento\Framework\App\ResourceConnection  $resource
+     * @param \Magento\Framework\App\Helper\Context             $context
+     * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
+     * @param \Payone\Core\Helper\Shop                          $shopHelper
+     * @param \Magento\Framework\App\ResourceConnection         $resource
+     * @param \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
-        \Magento\Framework\App\ResourceConnection $resource
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Payone\Core\Model\ResourceModel\CheckedAddresses $addressesChecked
     ) {
         parent::__construct($context, $storeManager, $shopHelper);
         $this->databaseResource = $resource;
+        $this->addressesChecked = $addressesChecked;
     }
 
     /**
@@ -200,7 +210,7 @@ class Database extends \Payone\Core\Helper\Base
      * @param  bool             $blIsCreditrating
      * @return string
      */
-    public function getOldAddressStatus(AddressInterface $oAddress, $blIsCreditrating = true)
+    protected function getStatusFromPreviousQuoteAddress(AddressInterface $oAddress, $blIsCreditrating = true)
     {
         $sSelectField = 'payone_protect_score';
         if ($blIsCreditrating === false) {
@@ -244,6 +254,34 @@ class Database extends \Payone\Core\Helper\Base
             $aParams['addr_type'] = $oAddress->getAddressType();
         }
         return $this->getDb()->fetchOne($oSelect, $aParams);
+    }
+
+    /**
+     * Returns last check score for given address
+     *
+     * @param  AddressInterface $oAddress
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    protected function getScoreFromCheckedAddresses(AddressInterface $oAddress)
+    {
+        return $this->addressesChecked->getLatestScoreForAddress($oAddress, true);
+    }
+
+    /**
+     * Get the address status from a previous order address
+     *
+     * @param  AddressInterface $oAddress
+     * @param  bool             $blIsCreditrating
+     * @return string
+     */
+    public function getOldAddressStatus(AddressInterface $oAddress, $blIsCreditrating = true)
+    {
+        $sStatus = $this->getStatusFromPreviousQuoteAddress($oAddress, $blIsCreditrating);
+        if(empty($sStatus) && $blIsCreditrating === true && $this->getConfigParam('integration_event', 'creditrating', 'payone_protect') == 'after_payment') {
+            $sStatus = $this->getScoreFromCheckedAddresses($oAddress);
+        }
+        return $sStatus;
     }
 
     /**
