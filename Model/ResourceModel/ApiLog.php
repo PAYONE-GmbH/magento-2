@@ -41,12 +41,20 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $shopHelper;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Fields that need to be masked before written in to the API log
      *
      * @var array
      */
     protected $aMaskFields = [
         'ip',
+        'iban',
     ];
 
     /**
@@ -54,15 +62,18 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Payone\Core\Helper\Shop $shopHelper
+     * @param \Payone\Core\Helper\Toolkit $toolkitHelper
      * @param string $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
         $this->shopHelper = $shopHelper;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -117,7 +128,11 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         foreach ($this->aMaskFields as $sKey) {
             if (isset($aRequest[$sKey])) {
-                $aRequest[$sKey] = $this->maskValue($aRequest[$sKey]);
+                if ($sKey == 'iban') {
+                    $aRequest[$sKey] = $this->toolkitHelper->maskIban($aRequest[$sKey]);
+                } else {
+                    $aRequest[$sKey] = $this->maskValue($aRequest[$sKey]);
+                }
             }
         }
         return $aRequest;

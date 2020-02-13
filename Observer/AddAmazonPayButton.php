@@ -117,7 +117,7 @@ class AddAmazonPayButton implements ObserverInterface
         $shortcut = $shortcutButtons->getLayout()->createBlock(
             'Payone\Core\Block\Amazon\Button',
             '',
-            []
+            ['data' => ['payoneLayoutName' => $shortcutButtons->getNameInLayout()]]
         );
 
         $shortcutButtons->addShortcut($shortcut);

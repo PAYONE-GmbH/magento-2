@@ -100,7 +100,7 @@ class CreditcardTest extends BaseTestCase
         $this->info->method('getLastTransId')->willReturn('12345');
 
         $result = $this->classToTest->getSpecificInformation();
-        $this->assertArrayHasKey('Credit Card Type:', $result);
+        $this->assertArrayHasKey('Credit Card Type', $result);
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertNotEmpty($result);
@@ -113,7 +113,7 @@ class CreditcardTest extends BaseTestCase
         $this->info->method('getLastTransId')->willReturn('12345');
 
         $result = $this->classToTest->getSpecificInformation();
-        $this->assertArrayHasKey('Credit Card Type:', $result);
+        $this->assertArrayHasKey('Credit Card Type', $result);
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertNotEmpty($result);
