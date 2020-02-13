@@ -27,12 +27,11 @@
 namespace Payone\Core\Controller\Transactionstatus;
 
 use Magento\Sales\Model\Order;
-use Magento\Framework\App\Request\Http;
 
 /**
  * TransactionStatus receiver
  */
-class Index extends \Magento\Framework\App\Action\Action
+class Index extends \Payone\Core\Controller\ExternalAction
 {
     /**
      * TransactionStatus model
@@ -87,6 +86,7 @@ class Index extends \Magento\Framework\App\Action\Action
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context              $context
+     * @param \Magento\Framework\Data\Form\FormKey               $formKey
      * @param \Payone\Core\Model\ResourceModel\TransactionStatus $transactionStatus
      * @param \Payone\Core\Helper\Toolkit                        $toolkitHelper
      * @param \Payone\Core\Helper\Environment                    $environmentHelper
@@ -97,6 +97,7 @@ class Index extends \Magento\Framework\App\Action\Action
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\Data\Form\FormKey $formKey,
         \Payone\Core\Model\ResourceModel\TransactionStatus $transactionStatus,
         \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
@@ -105,7 +106,7 @@ class Index extends \Magento\Framework\App\Action\Action
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
         \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder
     ) {
-        parent::__construct($context);
+        parent::__construct($context, $formKey);
         $this->transactionStatus = $transactionStatus;
         $this->toolkitHelper = $toolkitHelper;
         $this->environmentHelper = $environmentHelper;
@@ -113,14 +114,6 @@ class Index extends \Magento\Framework\App\Action\Action
         $this->transactionStatusHandler = $transactionStatusHandler;
         $this->resultRawFactory = $resultRawFactory;
         $this->substituteOrder = $substituteOrder;
-
-        // Fix for Magento 2.3 CsrfValidator and backwards-compatibility to prior Magento 2 versions
-        if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
-            $request = $this->getRequest();
-            if ($request instanceof Http && $request->isPost()) {
-                $request->setParam('ajax', true);
-            }
-        }
     }
 
     /**
@@ -198,7 +191,7 @@ class Index extends \Magento\Framework\App\Action\Action
 
         $oResultRaw = $this->resultRawFactory->create();
         $oResultRaw->setContents($sOutput);
-
+        
         return $oResultRaw;
     }
 }

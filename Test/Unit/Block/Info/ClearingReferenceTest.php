@@ -101,7 +101,7 @@ class ClearingReferenceTest extends BaseTestCase
         $this->info->method('getLastTransId')->willReturn('12345');
 
         $result = $this->classToTest->getSpecificInformation();
-        $this->assertArrayHasKey('IBAN:', $result);
+        $this->assertArrayHasKey('IBAN', $result);
 
         $result = $this->classToTest->getSpecificInformation();
         $this->assertNotEmpty($result);

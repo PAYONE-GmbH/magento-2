@@ -23,9 +23,11 @@
  */
 define(
     [
-        'Payone_Core/js/view/payment/method-renderer/base'
+        'Payone_Core/js/view/payment/method-renderer/base',
+        'Magento_Customer/js/model/customer',
+        'mage/url'
     ],
-    function (Component) {
+    function (Component, customer, url) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -35,6 +37,12 @@ define(
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
+            },
+            isPaydirektOneKlickDisplayable: function () {
+                return customer.isLoggedIn() && window.checkoutConfig.payment.payone.isPaydirektOneKlickDisplayable;
+            },
+            redirectToOneKlickController: function () {
+                window.location.replace(url.build('payone/paydirekt/agreement/'));
             }
         });
     }

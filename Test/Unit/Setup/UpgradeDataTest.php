@@ -30,12 +30,15 @@ use Payone\Core\Setup\UpgradeData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Sales\Setup\SalesSetup;
+use Magento\Customer\Setup\CustomerSetupFactory;
+use Magento\Customer\Setup\CustomerSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Shop;
+use Payone\Core\Helper\Payment;
 
 class UpgradeDataTest extends BaseTestCase
 {
@@ -60,12 +63,26 @@ class UpgradeDataTest extends BaseTestCase
             ->getMock();
         $salesSetupFactory->method('create')->willReturn($salesSetup);
 
+        $customerSetup = $this->getMockBuilder(CustomerSetup::class)->disableOriginalConstructor()->getMock();
+        $customerSetup->method('getAttribute')->willReturn(false);
+
+        $customerSetupFactory = $this->getMockBuilder(CustomerSetupFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $customerSetupFactory->method('create')->willReturn($customerSetup);
+
         $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $shopHelper->method('getMagentoVersion')->willReturn('2.2.0');
 
+        $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $paymentHelper->method('getAvailablePaymentTypes')->willReturn(['payone_paypal']);
+        
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'salesSetupFactory' => $salesSetupFactory,
-            'shopHelper' => $shopHelper
+            'customerSetupFactory' => $customerSetupFactory,
+            'shopHelper' => $shopHelper,
+            'paymentHelper' => $paymentHelper,
         ]);
     }
 
@@ -83,6 +100,30 @@ class UpgradeDataTest extends BaseTestCase
         $connection->method('where')->willReturn($connection);
         $connection->method('update')->willReturn(1);
         $connection->method('fetchAssoc')->willReturn($fetchResult);
+
+        $setup = $this->getMockBuilder(ModuleDataSetupInterface::class)->disableOriginalConstructor()->getMock();
+        $setup->method('getTable')->willReturn('table');
+        $setup->method('getConnection')->willReturn($connection);
+
+        $context = $this->getMockBuilder(ModuleContextInterface::class)->disableOriginalConstructor()->getMock();
+        $context->method('getVersion')->willReturn('2.0.1');
+
+        $result = $this->classToTest->upgrade($setup, $context);
+        $this->assertNull($result);
+    }
+
+    public function testInstallOldPayment()
+    {
+        $connection = $this->getMockBuilder(Mysql::class)
+            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->method('tableColumnExists')->willReturn(false);
+        $connection->method('select')->willReturn($connection);
+        $connection->method('from')->willReturn($connection);
+        $connection->method('where')->willReturn($connection);
+        $connection->method('update')->willReturn(1);
+        $connection->method('fetchAssoc')->willReturn(null);
 
         $setup = $this->getMockBuilder(ModuleDataSetupInterface::class)->disableOriginalConstructor()->getMock();
         $setup->method('getTable')->willReturn('table');

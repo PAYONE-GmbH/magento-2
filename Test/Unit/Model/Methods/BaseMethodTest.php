@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods;
 
+use Braintree\PaymentMethod;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Sales\Model\Order;
 use Payone\Core\Model\Methods\Paydirekt as ClassToTest;
@@ -143,8 +144,12 @@ class BaseMethodTest extends BaseTestCase
     {
         $this->shopHelper->method('getConfigParam')->willReturn('display');
 
+        $payment = $this->getMockBuilder(PaymentMethod::class)->disableOriginalConstructor()->setMethods(['getAdditionalInformation'])->getMock();
+        $payment->method('getAdditionalInformation')->willReturn([]);
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getTotalDue')->willReturn(100);
+        $order->method('getPayment')->willReturn($payment);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
@@ -158,7 +163,11 @@ class BaseMethodTest extends BaseTestCase
 
     public function testAuthorizeError()
     {
+        $payment = $this->getMockBuilder(PaymentMethod::class)->disableOriginalConstructor()->setMethods(['getAdditionalInformation'])->getMock();
+        $payment->method('getAdditionalInformation')->willReturn([]);
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getPayment')->willReturn($payment);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
@@ -289,7 +298,11 @@ class BaseMethodTest extends BaseTestCase
 
     public function testCaptureAuth()
     {
+        $payment = $this->getMockBuilder(PaymentMethod::class)->disableOriginalConstructor()->setMethods(['getAdditionalInformation'])->getMock();
+        $payment->method('getAdditionalInformation')->willReturn([]);
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getPayment')->willReturn($payment);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()

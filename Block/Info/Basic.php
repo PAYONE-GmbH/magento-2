@@ -48,15 +48,15 @@ class Basic extends Base
         } else {
             $oOrder = $this->getInfo()->getOrder();
             if ($oOrder && $oOrder->getPayoneClearingBankcode()) {
-                $data[(string)__('Please transfer the order amount to this bank account:')] = '';
-                $data[(string)__('Accountholder:')] = $oOrder->getPayoneClearingBankaccountholder();
-                $data[(string)__('Accountnumber:')] = $oOrder->getPayoneClearingBankaccount();
-                $data[(string)__('Bank code:')] = $oOrder->getPayoneClearingBankcode();
-                $data[(string)__('IBAN:')] = $oOrder->getPayoneClearingBankiban();
-                $data[(string)__('BIC:')] = $oOrder->getPayoneClearingBankbic();
-                $data[(string)__('Bank:')] = $oOrder->getPayoneClearingBankname();
+                $data[(string)__('Please transfer the order amount to this bank account')] = '';
+                $data[(string)__('Accountholder')] = $oOrder->getPayoneClearingBankaccountholder();
+                $data[(string)__('Accountnumber')] = $oOrder->getPayoneClearingBankaccount();
+                $data[(string)__('Bank code')] = $oOrder->getPayoneClearingBankcode();
+                $data[(string)__('IBAN')] = $oOrder->getPayoneClearingBankiban();
+                $data[(string)__('BIC')] = $oOrder->getPayoneClearingBankbic();
+                $data[(string)__('Bank')] = $oOrder->getPayoneClearingBankname();
             }
-            $data[(string)__('Payment reference:')] = $oOrder->getPayoneTxid();
+            $data[(string)__('Payment reference')] = $oOrder->getPayoneTxid();
         }
         return $transport->setData(array_merge($data, $transport->getData()));
     }

@@ -61,21 +61,21 @@ class Creditcard extends Base
 
         $oInfo = $this->getInfo();
         if ($oInfo->getAdditionalInformation('truncatedcardpan')) {
-            $data[(string)__('Credit Card Type:')] = $this->getCreditcardType($oInfo->getAdditionalInformation('cardtype'));
-            $data[(string)__('Credit Card Number:')] = $oInfo->getAdditionalInformation('truncatedcardpan');
-            $data[(string)__('Expiration Date:')] = $oInfo->getAdditionalInformation('cardexpiredate');
+            $data[(string)__('Credit Card Type')] = $this->getCreditcardType($oInfo->getAdditionalInformation('cardtype'));
+            $data[(string)__('Credit Card Number')] = $oInfo->getAdditionalInformation('truncatedcardpan');
+            $data[(string)__('Expiration Date')] = $oInfo->getAdditionalInformation('cardexpiredate');
         } else {
             $oStatus = $this->getAppointedStatus();
-            $data[(string)__('Credit Card Type:')] = $this->getCreditcardType($oStatus->getCardtype());
-            $data[(string)__('Credit Card Number:')] = $oStatus->getCardpan();
-            $data[(string)__('Expiration Date:')] = $oStatus->getCardexpiredate();
+            $data[(string)__('Credit Card Type')] = $this->getCreditcardType($oStatus->getCardtype());
+            $data[(string)__('Credit Card Number')] = $oStatus->getCardpan();
+            $data[(string)__('Expiration Date')] = $oStatus->getCardexpiredate();
         }
 
         $sTransId = $oInfo->getLastTransId();
         if ($sTransId == '') {
             $data[(string)__('Payment has not been processed yet.')] = '';
         } else {
-            $data[(string)__('Payment reference:')] = $sTransId;
+            $data[(string)__('Payment reference')] = $sTransId;
         }
         return $transport->setData(array_merge($data, $transport->getData()));
     }

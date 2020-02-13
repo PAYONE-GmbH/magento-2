@@ -104,6 +104,13 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     protected $setOrderReferenceDetails;
 
     /**
+     * Object of setorderreferencedetails request
+     *
+     * @var \Payone\Core\Model\Api\Request\Genericpayment\ConfirmOrderReference
+     */
+    protected $confirmOrderReference;
+
+    /**
      * Amazon Pay payment object
      *
      * @var \Payone\Core\Model\Methods\AmazonPay
@@ -160,9 +167,10 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      * @param \Magento\Checkout\Model\Cart                                           $cart
      * @param \Magento\Quote\Api\CartRepositoryInterface                             $quoteRepository
      * @param \Magento\SalesRule\Model\CouponFactory                                 $couponFactory
-     * @param \Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration         $getConfiguration,
-     * @param \Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails $getOrderReferenceDetails,
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration         $getConfiguration
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails $getOrderReferenceDetails
      * @param \Payone\Core\Model\Api\Request\Genericpayment\SetOrderReferenceDetails $setOrderReferenceDetails
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\ConfirmOrderReference    $confirmOrderReference
      * @param \Payone\Core\Model\Methods\AmazonPay                                   $payment
      * @param \Payone\Core\Helper\Order                                              $orderHelper
      * @param \Payone\Core\Helper\Checkout                                           $checkoutHelper
@@ -180,6 +188,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         \Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration $getConfiguration,
         \Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails $getOrderReferenceDetails,
         \Payone\Core\Model\Api\Request\Genericpayment\SetOrderReferenceDetails $setOrderReferenceDetails,
+        \Payone\Core\Model\Api\Request\Genericpayment\ConfirmOrderReference $confirmOrderReference,
         \Payone\Core\Model\Methods\AmazonPay $payment,
         \Payone\Core\Helper\Order $orderHelper,
         \Payone\Core\Helper\Checkout $checkoutHelper,
@@ -196,6 +205,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         $this->getConfiguration = $getConfiguration;
         $this->getOrderReferenceDetails = $getOrderReferenceDetails;
         $this->setOrderReferenceDetails = $setOrderReferenceDetails;
+        $this->confirmOrderReference = $confirmOrderReference;
         $this->payment = $payment;
         $this->orderHelper = $orderHelper;
         $this->checkoutHelper = $checkoutHelper;
@@ -213,7 +223,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
 
         $blSuccess = false;
 
-        $sAction = $this->getRequest()->getParam('action');
+        $sAction = rtrim($this->getRequest()->getParam('action'), '/');
         switch ($sAction) {
             case 'confirmSelection':
                 $aReturnData = $this->confirmSelection($aReturnData);
@@ -221,10 +231,16 @@ class LoadReview extends \Magento\Framework\App\Action\Action
                     $blSuccess = true;
                 }
                 break;
+            case 'confirmOrderReference':
+                $aReturnData = $this->confirmOrderReference();
+                if (isset($aReturnData['status']) && $aReturnData['status'] == 'OK') {
+                    $blSuccess = true;
+                }
+                break;
             case 'placeOrder':
                 $aReturnData = $this->placeOrder($aReturnData);
-                if (!empty($aReturnData['successUrl'])) {
-                    $blSuccess = true;
+                if (!empty($aReturnData['redirectUrl'])) {
+                    return $this->_redirect($aReturnData['redirectUrl']);
                 }
                 break;
             case 'updateShipping':
@@ -421,6 +437,34 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     }
 
     /**
+     * confirmOrderReference action
+     *
+     * @return array
+     */
+    protected function confirmOrderReference()
+    {
+        $oQuote = $this->checkoutSession->getQuote();
+
+        $sWorkorderId = $this->checkoutSession->getAmazonWorkorderId();
+        $amazonReferenceId = $this->checkoutSession->getAmazonReferenceId();
+        $amazonAddressToken = $this->checkoutSession->getAmazonAddressToken();
+
+        if (!$this->checkoutSession->getOrderReferenceDetailsExecuted()) {
+            $aResult = $this->setOrderReferenceDetails->sendRequest($this->payment, $oQuote->getGrandTotal(), $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
+            if (!isset($aResult['status']) || $aResult['status'] != 'OK') {
+                $aResult['request'] = 'setOrderReferenceDetails';
+                return $aResult;
+            }
+        }
+
+        $this->checkoutSession->setOrderReferenceDetailsExecuted(true);
+
+        $aResult = $this->confirmOrderReference->sendRequest($this->payment, $oQuote, $oQuote->getGrandTotal(), $sWorkorderId, $amazonReferenceId);
+        $aResult['request'] = 'confirmOrderReference';
+        return $aResult;
+    }
+
+    /**
      * placeOrder action
      * Generates the order
      *
@@ -429,22 +473,9 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      */
     protected function placeOrder($aReturnData)
     {
-        $oQuote = $this->checkoutSession->getQuote();
-        
-        $sWorkorderId = $this->checkoutSession->getAmazonWorkorderId();
-        $amazonReferenceId = $this->checkoutSession->getAmazonReferenceId();
-        $amazonAddressToken = $this->checkoutSession->getAmazonAddressToken();
-        $blSetOrderReferenceDetailsExecuted = $this->checkoutSession->getOrderReferenceDetailsExecuted();
-
-        if (!$blSetOrderReferenceDetailsExecuted) {
-            $aResult = $this->setOrderReferenceDetails->sendRequest($this->payment, $oQuote->getGrandTotal(), $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
-            if (!isset($aResult['status']) || $aResult['status'] != 'OK') {
-                return $aReturnData;
-            }
-        }
-
-        $this->checkoutSession->setOrderReferenceDetailsExecuted(true);
         try {
+            $oQuote = $this->checkoutSession->getQuote();
+
             if ($this->checkoutHelper->getCurrentCheckoutMethod($oQuote) == Onepage::METHOD_GUEST) {
                 $oQuote->setCustomerId(null)
                     ->setCustomerEmail($oQuote->getBillingAddress()->getEmail())
@@ -462,17 +493,24 @@ class LoadReview extends \Magento\Framework\App\Action\Action
 
             $this->unsetSessionVariables();
 
-            $aReturnData['successUrl'] = $this->_url->getUrl('checkout/onepage/success/');
+            $aReturnData['redirectUrl'] = $this->_url->getUrl('checkout/onepage/success/');
         } catch (AuthorizationException $e) {
             $aResponse = $e->getResponse();
             $aReturnData['errorMessage'] = $this->getErrorIdentifier($aResponse['errorcode']);
-            if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [980, 982])) {
-                $aReturnData['errorUrl'] = $this->_url->getUrl('payone/amazon/loadReview', ['action' => 'cancelToBasket']);
-                $this->unsetSessionVariables();
+            if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR') {
+                if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [981, 985])) {
+                    $this->messageManager->addErrorMessage('Please choose another payment method.');
+                    $aReturnData['redirectUrl'] = $this->_url->getUrl('checkout/cart');
+                    $this->unsetSessionVariables();
+                } elseif (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [980, 982])) {
+                    $aReturnData['redirectUrl'] = $this->_url->getUrl('payone/amazon/loadReview', ['action' => 'cancelToBasket']);
+                    $this->unsetSessionVariables();
+                }
             }
         } catch (\Exception $e) {
             //error_log($e->getMessage());
             $aReturnData['errorMessage'] = __('There has been an error processing your request.');
+            $aReturnData['redirectUrl'] = $this->_url->getUrl('payone/onepage/cancel?error=1');
         }
         return $aReturnData;
     }

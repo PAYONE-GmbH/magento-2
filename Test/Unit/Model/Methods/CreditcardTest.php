@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods;
 
+use Magento\Store\Model\Store;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Creditcard as ClassToTest;
@@ -50,12 +51,20 @@ class CreditcardTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var Order\Payment
+     */
+    private $info;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
 
-        $info = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
-        $info->method('getAdditionalInformation')->willReturn('info');
+        $this->info = $this->getMockBuilder(Order\Payment::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAdditionalInformation', 'getOrder'])
+            ->getMock();
+        $this->info->method('getAdditionalInformation')->willReturn('info');
 
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn('info');
@@ -80,7 +89,7 @@ class CreditcardTest extends BaseTestCase
             'shopHelper' => $shopHelper,
             'checkoutSession' => $checkoutSession
         ]);
-        $this->classToTest->setInfoInstance($info);
+        $this->classToTest->setInfoInstance($this->info);
     }
 
     public function testGetPaymentSpecificParameters()
@@ -105,6 +114,57 @@ class CreditcardTest extends BaseTestCase
             ->setMethods(['getAdditionalData'])
             ->getMock();
         $data->method('getAdditionalData')->willReturn($addData);
+
+        $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('default');
+
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getStore')->willReturn($store);
+
+        $this->info->method('getOrder')->willReturn($order);
+
+        $result = $this->classToTest->assignData($data);
+        $this->assertInstanceOf(ClassToTest::class, $result);
+    }
+
+    public function testAssignDataNoOrder()
+    {
+        $addData = [
+            'saveData' => 1,
+            'pseudocardpan' => '123',
+            'truncatedcardpan' => '1X3'
+        ];
+
+        $data = $this->getMockBuilder(DataObject::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAdditionalData'])
+            ->getMock();
+        $data->method('getAdditionalData')->willReturn($addData);
+
+        $this->info->method('getOrder')->willReturn(null);
+
+        $result = $this->classToTest->assignData($data);
+        $this->assertInstanceOf(ClassToTest::class, $result);
+    }
+
+    public function testAssignDataNoOrderNoStore()
+    {
+        $addData = [
+            'saveData' => 1,
+            'pseudocardpan' => '123',
+            'truncatedcardpan' => '1X3'
+        ];
+
+        $data = $this->getMockBuilder(DataObject::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getAdditionalData'])
+            ->getMock();
+        $data->method('getAdditionalData')->willReturn($addData);
+
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getStore')->willReturn(null);
+
+        $this->info->method('getOrder')->willReturn($order);
 
         $result = $this->classToTest->assignData($data);
         $this->assertInstanceOf(ClassToTest::class, $result);
