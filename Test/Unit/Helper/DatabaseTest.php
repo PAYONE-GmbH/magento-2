@@ -35,8 +35,10 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Select;
 use Magento\Quote\Model\Quote\Address;
+use Payone\Core\Model\ResourceModel\CheckedAddresses;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Store\Model\ScopeInterface;
 
 class DatabaseTest extends BaseTestCase
 {
@@ -92,10 +94,14 @@ class DatabaseTest extends BaseTestCase
         $this->databaseResource = $this->getMockBuilder(ResourceConnection::class)->disableOriginalConstructor()->getMock();
         $this->databaseResource->method('getConnection')->willReturn($this->connection);
 
+        $addressesChecked = $this->getMockBuilder(CheckedAddresses::class)->disableOriginalConstructor()->getMock();
+        $addressesChecked->method('getLatestScoreForAddress')->willReturn('R');
+        
         $this->database = $this->objectManager->getObject(Database::class, [
             'context' => $context,
             'storeManager' => $storeManager,
-            'databaseResource' => $this->databaseResource
+            'databaseResource' => $this->databaseResource,
+            'addressesChecked' => $addressesChecked
         ]);
     }
 
@@ -217,6 +223,37 @@ class DatabaseTest extends BaseTestCase
 
         $result = $this->database->getOldAddressStatus($address, false);
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetOldAddressStatusEmpty()
+    {
+        $address = $this->getMockBuilder(Address::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getFirstname', 'getLastname', 'getStreet', 'getCity', 'getRegion', 'getPostcode', 'getCountryId', 'getId', 'getCustomerId', 'getAddressType'])
+            ->getMock();
+        $address->method('getFirstname')->willReturn('Paul');
+        $address->method('getLastname')->willReturn('Payer');
+        $address->method('getStreet')->willReturn(['Teststr. 3']);
+        $address->method('getCity')->willReturn('Paycity');
+        $address->method('getRegion')->willReturn('Bremen');
+        $address->method('getPostcode')->willReturn('12345');
+        $address->method('getCountryId')->willReturn('DE');
+        $address->method('getId')->willReturn('5');
+        $address->method('getCustomerId')->willReturn('18');
+        $address->method('getAddressType')->willReturn('billing');
+
+        $this->databaseResource->method('getTableName')->willReturn('quote_address');
+        $this->connection->method('fetchOne')->willReturn(false);
+
+        $this->scopeConfig->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_protect/creditrating/integration_event', ScopeInterface::SCOPE_STORES, null, 'after_payment'],
+                ]
+            );
+
+        $result = $this->database->getOldAddressStatus($address);
+        $this->assertEquals('R', $result);
     }
 
     public function testRelabelTransaction()

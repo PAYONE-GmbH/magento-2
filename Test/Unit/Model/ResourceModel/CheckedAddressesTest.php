@@ -134,6 +134,17 @@ class CheckedAddressesTest extends BaseTestCase
         $this->assertFalse($result);
     }
 
+    public function testGetLatestScoreForAddress()
+    {
+        $expected = "R";
+
+        $this->shopHelper->method('getConfigParam')->willReturn(5);
+        $this->connection->method('fetchOne')->willReturn($expected);
+
+        $result = $this->classToTest->getLatestScoreForAddress($this->address, true);
+        $this->assertEquals($expected, $result);
+    }
+
     public function testWasAddressCheckedBefore()
     {
         $this->shopHelper->method('getConfigParam')->willReturn(5);
