@@ -102,10 +102,10 @@ define(
                 $('#' + this.getCode() + '_overlay').hide();
             },
             getPrivacyDeclaration: function () {
-                return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.invoice;
+                return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.installment;
             },
             isB2bMode: function () {
-                if (window.checkoutConfig.payment.payone.payolution.b2bMode.invoice == true &&
+                if (window.checkoutConfig.payment.payone.payolution.b2bMode.installment == true &&
                     quote.billingAddress() != null &&
                     typeof quote.billingAddress().company != 'undefined' &&
                     quote.billingAddress().company != ''
