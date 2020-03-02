@@ -87,9 +87,24 @@ class Paid implements ObserverInterface
         $oOrder = $observer->getOrder();
 
         // order is not guaranteed to exist if using transaction status forwarding
-        // advance payment should not create an invoice
-        if (null === $oOrder || $oOrder->getPayment()->getMethodInstance()->getCode() == PayoneConfig::METHOD_ADVANCE_PAYMENT) {
+        if (null === $oOrder) {
             return;
+        }
+
+        // if advance payment is paid should create an invoice
+        if($oOrder->getPayment()->getMethodInstance()->getCode() == PayoneConfig::METHOD_ADVANCE_PAYMENT){
+            $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
+            $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
+            $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
+            $oInvoice->register();
+            $oInvoice->save();
+
+            $oOrder->save();
+
+
+            if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
+                $this->invoiceSender->send($oInvoice);
+            }
         }
 
         $aInvoiceList = $oOrder->getInvoiceCollection()->getItems();
