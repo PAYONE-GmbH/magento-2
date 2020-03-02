@@ -30,6 +30,7 @@ use Magento\Framework\View\Result\Page;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\Result\Redirect as CoreRedirect;
+use Payone\Core\Model\PayoneConfig;
 
 /**
  * Controller for mandate management with debit payment
@@ -54,6 +55,16 @@ class Review extends \Magento\Framework\App\Action\Action
      * @var \Magento\Quote\Api\CartRepositoryInterface
      */
     protected $quoteRepository;
+
+    /**
+     * List of all PAYONE payment methods available for this review step
+     *
+     * @var array
+     */
+    protected $availableReviewMethods = [
+        PayoneConfig::METHOD_PAYPAL,
+        PayoneConfig::METHOD_PAYDIREKT,
+    ];
 
     /**
      * Constructor
@@ -82,8 +93,7 @@ class Review extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
-        if (empty($sWorkorderId)) {
+        if ($this->canReviewBeShown() === false) {
             /** @var CoreRedirect $resultRedirect */
             $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
             return $resultRedirect->setPath('checkout');
@@ -97,6 +107,25 @@ class Review extends \Magento\Framework\App\Action\Action
         }
 
         return $oPageObject;
+    }
+
+    /**
+     * Validates if the review step can be shown by checking some status flags
+     *
+     * @return bool
+     */
+    protected function canReviewBeShown()
+    {
+        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+        if ($this->checkoutSession->getQuote()->getPayment()->getMethod() == PayoneConfig::METHOD_PAYPAL && empty($sWorkorderId)) {
+            return false;
+        }
+
+        if (in_array($this->checkoutSession->getQuote()->getPayment()->getMethod(), $this->availableReviewMethods)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

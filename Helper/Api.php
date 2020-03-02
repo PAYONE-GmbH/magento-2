@@ -64,6 +64,13 @@ class Api extends Base
     protected $connFsockopen;
 
     /**
+     * Checkout session object
+     *
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $checkoutSession;
+
+    /**
      * Fields to copy from the request array to the order
      *
      * @var array
@@ -99,6 +106,15 @@ class Api extends Base
     ];
 
     /**
+     * Fields to copy from the session to the order
+     *
+     * @var array
+     */
+    protected $sessionToOrder = [
+        'payone_express_type' => 'payone_express_type',
+    ];
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context      $context
@@ -107,6 +123,7 @@ class Api extends Base
      * @param \Payone\Core\Helper\Connection\CurlPhp     $connCurlPhp
      * @param \Payone\Core\Helper\Connection\CurlCli     $connCurlCli
      * @param \Payone\Core\Helper\Connection\Fsockopen   $connFsockopen
+     * @param \Magento\Checkout\Model\Session            $checkoutSession
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -114,12 +131,14 @@ class Api extends Base
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Connection\CurlPhp $connCurlPhp,
         \Payone\Core\Helper\Connection\CurlCli $connCurlCli,
-        \Payone\Core\Helper\Connection\Fsockopen $connFsockopen
+        \Payone\Core\Helper\Connection\Fsockopen $connFsockopen,
+        \Magento\Checkout\Model\Session $checkoutSession
     ) {
         parent::__construct($context, $storeManager, $shopHelper);
         $this->connCurlPhp = $connCurlPhp;
         $this->connCurlCli = $connCurlCli;
         $this->connFsockopen = $connFsockopen;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -223,6 +242,20 @@ class Api extends Base
     }
 
     /**
+     * Get data from session
+     *
+     * @return array
+     */
+    protected function getSessionData()
+    {
+        $aData = [];
+        foreach ($this->sessionToOrder as $from => $to) {
+            $aData[$from] = $this->checkoutSession->getData($from, true); // get data and clear
+        }
+        return $aData;
+    }
+
+    /**
      * Add PAYONE information to the order object to be saved in the DB
      *
      * @param  SalesOrder  $oOrder
@@ -234,6 +267,7 @@ class Api extends Base
     {
         $this->addDataToOrder($oOrder, $aRequest, $this->requestToOrder);
         $this->addDataToOrder($oOrder, $aResponse, $this->responseToOrder);
+        $this->addDataToOrder($oOrder, $this->getSessionData(), $this->sessionToOrder);
     }
 
     /**

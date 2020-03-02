@@ -57,6 +57,12 @@
             <label>Sort Order</label>
             <config_path>payment/payone_creditcard/sort_order</config_path>
         </field>
+        <field id="auto_cardtype_detection" translate="label,comment" type="select" sortOrder="105" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Auto Cardtype Detection</label>
+            <comment>Enables the cardtype auto-detection and disables the manual cardtype selection for customers.</comment>
+            <config_path>payment/payone_creditcard/auto_cardtype_detection</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
         <field id="types" translate="label" type="multiselect" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Creditcard-Type</label>
             <source_model>Payone\Core\Model\Source\CreditcardTypes</source_model>

@@ -28,6 +28,7 @@ namespace Payone\Core\Controller\Paypal;
 
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\Result\Redirect;
+use Payone\Core\Model\PayoneConfig;
 
 /**
  * Controller for handling the return from PayPal Express

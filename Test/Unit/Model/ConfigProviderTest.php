@@ -42,7 +42,9 @@ use Magento\Payment\Model\Method\AbstractMethod;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Checkout\Model\Session;
+use Magento\Customer\Model\Session as CustomerSession;
 use Payone\Core\Model\ResourceModel\SavedPaymentData;
+use Magento\Customer\Model\Customer as CustomerModel;
 
 class ConfigProviderTest extends BaseTestCase
 {
@@ -65,6 +67,11 @@ class ConfigProviderTest extends BaseTestCase
      * @var Session|\PHPUnit_Framework_MockObject_MockObject
      */
     private $checkoutSession;
+
+    /**
+     * @var CustomerSession|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $customerSession;
 
     protected function setUp()
     {
@@ -108,6 +115,15 @@ class ConfigProviderTest extends BaseTestCase
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 
+        $customer = $this->getMockBuilder(CustomerModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayonePaydirektRegistered'])
+            ->getMock();
+        $customer->method('getPayonePaydirektRegistered')->willReturn('0');
+        
+        $this->customerSession = $this->getMockBuilder(CustomerSession::class)->disableOriginalConstructor()->getMock();
+        $this->customerSession->method('getCustomer')->willReturn($customer);
+        
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'dataHelper' => $this->dataHelper,
             'countryHelper' => $countryHelper,
@@ -118,7 +134,8 @@ class ConfigProviderTest extends BaseTestCase
             'escaper' => $escaper,
             'consumerscoreHelper' => $consumerscoreHelper,
             'checkoutSession' => $this->checkoutSession,
-            'savedPaymentData' => $savedPaymentData
+            'savedPaymentData' => $savedPaymentData,
+            'customerSession' => $this->customerSession,
         ]);
     }
 
@@ -130,6 +147,7 @@ class ConfigProviderTest extends BaseTestCase
             ->getMock();
         $method->method('getInstructions')->willReturn('Instruction');
         $this->dataHelper->method('getMethodInstance')->willReturn($method);
+        $this->customerSession->method('isLoggedIn')->willReturn(false);
 
         $this->checkoutSession->method('getPayoneCanceledPaymentMethod')->willReturn(null);
 
@@ -142,6 +160,7 @@ class ConfigProviderTest extends BaseTestCase
         $this->dataHelper->method('getMethodInstance')->willReturn(null);
 
         $this->checkoutSession->method('getPayoneCanceledPaymentMethod')->willReturn('payone_creditcard');
+        $this->customerSession->method('isLoggedIn')->willReturn(true);
 
         $result = $this->classToTest->getConfig();
         $this->assertNotEmpty($result);

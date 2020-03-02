@@ -30,6 +30,8 @@ use Payone\Core\Setup\UpgradeData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Sales\Setup\SalesSetup;
+use Magento\Customer\Setup\CustomerSetupFactory;
+use Magento\Customer\Setup\CustomerSetup;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\DB\Adapter\Pdo\Mysql;
@@ -61,6 +63,15 @@ class UpgradeDataTest extends BaseTestCase
             ->getMock();
         $salesSetupFactory->method('create')->willReturn($salesSetup);
 
+        $customerSetup = $this->getMockBuilder(CustomerSetup::class)->disableOriginalConstructor()->getMock();
+        $customerSetup->method('getAttribute')->willReturn(false);
+
+        $customerSetupFactory = $this->getMockBuilder(CustomerSetupFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMock();
+        $customerSetupFactory->method('create')->willReturn($customerSetup);
+
         $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $shopHelper->method('getMagentoVersion')->willReturn('2.2.0');
 
@@ -69,6 +80,7 @@ class UpgradeDataTest extends BaseTestCase
         
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'salesSetupFactory' => $salesSetupFactory,
+            'customerSetupFactory' => $customerSetupFactory,
             'shopHelper' => $shopHelper,
             'paymentHelper' => $paymentHelper,
         ]);
