@@ -37,7 +37,6 @@ use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Plugins\GenerateGiftCardAccountsInvoice;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
 
@@ -74,7 +73,9 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         $invoiceMock->expects($this->atMost(2))->method('getState')->willReturn(Invoice::STATE_OPEN);
 
         $subjectMock = $this->createMock(\Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice::class);
-        $proceedMock = static function ($observer) { return false; };
+        $proceedMock = static function ($observer) {
+            return false;
+        };
 
 
         /** @var Observer | Mock $observerMock */
@@ -84,13 +85,12 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
                              ->getMockForAbstractClass();
         $observerMock->expects($this->once())->method('getInvoice')->willReturn($invoiceMock);
 
-        $actual   = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
-        $expected = false;
-        $this->assertEquals($expected, $actual);
+        $actual = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
 
+        $this->assertFalse($actual);
     }
 
-    public function test_it_should_execute_successfully(): void
+    public function test_it_should_execute_successfully_for_advanced_payment(): void
     {
         $paymentMethodMock = $this->createMock(PayoneMethod::class);
         $paymentMethodMock->expects($this->once())->method('getCode')->willReturn(PayoneConfig::METHOD_ADVANCE_PAYMENT);
@@ -120,10 +120,44 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
                              ->getMockForAbstractClass();
         $observerMock->expects($this->once())->method('getInvoice')->willReturn($invoiceMock);
 
-        $actual   = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
-        $expected = NULL;
+        $actual = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertNull($actual);
+    }
+
+    public function test_it_should_execute_successfully_for_any_other_payment(): void
+    {
+        $paymentMethodMock = $this->createMock(PayoneMethod::class);
+        $paymentMethodMock->expects($this->once())->method('getCode')->willReturn(PayoneConfig::METHOD_CREDITCARD);
+
+        $paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)
+                            ->disableOriginalConstructor()
+                            ->setMethods(['getMethodInstance'])
+                            ->getMockForAbstractClass();
+        $paymentMock->expects($this->once())->method('getMethodInstance')->willReturn($paymentMethodMock);
+
+        $orderMock = $this->createMock(Order::class);
+        $orderMock->expects($this->once())->method('getPayment')->willReturn($paymentMock);
+
+        $invoiceMock = $this->createMock(Invoice::class);
+        $invoiceMock->expects($this->once())->method('getOrder')->willReturn($orderMock);
+        $invoiceMock->expects($this->atMost(4))->method('getState')->willReturn(Invoice::STATE_PAID);
+
+        $subjectMock = $this->createMock(\Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice::class);
+        $proceedMock = static function ($observer) {
+            return false;
+        };
+
+        /** @var Observer | Mock $observerMock */
+        $observerMock = $this->getMockBuilder(Observer::class)
+                             ->disableOriginalConstructor()
+                             ->setMethods(['getInvoice'])
+                             ->getMockForAbstractClass();
+        $observerMock->expects($this->once())->method('getInvoice')->willReturn($invoiceMock);
+
+        $actual = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
+
+        $this->assertNull($actual);
     }
 
     protected function setUp(): void
