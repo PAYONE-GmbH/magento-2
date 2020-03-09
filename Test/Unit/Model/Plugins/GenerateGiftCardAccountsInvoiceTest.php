@@ -29,15 +29,17 @@ declare(strict_types=1);
 namespace Payone\Core\Test\Unit\Model\Plugins;
 
 use Magento\Framework\Event\Observer;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Phrase;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Model\Methods\PayoneMethod;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Plugins\GenerateGiftCardAccountsInvoice;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\MockObject as Mock;
 use PHPUnit\Framework\TestCase;
-
-use const Payone\Core\Model\Methods\PayoneMethod;
 
 class GenerateGiftCardAccountsInvoiceTest extends TestCase
 {
@@ -48,16 +50,20 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
      */
     private $sut;
 
-    protected function setUp() : void
+    public function test_it_should_continue_on_exception(): void
     {
-        $this->sut = new GenerateGiftCardAccountsInvoice();
-    }
+        /** @var Phrase | Mock $phraseMock */
+        $phraseMock = $this->createMock(\Magento\Framework\Phrase::class);
 
-    public function test_it_should_execute_successfully() : void
-    {
         $paymentMethodMock = $this->createMock(PayoneMethod::class);
+        $paymentMethodMock->expects($this->once())
+                          ->method('getCode')
+                          ->willThrowException(new LocalizedException($phraseMock));
 
-        $paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)->disableOriginalConstructor()->setMethods(['getMethodInstance'])->getMockForAbstractClass();
+        $paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)
+                            ->disableOriginalConstructor()
+                            ->setMethods(['getMethodInstance'])
+                            ->getMockForAbstractClass();
         $paymentMock->expects($this->once())->method('getMethodInstance')->willReturn($paymentMethodMock);
 
         $orderMock = $this->createMock(Order::class);
@@ -65,17 +71,63 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
 
         $invoiceMock = $this->createMock(Invoice::class);
         $invoiceMock->expects($this->once())->method('getOrder')->willReturn($orderMock);
+        $invoiceMock->expects($this->atMost(2))->method('getState')->willReturn(Invoice::STATE_OPEN);
 
         $subjectMock = $this->createMock(\Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice::class);
-        $proceedMock = static function ($observer) {};
+        $proceedMock = static function ($observer) { return false; };
+
 
         /** @var Observer | Mock $observerMock */
-        $observerMock = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getInvoice'])->getMockForAbstractClass();
+        $observerMock = $this->getMockBuilder(Observer::class)
+                             ->disableOriginalConstructor()
+                             ->setMethods(['getInvoice'])
+                             ->getMockForAbstractClass();
         $observerMock->expects($this->once())->method('getInvoice')->willReturn($invoiceMock);
 
-        $actual = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
-        $expected = null;
+        $actual   = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
+        $expected = false;
+        $this->assertEquals($expected, $actual);
+
+    }
+
+    public function test_it_should_execute_successfully(): void
+    {
+        $paymentMethodMock = $this->createMock(PayoneMethod::class);
+        $paymentMethodMock->expects($this->once())->method('getCode')->willReturn(PayoneConfig::METHOD_ADVANCE_PAYMENT);
+
+        $paymentMock = $this->getMockBuilder(OrderPaymentInterface::class)
+                            ->disableOriginalConstructor()
+                            ->setMethods(['getMethodInstance'])
+                            ->getMockForAbstractClass();
+        $paymentMock->expects($this->once())->method('getMethodInstance')->willReturn($paymentMethodMock);
+
+        $orderMock = $this->createMock(Order::class);
+        $orderMock->expects($this->once())->method('getPayment')->willReturn($paymentMock);
+
+        $invoiceMock = $this->createMock(Invoice::class);
+        $invoiceMock->expects($this->once())->method('getOrder')->willReturn($orderMock);
+        $invoiceMock->expects($this->atMost(2))->method('getState')->willReturn(Invoice::STATE_OPEN);
+
+        $subjectMock = $this->createMock(\Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice::class);
+        $proceedMock = static function ($observer) {
+            return false;
+        };
+
+        /** @var Observer | Mock $observerMock */
+        $observerMock = $this->getMockBuilder(Observer::class)
+                             ->disableOriginalConstructor()
+                             ->setMethods(['getInvoice'])
+                             ->getMockForAbstractClass();
+        $observerMock->expects($this->once())->method('getInvoice')->willReturn($invoiceMock);
+
+        $actual   = $this->sut->aroundExecute($subjectMock, $proceedMock, $observerMock);
+        $expected = NULL;
 
         $this->assertEquals($expected, $actual);
+    }
+
+    protected function setUp(): void
+    {
+        $this->sut = new GenerateGiftCardAccountsInvoice();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
@@ -26,11 +27,9 @@
 
 namespace Payone\Core\Model\Plugins;
 
-use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice as GenerateGiftCardAccountsInvoiceOriginal;
-use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
@@ -65,7 +64,7 @@ class GenerateGiftCardAccountsInvoice
                 if ($this->isAdvancedPaymentAndInvoiceIsOpen($paymentMethodCode, $invoice) || $this->isAnyOtherPaymentAndInvoiceIsPaid($paymentMethodCode, $invoice)) {
                     return NULL;
                 }
-            } catch (Exception $exception) {
+            } catch (LocalizedException $exception) {
                 // continue with regular plugin flow
             }
         }
