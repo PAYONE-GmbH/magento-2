@@ -94,6 +94,22 @@ class CheckoutSubmitBefore implements ObserverInterface
     }
 
     /**
+     * Check if given payment methods was enabled for bonicheck in the configuration
+     *
+     * @param  string $sPaymentCode
+     * @return bool
+     */
+    protected function isPaymentMethodEnabledForCheck($sPaymentCode)
+    {
+        $sPaymentTypesToCheck = $this->getConfigParam('enabled_for_payment_methods');
+        $aPaymentTypesToCheck = explode(',', $sPaymentTypesToCheck);
+        if (array_search($sPaymentCode, $aPaymentTypesToCheck) !== false) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Determine if creditrating is needed
      *
      * @param  Quote $oQuote
@@ -105,18 +121,28 @@ class CheckoutSubmitBefore implements ObserverInterface
             return false;
         }
 
-        $oMethodInstance = $oQuote->getPayment()->getMethodInstance();
-        $sPaymentCode = $oMethodInstance->getCode();
-        $sPaymentTypesToCheck = $this->getConfigParam('enabled_for_payment_methods');
-        $aPaymentTypesToCheck = explode(',', $sPaymentTypesToCheck);
-        if (array_search($sPaymentCode, $aPaymentTypesToCheck) === false) {
+        if ($this->isPaymentMethodEnabledForCheck($oQuote->getPayment()->getMethodInstance()->getCode()) === false) {
             return false;
         }
 
-        if ($oMethodInstance->getInfoInstance()->getAdditionalInformation('payone_boni_agreement') === false) {
+        if ($oQuote->getPayment()->getMethodInstance()->getInfoInstance()->getAdditionalInformation('payone_boni_agreement') === false) { // getAdditionalInformation() returns null if field not existing
             return false; // agreement checkbox was not checked by the customer
         }
 
+        return true;
+    }
+
+    /**
+     * @param Quote $oQuote
+     */
+    protected function isBonicheckAgreementActiveAndNotConfirmedByCustomer($oQuote)
+    {
+        if (!$this->consumerscoreHelper->canShowAgreementMessage() || // check if agreement is configured
+            !$this->isPaymentMethodEnabledForCheck($oQuote->getPayment()->getMethodInstance()->getCode()) || // check if selected payment methods is enabled for bonicheck
+            $oQuote->getPayment()->getMethodInstance()->getInfoInstance()->getAdditionalInformation('payone_boni_agreement') !== false // check if agreement was not confirmed
+        ) {
+            return false;
+        }
         return true;
     }
 
@@ -237,6 +263,10 @@ class CheckoutSubmitBefore implements ObserverInterface
 
         if ($this->isCreditratingNeeded($oQuote) === true) {
             $aScores[] = $this->getScoreByCreditrating($oBilling);
+        }
+
+        if ($this->isBonicheckAgreementActiveAndNotConfirmedByCustomer($oQuote) === true) {
+            $aScores[] = 'R';
         }
 
         $sScore = $this->consumerscoreHelper->getWorstScore($aScores);
