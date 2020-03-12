@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
@@ -77,8 +77,10 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         $invoiceMock->expects($this->once())->method('getOrder')->willReturn($orderMock);
         $invoiceMock->expects($this->atMost(2))->method('getState')->willReturn(Invoice::STATE_OPEN);
 
+        /** @var \Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice | Mock $subjectMock */
         $subjectMock = $this->createMock(\Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice::class);
-        $proceedMock = static function ($observer) {
+        $proceedMock = static function ($observer)
+        {
             return false;
         };
 
@@ -117,8 +119,10 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         $invoiceMock->expects($this->once())->method('getOrder')->willReturn($orderMock);
         $invoiceMock->expects($this->atMost(2))->method('getState')->willReturn(Invoice::STATE_OPEN);
 
+        /** @var \Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice | Mock $subjectMock */
         $subjectMock = $this->createMock(\Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice::class);
-        $proceedMock = static function ($observer) {
+        $proceedMock = static function ($observer)
+        {
             return false;
         };
 
@@ -156,8 +160,10 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         $invoiceMock->expects($this->once())->method('getOrder')->willReturn($orderMock);
         $invoiceMock->expects($this->atMost(4))->method('getState')->willReturn(Invoice::STATE_PAID);
 
+        /** @var \Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice | Mock $subjectMock */
         $subjectMock = $this->createMock(\Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice::class);
-        $proceedMock = static function ($observer) {
+        $proceedMock = static function ($observer)
+        {
             return false;
         };
 
