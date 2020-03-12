@@ -39,14 +39,14 @@ class CreditcardTypes implements ArrayInterface
      * @var array
      */
     protected static $aTypes = [
-        'V' => array('name' => 'Visa', 'cvc_length' => 3),
-        'M' => array('name' => 'Mastercard', 'cvc_length' => 3),
-        'A' => array('name' => 'American Express', 'cvc_length' => 4),
-        'D' => array('name' => 'Diners Club', 'cvc_length' => 3),
-        'J' => array('name' => 'JCB', 'cvc_length' => 3),
-        'O' => array('name' => 'Maestro International', 'cvc_length' => 3),
-        'C' => array('name' => 'Discover', 'cvc_length' => 3),
-        'B' => array('name' => 'Carte Bleue', 'cvc_length' => 3),
+        'visa'              => array('name' => 'Visa',                  'cardtype' => 'V', 'cvc_length' => 3),
+        'mastercard'        => array('name' => 'Mastercard',            'cardtype' => 'M', 'cvc_length' => 3),
+        'americanexpress'   => array('name' => 'American Express',      'cardtype' => 'A', 'cvc_length' => 4),
+        'dinersclub'        => array('name' => 'Diners Club',           'cardtype' => 'D', 'cvc_length' => 3),
+        'jcb'               => array('name' => 'JCB',                   'cardtype' => 'J', 'cvc_length' => 3),
+        'maestroint'        => array('name' => 'Maestro International', 'cardtype' => 'O', 'cvc_length' => 3),
+        'discover'          => array('name' => 'Discover',              'cardtype' => 'D', 'cvc_length' => 3),
+        'cartebleue'        => array('name' => 'Carte Bleue',           'cardtype' => 'B', 'cvc_length' => 3),
     ];
 
     /**

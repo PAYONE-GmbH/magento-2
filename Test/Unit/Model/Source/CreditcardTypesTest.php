@@ -54,6 +54,6 @@ class CreditcardTypesTest extends BaseTestCase
     public function testGetCreditcardTypes()
     {
         $result = CreditcardTypes::getCreditcardTypes();
-        $this->assertArrayHasKey('V', $result);
+        $this->assertArrayHasKey('visa', $result);
     }
 }

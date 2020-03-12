@@ -88,7 +88,7 @@ class UpgradeDataTest extends BaseTestCase
 
     public function testInstall()
     {
-        $fetchResult = [['value' => serialize(['a' => 'b'])]];
+        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
 
         $connection = $this->getMockBuilder(Mysql::class)
             ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
@@ -114,6 +114,8 @@ class UpgradeDataTest extends BaseTestCase
 
     public function testInstallOldPayment()
     {
+        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
+
         $connection = $this->getMockBuilder(Mysql::class)
             ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
             ->disableOriginalConstructor()
@@ -123,7 +125,7 @@ class UpgradeDataTest extends BaseTestCase
         $connection->method('from')->willReturn($connection);
         $connection->method('where')->willReturn($connection);
         $connection->method('update')->willReturn(1);
-        $connection->method('fetchAssoc')->willReturn(null);
+        $connection->method('fetchAssoc')->willReturn($fetchResult);
 
         $setup = $this->getMockBuilder(ModuleDataSetupInterface::class)->disableOriginalConstructor()->getMock();
         $setup->method('getTable')->willReturn('table');
