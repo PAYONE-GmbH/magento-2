@@ -28,6 +28,7 @@ declare(strict_types=1);
 
 namespace Payone\Core\Test\Unit\Model\Plugins;
 
+use Magento\Enterprise\Model\ProductMetadata;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Phrase;
@@ -51,6 +52,10 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
 
     public function test_it_should_continue_on_exception(): void
     {
+        if (!class_exists(ProductMetadata::class)) {
+            $this->markTestSkipped('Not applicable in OpenSource Edition');
+        }
+
         /** @var Phrase | Mock $phraseMock */
         $phraseMock = $this->createMock(\Magento\Framework\Phrase::class);
 
@@ -92,6 +97,10 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
 
     public function test_it_should_execute_successfully_for_advanced_payment(): void
     {
+        if (!class_exists(ProductMetadata::class)) {
+            $this->markTestSkipped('Not applicable in OpenSource Edition');
+        }
+
         $paymentMethodMock = $this->createMock(PayoneMethod::class);
         $paymentMethodMock->expects($this->once())->method('getCode')->willReturn(PayoneConfig::METHOD_ADVANCE_PAYMENT);
 
@@ -127,6 +136,10 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
 
     public function test_it_should_execute_successfully_for_any_other_payment(): void
     {
+        if (!class_exists(ProductMetadata::class)) {
+            $this->markTestSkipped('Not applicable in OpenSource Edition');
+        }
+
         $paymentMethodMock = $this->createMock(PayoneMethod::class);
         $paymentMethodMock->expects($this->once())->method('getCode')->willReturn(PayoneConfig::METHOD_CREDITCARD);
 
