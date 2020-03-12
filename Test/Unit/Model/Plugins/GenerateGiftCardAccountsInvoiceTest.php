@@ -50,7 +50,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
      */
     private $sut;
 
-    public function test_it_should_continue_on_exception(): void
+    public function test_it_should_continue_on_exception()
     {
         if (!class_exists(ProductMetadata::class)) {
             $this->markTestSkipped('Not applicable in OpenSource Edition');
@@ -97,7 +97,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         $this->assertFalse($actual);
     }
 
-    public function test_it_should_execute_successfully_for_advanced_payment(): void
+    public function test_it_should_execute_successfully_for_advanced_payment()
     {
         if (!class_exists(ProductMetadata::class)) {
             $this->markTestSkipped('Not applicable in OpenSource Edition');
@@ -138,7 +138,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         $this->assertNull($actual);
     }
 
-    public function test_it_should_execute_successfully_for_any_other_payment(): void
+    public function test_it_should_execute_successfully_for_any_other_payment()
     {
         if (!class_exists(ProductMetadata::class)) {
             $this->markTestSkipped('Not applicable in OpenSource Edition');
@@ -179,7 +179,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         $this->assertNull($actual);
     }
 
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->sut = new GenerateGiftCardAccountsInvoice();
     }
