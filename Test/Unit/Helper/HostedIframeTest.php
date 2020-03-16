@@ -36,6 +36,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -76,6 +77,7 @@ class HostedIframeTest extends BaseTestCase
 
         $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $paymentHelper->method('isCheckCvcActive')->willReturn(true);
+        $paymentHelper->method('getAvailableCreditcardTypes')->willReturn([['id' => 'V']]);
 
         $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, [
             'shopHelper' => $this->objectManager->getObject(Shop::class)
@@ -103,9 +105,9 @@ class HostedIframeTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetHostedFieldConfig()
+    protected function getHostedIframeConfig()
     {
-        $aHostedConfig = [
+        return [
             "Number_type" => "tel",
             "Number_count" => "30",
             "Number_max" => "16",
@@ -139,15 +141,10 @@ class HostedIframeTest extends BaseTestCase
             "Errors_active" => "true",
             "Errors_lang" => "de"
         ];
+    }
 
-        $this->scopeConfig->expects($this->any())
-            ->method('getValue')
-            ->willReturnMap(
-                [
-                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($aHostedConfig)]
-                ]
-            );
-        $result = $this->hostedIframe->getHostedFieldConfig();
+    protected function getExpectedArray($addCardtypeDetection = false)
+    {
         $expected = [
             'fields' => [
                 'cardpan' => [
@@ -170,7 +167,6 @@ class HostedIframeTest extends BaseTestCase
                         'dinersclub' => 3,
                         'jcb' => 3,
                         'maestroint' => 3,
-                        'discover' => 3,
                         'cartebleue' => 3,
                     ],
                 ],
@@ -206,6 +202,45 @@ class HostedIframeTest extends BaseTestCase
             'error' => 'errorOutput',
             'language' => 'de'
         ];
+        if ($addCardtypeDetection === true) {
+            $expected['autoCardtypeDetection'] = [
+                'supportedCardtypes' => ['V'],
+                'callback' => false
+            ];
+        }
+        return $expected;
+    }
+
+    public function testGetHostedFieldConfig()
+    {
+        $aHostedConfig = $this->getHostedIframeConfig();
+
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($aHostedConfig)]
+                ]
+            );
+        $result = $this->hostedIframe->getHostedFieldConfig();
+        $expected = $this->getExpectedArray();
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetHostedFieldConfigAutodetect()
+    {
+        $aHostedConfig = $this->getHostedIframeConfig();
+
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($aHostedConfig)],
+                    ['payment/'.PayoneConfig::METHOD_CREDITCARD.'/auto_cardtype_detection', ScopeInterface::SCOPE_STORES, null, '1']
+                ]
+            );
+        $result = $this->hostedIframe->getHostedFieldConfig();
+        $expected = $this->getExpectedArray(true);
         $this->assertEquals($expected, $result);
     }
 }
