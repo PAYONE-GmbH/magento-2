@@ -101,8 +101,7 @@ class CheckoutSubmitBefore implements ObserverInterface
      */
     protected function isPaymentMethodEnabledForCheck($sPaymentCode)
     {
-        $sPaymentTypesToCheck = $this->getConfigParam('enabled_for_payment_methods');
-        $aPaymentTypesToCheck = explode(',', $sPaymentTypesToCheck);
+        $aPaymentTypesToCheck = $this->consumerscoreHelper->getConsumerscoreEnabledMethods();
         if (array_search($sPaymentCode, $aPaymentTypesToCheck) !== false) {
             return true;
         }

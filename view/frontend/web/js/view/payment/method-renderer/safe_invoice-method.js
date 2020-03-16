@@ -23,7 +23,7 @@
  */
 define(
     [
-        'Magento_Checkout/js/view/payment/default',
+        'Payone_Core/js/view/payment/method-renderer/base',
         'mage/translate',
         'Magento_Checkout/js/model/quote'
     ],

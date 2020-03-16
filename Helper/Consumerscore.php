@@ -264,4 +264,16 @@ class Consumerscore extends \Payone\Core\Helper\Base
         }
         return true;
     }
+
+    /**
+     * Reads consumerscore enabled methods from database and splits them to an array
+     *
+     * @return array
+     */
+    public function getConsumerscoreEnabledMethods()
+    {
+        $sEnabledMethods = $this->getConfigParam('enabled_for_payment_methods', 'creditrating', 'payone_protect');
+        $aEnabledMethods = explode(',', $sEnabledMethods);
+        return $aEnabledMethods;
+    }
 }
