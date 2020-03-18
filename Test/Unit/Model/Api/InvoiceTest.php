@@ -151,6 +151,7 @@ class InvoiceTest extends BaseTestCase
     {
         $this->toolkitHelper->method('getConfigParam')->willReturn('display');
         $this->amastyHelper->method('hasAmastyGiftcards')->willReturn(false);
+        $this->amastyHelper->method('getAmastyGiftCards')->willReturn([]);
 
         $authorization = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
 
@@ -176,6 +177,7 @@ class InvoiceTest extends BaseTestCase
     {
         $this->toolkitHelper->method('getConfigParam')->willReturn('sku');
         $this->amastyHelper->method('hasAmastyGiftcards')->willReturn(false);
+        $this->amastyHelper->method('getAmastyGiftCards')->willReturn([]);
 
         $authorization = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
 
