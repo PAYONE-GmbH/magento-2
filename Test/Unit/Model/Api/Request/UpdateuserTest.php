@@ -88,7 +88,7 @@ class UpdateuserTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
-        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_KLARNA);
+        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_CASH_ON_DELIVERY);
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);

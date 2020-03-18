@@ -171,7 +171,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $this->consumerscoreHelper->expects($this->any())
             ->method('getAllowedMethodsForScore')
             ->willReturnMap([
-                ['Y', [PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_BILLSAFE]],
+                ['Y', [PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_CASH_ON_DELIVERY]],
                 ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CREDITCARD]]
             ]);
 
@@ -342,7 +342,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $this->consumerscoreHelper->expects($this->any())
             ->method('getAllowedMethodsForScore')
             ->willReturnMap([
-                ['Y', [PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_BILLSAFE]],
+                ['Y', [PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_CASH_ON_DELIVERY]],
                 ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CREDITCARD]]
             ]);
 
