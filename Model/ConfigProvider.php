@@ -250,7 +250,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'payolution' => $this->getPayolutionConfig(),
             'canceledPaymentMethod' => $this->getCanceledPaymentMethod(),
             'isError' => $this->checkoutSession->getPayoneIsError(),
-            'klarnaStoreIds' => $this->paymentHelper->getKlarnaStoreIds(),
             'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>='),
             'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId()),
