@@ -84,7 +84,7 @@ class MethodListTest extends BaseTestCase
         $this->consumerscoreHelper->expects($this->any())
             ->method('getAllowedMethodsForScore')
             ->willReturnMap([
-                    ['Y', [PayoneConfig::METHOD_CREDITCARD, PayoneConfig::METHOD_ADVANCE_PAYMENT]],
+                    ['Y', [PayoneConfig::METHOD_CREDITCARD, PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_OBT_GIROPAY]],
                     ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CASH_ON_DELIVERY, PayoneConfig::METHOD_AMAZONPAY]],
                 ]);
 
@@ -107,10 +107,11 @@ class MethodListTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote', 'getPayonePaymentBans'])
+            ->setMethods(['getQuote', 'getPayonePaymentBans', 'getPayonePaymentWhitelist'])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($this->quote);
         $checkoutSession->method('getPayonePaymentBans')->willReturn([PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00']);
+        $checkoutSession->method('getPayonePaymentWhitelist')->willReturn(['payone_creditcard', 'payone_paypal', 'payone_debit', 'payone_barzahlen', 'payone_cash_on_delivery', 'payone_amazonpay']);
 
         $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $addresscheck->method('getPersonstatusMapping')->willReturn(['PPV' => 'R']);
@@ -225,6 +226,24 @@ class MethodListTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_AMAZONPAY);
+        $paymentMethods = [$payment];
+
+        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->paymentBan->method('getPaymentBans')->willReturn([]);
+
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $this->assertEmpty($result);
+    }
+
+    public function testAfterGetAvailableMethodsRemoveNotWhitelisted()
+    {
+        $this->consumerscore->method('sendRequest')->willReturn(true);
+        $this->consumerscoreHelper->method('getWorstScore')->willReturn('Y');
+
+        $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
+
+        $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_OBT_GIROPAY);
         $paymentMethods = [$payment];
 
         $this->quote->method('getCustomerId')->willReturn('5');

@@ -381,7 +381,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
     {
         $this->consumerscore->method('sendRequest')->willReturn(['status' => 'VALID', 'score' => 'G']);
         $this->consumerscoreHelper->method('isCreditratingNeeded')->willReturn(true);
-        $this->consumerscoreHelper->method('getWorstScore')->willReturn('X');
+        $this->consumerscoreHelper->method('getWorstScore')->willReturn('Y');
         $this->consumerscoreHelper->method('getConsumerscoreEnabledMethods')->willReturn(['payone_paypal', 'payone_creditcard']);
         $this->consumerscoreHelper->expects($this->any())
             ->method('getConfigParam')
@@ -395,7 +395,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
             ->method('getAllowedMethodsForScore')
             ->willReturnMap([
                 ['Y', [PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_BILLSAFE]],
-                ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CREDITCARD]]
+                ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_BARZAHLEN]]
             ]);
 
         $observer = $this->getExecuteObserver();

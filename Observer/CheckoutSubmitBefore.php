@@ -33,6 +33,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Api\Data\AddressInterface;
 use Payone\Core\Model\Source\CreditratingIntegrationEvent as Event;
 use Payone\Core\Model\Source\PersonStatus;
+use Payone\Core\Model\Exception\FilterMethodListException;
 
 /**
  * Event class to set the orderstatus to new and pending
@@ -61,20 +62,30 @@ class CheckoutSubmitBefore implements ObserverInterface
     protected $addresscheck;
 
     /**
+     * Checkout session object
+     *
+     * @var \Magento\Checkout\Model\Session\Proxy
+     */
+    protected $checkoutSession;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
      * @param \Payone\Core\Helper\Consumerscore            $consumerscoreHelper
      * @param \Payone\Core\Model\Risk\Addresscheck         $addresscheck
+     * @param \Magento\Checkout\Model\Session\Proxy        $checkoutSession
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
-        \Payone\Core\Model\Risk\Addresscheck $addresscheck
+        \Payone\Core\Model\Risk\Addresscheck $addresscheck,
+        \Magento\Checkout\Model\Session\Proxy $checkoutSession
     ) {
         $this->consumerscore = $consumerscore;
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->addresscheck = $addresscheck;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -237,6 +248,21 @@ class CheckoutSubmitBefore implements ObserverInterface
     }
 
     /**
+     * Returns allowed payment methods for the given score
+     *
+     * @param  string $sScore
+     * @return array
+     */
+    protected function getPaymentWhitelist($sScore)
+    {
+        $aWhitelist = $this->consumerscoreHelper->getAllowedMethodsForScore('R');
+        if ($sScore == "Y") {
+            $aWhitelist = array_merge($aWhitelist, $this->consumerscoreHelper->getAllowedMethodsForScore('Y'));
+        }
+        return $aWhitelist;
+    }
+
+    /**
      * Execute certain tasks after the payment is placed and thus the order is placed
      *
      * @param  Observer $observer
@@ -271,7 +297,9 @@ class CheckoutSubmitBefore implements ObserverInterface
         $sScore = $this->consumerscoreHelper->getWorstScore($aScores);
         $blSuccess = $this->isPaymentApplicableForScore($oQuote, $sScore);
         if ($blSuccess === false) {
-            throw new LocalizedException(__($this->getInsufficientScoreMessage()));
+            $aWhitelist = $this->getPaymentWhitelist($sScore);
+            $this->checkoutSession->setPayonePaymentWhitelist($aWhitelist);
+            throw new FilterMethodListException(__($this->getInsufficientScoreMessage()), $aWhitelist);
         }
     }
 }
