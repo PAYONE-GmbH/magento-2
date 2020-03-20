@@ -32,7 +32,7 @@ namespace Payone\Core\Model;
 abstract class PayoneConfig
 {
     /* Module version */
-    const MODULE_VERSION = '2.8.0';
+    const MODULE_VERSION = '2.8.1';
 
     /* Authorization request types */
     const REQUEST_TYPE_PREAUTHORIZATION = 'preauthorization';
@@ -75,8 +75,7 @@ abstract class PayoneConfig
     const METHOD_OBT_POSTFINANCE_CARD = 'payone_obt_postfinance_card';
     const METHOD_OBT_IDEAL = 'payone_obt_ideal';
     const METHOD_OBT_PRZELEWY = 'payone_obt_przelewy';
-    const METHOD_BILLSAFE = 'payone_billsafe';
-    const METHOD_KLARNA = 'payone_klarna';
+    const METHOD_KLARNA = 'payone_klarna'; // method was deleted but constant is still useful for unit tests
     const METHOD_BARZAHLEN = 'payone_barzahlen';
     const METHOD_PAYDIREKT = 'payone_paydirekt';
     const METHOD_SAFE_INVOICE = 'payone_safe_invoice';

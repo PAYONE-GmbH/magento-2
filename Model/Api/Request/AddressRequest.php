@@ -120,11 +120,8 @@ abstract class AddressRequest extends Base
             $this->addParameter('telephonenumber', $oBilling->getTelephone(), $blIsUpdateUser);
         }
 
-        if ((
-                in_array($oPayment->getCode(), [PayoneConfig::METHOD_KLARNA]) &&
-                in_array($oBilling->getCountryId(), ['DE', 'NL', 'AT'])
-            ) || ($blIsUpdateUser || ($sDob != '0000-00-00 00:00:00' && $sDob != ''))
-        ) {
+        // Might be needed again with new Klarna in if-statement: in_array($oPayment->getCode(), [PayoneConfig::METHOD_KLARNA]) && in_array($oBilling->getCountryId(), ['DE', 'NL', 'AT'])
+        if ($blIsUpdateUser || ($sDob != '0000-00-00 00:00:00' && $sDob != '')) {
             $this->addParameter('birthday', str_replace('-', '', date('Ymd', strtotime($sDob)), $blIsUpdateUser));
         }
 

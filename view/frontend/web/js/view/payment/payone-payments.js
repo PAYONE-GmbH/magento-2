@@ -93,14 +93,6 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/paydirekt-method'
             },
             {
-                type: 'payone_billsafe',
-                component: 'Payone_Core/js/view/payment/method-renderer/billsafe-method'
-            },
-            {
-                type: 'payone_klarna',
-                component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
-            },
-            {
                 type: 'payone_safe_invoice',
                 component: 'Payone_Core/js/view/payment/method-renderer/safe_invoice-method'
             },

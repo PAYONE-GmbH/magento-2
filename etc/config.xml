@@ -163,24 +163,6 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_paydirekt>
-            <payone_billsafe translate="title" module="Payone_Core">
-                <active>1</active>
-                <payment_action>Authorization</payment_action>
-                <model>Payone\Core\Model\Methods\Billsafe</model>
-                <order_status>pending</order_status>
-                <title>PAYONE - BillSAFE</title>
-                <allowspecific>0</allowspecific>
-                <group>payone</group>
-            </payone_billsafe>
-            <payone_klarna translate="title" module="Payone_Core">
-                <active>1</active>
-                <payment_action>Authorization</payment_action>
-                <model>Payone\Core\Model\Methods\Klarna</model>
-                <order_status>pending</order_status>
-                <title>PAYONE - Klarna Invoice</title>
-                <allowspecific>0</allowspecific>
-                <group>payone</group>
-            </payone_klarna>
             <payone_safe_invoice translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
@@ -266,8 +248,6 @@
                 <payone_obt_przelewy>{"_1343137411652_852":{"txaction":"appointed","state_status":"processing"}}</payone_obt_przelewy>
                 <payone_barzahlen>{"_payone_status_mapping6":{"txaction":"appointed","state_status":"processing"}}</payone_barzahlen>
                 <payone_paydirekt>{"_1343118466182_183":{"txaction":"appointed","state_status":"processing"}}</payone_paydirekt>
-                <payone_billsafe>{"_payone_status_mapping4":{"txaction":"appointed","state_status":"processing"}}</payone_billsafe>
-                <payone_klarna>{"_payone_status_mapping2":{"txaction":"appointed","state_status":"processing"}}</payone_klarna>
                 <payone_safe_invoice>{"_payone_status_invoice":{"txaction":"appointed","state_status":"processing"}}</payone_safe_invoice>
                 <payone_payolution_invoice>{"_payone_status_mapping7":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_invoice>
                 <payone_payolution_debit>{"_payone_status_mapping8":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_debit>
@@ -377,12 +357,6 @@
             <payone_paydirekt>
                 <use_global>1</use_global>
             </payone_paydirekt>
-            <payone_billsafe>
-                <use_global>1</use_global>
-            </payone_billsafe>
-            <payone_klarna>
-                <use_global>1</use_global>
-            </payone_klarna>
             <payone_safe_invoice>
                 <use_global>1</use_global>
                 <disable_after_refusal>0</disable_after_refusal>
