@@ -227,7 +227,8 @@ class MethodList
     {
         $aWhitelist = $this->checkoutSession->getPayonePaymentWhitelist();
         if (!empty($aWhitelist)) {
-            for($i = 0; $i < count($aPaymentMethods); $i++) {
+            $iCount = count($aPaymentMethods);
+            for($i = 0; $i < $iCount; $i++) {
                 if (array_search($aPaymentMethods[$i]->getCode(), $aWhitelist) === false) {
                     unset($aPaymentMethods[$i]);
                 }
