@@ -40,6 +40,7 @@ define(
                 birthmonth: '',
                 birthyear: '',
                 tradeRegistryNumber: '',
+                companyUid: '',
                 iban: '',
                 bic: '',
                 agreement: false
@@ -51,6 +52,7 @@ define(
                         'birthmonth',
                         'birthyear',
                         'tradeRegistryNumber',
+                        'companyUid',
                         'iban',
                         'bic',
                         'agreement'
@@ -70,6 +72,7 @@ define(
                 }
                 if (this.isB2bMode()) {
                     parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
+                    parentReturn.additional_data.company_uid = this.companyUid();
                     parentReturn.additional_data.b2bmode = true;
                 }
                 parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
