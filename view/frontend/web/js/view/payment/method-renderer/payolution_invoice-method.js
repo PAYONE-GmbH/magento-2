@@ -92,6 +92,9 @@ define(
                 return false;
             },
             requestBirthday: function () {
+                if (quote.billingAddress() == null) {
+                    return false;
+                }
                 return !this.isB2bMode();
             },
             validate: function () {
