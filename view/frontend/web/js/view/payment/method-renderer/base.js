@@ -134,6 +134,27 @@ define(
                     }
                 }
                 return this;
+            },
+            isAgreementVisible: function () {
+                if (this.canShowPaymentHintText() || this.canShowAgreementMessage()) {
+                    return true;
+                }
+                return false;
+            },
+            canShowPaymentHintText: function () {
+                return window.checkoutConfig.payment.payone.canShowPaymentHintText;
+            },
+            getPaymentHintText: function () {
+                return window.checkoutConfig.payment.payone.paymentHintText;
+            },
+            canShowAgreementMessage: function () {
+                if (window.checkoutConfig.payment.payone.canShowAgreementMessage && $.inArray(this.getCode(), window.checkoutConfig.payment.payone.consumerScoreEnabledMethods) != -1) {
+                    return true;
+                }
+                return false;
+            },
+            getAgreementMessage: function () {
+                return window.checkoutConfig.payment.payone.agreementMessage;
             }
         });
     }
