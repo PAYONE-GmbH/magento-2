@@ -171,6 +171,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      * @param \Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails $getOrderReferenceDetails
      * @param \Payone\Core\Model\Api\Request\Genericpayment\SetOrderReferenceDetails $setOrderReferenceDetails
      * @param \Payone\Core\Model\Api\Request\Genericpayment\ConfirmOrderReference    $confirmOrderReference
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\CancelOrderReference     $cancelOrderReference
      * @param \Payone\Core\Model\Methods\AmazonPay                                   $payment
      * @param \Payone\Core\Helper\Order                                              $orderHelper
      * @param \Payone\Core\Helper\Checkout                                           $checkoutHelper
@@ -189,6 +190,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         \Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails $getOrderReferenceDetails,
         \Payone\Core\Model\Api\Request\Genericpayment\SetOrderReferenceDetails $setOrderReferenceDetails,
         \Payone\Core\Model\Api\Request\Genericpayment\ConfirmOrderReference $confirmOrderReference,
+        \Payone\Core\Model\Api\Request\Genericpayment\CancelOrderReference $cancelOrderReference,
         \Payone\Core\Model\Methods\AmazonPay $payment,
         \Payone\Core\Helper\Order $orderHelper,
         \Payone\Core\Helper\Checkout $checkoutHelper,
@@ -206,6 +208,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         $this->getOrderReferenceDetails = $getOrderReferenceDetails;
         $this->setOrderReferenceDetails = $setOrderReferenceDetails;
         $this->confirmOrderReference = $confirmOrderReference;
+        $this->cancelOrderReference = $cancelOrderReference;
         $this->payment = $payment;
         $this->orderHelper = $orderHelper;
         $this->checkoutHelper = $checkoutHelper;
@@ -473,6 +476,8 @@ class LoadReview extends \Magento\Framework\App\Action\Action
      */
     protected function placeOrder($aReturnData)
     {
+        $blUnsetSessionVariables = true;
+
         try {
             $oQuote = $this->checkoutSession->getQuote();
 
@@ -491,20 +496,20 @@ class LoadReview extends \Magento\Framework\App\Action\Action
             $this->cartManagement->placeOrder($oQuote->getId());
             $oQuote->setIsActive(false)->save();
 
-            $this->unsetSessionVariables();
-
             $aReturnData['redirectUrl'] = $this->_url->getUrl('checkout/onepage/success/');
         } catch (AuthorizationException $e) {
             $aResponse = $e->getResponse();
             $aReturnData['errorMessage'] = $this->getErrorIdentifier($aResponse['errorcode']);
             if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR') {
-                if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [981, 985])) {
-                    $this->messageManager->addErrorMessage('Please choose another payment method.');
-                    $aReturnData['redirectUrl'] = $this->_url->getUrl('checkout/cart');
-                    $this->unsetSessionVariables();
-                } elseif (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [980, 982])) {
+                if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [981])) {
+                    $blUnsetSessionVariables = false;
+                    $aReturnData['redirectUrl'] = $this->_url->getUrl('payone/onepage/amazon', ['_secure' => true]);
+                    $this->checkoutSession->setTriggerInvalidPayment(true);
+                } elseif (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && in_array($aResponse['errorcode'], [980, 982, 983])) {
+                    if (in_array($aResponse['errorcode'], [980, 983])) {
+                        $this->cancelOrderReference->sendRequest($this->payment, $oQuote, $this->checkoutSession->getAmazonWorkorderId(), $this->checkoutSession->getAmazonReferenceId());
+                    }
                     $aReturnData['redirectUrl'] = $this->_url->getUrl('payone/amazon/loadReview', ['action' => 'cancelToBasket']);
-                    $this->unsetSessionVariables();
                 }
             }
         } catch (\Exception $e) {
@@ -512,6 +517,11 @@ class LoadReview extends \Magento\Framework\App\Action\Action
             $aReturnData['errorMessage'] = __('There has been an error processing your request.');
             $aReturnData['redirectUrl'] = $this->_url->getUrl('payone/onepage/cancel?error=1');
         }
+
+        if ($blUnsetSessionVariables === true) {
+            $this->unsetSessionVariables();
+        }
+
         return $aReturnData;
     }
 
@@ -526,5 +536,6 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         $this->checkoutSession->unsAmazonReferenceId();
         $this->checkoutSession->unsAmazonAddressToken();
         $this->checkoutSession->unsOrderReferenceDetailsExecuted();
+        $this->checkoutSession->unsTriggerInvalidPayment();
     }
 }

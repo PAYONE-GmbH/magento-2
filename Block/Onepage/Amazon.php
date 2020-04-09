@@ -147,4 +147,14 @@ class Amazon extends Template
     {
         return $this->checkoutSession->getAmazonReferenceId();
     }
+
+    /**
+     * Returns if invalidPayment javascript method has to be started after initialization
+     *
+     * @return bool
+     */
+    public function triggerInvalidPayment()
+    {
+        return !empty($this->checkoutSession->getTriggerInvalidPayment());
+    }
 }
