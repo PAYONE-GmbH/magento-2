@@ -73,6 +73,7 @@ class PayolutionBase extends PayoneMethod
         'telephone',
         'b2bmode',
         'trade_registry_number',
+        'company_uid',
         'dateofbirth'
     ];
 
@@ -160,7 +161,15 @@ class PayolutionBase extends PayoneMethod
         $blB2b = $this->getInfoInstance()->getAdditionalInformation('b2bmode');
         if ($blB2b == '1') {
             $aBaseParams['add_paydata[b2b]'] = 'yes';
-            $aBaseParams['add_paydata[company_trade_registry_number]'] = $this->getInfoInstance()->getAdditionalInformation('trade_registry_number');
+
+            $sTradeRegistryNumber = $this->getInfoInstance()->getAdditionalInformation('trade_registry_number');
+            if (!empty($sTradeRegistryNumber)) {
+                $aBaseParams['add_paydata[company_trade_registry_number]'] = $sTradeRegistryNumber;
+            }
+            $sCompanyUid = $this->getInfoInstance()->getAdditionalInformation('company_uid');
+            if (!empty($sCompanyUid)) {
+                $aBaseParams['add_paydata[company_uid]'] = $sCompanyUid;
+            }
         }
 
         $aSubTypeParams = $this->getSubTypeSpecificParameters($oOrder);
