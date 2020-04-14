@@ -76,7 +76,10 @@ class SetOrderReferenceDetailsTest extends BaseTestCase
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getClearingtype')->willReturn('fnc');
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getGrandTotal'])
+            ->getMock();
         $quote->method('getGrandTotal')->willReturn(100);
 
         $this->shopHelper->method('getConfigParam')->willReturn('12345');

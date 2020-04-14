@@ -75,7 +75,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save'])
+            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save', 'getGrandTotal'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
@@ -101,7 +101,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save'])
+            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save', 'getGrandTotal'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
