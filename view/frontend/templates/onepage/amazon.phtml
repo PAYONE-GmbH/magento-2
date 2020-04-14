@@ -56,8 +56,7 @@
             onReady: window.onAmazonWidgetsInitialized,
             onError: window.onAmazonPaymentsError
         }).bind("addressBookWidgetDiv");
-
-        new OffAmazonPayments.Widgets.Wallet({
+        walletWidget = new OffAmazonPayments.Widgets.Wallet({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
             onPaymentSelect: function(orderReference) {
@@ -69,7 +68,9 @@
             onError: function (error) {
                 console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
             }
-        }).bind("walletWidgetDiv");
+        });
+        walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
+        walletWidget.bind("walletWidgetDiv");
         rendered = true;
     };
     window.onAmazonPaymentsInvalidPayment = function () {
@@ -93,7 +94,7 @@
             onReady: window.onAmazonWidgetsInitialized,
             onError: window.onAmazonPaymentsError
         }).bind('addressBookWidgetDiv').renderRequested = initiatedByPopup;
-        new OffAmazonPayments.Widgets.Wallet({
+        walletWidget = new OffAmazonPayments.Widgets.Wallet({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             amazonOrderReferenceId: window.amazonOrderReferenceId,
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
@@ -107,7 +108,9 @@
             onError: function (error) {
                 console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
             }
-        }).bind('walletWidgetDiv').renderRequested = initiatedByPopup;
+        });
+        walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
+        walletWidget.bind('walletWidgetDiv').renderRequested = initiatedByPopup;
         rendered = true;
         payoneShowInitStep();
     };

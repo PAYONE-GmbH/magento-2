@@ -275,7 +275,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     {
         $sWorkorderId = $this->checkoutSession->getAmazonWorkorderId();
         if (empty($sWorkorderId)) {
-            $aResult = $this->getConfiguration->sendRequest($this->payment);
+            $aResult = $this->getConfiguration->sendRequest($this->payment, $this->checkoutSession->getQuote());
             if (isset($aResult['status']) && $aResult['status'] == 'OK' && isset($aResult['workorderid'])) {
                 $sWorkorderId = $aResult['workorderid'];
                 $this->checkoutSession->setAmazonWorkorderId($aResult['workorderid']);
@@ -402,12 +402,12 @@ class LoadReview extends \Magento\Framework\App\Action\Action
             $amazonReferenceId = $this->getRequest()->getParam('amazonReferenceId');
             $amazonAddressToken = $this->getRequest()->getParam('amazonAddressToken');
 
-            $aResult = $this->getOrderReferenceDetails->sendRequest($this->payment, $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
+            $oQuote = $this->checkoutSession->getQuote();
+            $aResult = $this->getOrderReferenceDetails->sendRequest($this->payment, $oQuote, $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
             if (isset($aResult['status']) && $aResult['status'] == 'OK') {
                 $this->checkoutSession->setAmazonAddressToken($amazonAddressToken);
                 $this->checkoutSession->setAmazonReferenceId($amazonReferenceId);
 
-                $oQuote = $this->checkoutSession->getQuote();
                 $oQuote = $this->orderHelper->updateAddresses($oQuote, $aResult);
 
                 $oPayment = $oQuote->getPayment();
@@ -450,7 +450,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
         $amazonAddressToken = $this->checkoutSession->getAmazonAddressToken();
 
         if (!$this->checkoutSession->getOrderReferenceDetailsExecuted()) {
-            $aResult = $this->setOrderReferenceDetails->sendRequest($this->payment, $oQuote->getGrandTotal(), $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
+            $aResult = $this->setOrderReferenceDetails->sendRequest($this->payment, $oQuote, $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
             if (!isset($aResult['status']) || $aResult['status'] != 'OK') {
                 $aResult['request'] = 'setOrderReferenceDetails';
                 return $aResult;
@@ -459,7 +459,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
 
         $this->checkoutSession->setOrderReferenceDetailsExecuted(true);
 
-        $aResult = $this->confirmOrderReference->sendRequest($this->payment, $oQuote, $oQuote->getGrandTotal(), $sWorkorderId, $amazonReferenceId);
+        $aResult = $this->confirmOrderReference->sendRequest($this->payment, $oQuote, $sWorkorderId, $amazonReferenceId);
         $aResult['request'] = 'confirmOrderReference';
         return $aResult;
     }
