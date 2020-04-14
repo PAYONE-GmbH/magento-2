@@ -36,10 +36,6 @@
             <label>Title</label>
             <config_path>payment/payone_payolution_debit/title</config_path>
         </field>
-        <field id="b2b_mode" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>B2B mode</label>
-            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-        </field>
         <field id="company" translate="label,comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Company name</label>
             <comment>Required</comment>
