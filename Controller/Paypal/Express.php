@@ -146,6 +146,7 @@ class Express extends \Magento\Framework\App\Action\Action
 
             $this->checkoutSession->setIsPayonePayPalExpress(true);
             $aResponse = $this->genericRequest->sendRequest($oQuote, $this->paypalPayment);
+            $this->checkoutSession->unsIsPayonePayPalExpress();
             if ($aResponse['status'] == 'ERROR') {
                 $this->messageManager->addError(__($aResponse['customermessage']));
 
