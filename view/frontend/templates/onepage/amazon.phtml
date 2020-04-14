@@ -68,8 +68,7 @@
             onReady: window.onAmazonWidgetsInitialized,
             onError: window.onAmazonPaymentsError
         }).bind("addressBookWidgetDiv");
-
-        new OffAmazonPayments.Widgets.Wallet({
+        walletWidget = new OffAmazonPayments.Widgets.Wallet({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
             onPaymentSelect: window.onAmazonAddressSelected,
@@ -77,7 +76,9 @@
                 designMode: 'responsive'
             },
             onError: window.onAmazonPaymentsError
-        }).bind("walletWidgetDiv");
+        });
+        walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
+        walletWidget.bind("walletWidgetDiv");
     };
     window.payoneInitInvalidPaymentWidgets = function () {
         document.getElementById('checkoutStepInitContent').className += " locked";
@@ -95,7 +96,7 @@
             onReady: window.onAmazonWidgetsInitialized,
             onError: window.onAmazonPaymentsError
         }).bind('addressBookWidgetDiv').renderRequested = initiatedByPopup;
-        new OffAmazonPayments.Widgets.Wallet({
+        walletWidget = new OffAmazonPayments.Widgets.Wallet({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             amazonOrderReferenceId: window.amazonOrderReferenceId,
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
@@ -106,7 +107,9 @@
                 designMode: 'responsive'
             },
             onError: window.onAmazonPaymentsError
-        }).bind('walletWidgetDiv').renderRequested = initiatedByPopup;
+        });
+        walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
+        walletWidget.bind('walletWidgetDiv').renderRequested = initiatedByPopup;
         payoneShowInitStep();
     };
     window.onAmazonWidgetsInitialized = function (orderReference) {
@@ -123,7 +126,7 @@
         }
 
         if (window.amazonOrderReferenceId === undefined) {
-            window.amazonOrderReferenceId = orderReference.getAmazonOrderReferenceId();
+        window.amazonOrderReferenceId = orderReference.getAmazonOrderReferenceId();
         }
     };
 </script>
@@ -255,12 +258,12 @@
                     if (oResponse.errorcode == '985') {
                         payoneInitInvalidPaymentWidgets();
                     } else {
-                        amazon.Login.logout();
-                        var oResponse = JSON.parse(responseRaw.responseText);
-                        if (oResponse.request !== undefined && oResponse.request == 'confirmOrderReference') {
-                            confirmationFlow.error();
-                            window.location.href = '<?php echo $this->getErrorUrl(); ?>';
-                        }
+                    amazon.Login.logout();
+                    var oResponse = JSON.parse(responseRaw.responseText);
+                    if (oResponse.request !== undefined && oResponse.request == 'confirmOrderReference') {
+                        confirmationFlow.error();
+                        window.location.href = '<?php echo $this->getErrorUrl(); ?>';
+                    }
                     }
                 },
                 timeout: "30000" //specify your timeout value (for example, 3000)

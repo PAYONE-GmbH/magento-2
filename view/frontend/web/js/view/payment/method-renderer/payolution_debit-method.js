@@ -39,6 +39,7 @@ define(
                 iban: '',
                 bic: '',
                 tradeRegistryNumber: '',
+                companyUid: '',
                 agreement: false,
                 mandate: false
             },
@@ -51,6 +52,7 @@ define(
                         'iban',
                         'bic',
                         'tradeRegistryNumber',
+                        'companyUid',
                         'agreement',
                         'mandate'
                     ]);
@@ -69,6 +71,7 @@ define(
                 }
                 if (this.isB2bMode()) {
                     parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
+                    parentReturn.additional_data.company_uid = this.companyUid();
                     parentReturn.additional_data.b2bmode = true;
                 }
                 parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
@@ -113,6 +116,9 @@ define(
                 return false;
             },
             requestBirthday: function () {
+                if (quote.billingAddress() == null) {
+                    return false;
+                }
                 return !this.isB2bMode();
             },
             validate: function () {

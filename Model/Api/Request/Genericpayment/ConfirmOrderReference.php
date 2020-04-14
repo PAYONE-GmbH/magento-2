@@ -105,12 +105,12 @@ class ConfirmOrderReference extends Base
      * @param  string       $sAmazonReferenceId
      * @return array
      */
-    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote, $dAmount, $sWorkorderId, $sAmazonReferenceId)
+    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote, $sWorkorderId, $sAmazonReferenceId)
     {
         $this->addParameter('request', 'genericpayment');
         $this->addParameter('add_paydata[action]', 'confirmorderreference');
 
-        $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100);
+        $this->addParameter('amount', number_format($this->apiHelper->getQuoteAmount($oQuote), 2, '.', '') * 100);
         $this->addParameter('add_paydata[amazon_reference_id]', $sAmazonReferenceId);
         $this->addParameter('add_paydata[reference]', $this->getReservedOrderId($oQuote, $oPayment));
         $this->addParameter('workorderid', $sWorkorderId);
@@ -122,7 +122,7 @@ class ConfirmOrderReference extends Base
         $this->addParameter('clearingtype', $oPayment->getClearingtype());
         $this->addParameter('wallettype', 'AMZ');
 
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote));
 
         $this->addParameter('successurl', $this->url->getUrl('payone/amazon/loadReview?action=placeOrder'));
         $this->addParameter('errorurl', $this->url->getUrl('payone/amazon/confirmOrderError'));

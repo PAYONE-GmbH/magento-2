@@ -120,7 +120,7 @@ class CancelOrderReference extends Base
         $this->addParameter('clearingtype', $oPayment->getClearingtype());
         $this->addParameter('wallettype', 'AMZ');
 
-        $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote));
 
         $this->addParameter('successurl', $this->url->getUrl('payone/amazon/loadReview?action=placeOrder'));
         $this->addParameter('errorurl', $this->url->getUrl('payone/amazon/confirmOrderError'));

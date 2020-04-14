@@ -81,6 +81,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willReturn($quote);
+        $quote->method('getGrandTotal')->willReturn(100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -90,7 +91,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($payment, $quote, 100,'123', '123');
+        $result = $this->classToTest->sendRequest($payment, $quote, '123', '123');
         $this->assertEquals($response, $result);
     }
 
@@ -106,6 +107,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willThrowException($exception);
+        $quote->method('getGrandTotal')->willReturn(100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -115,7 +117,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($payment, $quote, 100,'123', '123');
+        $result = $this->classToTest->sendRequest($payment, $quote,'123', '123');
         $this->assertEquals($response, $result);
     }
 }
