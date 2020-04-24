@@ -45,7 +45,7 @@
     };
     window.onAmazonPaymentsReady = function() {
         if (triggerInvalidPayments === true) {
-            payoneInitInvalidPaymentWidgets();
+            payoneInitInvalidPaymentWidgets('Read');
         } else {
             payoneInitFreshWidgets();
         }
@@ -80,12 +80,12 @@
         walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
         walletWidget.bind("walletWidgetDiv");
     };
-    window.payoneInitInvalidPaymentWidgets = function () {
+    window.payoneInitInvalidPaymentWidgets = function (addressDisplayMode) {
         document.getElementById('checkoutStepInitContent').className += " locked";
         document.getElementById('addressBookWidgetDiv').innerHTML = "";
         document.getElementById('walletWidgetDiv').innerHTML = "";
         new OffAmazonPayments.Widgets.AddressBook({
-            displayMode: 'Read',
+            displayMode: addressDisplayMode,
             sellerId: '<?php echo $this->getSellerId(); ?>',
             amazonOrderReferenceId: window.amazonOrderReferenceId,
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
@@ -244,7 +244,11 @@
                             //amazon.Login.logout(); // logout cannot happen here because InvalidPaymentMethod will be thrown AFTER this
                             confirmationFlow.success();
                         } else if (oResponse.errorcode == '981' || oResponse.errorcode == '985') {
-                            payoneInitInvalidPaymentWidgets();
+                            var addressDisplayMode = 'Read';
+                            if (oResponse.errorcode == '985') {
+                                addressDisplayMode = 'Edit';
+                            }
+                            payoneInitInvalidPaymentWidgets(addressDisplayMode);
                             payoneUpdateContent(responseRaw);
                             payoneShowInitStep();
                         } else {
@@ -256,7 +260,7 @@
                 },
                 error: function (responseRaw) {
                     if (oResponse.errorcode == '985') {
-                        payoneInitInvalidPaymentWidgets();
+                        payoneInitInvalidPaymentWidgets('Edit');
                     } else {
                     amazon.Login.logout();
                     var oResponse = JSON.parse(responseRaw.responseText);
@@ -290,7 +294,11 @@
                             return true;
                         } else if(oResponse.errorMessage !== undefined) {
                             if (oResponse.errorMessage === 'PaymentMethodNotAllowed' || oResponse.errorMessage === 'InvalidPaymentMethod') {
-                                payoneInitInvalidPaymentWidgets();
+                                var addressDisplayMode = 'Read';
+                                if (oResponse.errorMessage === 'PaymentMethodNotAllowed') {
+                                    addressDisplayMode = 'Edit';
+                                }
+                                payoneInitInvalidPaymentWidgets(addressDisplayMode);
                             }
                         }
                     }
