@@ -36,7 +36,7 @@ use Payone\Core\Helper\Payment;
 use Payone\Core\Observer\AddPaydirektOneklickButton as ClassToTest;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-use Magento\Customer\Model\Session\Proxy as CustomerSession;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Customer\Model\Customer;
 
 class AddPaydirektOneklickButtonTest extends BaseTestCase

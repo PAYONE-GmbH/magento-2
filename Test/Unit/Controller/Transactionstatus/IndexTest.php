@@ -39,7 +39,7 @@ use Magento\Sales\Model\Order as OrderCore;
 use Magento\Framework\Event\ManagerInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-use Payone\Core\Model\Handler\SubstituteOrder\Proxy as SubstituteOrder;
+use Payone\Core\Model\Handler\SubstituteOrder;
 
 class IndexTest extends BaseTestCase
 {

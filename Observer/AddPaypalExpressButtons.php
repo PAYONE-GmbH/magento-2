@@ -32,7 +32,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Paypal\Block\Express\Shortcut;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\SimpleProtect\SimpleProtect;
-use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 /**
  * Event class to add the PayPal Express buttons to the frontend

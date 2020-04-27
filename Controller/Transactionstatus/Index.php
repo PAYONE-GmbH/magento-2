@@ -78,7 +78,7 @@ class Index extends \Payone\Core\Controller\ExternalAction
     /**
      * PAYONE substitute order handler
      *
-     * @var \Payone\Core\Model\Handler\SubstituteOrder\Proxy
+     * @var \Payone\Core\Model\Handler\SubstituteOrder
      */
     protected $substituteOrder;
 
@@ -93,7 +93,7 @@ class Index extends \Payone\Core\Controller\ExternalAction
      * @param \Payone\Core\Helper\Order                          $orderHelper
      * @param \Payone\Core\Model\Handler\TransactionStatus       $transactionStatusHandler,
      * @param \Magento\Framework\Controller\Result\RawFactory    $resultRawFactory
-     * @param \Payone\Core\Model\Handler\SubstituteOrder\Proxy   $substituteOrder
+     * @param \Payone\Core\Model\Handler\SubstituteOrder   $substituteOrder
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -104,7 +104,7 @@ class Index extends \Payone\Core\Controller\ExternalAction
         \Payone\Core\Helper\Order $orderHelper,
         \Payone\Core\Model\Handler\TransactionStatus $transactionStatusHandler,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder
+        \Payone\Core\Model\Handler\SubstituteOrder $substituteOrder
     ) {
         parent::__construct($context, $formKey);
         $this->transactionStatus = $transactionStatus;

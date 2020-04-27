@@ -37,7 +37,7 @@ use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Observer\AddPaypalExpressButtons as ClassToTest;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\SimpleProtect\SimpleProtect;
 
