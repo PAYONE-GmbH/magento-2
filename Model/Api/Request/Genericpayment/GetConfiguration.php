@@ -27,6 +27,7 @@
 namespace Payone\Core\Model\Api\Request\Genericpayment;
 
 use Payone\Core\Model\Methods\PayoneMethod;
+use Magento\Quote\Model\Quote;
 
 /**
  * Class for the PAYONE Server API request genericpayment - "getconfiguration"
@@ -37,9 +38,10 @@ class GetConfiguration extends Base
      * Send request to PAYONE Server-API with request-type "genericpayment" and action "getconfiguration"
      *
      * @param  PayoneMethod $oPayment payment object
+     * @param  Quote        $oQuote
      * @return array
      */
-    public function sendRequest(PayoneMethod $oPayment)
+    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote = null)
     {
         $this->addParameter('request', 'genericpayment');
         $this->addParameter('add_paydata[action]', 'getconfiguration');
@@ -51,7 +53,11 @@ class GetConfiguration extends Base
         $this->addParameter('clearingtype', $oPayment->getClearingtype());
         $this->addParameter('wallettype', 'AMZ');
 
-        $this->addParameter('currency', 'EUR'); // no currency given in admin-context
+        $sCurrency = 'EUR'; // no currency given in admin-context
+        if ($oQuote !== null) {
+            $sCurrency = $this->apiHelper->getCurrencyFromQuote($oQuote);
+        }
+        $this->addParameter('currency', $sCurrency); // no currency given in admin-context
 
         return $this->send($oPayment);
     }

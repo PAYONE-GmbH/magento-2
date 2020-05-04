@@ -34,19 +34,31 @@
         initiatedByPopup = false;
     }
 
-    var rendered = false;
+    <?php if (!empty($this->getOrderReferenceId())): ?>
+        window.amazonOrderReferenceId = '<?php echo $this->getOrderReferenceId(); ?>';
+    <?php endif; ?>
 
-    window.onAmazonLoginReady = function() {amazon.Login.setClientId('<?php echo $this->getClientId(); ?>'); };
+    var triggerInvalidPayments = <?php echo ($this->triggerInvalidPayment() === true ? 'true' : 'false'); ?>;
+
+    window.onAmazonLoginReady = function() {
+        amazon.Login.setClientId('<?php echo $this->getClientId(); ?>');
+    };
     window.onAmazonPaymentsReady = function() {
-        if (rendered === true) {
-            return;
+        if (triggerInvalidPayments === true) {
+            payoneInitInvalidPaymentWidgets();
+        } else {
+            payoneInitFreshWidgets();
         }
+    };
+    window.onAmazonAddressSelected = function () {};
+    window.onAmazonPaymentsError = function (error) {
+        console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
+    };
+    window.payoneInitFreshWidgets = function () {
         new OffAmazonPayments.Widgets.AddressBook({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
-            onAddressSelect: function(orderReference) {
-                jQuery('#confirmSelection').attr('disabled', true);
-            },
+            onAddressSelect: window.onAmazonAddressSelected,
             design: {
                 designMode: 'responsive'
             },
@@ -56,74 +68,49 @@
             onReady: window.onAmazonWidgetsInitialized,
             onError: window.onAmazonPaymentsError
         }).bind("addressBookWidgetDiv");
-
-        new OffAmazonPayments.Widgets.Wallet({
+        walletWidget = new OffAmazonPayments.Widgets.Wallet({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
-            onPaymentSelect: function(orderReference) {
-                jQuery('#confirmSelection').attr('disabled', false);
-            },
+            onPaymentSelect: window.onAmazonAddressSelected,
             design: {
                 designMode: 'responsive'
             },
-            onError: function (error) {
-                console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
-            }
-        }).bind("walletWidgetDiv");
-        rendered = true;
+            onError: window.onAmazonPaymentsError
+        });
+        walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
+        walletWidget.bind("walletWidgetDiv");
     };
-    window.onAmazonPaymentsInvalidPayment = function () {
-        if (rendered === true) {
-            return;
-        }
-        jQuery('#placeOrder').attr('disabled', true);
-        jQuery('#checkoutStepInitContent, #chooseMethod').addClass('locked');
-        jQuery('#addressBookWidgetDiv, #walletWidgetDiv').empty();
+    window.payoneInitInvalidPaymentWidgets = function () {
+        document.getElementById('checkoutStepInitContent').className += " locked";
+        document.getElementById('addressBookWidgetDiv').innerHTML = "";
+        document.getElementById('walletWidgetDiv').innerHTML = "";
         new OffAmazonPayments.Widgets.AddressBook({
             displayMode: 'Read',
             sellerId: '<?php echo $this->getSellerId(); ?>',
             amazonOrderReferenceId: window.amazonOrderReferenceId,
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
-            onAddressSelect: function () {
-                jQuery('#confirmSelection').attr('disabled', true);
-            },
+            onAddressSelect: window.onAmazonAddressSelected,
             design: {
                 designMode: 'responsive'
             },
             onReady: window.onAmazonWidgetsInitialized,
             onError: window.onAmazonPaymentsError
         }).bind('addressBookWidgetDiv').renderRequested = initiatedByPopup;
-        new OffAmazonPayments.Widgets.Wallet({
+        walletWidget = new OffAmazonPayments.Widgets.Wallet({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             amazonOrderReferenceId: window.amazonOrderReferenceId,
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
             onPaymentSelect: function () {
-                jQuery('#confirmSelection').attr('disabled', false);
-                jQuery('#checkoutStepInitContent').addClass('solved');
+                document.getElementById('checkoutStepInitContent').className += " solved";
             },
             design: {
                 designMode: 'responsive'
             },
-            onError: function (error) {
-                console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
-            }
-        }).bind('walletWidgetDiv').renderRequested = initiatedByPopup;
-        rendered = true;
+            onError: window.onAmazonPaymentsError
+        });
+        walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
+        walletWidget.bind('walletWidgetDiv').renderRequested = initiatedByPopup;
         payoneShowInitStep();
-    };
-    window.onAmazonPaymentsError = function (error) {
-        /*
-        if (error.getErrorCode() === 'BuyerSessionExpired') {
-            //jQuery('#addressBookWidgetCover, #walletWidgetCover')
-                .css('background', 'lightgrey').addClass('show').delay(15)
-                .promise().done(function () {
-                alert('Expired');
-                //window.location.href = 'http://localhost';
-            });
-        } else {
-        */
-            console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
-        /* } */
     };
     window.onAmazonWidgetsInitialized = function (orderReference) {
         var match,
@@ -137,7 +124,10 @@
                 window.addressConsentToken = decode(match[2]);
             }
         }
+
+        if (window.amazonOrderReferenceId === undefined) {
         window.amazonOrderReferenceId = orderReference.getAmazonOrderReferenceId();
+        }
     };
 </script>
 
@@ -248,23 +238,32 @@
                 },
                 showLoader: true,
                 complete: function (responseRaw) {
-                    amazon.Login.logout();
                     var oResponse = JSON.parse(responseRaw.responseText);
                     if (oResponse.request !== undefined && oResponse.request == 'confirmOrderReference') {
                         if (oResponse.success === true) {
+                            //amazon.Login.logout(); // logout cannot happen here because InvalidPaymentMethod will be thrown AFTER this
                             confirmationFlow.success();
+                        } else if (oResponse.errorcode == '981' || oResponse.errorcode == '985') {
+                            payoneInitInvalidPaymentWidgets();
+                            payoneUpdateContent(responseRaw);
+                            payoneShowInitStep();
                         } else {
+                            amazon.Login.logout();
                             confirmationFlow.error();
                             window.location.href = '<?php echo $this->getErrorUrl(); ?>';
                         }
                     }
                 },
                 error: function (responseRaw) {
+                    if (oResponse.errorcode == '985') {
+                        payoneInitInvalidPaymentWidgets();
+                    } else {
                     amazon.Login.logout();
                     var oResponse = JSON.parse(responseRaw.responseText);
                     if (oResponse.request !== undefined && oResponse.request == 'confirmOrderReference') {
                         confirmationFlow.error();
                         window.location.href = '<?php echo $this->getErrorUrl(); ?>';
+                    }
                     }
                 },
                 timeout: "30000" //specify your timeout value (for example, 3000)
@@ -291,7 +290,7 @@
                             return true;
                         } else if(oResponse.errorMessage !== undefined) {
                             if (oResponse.errorMessage === 'PaymentMethodNotAllowed' || oResponse.errorMessage === 'InvalidPaymentMethod') {
-                                onAmazonPaymentsInvalidPayment();
+                                payoneInitInvalidPaymentWidgets();
                             }
                         }
                     }

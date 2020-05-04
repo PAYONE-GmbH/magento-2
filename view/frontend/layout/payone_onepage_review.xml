@@ -42,6 +42,6 @@
                 <block class="Magento\CheckoutAgreements\Block\Agreements" name="payone_onepage_review_details_agreements" as="agreements" template="Magento_CheckoutAgreements::additional_agreements.phtml"/>
             </block>
         </referenceContainer>
-        <block class="Magento\Framework\View\Element\Template" name="additional.product.info" template="Magento_Theme::template.phtml"/>
+        <block class="Payone\Core\Block\Onepage\Totals" name="additional.product.info" template="Magento_Theme::template.phtml"/>
     </body>
 </page>

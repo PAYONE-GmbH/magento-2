@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
+use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
@@ -80,7 +81,9 @@ class GetConfigurationTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($payment);
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->sendRequest($payment, $quote);
         $this->assertEquals($response, $result);
     }
 }

@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2019 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -30,9 +30,9 @@ use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Methods\PayoneMethod;
 
 /**
- * Class for the PAYONE Server API request genericpayment - "confirmorderreference"
+ * Class for the PAYONE Server API request genericpayment - "cancelorderreference"
  */
-class ConfirmOrderReference extends Base
+class CancelOrderReference extends Base
 {
     /**
      * Logger object
@@ -100,7 +100,6 @@ class ConfirmOrderReference extends Base
      *
      * @param  PayoneMethod $oPayment payment object
      * @param  Quote        $oQuote
-     * @param  float        $dAmount
      * @param  string       $sWorkorderId
      * @param  string       $sAmazonReferenceId
      * @return array
@@ -108,9 +107,8 @@ class ConfirmOrderReference extends Base
     public function sendRequest(PayoneMethod $oPayment, Quote $oQuote, $sWorkorderId, $sAmazonReferenceId)
     {
         $this->addParameter('request', 'genericpayment');
-        $this->addParameter('add_paydata[action]', 'confirmorderreference');
+        $this->addParameter('add_paydata[action]', 'cancelorderreference');
 
-        $this->addParameter('amount', number_format($this->apiHelper->getQuoteAmount($oQuote), 2, '.', '') * 100);
         $this->addParameter('add_paydata[amazon_reference_id]', $sAmazonReferenceId);
         $this->addParameter('add_paydata[reference]', $this->getReservedOrderId($oQuote, $oPayment));
         $this->addParameter('workorderid', $sWorkorderId);
