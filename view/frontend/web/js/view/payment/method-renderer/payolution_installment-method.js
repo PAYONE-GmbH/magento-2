@@ -70,11 +70,6 @@ define(
                 if (this.requestBirthday()) {
                     parentReturn.additional_data.dateofbirth = this.birthyear() + this.birthmonth() + this.birthday();
                 }
-                if (this.isB2bMode()) {
-                    parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
-                    parentReturn.additional_data.company_uid = this.companyUid();
-                    parentReturn.additional_data.b2bmode = true;
-                }
                 parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
                 parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
                 parentReturn.additional_data.duration = $('#' + this.getCode() + '_duration').val();
@@ -107,21 +102,11 @@ define(
             getPrivacyDeclaration: function () {
                 return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.installment;
             },
-            isB2bMode: function () {
-                if (window.checkoutConfig.payment.payone.payolution.b2bMode.installment == true &&
-                    quote.billingAddress() != null &&
-                    typeof quote.billingAddress().company != 'undefined' &&
-                    quote.billingAddress().company != ''
-                ) {
-                    return true;
-                }
-                return false;
-            },
             requestBirthday: function () {
                 if (quote.billingAddress() == null) {
                     return false;
                 }
-                return !this.isB2bMode();
+                return true;
             },
             validate: function () {
                 if (this.requestBirthday() == true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {

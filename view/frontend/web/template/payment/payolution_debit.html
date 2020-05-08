@@ -44,38 +44,6 @@
 
         <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
-                <!-- ko if: isB2bMode() -->
-                <div class="field number">
-                    <label data-bind="attr: {for: getCode() + '_companyUid'}" class="label">
-                        <span><!-- ko i18n: 'VAT No.'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[companyUid]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_companyUid',
-                                    title: $t('VAT No.'),
-                                    'data-container': getCode() + '-companyUid'},
-                              value: companyUid,
-                              valueUpdate: 'keyup' "/>
-                    </div>
-                </div>
-                <div class="field number">
-                    <label data-bind="attr: {for: getCode() + '_tradeRegistryNumber'}" class="label">
-                        <span><!-- ko i18n: 'Company trade registry number'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[tradeRegistryNumber]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_tradeRegistryNumber',
-                                    title: $t('Company trade registry number'),
-                                    'data-container': getCode() + '-tradeRegistryNumber'},
-                              value: tradeRegistryNumber,
-                              valueUpdate: 'keyup' "/>
-                    </div>
-                </div>
-                <!--/ko-->
                 <!-- ko if: requestBirthday() -->
                 <div class="field number required">
                     <label data-bind="attr: {for: getCode() + '_birthday'}" class="label">
