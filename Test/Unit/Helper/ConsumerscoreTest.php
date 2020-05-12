@@ -363,4 +363,17 @@ class ConsumerscoreTest extends BaseTestCase
         $result = $this->consumerscore->isCreditratingNeeded('before_payment', 500);
         $this->assertTrue($result);
     }
+
+    public function testGetConsumerscoreEnabledMethods()
+    {
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_protect/creditrating/enabled_for_payment_methods', ScopeInterface::SCOPE_STORES, null, 'a,b']
+                ]
+            );
+        $result = $this->consumerscore->getConsumerscoreEnabledMethods();
+        $this->assertEquals(['a', 'b'], $result);
+    }
 }

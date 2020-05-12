@@ -34,7 +34,7 @@ use Payone\Core\Helper\Consumerscore as ConsumerscoreHelper;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Sales\Model\Order\Payment;
-use Magento\Payment\Model\MethodInterface;
+use Payone\Core\Model\Methods\Creditcard as MethodInterface;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Event\Observer;
@@ -99,10 +99,14 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
     public function testIsCreditratingNeededPaymentTypeMissing()
     {
         $this->consumerscoreHelper->method('isCreditratingNeeded')->willReturn(true);
-        $this->consumerscoreHelper->method('getConfigParam')->willReturn(PayoneConfig::METHOD_CREDITCARD.','.PayoneConfig::METHOD_DEBIT);
+        $this->consumerscoreHelper->method('getConsumerscoreEnabledMethods')->willReturn([PayoneConfig::METHOD_DEBIT]);
+
+        $infoInstance = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
+        $infoInstance->method('getAdditionalInformation')->willReturn(false);
 
         $paymentMethod = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $paymentMethod->method('getCode')->willReturn(PayoneConfig::METHOD_PAYPAL);
+        $paymentMethod->method('getInfoInstance')->willReturn($infoInstance);
 
         $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $payment->method('getMethodInstance')->willReturn($paymentMethod);
@@ -118,6 +122,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
     {
         $this->consumerscoreHelper->method('isCreditratingNeeded')->willReturn(true);
         $this->consumerscoreHelper->method('getConfigParam')->willReturn(PayoneConfig::METHOD_CREDITCARD.','.PayoneConfig::METHOD_DEBIT);
+        $this->consumerscoreHelper->method('getConsumerscoreEnabledMethods')->willReturn(['payone_paypal', 'payone_creditcard']);
 
         $infoInstance = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
         $infoInstance->method('getAdditionalInformation')->willReturn(false);
@@ -140,6 +145,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
     {
         $this->consumerscoreHelper->method('isCreditratingNeeded')->willReturn(true);
         $this->consumerscoreHelper->method('getConfigParam')->willReturn(PayoneConfig::METHOD_CREDITCARD.','.PayoneConfig::METHOD_DEBIT);
+        $this->consumerscoreHelper->method('getConsumerscoreEnabledMethods')->willReturn(['payone_paypal', 'payone_creditcard']);
 
         $infoInstance = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
         $infoInstance->method('getAdditionalInformation')->willReturn(true);
@@ -302,6 +308,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
         $this->consumerscore->method('sendRequest')->willReturn(['status' => 'VALID', 'score' => 'G']);
         $this->consumerscoreHelper->method('isCreditratingNeeded')->willReturn(true);
         $this->consumerscoreHelper->method('getWorstScore')->willReturn('G');
+        $this->consumerscoreHelper->method('getConsumerscoreEnabledMethods')->willReturn(['payone_paypal', 'payone_creditcard']);
         $this->consumerscoreHelper->expects($this->any())
             ->method('getConfigParam')
             ->willReturnMap(
@@ -312,6 +319,50 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
             );
 
         $observer = $this->getExecuteObserver();
+
+        $result = $this->classToTest->execute($observer);
+        $this->assertNull($result);
+    }
+
+    public function testExecuteNoAgreement()
+    {
+        $this->consumerscore->method('sendRequest')->willReturn(['status' => 'VALID', 'score' => 'G']);
+        $this->consumerscoreHelper->method('isCreditratingNeeded')->willReturn(true);
+        $this->consumerscoreHelper->method('getWorstScore')->willReturn('G');
+        $this->consumerscoreHelper->method('getConsumerscoreEnabledMethods')->willReturn([PayoneConfig::METHOD_CREDITCARD]);
+        $this->consumerscoreHelper->method('canShowAgreementMessage')->willReturn(true);
+        $this->consumerscoreHelper->expects($this->any())
+            ->method('getConfigParam')
+            ->willReturnMap(
+                [
+                    ['enabled', 'address_check', 'payone_protect', null, true]
+                ]
+            );
+
+        $address = $this->getMockBuilder(Address::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getPayoneAddresscheckScore', 'getPayoneProtectScore', 'setPayoneProtectScore', 'save'])
+            ->getMock();
+        $address->method('getPayoneAddresscheckScore')->willReturn('G');
+        $address->method('setPayoneProtectScore')->willReturn($address);
+
+        $infoInstance = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
+        $infoInstance->method('getAdditionalInformation')->willReturn(false);
+
+        $paymentMethod = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $paymentMethod->method('getCode')->willReturn(PayoneConfig::METHOD_CREDITCARD);
+        $paymentMethod->method('getInfoInstance')->willReturn($infoInstance);
+
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getMethodInstance')->willReturn($paymentMethod);
+
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote->method('getBillingAddress')->willReturn($address);
+        $quote->method('getShippingAddress')->willReturn($address);
+        $quote->method('getPayment')->willReturn($payment);
+
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getQuote'])->getMock();
+        $observer->method('getQuote')->willReturn($quote);
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);
@@ -330,7 +381,8 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
     {
         $this->consumerscore->method('sendRequest')->willReturn(['status' => 'VALID', 'score' => 'G']);
         $this->consumerscoreHelper->method('isCreditratingNeeded')->willReturn(true);
-        $this->consumerscoreHelper->method('getWorstScore')->willReturn('X');
+        $this->consumerscoreHelper->method('getWorstScore')->willReturn('Y');
+        $this->consumerscoreHelper->method('getConsumerscoreEnabledMethods')->willReturn(['payone_paypal', 'payone_creditcard']);
         $this->consumerscoreHelper->expects($this->any())
             ->method('getConfigParam')
             ->willReturnMap(
@@ -343,7 +395,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
             ->method('getAllowedMethodsForScore')
             ->willReturnMap([
                 ['Y', [PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_CASH_ON_DELIVERY]],
-                ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CREDITCARD]]
+                ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_BARZAHLEN]]
             ]);
 
         $observer = $this->getExecuteObserver();

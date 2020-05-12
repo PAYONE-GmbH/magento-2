@@ -213,6 +213,8 @@ class LoadReviewTest extends BaseTestCase
                 'getOrderReferenceDetailsExecuted',
                 'setOrderReferenceDetailsExecuted',
                 'unsOrderReferenceDetailsExecuted',
+                'setTriggerInvalidPayment',
+                'unsTriggerInvalidPayment',
             ])
             ->getMock();
         $checkoutSession->method('getAmazonWorkorderId')->willReturn(null);
@@ -312,7 +314,7 @@ class LoadReviewTest extends BaseTestCase
         $this->request->method('getParam')->willReturn('placeOrder');
 
         $exception = $this->getMockBuilder(AuthorizationException::class)->disableOriginalConstructor()->getMock();
-        $exception->method('getResponse')->willReturn(['status' => 'ERROR', 'errorcode' => 982]);
+        $exception->method('getResponse')->willReturn(['status' => 'ERROR', 'errorcode' => 980]);
         $this->cartManagement->method('placeOrder')->willThrowException($exception);
 
         $result = $this->classToTest->execute();

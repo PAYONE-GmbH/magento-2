@@ -218,6 +218,26 @@ class MethodList
     }
 
     /**
+     * Remove paymenttypes not on the session whitelist
+     *
+     * @param  array $aPaymentMethods
+     * @return array
+     */
+    protected function removeNotWhitelistedPaymentMethods($aPaymentMethods)
+    {
+        $aWhitelist = $this->checkoutSession->getPayonePaymentWhitelist();
+        if (!empty($aWhitelist)) {
+            $iCount = count($aPaymentMethods);
+            for($i = 0; $i < $iCount; $i++) {
+                if (array_search($aPaymentMethods[$i]->getCode(), $aWhitelist) === false) {
+                    unset($aPaymentMethods[$i]);
+                }
+            }
+        }
+        return $aPaymentMethods;
+    }
+
+    /**
      * Remove Amazon Pay from payment method array
      *
      * @param  array $aPaymentMethods
@@ -260,6 +280,7 @@ class MethodList
         }
 
         $aPaymentMethods = $this->removeBannedPaymentMethods($aPaymentMethods, $oQuote);
+        $aPaymentMethods = $this->removeNotWhitelistedPaymentMethods($aPaymentMethods);
         $aPaymentMethods = $this->removeAmazonPay($aPaymentMethods);
 
         return $aPaymentMethods;

@@ -37,6 +37,7 @@ define(
                 birthmonth: '',
                 birthyear: '',
                 tradeRegistryNumber: '',
+                companyUid: '',
                 agreement: false
             },
             initObservable: function () {
@@ -46,6 +47,7 @@ define(
                         'birthmonth',
                         'birthyear',
                         'tradeRegistryNumber',
+                        'companyUid',
                         'agreement'
                     ]);
                 return this;
@@ -60,6 +62,7 @@ define(
                 }
                 if (this.isB2bMode()) {
                     parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
+                    parentReturn.additional_data.company_uid = this.companyUid();
                     parentReturn.additional_data.b2bmode = true;
                 }
                 return parentReturn;
@@ -89,6 +92,9 @@ define(
                 return false;
             },
             requestBirthday: function () {
+                if (quote.billingAddress() == null) {
+                    return false;
+                }
                 return !this.isB2bMode();
             },
             validate: function () {

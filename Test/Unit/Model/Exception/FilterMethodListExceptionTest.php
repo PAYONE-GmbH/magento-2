@@ -19,41 +19,55 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Model\Source;
+namespace Payone\Core\Test\Unit\Model\Exception;
 
-use Payone\Core\Model\Source\CreditcardTypes as ClassToTest;
+use Payone\Core\Model\Exception\FilterMethodListException as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Model\Source\CreditcardTypes;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class CreditcardTypesTest extends BaseTestCase
+class FilterMethodListExceptionTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
      */
     private $classToTest;
 
+    /**
+     * @var ClassToTest
+     */
+    private $classToTest2;
+
+    /**
+     * @var ObjectManager|PayoneObjectManager
+     */
+    private $objectManager;
+
     protected function setUp()
     {
-        $objectManager = $this->getObjectManager();
-        $this->classToTest = $objectManager->getObject(ClassToTest::class);
+        $this->objectManager = $this->getObjectManager();
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'phrase' => __('Phrase'),
+            'safePaymentMethods' => ['a', 'b', 'c']
+        ]);
+
+        $this->classToTest2 = $this->objectManager->getObject(ClassToTest::class, [
+            'phrase' => __('Phrase')
+        ]);
     }
 
-    public function testToOptionArray()
+    public function testGetParameters()
     {
-        $result = $this->classToTest->toOptionArray();
-        $this->assertCount(7, $result);
-    }
+        $result = $this->classToTest->getParameters();
+        $this->assertNotEmpty($result);
 
-    public function testGetCreditcardTypes()
-    {
-        $result = CreditcardTypes::getCreditcardTypes();
-        $this->assertArrayHasKey('visa', $result);
+        $result = $this->classToTest2->getParameters();
+        $this->assertEmpty($result);
     }
 }

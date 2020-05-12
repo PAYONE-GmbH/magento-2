@@ -202,8 +202,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         return [
             'b2bMode' => [
                 'invoice' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_INVOICE, 'payone_payment'),
-                'debit' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_DEBIT, 'payone_payment'),
-                'installment' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT, 'payone_payment'),
             ],
             'privacyDeclaration' => [
                 'invoice' => $this->privacyDeclaration->getPayolutionAcceptanceText(PayoneConfig::METHOD_PAYOLUTION_INVOICE),
@@ -247,6 +245,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'paymentHintText' => $this->requestHelper->getConfigParam('payment_hint_text', 'creditrating', 'payone_protect'),
             'canShowAgreementMessage' => $this->consumerscoreHelper->canShowAgreementMessage(),
             'agreementMessage' => $this->requestHelper->getConfigParam('agreement_message', 'creditrating', 'payone_protect'),
+            'consumerScoreEnabledMethods' => $this->consumerscoreHelper->getConsumerscoreEnabledMethods(),
             'payolution' => $this->getPayolutionConfig(),
             'canceledPaymentMethod' => $this->getCanceledPaymentMethod(),
             'isError' => $this->checkoutSession->getPayoneIsError(),

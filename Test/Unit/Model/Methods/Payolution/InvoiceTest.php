@@ -148,7 +148,8 @@ class InvoiceTest extends BaseTestCase
             'workorderid' => '1',
             'birthday' => '1',
             'add_paydata[b2b]' => 'yes',
-            'add_paydata[company_trade_registry_number]' => '1'
+            'add_paydata[company_trade_registry_number]' => '1',
+            'add_paydata[company_uid]' => '1',
         ];
         $this->assertEquals($expected, $result);
     }

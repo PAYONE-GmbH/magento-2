@@ -24,16 +24,18 @@
 /*jshint browser:true jquery:true*/
 /*global alert*/
 define([
-    'jquery'
-], function ($) {
+    'jquery',
+    'Magento_Checkout/js/checkout-data'
+], function ($, checkoutData) {
     'use strict';
 
     var mixin = {
         getData: function () {
             var parentReturn = this._super();
-            if ($('#payone_boni_agreement') && $('#payone_boni_agreement')[0]) {
+            var checkboxElement = $('#payone_boni_agreement_' + checkoutData.getSelectedPaymentMethod());
+            if (checkboxElement && checkboxElement[0]) {
                 var blAgreed = false;
-                if ($('#payone_boni_agreement')[0].checked) {
+                if (checkboxElement[0].checked) {
                     blAgreed = true;
                 }
                 

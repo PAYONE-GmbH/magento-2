@@ -102,4 +102,7 @@
             <argument name="logger" xsi:type="object">Payone\Core\Model\Logger\ForwardingLogger</argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\Webapi\ErrorProcessor">
+        <plugin name="Payone_Core_plugin_WebapiErrorProcessor" type="Payone\Core\Model\Plugins\WebapiErrorProcessor" sortOrder="1"/>
+    </type>
 </config>

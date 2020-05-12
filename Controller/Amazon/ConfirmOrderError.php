@@ -73,21 +73,23 @@ class ConfirmOrderError extends Action
      */
     public function execute()
     {
+        /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+
+        $message = "There was a problem with your payment. Your order hasn't been placed, and you haven't been charged.";
+        if ($this->getRequest()->getParam('AuthenticationStatus') == 'Abandoned') {
+            $this->checkoutSession->setTriggerInvalidPayment(true);
+            return $resultRedirect->setUrl($this->urlBuilder->getUrl('payone/onepage/amazon'));
+        }
+
         $this->checkoutSession->setIsPayoneRedirectCancellation(true);
         $this->checkoutSession->unsAmazonWorkorderId();
         $this->checkoutSession->unsAmazonAddressToken();
         $this->checkoutSession->unsAmazonReferenceId();
         $this->checkoutSession->unsOrderReferenceDetailsExecuted();
 
-        $message = "There was a problem with your payment. Your order hasn't been placed, and you haven't been charged.";
-        if ($this->getRequest()->getParam('AuthenticationStatus') == 'Abandoned') {
-            $message = "Something's wrong with your payment method. To place your order, try another.";
-        }
-
         $this->messageManager->addErrorMessage(__($message));
 
-        /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         return $resultRedirect->setUrl($this->urlBuilder->getUrl('checkout/cart'));
     }
 }
