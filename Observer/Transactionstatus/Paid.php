@@ -71,14 +71,15 @@ class Paid implements ObserverInterface
     public function __construct(InvoiceService $invoiceService, InvoiceSender $invoiceSender, Base $baseHelper)
     {
         $this->invoiceService = $invoiceService;
-        $this->invoiceSender = $invoiceSender;
-        $this->baseHelper = $baseHelper;
+        $this->invoiceSender  = $invoiceSender;
+        $this->baseHelper     = $baseHelper;
     }
 
     /**
      * Generate an invoice for the order to mark the order as paid
      *
-     * @param  Observer $observer
+     * @param Observer $observer
+     *
      * @return void
      */
     public function execute(Observer $observer)
@@ -87,17 +88,30 @@ class Paid implements ObserverInterface
         $oOrder = $observer->getOrder();
 
         // order is not guaranteed to exist if using transaction status forwarding
-        // advance payment should not create an invoice
-        if (null === $oOrder || $oOrder->getPayment()->getMethodInstance()->getCode() == PayoneConfig::METHOD_ADVANCE_PAYMENT) {
+        if (NULL === $oOrder) {
             return;
+        }
+
+        // if advance payment is paid should create an invoice
+        if ($oOrder->getPayment()->getMethodInstance()->getCode() === PayoneConfig::METHOD_ADVANCE_PAYMENT) {
+            $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
+            $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
+            $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
+            $oInvoice->register();
+            $oInvoice->save();
+
+            $oOrder->save();
+
+
+            if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
+                $this->invoiceSender->send($oInvoice);
+            }
         }
 
         $aInvoiceList = $oOrder->getInvoiceCollection()->getItems();
         if ($oInvoice = array_shift($aInvoiceList)) { // get first invoice
             $oInvoice->pay(); // mark invoice as paid
-	    $oInvoice->save();
-
-	    $oOrder->save();
-	}
+            $oInvoice->save();
+        }
     }
 }

@@ -84,6 +84,9 @@
     <type name="Magento\Sales\Model\ResourceModel\Order\Handler\State">
         <plugin name="Payone_Core_Plugin_State" type="Payone\Core\Model\Plugins\State" sortOrder="1" />
     </type>
+    <type name="Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice">
+        <plugin name="Payone_Core_Plugin_Prevent_Doubled_GiftCardAccounts" type="Payone\Core\Model\Plugins\GenerateGiftCardAccountsInvoice" sortOrder="1" />
+    </type>
     <type name="Payone\Core\Model\Logger\Info">
         <arguments>
             <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
