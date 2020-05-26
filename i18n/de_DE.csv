@@ -1078,6 +1078,8 @@
 "Installment","Rate"
 "due","f&auml;llig"
 
+"Use Klarna","Klarna verwenden"
+
 "Installment Draft Username","Ratenkauf Muster Benutzername"
 "Installment Draft Password","Ratenkauf Muster Passwort"
 
@@ -1113,6 +1115,9 @@
 "Declare as default","Als Standard festlegen"
 "Delete","Löschen"
 "ends with","endet auf"
+
+"Klarna payment can not be offered for this order.","Die Bezahlung mit Klarna kann für diese Bestellung leider nicht angeboten werden."
+"Please choose your desired Klarna payment method:","Bitte wählen Sie Ihre gewünscht Klarna Zahlart:"
 
 "Register for paydirekt oneKlick","Für paydirekt oneKlick registrieren"
 "Please check your email account for the paydirekt registration email before continuing.","Bitte prüfen Sie Ihr Email-Konto bzgl. der Registrierungs-Email von paydirekt bevor Sie fortfahren."

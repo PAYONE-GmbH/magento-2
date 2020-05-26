@@ -44,6 +44,13 @@ class KlarnaBase extends PayoneMethod
     const METHOD_KLARNA_SUBTYPE_INSTALLMENT = 'KIS';
 
     /**
+     * Payment method code for pseudo-payment-type Klarna
+     *
+     * @var string
+     */
+    protected $_code = PayoneConfig::METHOD_KLARNA_BASE;
+
+    /**
      * Clearingtype for PAYONE authorization request
      *
      * @var string
@@ -65,13 +72,12 @@ class KlarnaBase extends PayoneMethod
     protected $sLongSubType = false;
 
     /**
-     * Keys that need to be assigned to the additionalinformation fields
+     * Determines if the redirect-parameters have to be added
+     * to the authorization-request
      *
-     * @var array
+     * @var bool
      */
-    protected $aAssignKeys = [
-        ''///@TODO
-    ];
+    protected $blNeedsRedirectUrls = true;
 
     /**
      * Info instructions block path
@@ -90,46 +96,19 @@ class KlarnaBase extends PayoneMethod
     {
         $aBaseParams = [
             'financingtype' => $this->getSubType(),
-            'api_version' => '3.11',
-            //'workorderid' => $this->getInfoInstance()->getAdditionalInformation('workorderid'),
+            'add_paydata[authorization_token]' => $this->getInfoInstance()->getAdditionalInformation('authorization_token'),
         ];
+
+        $oShipping = $oOrder->getShippingAddress();
+        if ($oShipping) {
+            $aBaseParams['add_paydata[shipping_email]'] = $oOrder->getCustomerEmail();
+            $aBaseParams['add_paydata[shipping_title]'] = '';
+            $aBaseParams['add_paydata[shipping_telephonenumber]'] = '';
+        }
 
         $aSubTypeParams = $this->getSubTypeSpecificParameters($oOrder);
         $aParams = array_merge($aBaseParams, $aSubTypeParams);
         return $aParams;
-    }
-
-    /**
-     * Method to trigger the Payone genericpayment request pre-check
-     *
-     * @param  float $dAmount
-     * @return array
-     * @throws LocalizedException
-     */
-    public function sendPayonePreCheck($dAmount)
-    {
-        $oQuote = $this->checkoutSession->getQuote();
-        if ($this->shopHelper->getConfigParam('currency') == 'display') {
-            $dAmount = $oQuote->getGrandTotal(); // send display amount instead of base amount
-        }
-        $aResponse = $this->precheckRequest->sendRequest($this, $oQuote, $dAmount);
-
-        if ($aResponse['status'] == 'ERROR') {// request returned an error
-            throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
-        } elseif ($aResponse['status'] == 'OK') {
-            $this->getInfoInstance()->setAdditionalInformation('workorderid', $aResponse['workorderid']);
-        }
-        return $aResponse;
-    }
-
-    /**
-     * Return long subtype
-     *
-     * @return string
-     */
-    public function getLongSubType()
-    {
-        return $this->sLongSubType;
     }
 
     /**
@@ -143,12 +122,7 @@ class KlarnaBase extends PayoneMethod
         parent::assignData($data);
 
         $oInfoInstance = $this->getInfoInstance();
-        foreach ($this->aAssignKeys as $sKey) {
-            $sData = $this->toolkitHelper->getAdditionalDataEntry($data, $sKey);
-            if ($sData) {
-                $oInfoInstance->setAdditionalInformation($sKey, $sData);
-            }
-        }
+        $oInfoInstance->setAdditionalInformation('authorization_token', $this->toolkitHelper->getAdditionalDataEntry($data, 'authorization_token'));
 
         return $this;
     }
