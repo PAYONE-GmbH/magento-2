@@ -84,7 +84,13 @@ class StartSession extends Base
         $this->addParameter('amount', number_format($this->apiHelper->getQuoteAmount($oQuote), 2, '.', '') * 100); // add price to request
         $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote)); // add currency to request
 
-        $this->addAddress($oQuote->getBillingAddress());
+        $oBilling = $oQuote->getBillingAddress();
+        $this->addAddress($oBilling);
+        if ($oBilling->getCompany()) {
+            $this->addParameter('add_paydata[organization_entity_type]', 'OTHER');
+            $this->addParameter('add_paydata[organization_registry_id]', '');
+        }
+
         $oShipping = $oQuote->getShippingAddress();
         if ($oShipping) {
             $this->addAddress($oShipping, true);

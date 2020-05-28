@@ -99,6 +99,12 @@ class KlarnaBase extends PayoneMethod
             'add_paydata[authorization_token]' => $this->getInfoInstance()->getAdditionalInformation('authorization_token'),
         ];
 
+        $oBilling = $oOrder->getBillingAddress();
+        if ($oBilling->getCompany()) {
+            $aBaseParams['add_paydata[organization_entity_type]'] = 'OTHER';
+            $aBaseParams['add_paydata[organization_registry_id]'] = '';
+        }
+
         $oShipping = $oOrder->getShippingAddress();
         if ($oShipping) {
             $aBaseParams['add_paydata[shipping_email]'] = $oOrder->getCustomerEmail();

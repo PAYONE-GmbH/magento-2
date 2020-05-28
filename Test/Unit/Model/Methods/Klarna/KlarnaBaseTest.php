@@ -61,13 +61,15 @@ class KlarnaBaseTest extends BaseTestCase
     public function testGetPaymentSpecificParameters()
     {
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getCompany')->willReturn('Firma');
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getBillingAddress')->willReturn($address);
         $order->method('getShippingAddress')->willReturn($address);
         $order->method('getCustomerEmail')->willReturn('tester@payone.de');
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
-        $this->assertCount(5, $result);
+        $this->assertCount(7, $result);
     }
 
     public function testAssignData()

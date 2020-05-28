@@ -185,14 +185,17 @@ define(
                         region: shippingAddress.regionCode,
                         phone: shippingAddress.telephone,
                         country: shippingAddress.countryId
-                    },
-                    //customer: {
-                    //    date_of_birth: "1970-01-01",
-                    //    gender: "male"
-                    //}
+                    }
                 };
 
-                console.log(data);
+                if (billingAddress.company !== undefined) {
+                    data.billing_address.organization_name = billingAddress.company;
+                    data.customer = {organization_registration_id: ''};
+                }
+                if (shippingAddress.company !== undefined) {
+                    data.shipping_address.organization_name = shippingAddress.company;
+                    data.customer = {organization_registration_id: ''};
+                }
 
                 if (self.authToken === false) {
                     Klarna.Payments.authorize({

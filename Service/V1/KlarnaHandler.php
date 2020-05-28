@@ -111,8 +111,8 @@ class KlarnaHandler implements KlarnaHandlerInterface
                     $oResponse->setData('errormessage', $aResponse['customermessage']);
                 }
             }
+            $oResponse->setData('success', $blSuccess);
         }
-        $oResponse->setData('success', $blSuccess);
 
         return $oResponse;
     }
