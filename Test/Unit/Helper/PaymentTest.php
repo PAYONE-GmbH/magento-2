@@ -223,4 +223,10 @@ class PaymentTest extends BaseTestCase
         $result = $this->payment->getAmazonPayWidgetUrl();
         $this->assertNotEmpty($result);
     }
+
+    public function testGetKlarnaMethodTitles()
+    {
+        $result = $this->payment->getKlarnaMethodTitles();
+        $this->assertCount(3, $result);
+    }
 }

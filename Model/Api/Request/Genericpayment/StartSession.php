@@ -96,11 +96,7 @@ class StartSession extends Base
         $this->addParameter('clearingtype', 'fnc');
         $this->addParameter('financingtype', $oPayment->getSubType());
 
-        try {
-            $this->invoiceGenerator->addProductInfo($this, $oQuote, false, false, $dShippingCosts);
-        } catch (\Exception $exc) {
-            error_log(date('Y-m-d H:i:s - ')."Error: ".$exc->getMessage()."\n", 3, dirname(__FILE__).'/klarna.log');
-        }
+        $this->invoiceGenerator->addProductInfo($this, $oQuote, false, false, $dShippingCosts);
 
         return $this->send($oPayment);
     }
