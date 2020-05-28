@@ -34,7 +34,7 @@ use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Framework\DataObject;
 
 /**
- * Base class for all Payolution methods
+ * Base class for all Klarna methods
  */
 class KlarnaBase extends PayoneMethod
 {

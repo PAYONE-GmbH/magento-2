@@ -32,7 +32,7 @@ use Magento\Framework\DataObject;
 use Magento\Payment\Model\InfoInterface;
 
 /**
- * Model for Klarna debit payment method
+ * Model for Klarna invoice payment method
  */
 class Invoice extends KlarnaBase
 {
