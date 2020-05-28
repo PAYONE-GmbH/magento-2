@@ -170,7 +170,7 @@ class AmazonPay implements AmazonPayInterface
     {
         $sWorkorderId = $this->checkoutSession->getAmazonWorkorderId();
         if (empty($sWorkorderId)) {
-            $aResult = $this->getConfiguration->sendRequest($this->payment);
+            $aResult = $this->getConfiguration->sendRequest($this->payment, $this->checkoutSession->getQuote());
             if (isset($aResult['status']) && $aResult['status'] == 'OK' && isset($aResult['workorderid'])) {
                 $sWorkorderId = $aResult['workorderid'];
                 $this->checkoutSession->setAmazonWorkorderId($aResult['workorderid']);
@@ -194,12 +194,12 @@ class AmazonPay implements AmazonPayInterface
         if (!empty($sWorkorderId)) {
             $blSuccess = true;
 
-            $aResult = $this->getOrderReferenceDetails->sendRequest($this->payment, $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
+            $oQuote = $this->checkoutSession->getQuote();
+            $aResult = $this->getOrderReferenceDetails->sendRequest($this->payment, $oQuote, $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
             if (isset($aResult['status']) && $aResult['status'] == 'OK') {
                 $this->checkoutSession->setAmazonAddressToken($amazonAddressToken);
                 $this->checkoutSession->setAmazonReferenceId($amazonReferenceId);
 
-                $oQuote = $this->checkoutSession->getQuote();
                 $oQuote = $this->orderHelper->updateAddresses($oQuote, $aResult);
 
                 $oPayment = $oQuote->getPayment();
@@ -207,7 +207,7 @@ class AmazonPay implements AmazonPayInterface
 
                 $oQuote->save();
 
-                $aResult = $this->setOrderReferenceDetails->sendRequest($this->payment, 50.00, $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
+                $aResult = $this->setOrderReferenceDetails->sendRequest($this->payment, $oQuote, $sWorkorderId, $amazonReferenceId, $amazonAddressToken);
                 if (isset($aResult['status']) && $aResult['status'] == 'OK') {
                     if ($this->checkoutHelper->getCurrentCheckoutMethod($oQuote) == Onepage::METHOD_GUEST) {
                         $oQuote->setCustomerId(null)

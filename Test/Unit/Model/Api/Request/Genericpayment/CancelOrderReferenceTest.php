@@ -19,14 +19,14 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2019 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
 namespace Payone\Core\Test\Unit\Model\Api\Request\Genericpayment;
 
-use Payone\Core\Model\Api\Request\Genericpayment\ConfirmOrderReference as ClassToTest;
+use Payone\Core\Model\Api\Request\Genericpayment\CancelOrderReference as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
@@ -36,7 +36,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Url;
 
-class ConfirmOrderReferenceTest extends BaseTestCase
+class CancelOrderReferenceTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -60,7 +60,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
-        
+
         $url = $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
         $url->method('getUrl')->willReturn('https://www.payone.com/');
 
@@ -75,13 +75,12 @@ class ConfirmOrderReferenceTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save', 'getGrandTotal'])
+            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willReturn($quote);
-        $quote->method('getGrandTotal')->willReturn(100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -91,7 +90,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($payment, $quote, '123', '123');
+        $result = $this->classToTest->sendRequest($payment, $quote, 100,'123', '123');
         $this->assertEquals($response, $result);
     }
 
@@ -101,13 +100,12 @@ class ConfirmOrderReferenceTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save', 'getGrandTotal'])
+            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willThrowException($exception);
-        $quote->method('getGrandTotal')->willReturn(100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -117,7 +115,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($payment, $quote,'123', '123');
+        $result = $this->classToTest->sendRequest($payment, $quote, 100,'123', '123');
         $this->assertEquals($response, $result);
     }
 }
