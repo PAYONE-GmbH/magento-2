@@ -182,7 +182,7 @@ class Invoice
         }
     }
 
-    protected function addGiftCardItem(Order $oOrder)
+    protected function addGiftCardItem($oOrder)
     {
         $giftCards = json_decode($oOrder->getData('gift_cards'), true);
 
