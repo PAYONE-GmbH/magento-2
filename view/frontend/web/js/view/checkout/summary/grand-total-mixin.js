@@ -17,33 +17,33 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 /*jshint browser:true jquery:true*/
 /*global alert*/
-var config = {
-    config: {
-        mixins: {
-            'Magento_Checkout/js/view/shipping': {
-                'Payone_Core/js/view/shipping-mixin': true
-            },
-            'Magento_Checkout/js/view/billing-address': {
-                'Payone_Core/js/view/billing-address-mixin': true
-            },
-            'Magento_Checkout/js/view/payment/default': {
-                'Payone_Core/js/view/payment/default-mixin': true
-            },
-            'Magento_Checkout/js/model/error-processor': {
-                'Payone_Core/js/model/error-processor-mixin': true
-            },
-            'Magento_Tax/js/view/checkout/summary/grand-total': {
-                'Payone_Core/js/view/checkout/summary/grand-total-mixin': true
-            },
-            'Magento_Checkout/js/action/select-payment-method': {
-                'Payone_Core/js/action/select-payment-method-mixin': true
+define([
+    'jquery',
+    'Magento_Checkout/js/model/quote'
+], function ($, quote) {
+    'use strict';
+
+    var mixin = {
+        isBaseGrandTotalDisplayNeeded: function () {
+            var parentReturn = this._super();
+            if (window.checkoutConfig.payment.payone.currency === "display" && parentReturn === true && quote.paymentMethod()) {
+                if (quote.paymentMethod().method.indexOf('payone') !== -1) {
+                    $('.opc-block-summary .totals.charge').hide();
+                } else {
+                    $('.opc-block-summary .totals.charge').show();
+                }
             }
+            return this._super();
         }
-    }
-};
+    };
+
+    return function (grand_total) {
+        return grand_total.extend(mixin);
+    };
+});

@@ -253,6 +253,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId()),
             'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
+            'currency' => $this->requestHelper->getConfigParam('currency'),
         ];
     }
 
