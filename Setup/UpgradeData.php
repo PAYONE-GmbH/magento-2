@@ -36,6 +36,7 @@ use Payone\Core\Helper\Shop;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Payone\Core\Helper\Payment;
 use Magento\Store\Model\ScopeInterface;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Source\CreditcardTypes;
 
 /**
@@ -384,6 +385,9 @@ class UpgradeData implements UpgradeDataInterface
      */
     protected function addPaymentInactiveConfig($methodCode)
     {
+        if ($methodCode == PayoneConfig::METHOD_KLARNA_BASE) { // Klarna base has to stay active
+            return;
+        }
         $this->configWriter->save('payment/'.$methodCode.'/active', 0);
     }
 
