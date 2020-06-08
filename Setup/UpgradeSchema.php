@@ -103,20 +103,6 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
             );
         }
 
-        if (!$setup->getConnection()->tableColumnExists($setup->getTable('customer_entity'), 'payone_paydirekt_registered')) {
-            $setup->getConnection()->addColumn(
-                $setup->getTable('customer_entity'),
-                'payone_paydirekt_registered',
-                [
-                    'type' => Table::TYPE_INTEGER,
-                    'length' => 1,
-                    'nullable' => false,
-                    'default' => 0,
-                    'comment' => 'Payone paydirekt OneClick is registered'
-                ]
-            );
-        }
-
         if (!$setup->getConnection()->tableColumnExists($setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES), 'score')) {
             $setup->getConnection()->addColumn(
                 $setup->getTable(CheckedAddresses::TABLE_CHECKED_ADDRESSES),

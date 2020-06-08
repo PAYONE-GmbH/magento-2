@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Setup;
 
+use Magento\Customer\Setup\CustomerSetup;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -262,29 +263,16 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
+        $customerInstaller = $this->customerSetupFactory->create(['setup' => $setup]);
         if ($setup->getConnection()->tableColumnExists($setup->getTable('customer_entity'), 'payone_paydirekt_registered')) {
-            $customerInstaller = $this->customerSetupFactory->create(['setup' => $setup]);
             $customerInstaller->removeAttribute('customer', 'payone_paydirekt_registered');
             if (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_registered', 'attribute_id')) {
-                $customerInstaller->addAttribute(
-                    'customer',
-                    'payone_paydirekt_registered',
-                    [
-                        'type'         => 'int',
-                        'label'        => 'Payone paydirekt OneClick is registered',
-                        'input'        => 'text',
-                        'required'     => false,
-                        'visible'      => false,
-                        'user_defined' => false,
-                        'sort_order'   => 999,
-                        'position'     => 999,
-                        'system'       => 0,
-                    ]
-                );
-
+                $this->addPaydirektRegisteredAttribute($customerInstaller);
                 $this->copyPaydirektRegisteredData($setup, $customerInstaller->getAttributeId('customer', 'payone_paydirekt_registered'));
                 $setup->getConnection()->dropColumn($setup->getTable('customer_entity'), 'payone_paydirekt_registered');
             }
+        } elseif (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_registered', 'attribute_id')) {
+            $this->addPaydirektRegisteredAttribute($customerInstaller);
         }
 
         $this->deactivateNewPaymentMethods($setup);
@@ -294,6 +282,31 @@ class UpgradeData implements UpgradeDataInterface
         }
 
         $setup->endSetup();
+    }
+
+    /**
+     * Adds payone_paydirekt_registered attribute
+     *
+     * @param  CustomerSetup $customerInstaller
+     * @return void
+     */
+    protected function addPaydirektRegisteredAttribute(CustomerSetup $customerInstaller)
+    {
+        $customerInstaller->addAttribute(
+            'customer',
+            'payone_paydirekt_registered',
+            [
+                'type'         => 'int',
+                'label'        => 'Payone paydirekt OneClick is registered',
+                'input'        => 'text',
+                'required'     => false,
+                'visible'      => false,
+                'user_defined' => false,
+                'sort_order'   => 999,
+                'position'     => 999,
+                'system'       => 0,
+            ]
+        );
     }
 
     /**
