@@ -262,28 +262,27 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
-        $customerInstaller = $this->customerSetupFactory->create(['setup' => $setup]);
-        $customerInstaller->removeAttribute('customer', 'payone_paydirekt_registered');
-        if (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_registered', 'attribute_id')) {
-            $customerInstaller->addAttribute(
-                'customer',
-                'payone_paydirekt_registered',
-                [
-                    'type'         => 'int',
-                    'label'        => 'Payone paydirekt OneClick is registered',
-                    'input'        => 'text',
-                    'required'     => false,
-                    'visible'      => false,
-                    'user_defined' => false,
-                    'sort_order'   => 999,
-                    'position'     => 999,
-                    'system'       => 0,
-                ]
-            );
+        if ($setup->getConnection()->tableColumnExists($setup->getTable('customer_entity'), 'payone_paydirekt_registered')) {
+            $customerInstaller = $this->customerSetupFactory->create(['setup' => $setup]);
+            $customerInstaller->removeAttribute('customer', 'payone_paydirekt_registered');
+            if (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_registered', 'attribute_id')) {
+                $customerInstaller->addAttribute(
+                    'customer',
+                    'payone_paydirekt_registered',
+                    [
+                        'type'         => 'int',
+                        'label'        => 'Payone paydirekt OneClick is registered',
+                        'input'        => 'text',
+                        'required'     => false,
+                        'visible'      => false,
+                        'user_defined' => false,
+                        'sort_order'   => 999,
+                        'position'     => 999,
+                        'system'       => 0,
+                    ]
+                );
 
-            $this->copyPaydirektRegisteredData($setup, $customerInstaller->getAttributeId('customer', 'payone_paydirekt_registered'));
-
-            if ($setup->getConnection()->tableColumnExists($setup->getTable('customer_entity'), 'payone_paydirekt_registered')) {
+                $this->copyPaydirektRegisteredData($setup, $customerInstaller->getAttributeId('customer', 'payone_paydirekt_registered'));
                 $setup->getConnection()->dropColumn($setup->getTable('customer_entity'), 'payone_paydirekt_registered');
             }
         }
