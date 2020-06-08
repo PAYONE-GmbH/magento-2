@@ -38,6 +38,8 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Customer\Model\Session\Proxy as CustomerSession;
 use Magento\Customer\Model\Customer;
+use Magento\Customer\Model\Data\Customer as CustomerData;
+use Magento\Framework\Model\AbstractExtensibleModel;
 
 class AddPaydirektOneklickButtonTest extends BaseTestCase
 {
@@ -61,17 +63,25 @@ class AddPaydirektOneklickButtonTest extends BaseTestCase
      */
     private $customerSession;
 
+    /**
+     * @var CustomerData|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $customerData;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
 
         $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
 
+        $this->customerData = $this->getMockBuilder(CustomerData::class)->disableOriginalConstructor()->getMock();
+
         $customer = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayonePaydirektRegistered'])
+            ->setMethods(['getPayonePaydirektRegistered', 'getDataModel'])
             ->getMock();
         $customer->method('getPayonePaydirektRegistered')->willReturn(true);
+        $customer->method('getDataModel')->willReturn($this->customerData);
 
         $this->customerSession = $this->getMockBuilder(CustomerSession::class)->disableOriginalConstructor()->getMock();
         $this->customerSession->method('getCustomer')->willReturn($customer);
@@ -133,6 +143,36 @@ class AddPaydirektOneklickButtonTest extends BaseTestCase
         $this->assertNull($result);
     }
 
+    public function testExecuteNotRegistered()
+    {
+        $this->paymentHelper->method('isPaymentMethodActive')->willReturn(true);
+
+        $shortcut = $this->getMockBuilder(Shortcut::class)->disableOriginalConstructor()->getMock();
+
+        $layout = $this->getMockBuilder(LayoutInterface::class)->disableOriginalConstructor()->getMock();
+        $layout->method('createBlock')->willReturn($shortcut);
+
+        $shortcutButtons = $this->getMockBuilder(ShortcutButtons::class)->disableOriginalConstructor()->getMock();
+        $shortcutButtons->method('getNameInLayout')->willReturn('test');
+        $shortcutButtons->method('getLayout')->willReturn($layout);
+
+        $event = $this->getMockBuilder(Event::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getContainer'])
+            ->getMock();
+        $event->method('getContainer')->willReturn($shortcutButtons);
+
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
+        $observer->method('getEvent')->willReturn($event);
+
+        $this->customerData->method('getCustomAttribute')->willReturn(null);
+
+        $this->customerSession->method('isLoggedIn')->willReturn(true);
+
+        $result = $this->classToTest->execute($observer);
+        $this->assertNull($result);
+    }
+
     public function testExecutePaydirektActive()
     {
         $this->paymentHelper->method('isPaymentMethodActive')->willReturn(true);
@@ -154,6 +194,14 @@ class AddPaydirektOneklickButtonTest extends BaseTestCase
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);
+
+        $customAttribute = $this->getMockBuilder(AbstractExtensibleModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getValue'])
+            ->getMock();
+        $customAttribute->method('getValue')->willReturn(true);
+
+        $this->customerData->method('getCustomAttribute')->willReturn($customAttribute);
 
         $this->customerSession->method('isLoggedIn')->willReturn(true);
 

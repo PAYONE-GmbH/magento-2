@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Setup;
 
+use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
@@ -262,6 +263,7 @@ class UpgradeData implements UpgradeDataInterface
         }
 
         $customerInstaller = $this->customerSetupFactory->create(['setup' => $setup]);
+        $customerInstaller->removeAttribute('customer', 'payone_paydirekt_registered');
         if (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_registered', 'attribute_id')) {
             $customerInstaller->addAttribute(
                 'customer',
@@ -272,12 +274,18 @@ class UpgradeData implements UpgradeDataInterface
                     'input'        => 'text',
                     'required'     => false,
                     'visible'      => false,
-                    'user_defined' => true,
+                    'user_defined' => false,
                     'sort_order'   => 999,
                     'position'     => 999,
                     'system'       => 0,
                 ]
             );
+
+            $this->copyPaydirektRegisteredData($setup, $customerInstaller->getAttributeId('customer', 'payone_paydirekt_registered'));
+
+            if ($setup->getConnection()->tableColumnExists($setup->getTable('customer_entity'), 'payone_paydirekt_registered')) {
+                $setup->getConnection()->dropColumn($setup->getTable('customer_entity'), 'payone_paydirekt_registered');
+            }
         }
 
         $this->deactivateNewPaymentMethods($setup);
@@ -406,6 +414,33 @@ class UpgradeData implements UpgradeDataInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * Copied payone_paydirekt_registered data from the customer_entity table to the eav_entities
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @param  int                      $attributeId
+     * @return void
+     */
+    protected function copyPaydirektRegisteredData(ModuleDataSetupInterface $setup, $attributeId)
+    {
+        $select = $setup->getConnection()
+            ->select()
+            ->from($setup->getTable('customer_entity'), ['entity_id'])
+            ->where('payone_paydirekt_registered = 1');
+        $result = $setup->getConnection()->fetchAssoc($select);
+
+        foreach ($result as $row) {
+            $setup->getConnection()->insert(
+                $setup->getTable('customer_entity_int'),
+                [
+                    'attribute_id' => $attributeId,
+                    'entity_id' => $row['entity_id'],
+                    'value' => 1,
+                ]
+            );
+        }
     }
 
     /**

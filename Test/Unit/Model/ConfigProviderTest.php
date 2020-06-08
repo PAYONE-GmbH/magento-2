@@ -45,6 +45,8 @@ use Magento\Checkout\Model\Session;
 use Magento\Customer\Model\Session as CustomerSession;
 use Payone\Core\Model\ResourceModel\SavedPaymentData;
 use Magento\Customer\Model\Customer as CustomerModel;
+use Magento\Customer\Model\Data\Customer as CustomerData;
+use Magento\Framework\Model\AbstractExtensibleModel;
 
 class ConfigProviderTest extends BaseTestCase
 {
@@ -115,11 +117,15 @@ class ConfigProviderTest extends BaseTestCase
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 
+        $customerData = $this->getMockBuilder(CustomerData::class)->disableOriginalConstructor()->getMock();
+        $customerData->method('getCustomAttribute')->willReturn(null);
+
         $customer = $this->getMockBuilder(CustomerModel::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayonePaydirektRegistered'])
+            ->setMethods(['getPayonePaydirektRegistered', 'getDataModel'])
             ->getMock();
         $customer->method('getPayonePaydirektRegistered')->willReturn('0');
+        $customer->method('getDataModel')->willReturn($customerData);
         
         $this->customerSession = $this->getMockBuilder(CustomerSession::class)->disableOriginalConstructor()->getMock();
         $this->customerSession->method('getCustomer')->willReturn($customer);
