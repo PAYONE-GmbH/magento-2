@@ -38,11 +38,7 @@
             <div data-ui-id="checkout-cart-validationmessages-message-error"><?php echo $this->getErrorMessage(); ?></div>
         </div>
     <?php endif; ?>
-    <form method="post" action="<?php echo $this->getCheckoutUrl(); ?> ">
-        <button class="action primary checkout" type="submit">
-            <span><?php echo __('Back'); ?></span>
-        </button>
-    </form>
+    <a class="action primary checkout" type="submit" href="<?php echo $this->getCheckoutUrl(); ?>"><?php echo __('Back'); ?></a>
     <?php if (!$this->getErrorMessage()): ?>
         <h3 class="section">
             <strong><?php echo __('SEPA debit note'); ?></strong>
