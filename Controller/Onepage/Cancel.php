@@ -84,6 +84,8 @@ class Cancel extends Action
     public function execute()
     {
         try {
+            $sPayPalWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+
             $this->checkoutSession->setIsPayoneRedirectCancellation(true);
             $this->checkoutSession->unsPayoneWorkorderId();
             $this->checkoutSession->unsIsPayonePayPalExpress();
@@ -115,6 +117,10 @@ class Cancel extends Action
 
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        return $resultRedirect->setUrl($this->urlBuilder->getUrl('checkout').'#payment');
+        $sRedirectUrl = $this->urlBuilder->getUrl('checkout').'#payment';
+        if (!empty($sPayPalWorkorderId)) {
+            $sRedirectUrl = $this->urlBuilder->getUrl('checkout/cart');
+        }
+        return $resultRedirect->setUrl($sRedirectUrl);
     }
 }

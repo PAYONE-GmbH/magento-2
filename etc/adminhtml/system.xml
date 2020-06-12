@@ -49,7 +49,7 @@
                 </field>
                 <field id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Referencenumber prefix</label>
-                    <comment>optional</comment>
+                    <comment><![CDATA[optional - Please consider the maximum length of our <a href="https://docs.payone.com/display/PLATFORM/reference+-+definition" target="_blank" rel="noopener noreferrer" title="Documentation: Reference Definition">reference parameter</a>. We strongly suggest using a max of 5 characters as your prefix.]]></comment>
                     <tooltip>A unique referencenumber has to be transferred to PAYONE with every request. This is a consecutive number, normally starting at 1. When operating multiple shops ( e.g. live- and test-shop ) with the same PAYONE account-data there will be problems when the current referencenumber was already used. This can be avoided by using different prefixes on different shops.</tooltip>
                 </field>
                 <field id="allowspecific" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -87,11 +87,11 @@
                 <field id="invoice_appendix" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dynamic invoice message</label>
                     <comment>Maximum 255 digits. Placeholders: {{order_increment_id}}, {{customer_id}}</comment>
-                </field>  
+                </field>
                 <field id="invoice_appendix_refund" translate="label,comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dynamic refund message</label>
                     <comment>Maximum 255 digits. Placeholders: {{order_increment_id}}, {{order_id}}, {{customer_id}}</comment>
-                </field>  
+                </field>
             </group>
             <group id="statusmapping" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Status Mapping</label>
@@ -170,16 +170,6 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <field id="payone_billsafe" translate="label" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>BillSAFE</label>
-                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field>
-                <field id="payone_klarna" translate="label" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Klarna Invoice</label>
-                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field>
                 <field id="payone_safe_invoice" translate="label" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Safe Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -247,8 +237,6 @@
             <include path="Payone_Core::system/payone_obt_przelewy.xml"/>
             <include path="Payone_Core::system/payone_barzahlen.xml"/>
             <include path="Payone_Core::system/payone_paydirekt.xml"/>
-            <include path="Payone_Core::system/payone_billsafe.xml"/>
-            <include path="Payone_Core::system/payone_klarna.xml"/>
             <include path="Payone_Core::system/payone_safe_invoice.xml"/>
             <include path="Payone_Core::system/payone_payolution_invoice.xml"/>
             <include path="Payone_Core::system/payone_payolution_debit.xml"/>
@@ -399,8 +387,8 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="sample_mode_frequency" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
-					<label>Sample Mode Frequency</label>
-					<comment>Perform creditrating for 1 out of n orders.</comment>
+                    <label>Sample Mode Frequency</label>
+                    <comment>Perform creditrating for 1 out of n orders.</comment>
                     <depends>
                         <field id="sample_mode_enabled">1</field>
                     </depends>
@@ -426,7 +414,7 @@
                     <label>Maximum Order Total</label>
                 </field>
                 <field id="result_lifetime" translate="label,comment" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1">
-					<label>Lifetime</label>
+                    <label>Lifetime</label>
                     <comment>Result lifetime in days</comment>
                 </field>
             </group>
@@ -439,7 +427,7 @@
                 <label>Transaction-Status Processing</label>
                 <field id="valid_ips" translate="label,comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Valid PAYONE IPs</label>
-                    <comment>Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use * </comment>
+                    <comment>Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use *</comment>
                 </field>
                 <field id="proxy_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Proxy-Mode</label>
@@ -459,7 +447,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>Logfile can be found in /var/log/payone_transaction_forwarding.log</comment>
                 </field>
-           </group>
+            </group>
             <group id="discount" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Invoicing Data - Discount</label>
                 <field id="sku" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">

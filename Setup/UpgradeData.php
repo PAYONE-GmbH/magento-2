@@ -36,6 +36,7 @@ use Payone\Core\Helper\Shop;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Payone\Core\Helper\Payment;
 use Magento\Store\Model\ScopeInterface;
+use Payone\Core\Model\Source\CreditcardTypes;
 
 /**
  * Class UpgradeData
@@ -281,6 +282,10 @@ class UpgradeData implements UpgradeDataInterface
 
         $this->deactivateNewPaymentMethods($setup);
 
+        if (version_compare($context->getVersion(), '2.8.0', '<=')) { // pre update version is less than or equal to 2.8.0
+            $this->convertCreditcardTypesConfig($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -331,6 +336,44 @@ class UpgradeData implements UpgradeDataInterface
         $data = ['path' => 'payone_protect/personstatus/mapping'];
         $where = ['path = ?' => 'payone_protect/address_check/mapping_personstatus'];
         $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
+    }
+
+    /**
+     * Updates configured creditcard types from old data handling to new data handling
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @return void
+     */
+    protected function convertCreditcardTypesConfig(ModuleDataSetupInterface $setup)
+    {
+        $select = $setup->getConnection()
+            ->select()
+            ->from($setup->getTable('core_config_data'), ['config_id', 'value'])
+            ->where('path = "payone_payment/payone_creditcard/types"');
+        $result = $setup->getConnection()->fetchAssoc($select);
+
+        $cardTypes = CreditcardTypes::getCreditcardTypes();
+        foreach ($result as $row) {
+            $newCardTypes = [];
+            $activatedCardtypes = explode(',', $row['value']);
+            foreach ($activatedCardtypes as $activeCardType) {
+                if ($activeCardType == "C") {
+                    $newCardTypes[] = "discover";
+                } elseif ($activeCardType == "D") {
+                    $newCardTypes[] = "dinersclub";
+                } else {
+                    foreach ($cardTypes as $cardTypeId => $cardType) {
+                        if ($cardType['cardtype'] == $activeCardType) {
+                            $newCardTypes[] = $cardTypeId;
+                        }
+                    }
+                }
+            }
+
+            $data = ['value' => implode(",", $newCardTypes)];
+            $where = ['config_id = ?' => $row['config_id']];
+            $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
+        }
     }
 
     /**

@@ -90,7 +90,7 @@ class PaymentTest extends BaseTestCase
 
     public function testGetAvailableCreditcardTypes()
     {
-        $creditcardTypes = 'V,M';
+        $creditcardTypes = 'visa,mastercard';
         $expected = [
             ['id' => 'V', 'title' => 'Visa', 'cvc_length' => 3],
             ['id' => 'M', 'title' => 'Mastercard', 'cvc_length' => 3]

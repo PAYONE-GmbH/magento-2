@@ -150,6 +150,7 @@ class Invoice
         if ($aPositions === false || $blFirstCapture === true || $blDebit === true) {
             $this->addShippingItem($oOrder, $aPositions, $blDebit); // add shipping invoice params to request
             $this->addDiscountItem($oOrder, $aPositions, $blDebit); // add discount invoice params to request
+            $this->addGiftCardItem($oOrder);  // add gift card invoice params to request
             $this->addAmastyGiftcards($oOrder, $aPositions, $blDebit); // add amasty giftcard invoice params to request
         }
         return $this->dAmount;
@@ -179,6 +180,19 @@ class Invoice
             if ($this->dTax === false) { // is dTax not set yet?
                 $this->dTax = $oItem->getTaxPercent(); // set the tax for following entities which dont have the vat attached to it
             }
+        }
+    }
+
+    protected function addGiftCardItem(Order $oOrder)
+    {
+        $giftCards = json_decode($oOrder->getData('gift_cards'), true);
+
+        if(empty($giftCards) || !is_array($giftCards)) {
+            return;
+        }
+
+        foreach($giftCards as $giftCard) {
+            $this->addInvoicePosition($giftCard['c'], -$giftCard['authorized'], 'voucher', 1, 'Giftcard', 0);
         }
     }
 

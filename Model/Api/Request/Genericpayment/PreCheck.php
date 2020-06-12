@@ -95,10 +95,18 @@ class PreCheck extends Base
         }
 
         if ($oPayment->getData('info_instance')) {
-            $sTradeRegistryNumber = $oPayment->getInfoInstance()->getAdditionalInformation('trade_registry_number');
-            if ($sTradeRegistryNumber) {
+            $blB2bMode = $oPayment->getInfoInstance()->getAdditionalInformation('b2bmode');
+            if (!empty($blB2bMode) && (bool)$blB2bMode === true) {
                 $this->addParameter('add_paydata[b2b]', 'yes');
-                $this->addParameter('add_paydata[company_trade_registry_number]', $sTradeRegistryNumber);
+
+                $sTradeRegistryNumber = $oPayment->getInfoInstance()->getAdditionalInformation('trade_registry_number');
+                if (!empty($sTradeRegistryNumber)) {
+                    $this->addParameter('add_paydata[company_trade_registry_number]', $sTradeRegistryNumber);
+                }
+                $sCompanyUid = $oPayment->getInfoInstance()->getAdditionalInformation('company_uid');
+                if (!empty($sCompanyUid)) {
+                    $this->addParameter('add_paydata[company_uid]', $sCompanyUid);
+                }
             }
         }
 

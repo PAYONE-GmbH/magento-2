@@ -28,13 +28,14 @@ namespace Payone\Core\Controller\Transactionstatus;
 
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Data\Form\FormKey;
 use Payone\Core\Model\TransactionStatus\Forwarding;
 use Magento\Framework\Controller\Result\RawFactory;
 
 /**
  * TransactionStatus decoupler
  */
-class Decouple extends \Magento\Framework\App\Action\Action
+class Decouple extends \Payone\Core\Controller\ExternalAction
 {
     /**
      * PAYONE TransactionStatus Forwarding
@@ -54,22 +55,15 @@ class Decouple extends \Magento\Framework\App\Action\Action
      * Constructor
      *
      * @param Context    $context
+     * @param FormKey    $formKey
      * @param Forwarding $statusForwarding
      * @param RawFactory $resultRawFactory
      */
-    public function __construct(Context $context, Forwarding $statusForwarding, RawFactory $resultRawFactory) {
-        parent::__construct($context);
+    public function __construct(Context $context, FormKey $formKey, Forwarding $statusForwarding, RawFactory $resultRawFactory) {
+        parent::__construct($context, $formKey);
 
         $this->statusForwarding = $statusForwarding;
         $this->resultRawFactory = $resultRawFactory;
-
-        // Fix for Magento 2.3 CsrfValidator and backwards-compatibility to prior Magento 2 versions
-        if(interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
-            $request = $this->getRequest();
-            if ($request instanceof Http && $request->isPost()) {
-                $request->setParam('ajax', true);
-            }
-        }
     }
 
     /**

@@ -54,8 +54,6 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_POSTFINANCE_CARD,
         PayoneConfig::METHOD_OBT_IDEAL,
         PayoneConfig::METHOD_OBT_PRZELEWY,
-        PayoneConfig::METHOD_BILLSAFE,
-        PayoneConfig::METHOD_KLARNA,
         PayoneConfig::METHOD_BARZAHLEN,
         PayoneConfig::METHOD_PAYDIREKT,
         PayoneConfig::METHOD_SAFE_INVOICE,
@@ -86,8 +84,6 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_PRZELEWY => 'sb',
         PayoneConfig::METHOD_PAYPAL => 'wlt',
         PayoneConfig::METHOD_PAYDIREKT => 'wlt',
-        PayoneConfig::METHOD_BILLSAFE => 'fnc',
-        PayoneConfig::METHOD_KLARNA => 'fnc',
         PayoneConfig::METHOD_BARZAHLEN => 'csh',
         PayoneConfig::METHOD_SAFE_INVOICE => 'rec',
         PayoneConfig::METHOD_PAYOLUTION_INVOICE => 'fnc',
@@ -146,11 +142,11 @@ class Payment extends \Payone\Core\Helper\Base
             $aAllTypes = CreditcardTypes::getCreditcardTypes();
 
             $aCreditcardTypes = explode(',', $sCreditcardTypes);
-            foreach ($aCreditcardTypes as $sType) {
+            foreach ($aCreditcardTypes as $sTypeId) {
                 $aReturn[] = [
-                    'id' => $sType,
-                    'title' => $aAllTypes[$sType]['name'],
-                    'cvc_length' => $aAllTypes[$sType]['cvc_length'],
+                    'id' => $aAllTypes[$sTypeId]['cardtype'],
+                    'title' => $aAllTypes[$sTypeId]['name'],
+                    'cvc_length' => $aAllTypes[$sTypeId]['cvc_length'],
                 ];
             }
         }

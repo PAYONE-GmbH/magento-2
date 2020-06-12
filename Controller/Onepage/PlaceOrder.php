@@ -26,6 +26,8 @@
 
 namespace Payone\Core\Controller\Onepage;
 
+use Payone\Core\Model\PayoneConfig;
+
 /**
  * Controller for creating the PaypalExpress orders
  */
@@ -119,6 +121,9 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
 
         $this->checkoutSession->setPayoneUserAgent($this->getRequest()->getHeader('user-agent'));
         $this->checkoutSession->setPayoneExpressType($oQuote->getPayment()->getMethod());
+        if ($oQuote->getPayment()->getMethod() == PayoneConfig::METHOD_PAYPAL) {
+            $this->checkoutSession->setIsPayonePayPalExpress(true);
+        }
         if ($this->getRequest()->getParam('fingerprint')) {
             $this->checkoutSession->setPayoneDeviceFingerprint($this->getRequest()->getParam('fingerprint'));
         }
