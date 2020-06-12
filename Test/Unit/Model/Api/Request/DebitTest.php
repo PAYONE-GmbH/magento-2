@@ -171,11 +171,12 @@ class DebitTest extends BaseTestCase
 
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered'])
+            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
             ->getMock();
         $item->method('getItemId')->willReturn('id');
         $item->method('getProductId')->willReturn('sku');
         $item->method('getQtyOrdered')->willReturn(2);
+        $item->method('getParentItemId')->willReturn(null);
 
         $item_missing = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
         $item_missing->method('getItemId')->willReturn('missing');

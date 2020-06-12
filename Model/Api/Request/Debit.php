@@ -112,7 +112,7 @@ class Debit extends Base
                     if ($aCreditmemo['items'][$oItem->getItemId()]['qty'] != $oItem->getQtyOrdered()) {
                         $blFull = false;
                     }
-                } else {
+                } elseif (!$oItem->getParentItemId()) { // dont set invoice list to not full on variant dummy items
                     $blFull = false;
                 }
             }
