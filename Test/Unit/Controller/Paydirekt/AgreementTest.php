@@ -44,6 +44,8 @@ use Magento\Quote\Model\Quote\Payment;
 use Magento\Customer\Model\Address;
 use Magento\Quote\Model\Quote\Address as QuoteAddress;
 use Magento\Customer\Api\Data\AddressInterface;
+use Magento\Customer\Model\Data\Customer as CustomerData;
+use Magento\Framework\Model\AbstractExtensibleModel;
 
 class AgreementTest extends BaseTestCase
 {
@@ -67,12 +69,21 @@ class AgreementTest extends BaseTestCase
      */
     private $customer;
 
+    /**
+     * @var RequestInterface|PayoneObjectManager
+     */
+    private $request;
+
+    /**
+     * @var AbstractExtensibleModel|PayoneObjectManager
+     */
+    private $customerData;
+
     protected function setUp()
     {
         $this->objectManager = $this->getObjectManager();
 
-        $request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
-        $request->method('getParam')->willReturn('123');
+        $this->request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $response = $this->getMockBuilder(ResponseInterface::class)->disableOriginalConstructor()->getMock();
         $redirect = $this->getMockBuilder(RedirectInterface::class)->disableOriginalConstructor()->getMock();
@@ -80,7 +91,7 @@ class AgreementTest extends BaseTestCase
         $urlBuilder->method('getUrl')->willReturn('http://www.test.com');
 
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $context->method('getRequest')->willReturn($request);
+        $context->method('getRequest')->willReturn($this->request);
         $context->method('getUrl')->willReturn($urlBuilder);
         $context->method('getResponse')->willReturn($response);
         $context->method('getRedirect')->willReturn($redirect);
@@ -106,6 +117,8 @@ class AgreementTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
         $address->method('getDataModel')->willReturn($addressData);
 
+        $this->customerData = $this->getMockBuilder(CustomerData::class)->disableOriginalConstructor()->getMock();
+
         $this->customer = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()
             ->setMethods([
@@ -113,11 +126,15 @@ class AgreementTest extends BaseTestCase
                 'setPayonePaydirektRegistered',
                 'getDefaultBillingAddress',
                 'getDefaultShippingAddress',
-                'setPayoneGenericpaymentSubtotal'
+                'setPayoneGenericpaymentSubtotal',
+                'getDataModel',
+                'updateData',
+                'save',
             ])
             ->getMock();
         $this->customer->method('getDefaultBillingAddress')->willReturn($address);
         $this->customer->method('getDefaultShippingAddress')->willReturn($address);
+        $this->customer->method('getDataModel')->willReturn($this->customerData);
 
         $customerSession = $this->getMockBuilder(CustomerSession::class)->disableOriginalConstructor()->getMock();
         $customerSession->method('getCustomer')->willReturn($this->customer);
@@ -134,7 +151,23 @@ class AgreementTest extends BaseTestCase
 
     public function testExecuteReview()
     {
-        $this->customer->method('getPayonePaydirektRegistered')->willReturn(true);
+        $this->customerData->method('getCustomAttribute')->willReturn(null);
+        $this->request->method('getParam')->willReturn('123');
+
+        $result = $this->classToTest->execute();
+        $this->assertNull($result);
+    }
+
+    public function testExecuteReviewRegistered()
+    {
+        $customAttribute = $this->getMockBuilder(AbstractExtensibleModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getValue'])
+            ->getMock();
+        $customAttribute->method('getValue')->willReturn(true);
+
+        $this->customerData->method('getCustomAttribute')->willReturn($customAttribute);
+        $this->request->method('getParam')->willReturn('123');
 
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -142,7 +175,10 @@ class AgreementTest extends BaseTestCase
 
     public function testExecuteRedirect()
     {
+        $this->customerData->method('getCustomAttribute')->willReturn(null);
         $this->customer->method('getPayonePaydirektRegistered')->willReturn(false);
+
+        $this->request->method('getParam')->willReturn(false);
 
         $response = [
             'status' => 'REDIRECT',
@@ -156,7 +192,10 @@ class AgreementTest extends BaseTestCase
 
     public function testExecuteError()
     {
+        $this->customerData->method('getCustomAttribute')->willReturn(null);
         $this->customer->method('getPayonePaydirektRegistered')->willReturn(false);
+
+        $this->request->method('getParam')->willReturn(false);
 
         $response = ['status' => 'ERROR'];
         $this->paydirektAgreement->method('sendAgreementRequest')->willReturn($response);

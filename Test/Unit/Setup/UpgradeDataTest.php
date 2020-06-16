@@ -88,10 +88,10 @@ class UpgradeDataTest extends BaseTestCase
 
     public function testInstall()
     {
-        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
+        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12, 'entity_id' => 12]];
 
         $connection = $this->getMockBuilder(Mysql::class)
-            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
+            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update', 'insert'])
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('tableColumnExists')->willReturn(false);
@@ -99,6 +99,7 @@ class UpgradeDataTest extends BaseTestCase
         $connection->method('from')->willReturn($connection);
         $connection->method('where')->willReturn($connection);
         $connection->method('update')->willReturn(1);
+        $connection->method('insert')->willReturn(1);
         $connection->method('fetchAssoc')->willReturn($fetchResult);
 
         $setup = $this->getMockBuilder(ModuleDataSetupInterface::class)->disableOriginalConstructor()->getMock();
@@ -114,10 +115,10 @@ class UpgradeDataTest extends BaseTestCase
 
     public function testInstallOldPayment()
     {
-        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
+        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12, 'entity_id' => 12]];
 
         $connection = $this->getMockBuilder(Mysql::class)
-            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
+            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update', 'insert'])
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('tableColumnExists')->willReturn(false);
@@ -125,6 +126,35 @@ class UpgradeDataTest extends BaseTestCase
         $connection->method('from')->willReturn($connection);
         $connection->method('where')->willReturn($connection);
         $connection->method('update')->willReturn(1);
+        $connection->method('insert')->willReturn(1);
+        $connection->method('fetchAssoc')->willReturn($fetchResult);
+
+        $setup = $this->getMockBuilder(ModuleDataSetupInterface::class)->disableOriginalConstructor()->getMock();
+        $setup->method('getTable')->willReturn('table');
+        $setup->method('getConnection')->willReturn($connection);
+
+        $context = $this->getMockBuilder(ModuleContextInterface::class)->disableOriginalConstructor()->getMock();
+        $context->method('getVersion')->willReturn('2.0.1');
+
+        $result = $this->classToTest->upgrade($setup, $context);
+        $this->assertNull($result);
+    }
+
+    public function testInstallColumnExists()
+    {
+        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12, 'entity_id' => 12]];
+
+        $connection = $this->getMockBuilder(Mysql::class)
+            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update', 'insert', 'dropColumn'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->method('tableColumnExists')->willReturn(true);
+        $connection->method('select')->willReturn($connection);
+        $connection->method('from')->willReturn($connection);
+        $connection->method('where')->willReturn($connection);
+        $connection->method('dropColumn')->willReturn($connection);
+        $connection->method('update')->willReturn(1);
+        $connection->method('insert')->willReturn(1);
         $connection->method('fetchAssoc')->willReturn($fetchResult);
 
         $setup = $this->getMockBuilder(ModuleDataSetupInterface::class)->disableOriginalConstructor()->getMock();

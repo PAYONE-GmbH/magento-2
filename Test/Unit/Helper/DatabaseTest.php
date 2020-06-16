@@ -312,16 +312,6 @@ class DatabaseTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMarkUserAsRegisteredWithPaydirekt()
-    {
-        $expected = 1;
-
-        $this->connection->method('update')->willReturn($expected);
-
-        $result = $this->database->markUserAsRegisteredWithPaydirekt(12345);
-        $this->assertEquals($expected, $result);
-    }
-
     public function testGetPaydirektOneklickOrderCount()
     {
         $expected = 1;
