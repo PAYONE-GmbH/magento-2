@@ -115,7 +115,7 @@ class StartSessionTest extends BaseTestCase
         $this->apiHelper->method('getQuoteAmount')->willReturn(5000);
         $this->apiHelper->method('getCurrencyFromQuote')->willReturn('EUR');
 
-        $result = $this->classToTest->sendRequest($quote, $payment, 5);
+        $result = $this->classToTest->sendRequest($quote, $payment, 5, 'tester@payone.de');
         $this->assertEquals($response, $result);
     }
 }

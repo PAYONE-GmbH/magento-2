@@ -103,7 +103,7 @@ class KlarnaHandlerTest extends BaseTestCase
 
         $this->startSession->method('sendRequest')->willReturn($response);
 
-        $result = $this->classToTest->startKlarnaSession(PayoneConfig::METHOD_KLARNA_INVOICE, 5);
+        $result = $this->classToTest->startKlarnaSession(PayoneConfig::METHOD_KLARNA_INVOICE, 5, 'tester@payone.de');
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
@@ -112,12 +112,28 @@ class KlarnaHandlerTest extends BaseTestCase
     {
         $response = [
             'status' => 'ERROR',
+            'errorcode' => '999',
             'customermessage' => 'An error occured'
         ];
 
         $this->startSession->method('sendRequest')->willReturn($response);
 
-        $result = $this->classToTest->startKlarnaSession(PayoneConfig::METHOD_KLARNA_INVOICE, 5);
+        $result = $this->classToTest->startKlarnaSession(PayoneConfig::METHOD_KLARNA_INVOICE, 5, 'tester@payone.de');
+        $result = $result->__toArray();
+        $this->assertFalse($result['success']);
+    }
+
+    public function testStartKlarnaSessionAnotherError()
+    {
+        $response = [
+            'status' => 'ERROR',
+            'errorcode' => '981',
+            'customermessage' => 'An error occured'
+        ];
+
+        $this->startSession->method('sendRequest')->willReturn($response);
+
+        $result = $this->classToTest->startKlarnaSession(PayoneConfig::METHOD_KLARNA_INVOICE, 5, 'tester@payone.de');
         $result = $result->__toArray();
         $this->assertFalse($result['success']);
     }

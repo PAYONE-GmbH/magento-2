@@ -92,6 +92,14 @@ define(
                 return window.checkoutConfig.payment.payone.klarnaTitles[methodCode];
             },
 
+            getCustomerEmail: function() {
+                var email = customer.customerData.email;
+                if (!customer.isLoggedIn()) {
+                    email = quote.guestEmail;
+                }
+                return email;
+            },
+
             startKlarnaCheckout: function (event, elem) {
                 var methodeCode = elem.currentTarget.id.replace("_selection", "");
                 var paymentMethodCategory = this.methodCategories[methodeCode];
@@ -105,9 +113,11 @@ define(
                 } else {
                     serviceUrl = urlBuilder.createUrl('/carts/mine/payone-startKlarna', {});
                 }
+
                 var request = {
                     paymentCode: methodeCode,
-                    shippingCosts: this.getShippingCosts()
+                    shippingCosts: this.getShippingCosts(),
+                    customerEmail: this.getCustomerEmail()
                 };
                 var self = this;
 
@@ -124,14 +134,13 @@ define(
                         if (response.success == true) {
                             startKlarnaWidget(response.client_token, self, methodeCode, paymentMethodCategory, 'klarnaInvoiceWidgetContainer');
                         } else {
-                            alert(response.errormessage);
+                            self.messageContainer.addErrorMessage({'message': response.errormessage});
                         }
                         fullScreenLoader.stopLoader();
                     }
                 ).fail(
                     function (response) {
-                        //errorProcessor.process(response, messageContainer);
-                        alert('An error occured.');
+                        self.messageContainer.addErrorMessage({'message': $t('An error occured.')});
                         fullScreenLoader.stopLoader();
                     }
                 );
@@ -166,7 +175,7 @@ define(
                     billing_address: {
                         given_name: billingAddress.firstname,
                         family_name: billingAddress.lastname,
-                        email: customer.customerData.email,
+                        email: this.getCustomerEmail(),
                         street_address: billingAddress.street[0],
                         //street_address2: "2. Stock",
                         postal_code: billingAddress.postcode,
@@ -178,7 +187,7 @@ define(
                     shipping_address: {
                         given_name: shippingAddress.firstname,
                         family_name: shippingAddress.lastname,
-                        email: customer.customerData.email,
+                        email: this.getCustomerEmail(),
                         street_address: shippingAddress.street[0],
                         postal_code: shippingAddress.postcode,
                         city: shippingAddress.city,

@@ -91,9 +91,10 @@ class KlarnaHandler implements KlarnaHandlerInterface
      *
      * @param  string $paymentCode
      * @param  double $shippingCosts
+     * @param  string $customerEmail
      * @return \Payone\Core\Service\V1\Data\KlarnaHandlerResponse
      */
-    public function startKlarnaSession($paymentCode, $shippingCosts)
+    public function startKlarnaSession($paymentCode, $shippingCosts, $customerEmail)
     {
         $oResponse = $this->responseFactory->create();
         $blSuccess = false;
@@ -102,13 +103,18 @@ class KlarnaHandler implements KlarnaHandlerInterface
         if (!empty($oMethodInstance)) {
             $oQuote = $this->checkoutSession->getQuote();
 
-            $aResponse = $this->startSession->sendRequest($oQuote, $oMethodInstance, $shippingCosts);
+            $aResponse = $this->startSession->sendRequest($oQuote, $oMethodInstance, $shippingCosts, $customerEmail);
+
             if (isset($aResponse['status'])) {
                 if ($aResponse['status'] == 'OK') {
                     $oResponse->setData('clientToken', $aResponse['add_paydata[client_token]']);
                     $blSuccess = true;
                 } elseif($aResponse['status'] == 'ERROR') {
-                    $oResponse->setData('errormessage', $aResponse['customermessage']);
+                    if ($aResponse['errorcode'] == '981') {
+                        $oResponse->setData('errormessage', __('Payment method is not available anymore'));
+                    } else {
+                        $oResponse->setData('errormessage', $aResponse['customermessage']);
+                    }
                 }
             }
             $oResponse->setData('success', $blSuccess);

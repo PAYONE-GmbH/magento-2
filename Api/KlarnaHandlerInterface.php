@@ -36,7 +36,8 @@ interface KlarnaHandlerInterface
      *
      * @param  string $paymentCode
      * @param  double $shippingCosts
+     * @param  string $customerEmail
      * @return \Payone\Core\Service\V1\Data\KlarnaHandlerResponse
      */
-    public function startKlarnaSession($paymentCode, $shippingCosts);
+    public function startKlarnaSession($paymentCode, $shippingCosts, $customerEmail);
 }

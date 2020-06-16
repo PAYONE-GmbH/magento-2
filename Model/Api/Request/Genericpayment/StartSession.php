@@ -71,9 +71,10 @@ class StartSession extends Base
      * @param Quote         $oQuote
      * @param PayoneMethod  $oPayment
      * @param double        $dShippingCosts
+     * @param string        $sCustomerEmail
      * @return array Response
      */
-    public function sendRequest(Quote $oQuote, PayoneMethod $oPayment, $dShippingCosts)
+    public function sendRequest(Quote $oQuote, PayoneMethod $oPayment, $dShippingCosts, $sCustomerEmail)
     {
         $this->addParameter('request', 'genericpayment');
         $this->addParameter('add_paydata[action]', 'start_session');
@@ -94,7 +95,7 @@ class StartSession extends Base
         $oShipping = $oQuote->getShippingAddress();
         if ($oShipping) {
             $this->addAddress($oShipping, true);
-            $this->addParameter('add_paydata[shipping_email]', $oQuote->getCustomerEmail());
+            $this->addParameter('add_paydata[shipping_email]', $sCustomerEmail);
             $this->addParameter('add_paydata[shipping_title]', '');
             $this->addParameter('add_paydata[shipping_telephonenumber]', '');
         }
