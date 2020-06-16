@@ -36,7 +36,7 @@ use Magento\Quote\Model\QuoteRepository;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Quote\Model\Quote;
-use Magento\Checkout\Model\Session\Proxy as Session;
+use Magento\Checkout\Model\Session;
 use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\Entities\TransactionStatus;
 

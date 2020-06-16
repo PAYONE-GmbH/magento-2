@@ -108,4 +108,29 @@
     <type name="Magento\Framework\Webapi\ErrorProcessor">
         <plugin name="Payone_Core_plugin_WebapiErrorProcessor" type="Payone\Core\Model\Plugins\WebapiErrorProcessor" sortOrder="1"/>
     </type>
+    <type name="Payone\Core\Controller\Onepage\Returned">
+        <arguments>
+            <argument name="substituteOrder" xsi:type="object">Payone\Core\Model\Handler\SubstituteOrder\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Payone\Core\Controller\Transactionstatus\Index">
+        <arguments>
+            <argument name="substituteOrder" xsi:type="object">Payone\Core\Model\Handler\SubstituteOrder\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Payone\Core\Observer\AddPaydirektOneklickButton">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Payone\Core\Model\Handler\SubstituteOrder">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Payone\Core\Observer\CheckoutSubmitBefore">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>

@@ -64,7 +64,7 @@ class CheckoutSubmitBefore implements ObserverInterface
     /**
      * Checkout session object
      *
-     * @var \Magento\Checkout\Model\Session\Proxy
+     * @var \Magento\Checkout\Model\Session
      */
     protected $checkoutSession;
 
@@ -74,13 +74,13 @@ class CheckoutSubmitBefore implements ObserverInterface
      * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
      * @param \Payone\Core\Helper\Consumerscore            $consumerscoreHelper
      * @param \Payone\Core\Model\Risk\Addresscheck         $addresscheck
-     * @param \Magento\Checkout\Model\Session\Proxy        $checkoutSession
+     * @param \Magento\Checkout\Model\Session              $checkoutSession
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Payone\Core\Model\Risk\Addresscheck $addresscheck,
-        \Magento\Checkout\Model\Session\Proxy $checkoutSession
+        \Magento\Checkout\Model\Session $checkoutSession
     ) {
         $this->consumerscore = $consumerscore;
         $this->consumerscoreHelper = $consumerscoreHelper;
