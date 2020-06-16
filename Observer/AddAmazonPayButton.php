@@ -33,7 +33,7 @@ use Magento\Paypal\Block\Express\Shortcut;
 use Magento\Store\Model\StoreManagerInterface;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\SimpleProtect\SimpleProtect;
-use Magento\Checkout\Model\Session\Proxy as CheckoutSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
 
 /**
  * Event class to add the Amazon Pay buttons to the frontend

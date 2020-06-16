@@ -26,7 +26,7 @@
 
 namespace Payone\Core\Observer;
 
-use Magento\Customer\Model\Session\Proxy as CustomerSession;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Event\ObserverInterface;
 use Payone\Core\Helper\Payment;
 use Magento\Framework\Event\Observer;
