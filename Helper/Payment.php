@@ -62,6 +62,10 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT,
         PayoneConfig::METHOD_ALIPAY,
         PayoneConfig::METHOD_AMAZONPAY,
+        PayoneConfig::METHOD_KLARNA_BASE,
+        PayoneConfig::METHOD_KLARNA_DEBIT,
+        PayoneConfig::METHOD_KLARNA_INVOICE,
+        PayoneConfig::METHOD_KLARNA_INSTALLMENT,
     ];
 
     /**
@@ -91,6 +95,10 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT => 'fnc',
         PayoneConfig::METHOD_ALIPAY => 'wlt',
         PayoneConfig::METHOD_AMAZONPAY => 'wlt',
+        PayoneConfig::METHOD_KLARNA_BASE => 'wlt',
+        PayoneConfig::METHOD_KLARNA_DEBIT => 'wlt',
+        PayoneConfig::METHOD_KLARNA_INVOICE => 'wlt',
+        PayoneConfig::METHOD_KLARNA_INSTALLMENT => 'wlt',
     ];
 
     /**
@@ -289,5 +297,17 @@ class Payment extends \Payone\Core\Helper\Base
             $sSandbox = '/sandbox';
         }
         return "https://static-eu.payments-amazon.com/OffAmazonPayments/eur".$sSandbox."/lpa/js/Widgets.js";
+    }
+
+    /**
+     * Returns method titles of Klarna payment methods
+     */
+    public function getKlarnaMethodTitles()
+    {
+        return [
+            PayoneConfig::METHOD_KLARNA_INVOICE => $this->getConfigParam('title', PayoneConfig::METHOD_KLARNA_INVOICE, 'payment'),
+            PayoneConfig::METHOD_KLARNA_DEBIT => $this->getConfigParam('title', PayoneConfig::METHOD_KLARNA_DEBIT, 'payment'),
+            PayoneConfig::METHOD_KLARNA_INSTALLMENT => $this->getConfigParam('title', PayoneConfig::METHOD_KLARNA_INSTALLMENT, 'payment'),
+        ];
     }
 }

@@ -112,6 +112,8 @@ class Paid implements ObserverInterface
         if ($oInvoice = array_shift($aInvoiceList)) { // get first invoice
             $oInvoice->pay(); // mark invoice as paid
             $oInvoice->save();
+
+            $oOrder->save();
         }
     }
 }

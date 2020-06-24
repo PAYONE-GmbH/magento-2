@@ -33,6 +33,8 @@
     <preference for="Payone\Core\Api\Data\EditAddressInterface" type="Payone\Core\Service\V1\Data\EditAddressResponse" />
     <preference for="Payone\Core\Api\AmazonPayInterface" type="Payone\Core\Service\V1\AmazonPay" />
     <preference for="Payone\Core\Api\Data\AmazonPayResponseInterface" type="Payone\Core\Service\V1\Data\AmazonPayResponse" />
+    <preference for="Payone\Core\Api\KlarnaHandlerInterface" type="Payone\Core\Service\V1\KlarnaHandler" />
+    <preference for="Payone\Core\Api\Data\KlarnaHandlerResponseInterface" type="Payone\Core\Service\V1\Data\KlarnaHandlerResponse" />
     <virtualType name="Payone\Core\Model\ResourceModel\ApiLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">payone_protocol_api</argument>
@@ -86,6 +88,9 @@
     </type>
     <type name="Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice">
         <plugin name="Payone_Core_Plugin_Prevent_Doubled_GiftCardAccounts" type="Payone\Core\Model\Plugins\GenerateGiftCardAccountsInvoice" sortOrder="1" />
+    </type>
+    <type name="Magento\Payment\Helper\Data">
+        <plugin sortOrder="5" name="payonePaymentData" type="Payone\Core\Model\Plugins\PaymentHelper"/>
     </type>
     <type name="Payone\Core\Model\Logger\Info">
         <arguments>
