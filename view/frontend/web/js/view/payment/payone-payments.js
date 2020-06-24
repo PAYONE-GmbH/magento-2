@@ -115,6 +115,22 @@ define(
             {
                 type: 'payone_amazonpay',
                 component: 'Payone_Core/js/view/payment/method-renderer/amazonpay-method'
+            },
+            {
+                type: 'payone_klarna_base',
+                component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
+            },
+            {
+                type: 'payone_klarna_invoice',
+                component: 'Payone_Core/js/view/payment/method-renderer/klarna_invoice-method'
+            },
+            {
+                type: 'payone_klarna_debit',
+                component: 'Payone_Core/js/view/payment/method-renderer/klarna_debit-method'
+            },
+            {
+                type: 'payone_klarna_installment',
+                component: 'Payone_Core/js/view/payment/method-renderer/klarna_installment-method'
             }
         );
         /** Add view logic here if needed */

@@ -254,6 +254,39 @@ class MethodList
     }
 
     /**
+     * Removes Klarna base methode if there are no Klarna sub-types available
+     *
+     * @param  array $aPaymentMethods
+     * @return array
+     */
+    public function checkKlarnaMethods($aPaymentMethods)
+    {
+        $iKeyKlarna = false;
+        $blHasKlarnaSubtypes = false;
+        $aKlarnaSubtypes = [
+            PayoneConfig::METHOD_KLARNA_INVOICE,
+            PayoneConfig::METHOD_KLARNA_DEBIT,
+            PayoneConfig::METHOD_KLARNA_INSTALLMENT
+        ];
+        for($i = 0; $i < count($aPaymentMethods); $i++) {
+            if (isset($aPaymentMethods[$i])) {
+                if ($aPaymentMethods[$i]->getCode() == PayoneConfig::METHOD_KLARNA_BASE) {
+                    $iKeyKlarna = $i;
+                }
+                if (in_array($aPaymentMethods[$i]->getCode(), $aKlarnaSubtypes) === true) {
+                    $blHasKlarnaSubtypes = true;
+                    break;
+                }
+            }
+        }
+
+        if ($iKeyKlarna !== false && $blHasKlarnaSubtypes === false) {
+            unset($aPaymentMethods[$iKeyKlarna]);
+        }
+        return $aPaymentMethods;
+    }
+
+    /**
      *
      * @param  OrigMethodList    $subject
      * @param  MethodInterface[] $aPaymentMethods
@@ -282,6 +315,7 @@ class MethodList
         $aPaymentMethods = $this->removeBannedPaymentMethods($aPaymentMethods, $oQuote);
         $aPaymentMethods = $this->removeNotWhitelistedPaymentMethods($aPaymentMethods);
         $aPaymentMethods = $this->removeAmazonPay($aPaymentMethods);
+        $aPaymentMethods = $this->checkKlarnaMethods($aPaymentMethods);
 
         return $aPaymentMethods;
     }

@@ -94,5 +94,17 @@
         <method name="payone_amazonpay">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="payone_klarna_base">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_klarna_invoice">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_klarna_debit">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_klarna_installment">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
     </methods>
 </payment>

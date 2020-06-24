@@ -33,7 +33,7 @@ class SubstituteOrder
     /**
      * Checkout session
      *
-     * @var \Magento\Checkout\Model\Session\Proxy
+     * @var \Magento\Checkout\Model\Session
      */
     protected $checkoutSession;
 
@@ -89,7 +89,7 @@ class SubstituteOrder
     /**
      * Constructor
      *
-     * @param \Magento\Checkout\Model\Session\Proxy                $checkoutSession
+     * @param \Magento\Checkout\Model\Session                      $checkoutSession
      * @param \Magento\Quote\Api\CartRepositoryInterface           $quoteRepository
      * @param \Magento\Sales\Api\OrderRepositoryInterface          $orderRepository
      * @param \Magento\Quote\Model\QuoteManagement                 $quoteManagement
@@ -99,7 +99,7 @@ class SubstituteOrder
      * @param \Payone\Core\Model\Handler\TransactionStatus         $transactionStatusHandler
      */
     public function __construct(
-        \Magento\Checkout\Model\Session\Proxy $checkoutSession,
+        \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Quote\Model\QuoteManagement $quoteManagement,

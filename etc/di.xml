@@ -33,6 +33,8 @@
     <preference for="Payone\Core\Api\Data\EditAddressInterface" type="Payone\Core\Service\V1\Data\EditAddressResponse" />
     <preference for="Payone\Core\Api\AmazonPayInterface" type="Payone\Core\Service\V1\AmazonPay" />
     <preference for="Payone\Core\Api\Data\AmazonPayResponseInterface" type="Payone\Core\Service\V1\Data\AmazonPayResponse" />
+    <preference for="Payone\Core\Api\KlarnaHandlerInterface" type="Payone\Core\Service\V1\KlarnaHandler" />
+    <preference for="Payone\Core\Api\Data\KlarnaHandlerResponseInterface" type="Payone\Core\Service\V1\Data\KlarnaHandlerResponse" />
     <virtualType name="Payone\Core\Model\ResourceModel\ApiLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">payone_protocol_api</argument>
@@ -87,6 +89,9 @@
     <type name="Magento\GiftCard\Observer\GenerateGiftCardAccountsInvoice">
         <plugin name="Payone_Core_Plugin_Prevent_Doubled_GiftCardAccounts" type="Payone\Core\Model\Plugins\GenerateGiftCardAccountsInvoice" sortOrder="1" />
     </type>
+    <type name="Magento\Payment\Helper\Data">
+        <plugin sortOrder="5" name="payonePaymentData" type="Payone\Core\Model\Plugins\PaymentHelper"/>
+    </type>
     <type name="Payone\Core\Model\Logger\Info">
         <arguments>
             <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
@@ -107,5 +112,30 @@
     </type>
     <type name="Magento\Framework\Webapi\ErrorProcessor">
         <plugin name="Payone_Core_plugin_WebapiErrorProcessor" type="Payone\Core\Model\Plugins\WebapiErrorProcessor" sortOrder="1"/>
+    </type>
+    <type name="Payone\Core\Controller\Onepage\Returned">
+        <arguments>
+            <argument name="substituteOrder" xsi:type="object">Payone\Core\Model\Handler\SubstituteOrder\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Payone\Core\Controller\Transactionstatus\Index">
+        <arguments>
+            <argument name="substituteOrder" xsi:type="object">Payone\Core\Model\Handler\SubstituteOrder\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Payone\Core\Observer\AddPaydirektOneklickButton">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Payone\Core\Model\Handler\SubstituteOrder">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Payone\Core\Observer\CheckoutSubmitBefore">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
     </type>
 </config>

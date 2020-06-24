@@ -79,7 +79,6 @@ class Managemandate extends AddressRequest
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // ID of PayOne Sub-Account
         $this->addParameter('clearingtype', 'elv');
 
-        $this->addParameter('customerid', $oCustomer->getId());
         $sPayOneUserId = $this->databaseHelper->getPayoneUserIdByCustNr($oCustomer->getId());
         if ($sPayOneUserId) {
             $this->addParameter('userid', $sPayOneUserId);

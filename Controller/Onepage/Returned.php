@@ -44,7 +44,7 @@ class Returned extends \Payone\Core\Controller\ExternalAction
     /**
      * PAYONE substitute order handler
      *
-     * @var \Payone\Core\Model\Handler\SubstituteOrder\Proxy
+     * @var \Payone\Core\Model\Handler\SubstituteOrder
      */
     protected $substituteOrder;
 
@@ -58,17 +58,17 @@ class Returned extends \Payone\Core\Controller\ExternalAction
     /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Action\Context            $context
-     * @param \Magento\Framework\Data\Form\FormKey             $formKey
-     * @param \Magento\Checkout\Model\Session                  $checkoutSession
-     * @param \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder
-     * @param \Payone\Core\Helper\Database                     $databaseHelper
+     * @param \Magento\Framework\App\Action\Context         $context
+     * @param \Magento\Framework\Data\Form\FormKey          $formKey
+     * @param \Magento\Checkout\Model\Session               $checkoutSession
+     * @param \Payone\Core\Model\Handler\SubstituteOrder    $substituteOrder
+     * @param \Payone\Core\Helper\Database                  $databaseHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Data\Form\FormKey $formKey,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Model\Handler\SubstituteOrder\Proxy $substituteOrder,
+        \Payone\Core\Model\Handler\SubstituteOrder $substituteOrder,
         \Payone\Core\Helper\Database $databaseHelper
     ) {
         parent::__construct($context, $formKey);

@@ -43,10 +43,7 @@ define(
             handleRedirectAction: function(sUrl) {
                 var self = this;
 
-                // update payment method information if additional data was changed
-                this.selectPaymentMethod();
                 this.isPlaceOrderActionAllowed(false);
-
                 this.getPlaceOrderDeferredObject()
                 .fail(
                     function () {
@@ -96,7 +93,7 @@ define(
                     return false;
                 }
             },
-            
+
             handleDebitPayment: function () {
                 if (this.validate() && additionalValidators.validate()) {
                     if (window.checkoutConfig.payment.payone.validateBankCode == true && window.checkoutConfig.payment.payone.bankCodeValidatedAndValid == false) {

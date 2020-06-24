@@ -28,6 +28,8 @@ namespace Payone\Core\Model\Api;
 
 use Payone\Core\Model\Api\Request\Base;
 use Magento\Sales\Model\Order;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
+use Magento\Quote\Model\Quote;
 
 /**
  * Collect all invoice parameters
@@ -120,23 +122,26 @@ class Invoice
     /**
      * Add invoicing data to the request and return the summed invoicing amount
      *
-     * @param  Base  $oRequest   Request object
-     * @param  Order $oOrder     Order object
-     * @param  array $aPositions Is given with non-complete captures or debits
-     * @param  bool  $blDebit    Is the call coming from a debit request
+     * @param  Base     $oRequest       Request object
+     * @param  object   $oOrder         Order object
+     * @param  array    $aPositions     Is given with non-complete captures or debits
+     * @param  bool     $blDebit        Is the call coming from a debit request
+     * @param  double   $dShippingCosts Shipping costs - needed for Klarna start_session
      * @return integer
      */
-    public function addProductInfo(Base $oRequest, Order $oOrder, $aPositions = false, $blDebit = false)
+    public function addProductInfo(Base $oRequest, $oOrder, $aPositions = false, $blDebit = false, $dShippingCosts = false)
     {
         $this->oRequest = $oRequest; // write request to property for manipulation of the object
-        $sInvoiceAppendix = $this->toolkitHelper->getInvoiceAppendix($oOrder); // get invoice appendix
-        if (!empty($sInvoiceAppendix)) {// invoice appendix existing?
-            $this->oRequest->addParameter('invoiceappendix', $sInvoiceAppendix); // add appendix to request
+        if ($oOrder instanceof Order) {
+            $sInvoiceAppendix = $this->toolkitHelper->getInvoiceAppendix($oOrder); // get invoice appendix
+            if (!empty($sInvoiceAppendix)) { // invoice appendix existing?
+                $this->oRequest->addParameter('invoiceappendix', $sInvoiceAppendix); // add appendix to request
+            }
         }
 
         $iQtyInvoiced = 0;
         foreach ($oOrder->getAllItems() as $oItem) { // add invoice items for all order items
-            if ($oItem->isDummy() === false) { // prevent variant-products of adding 2 items
+            if (($oOrder instanceof Order && $oItem->isDummy() === false) || ($oOrder instanceof Quote && $oItem->getParentItemId() === null)) { // prevent variant-products of adding 2 items
                 $this->addProductItem($oItem, $aPositions); // add product invoice params to request
             }
             $iQtyInvoiced += $oItem->getOrigData('qty_invoiced'); // get data pre-capture
@@ -148,7 +153,7 @@ class Invoice
         }
 
         if ($aPositions === false || $blFirstCapture === true || $blDebit === true) {
-            $this->addShippingItem($oOrder, $aPositions, $blDebit); // add shipping invoice params to request
+            $this->addShippingItem($oOrder, $aPositions, $blDebit, $dShippingCosts); // add shipping invoice params to request
             $this->addDiscountItem($oOrder, $aPositions, $blDebit); // add discount invoice params to request
             $this->addGiftCardItem($oOrder);  // add gift card invoice params to request
             $this->addAmastyGiftcards($oOrder, $aPositions, $blDebit); // add amasty giftcard invoice params to request
@@ -168,6 +173,9 @@ class Invoice
         $sPositionKey = $oItem->getProductId().$oItem->getSku();
         if ($aPositions === false || array_key_exists($sPositionKey, $aPositions) !== false) { // full or single-invoice?
             $dItemAmount = $oItem->getQtyOrdered(); // get ordered item amount
+            if ($oItem instanceof QuoteItem) {
+                $dItemAmount = $oItem->getQty();
+            }
             if ($aPositions !== false && array_key_exists($sPositionKey, $aPositions) !== false) { // product existing in single-invoice?
                 $dItemAmount = $aPositions[$sPositionKey]; // use amount from single-invoice
             }
@@ -183,7 +191,7 @@ class Invoice
         }
     }
 
-    protected function addGiftCardItem(Order $oOrder)
+    protected function addGiftCardItem($oOrder)
     {
         $giftCards = json_decode($oOrder->getData('gift_cards'), true);
 
@@ -199,19 +207,24 @@ class Invoice
     /**
      * Add invoicing item for shipping
      *
-     * @param  Order $oOrder
-     * @param  array $aPositions
-     * @param  bool  $blDebit
+     * @param  Order    $oOrder
+     * @param  array    $aPositions
+     * @param  bool     $blDebit
+     * @param  double   $dShippingCosts
      * @return void
      */
-    protected function addShippingItem(Order $oOrder, $aPositions, $blDebit)
+    protected function addShippingItem($oOrder, $aPositions, $blDebit, $dShippingCosts = false)
     {
-        // shipping costs existing or given for partial captures/debits?
-        if ($oOrder->getBaseShippingInclTax() != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('delcost', $aPositions) !== false))) {
+        $dPrice = $dShippingCosts;
+        if ($dPrice === false) {
             $dPrice = $oOrder->getBaseShippingInclTax();
             if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
                 $dPrice = $oOrder->getShippingInclTax();
             }
+        }
+
+        // shipping costs existing or given for partial captures/debits?
+        if ($dPrice != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('delcost', $aPositions) !== false))) {
             if ($aPositions !== false && array_key_exists('delcost', $aPositions) !== false) { // product existing in single-invoice?
                 $dPrice = $aPositions['delcost'];
             }
@@ -232,13 +245,21 @@ class Invoice
      * @param  bool  $blDebit
      * @return void
      */
-    protected function addDiscountItem(Order $oOrder, $aPositions, $blDebit)
+    protected function addDiscountItem($oOrder, $aPositions, $blDebit)
     {
         // discount costs existing or given for partial captures/debit?
         $dTransmitDiscount = $oOrder->getBaseDiscountAmount();
         if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
             $dTransmitDiscount = $oOrder->getDiscountAmount();
         }
+
+        if ($oOrder instanceof Quote) {
+            $dTransmitDiscount = $oOrder->getBaseSubtotal() - $oOrder->getBaseSubtotalWithDiscount();
+            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                $dTransmitDiscount = $oOrder->getSubtotal() - $oOrder->getSubtotalWithDiscount();
+            }
+        }
+
         if ($dTransmitDiscount != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('discount', $aPositions) !== false))) {
             if ($aPositions !== false && array_key_exists('discount', $aPositions) !== false) {
                 $dTransmitDiscount = $aPositions['discount'];

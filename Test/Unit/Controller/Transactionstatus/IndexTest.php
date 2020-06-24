@@ -39,7 +39,7 @@ use Magento\Sales\Model\Order as OrderCore;
 use Magento\Framework\Event\ManagerInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-use Payone\Core\Model\Handler\SubstituteOrder\Proxy as SubstituteOrder;
+use Payone\Core\Model\Handler\SubstituteOrder;
 
 class IndexTest extends BaseTestCase
 {
@@ -112,7 +112,10 @@ class IndexTest extends BaseTestCase
             ->getMock();
         $resultRawFactory->method('create')->willReturn($rawResponse);
 
-        $substituteOrder = $this->getMockBuilder(SubstituteOrder::class)->disableOriginalConstructor()->getMock();
+        $substituteOrder = $this->getMockBuilder(SubstituteOrder::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createSubstituteOrder'])
+            ->getMock();
         $substituteOrder->method('createSubstituteOrder')->willReturn($this->order);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
