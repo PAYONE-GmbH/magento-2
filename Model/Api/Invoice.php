@@ -293,7 +293,7 @@ class Invoice
      * @param  bool  $blDebit
      * @return void
      */
-    protected function addAmastyGiftcards(Order $oOrder, $aPositions, $blDebit)
+    protected function addAmastyGiftcards($oOrder, $aPositions, $blDebit)
     {
         $aGiftCards = $this->amastyHelper->getAmastyGiftCards($oOrder->getQuoteId());
         for ($i = 0; $i < count($aGiftCards); $i++) {
