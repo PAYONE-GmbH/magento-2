@@ -89,7 +89,7 @@ class Capture extends Base
                     if ($aInvoice['items'][$oItem->getItemId()] != $oItem->getQtyOrdered()) {
                         $blFull = false;
                     }
-                } else {
+                } elseif (!$oItem->getParentItemId()) { // dont set invoice list to not full on variant dummy items
                     $blFull = false;
                 }
             }

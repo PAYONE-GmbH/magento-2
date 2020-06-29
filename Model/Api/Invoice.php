@@ -72,6 +72,13 @@ class Invoice
     protected $toolkitHelper;
 
     /**
+     * PAYONE amasty helper
+     *
+     * @var \Payone\Core\Helper\AmastyGiftcard
+     */
+    protected $amastyHelper;
+
+    /**
      * Request object
      *
      * @var Base
@@ -83,9 +90,10 @@ class Invoice
      *
      * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
      */
-    public function __construct(\Payone\Core\Helper\Toolkit $toolkitHelper)
+    public function __construct(\Payone\Core\Helper\Toolkit $toolkitHelper, \Payone\Core\Helper\AmastyGiftcard $amastyHelper)
     {
         $this->toolkitHelper = $toolkitHelper;
+        $this->amastyHelper = $amastyHelper;
     }
 
     /**
@@ -148,6 +156,7 @@ class Invoice
             $this->addShippingItem($oOrder, $aPositions, $blDebit, $dShippingCosts); // add shipping invoice params to request
             $this->addDiscountItem($oOrder, $aPositions, $blDebit); // add discount invoice params to request
             $this->addGiftCardItem($oOrder);  // add gift card invoice params to request
+            $this->addAmastyGiftcards($oOrder, $aPositions, $blDebit); // add amasty giftcard invoice params to request
         }
         return $this->dAmount;
     }
@@ -256,7 +265,7 @@ class Invoice
                 $dTransmitDiscount = $aPositions['discount'];
             }
             $dDiscount = $this->toolkitHelper->formatNumber($dTransmitDiscount); // format discount
-            if ($aPositions === false) {// full invoice?
+            if ($aPositions === false && $this->amastyHelper->hasAmastyGiftcards($oOrder->getQuoteId()) === false) {
                 // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
                 // the calculated positions don't match, so we compensate for rounding-problems here
                 $dTotal = $oOrder->getBaseGrandTotal();
@@ -273,6 +282,51 @@ class Invoice
                 $sDesc = (string)__('Coupon').' - '.$oOrder->getCouponCode(); // add counpon code to description
             }
             $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
+        }
+    }
+
+    /**
+     * Adding amasty giftcards to request
+     *
+     * @param  Order $oOrder
+     * @param  array $aPositions
+     * @param  bool  $blDebit
+     * @return void
+     */
+    protected function addAmastyGiftcards($oOrder, $aPositions, $blDebit)
+    {
+        $aGiftCards = $this->amastyHelper->getAmastyGiftCards($oOrder->getQuoteId());
+        for ($i = 0; $i < count($aGiftCards); $i++) {
+            $aGiftCard = $aGiftCards[$i];
+            $blIsLastGiftcard = false;
+            if ($i + 1 == count($aGiftCards)) {
+                $blIsLastGiftcard = true;
+            }
+
+            $dTransmitDiscount = $aGiftCard['base_gift_amount'];
+            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                $dTransmitDiscount = $aGiftCard['gift_amount'];
+            }
+            if ($dTransmitDiscount != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('discount', $aPositions) !== false))) {
+                $dTransmitDiscount = $dTransmitDiscount * -1;
+                $dDiscount = $this->toolkitHelper->formatNumber($dTransmitDiscount); // format discount
+                if ($aPositions === false && $blIsLastGiftcard === true) {
+                    // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
+                    // the calculated positions don't match, so we compensate for rounding-problems here
+                    $dTotal = $oOrder->getBaseGrandTotal();
+                    if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                        $dTotal = $oOrder->getGrandTotal();
+                    }
+                    $dDiff = ($this->dAmount + $dTransmitDiscount - $dTotal); // calc rounding discrepancy
+                    $dDiscount -= $dDiff; // subtract difference from discount
+                }
+
+                if ($dDiscount != 0) {
+                    $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc'); // get configured voucher SKU
+                    $sDesc = (string)__('Amasty Coupon').' - '.$aGiftCard['code']; // add counpon code to description
+                    $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
+                }
+            }
         }
     }
 
