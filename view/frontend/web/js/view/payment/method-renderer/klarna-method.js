@@ -46,7 +46,7 @@ define(
             authToken: false,
             methodCategories: {
                 payone_klarna_invoice: 'pay_later',
-                payone_klarna_debit: 'pay_now',
+                payone_klarna_debit: 'direct_debit',
                 payone_klarna_installment: 'pay_over_time',
             },
 
