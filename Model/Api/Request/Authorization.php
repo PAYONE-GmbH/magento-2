@@ -109,6 +109,9 @@ class Authorization extends AddressRequest
 
         $this->addParameter('request', $oPayment->getAuthorizationMode()); // add request type
         $this->addParameter('mode', $oPayment->getOperationMode()); // add mode ( live or test )
+        if ($this->shopHelper->getConfigParam('transmit_customerid') == '1') {
+            $this->addParameter('customerid', $oOrder->getCustomerId()); // add customer id
+        }
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // add sub account id
         $this->setAuthorizationParameters($oPayment, $oOrder, $dAmount); // set authorization params
 

@@ -65,6 +65,7 @@ class ManagemandateTest extends BaseTestCase
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $this->shopHelper->method('getConfigParam')->willReturn('1');
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'databaseHelper' => $databaseHelper,
