@@ -53,7 +53,7 @@ class AmastyGiftcard extends \Payone\Core\Helper\Base
     {
         if ($this->aAmastyGiftcard === null) {
             $this->aAmastyGiftcard = [];
-            if (class_exists('\Amasty\GiftCard\Model\ResourceModel\Quote\CollectionFactory')) {
+            if (class_exists('\Amasty\GiftCard\Model\ResourceModel\Quote\Collection')) {
                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 
                 $giftCardsCollection = $objectManager->create('Amasty\GiftCard\Model\ResourceModel\Quote\CollectionFactory');
