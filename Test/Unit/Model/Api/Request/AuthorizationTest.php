@@ -80,6 +80,7 @@ class AuthorizationTest extends BaseTestCase
             ->willReturnMap([
                 ['aid', 'global', 'payone_general', null, '12345'],
                 ['transmit_ip', 'global', 'payone_general', null, '1'],
+                ['transmit_customerid', 'global', 'payone_general', null, '1'],
                 ['bill_as_del_address', PayoneConfig::METHOD_PAYPAL, 'payone_payment', null, true],
                 ['ref_prefix', 'global', 'payone_general', null, 'test_']
             ]);
