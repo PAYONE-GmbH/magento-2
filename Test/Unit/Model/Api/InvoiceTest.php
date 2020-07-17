@@ -34,6 +34,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Item;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Store\Model\Store;
 
 class InvoiceTest extends BaseTestCase
 {
@@ -46,6 +47,11 @@ class InvoiceTest extends BaseTestCase
      * @var Toolkit
      */
     private $toolkitHelper;
+
+    /**
+     * @var Store
+     */
+    private $store;
 
     protected function setUp()
     {
@@ -63,6 +69,9 @@ class InvoiceTest extends BaseTestCase
                 [90, 2, '90.00'],
                 [105, 2, '105.00'],
             ]);
+
+        $this->store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $this->store->method('getCode')->willReturn('test');
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'toolkitHelper' => $this->toolkitHelper
@@ -98,13 +107,14 @@ class InvoiceTest extends BaseTestCase
         $items = [$this->getItemMock()];
 
         $expected = 90;
-
+        
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getAllItems')->willReturn($items);
         $order->method('getBaseShippingInclTax')->willReturn(-5);
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
@@ -129,6 +139,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn($expected);
         $order->method('getGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
@@ -150,6 +161,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $positions = ['12345test_123' => '1', 'delcost' => '10', 'discount' => '-10'];
 
@@ -173,6 +185,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $positions = ['12345test_123' => 1.7];
 
