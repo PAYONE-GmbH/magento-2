@@ -56,6 +56,13 @@ class CashOnDelivery extends PayoneMethod
     protected $blNeedsSepaDataOnDebit = true;
 
     /**
+     * Info instructions block path
+     *
+     * @var string
+     */
+    protected $_infoBlockType = 'Payone\Core\Block\Info\Base';
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder

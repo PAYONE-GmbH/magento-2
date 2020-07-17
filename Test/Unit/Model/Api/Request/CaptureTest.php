@@ -92,6 +92,7 @@ class CaptureTest extends BaseTestCase
 
         $item_missing = $this->getMockBuilder(Item::class)->disableOriginalConstructor()->getMock();
         $item_missing->method('getItemId')->willReturn('missing');
+        $item_missing->method('getParentItemId')->willReturn(null);
 
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()

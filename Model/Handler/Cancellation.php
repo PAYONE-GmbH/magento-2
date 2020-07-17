@@ -77,10 +77,12 @@ class Cancellation
         if ($this->checkoutSession->getPayoneCustomerIsRedirected()) {
             try {
                 $orderId = $this->checkoutSession->getLastOrderId();
+                /** @var Order $order */
                 $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
                 if ($order) {
                     $order->cancel();
-                    $order->addStatusHistoryComment(__('The Payone transaction has been canceled.'), Order::STATE_CANCELED);
+                    $order
+                        ->addStatusToHistory(Order::STATE_CANCELED, __('The Payone transaction has been canceled.'), false);
                     $order->save();
 
                     $oCurrentQuote = $this->checkoutSession->getQuote();

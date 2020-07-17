@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Api\Request;
 
+use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Api\Request\PaydirektAgreement as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
@@ -65,9 +66,13 @@ class PaydirektAgreementTest extends BaseTestCase
         
         $environmentHelper = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
         $environmentHelper->method('getRemoteIp')->willReturn('1.1.1.1');
+
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getConfigParam')->willReturn('1');
         
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'apiHelper' => $this->apiHelper,
+            'shopHelper' => $shopHelper,
             'customerHelper' => $customerHelper,
             'url' => $url,
             'environmentHelper' => $environmentHelper,

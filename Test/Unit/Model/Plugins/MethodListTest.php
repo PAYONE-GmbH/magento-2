@@ -111,7 +111,7 @@ class MethodListTest extends BaseTestCase
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($this->quote);
         $checkoutSession->method('getPayonePaymentBans')->willReturn([PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00']);
-        $checkoutSession->method('getPayonePaymentWhitelist')->willReturn(['payone_creditcard', 'payone_paypal', 'payone_debit', 'payone_barzahlen', 'payone_cash_on_delivery', 'payone_amazonpay']);
+        $checkoutSession->method('getPayonePaymentWhitelist')->willReturn(['payone_creditcard', 'payone_paypal', 'payone_debit', 'payone_barzahlen', 'payone_cash_on_delivery', 'payone_amazonpay', 'payone_klarna_base', 'payone_klarna_invoice']);
 
         $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $addresscheck->method('getPersonstatusMapping')->willReturn(['PPV' => 'R']);
@@ -245,6 +245,46 @@ class MethodListTest extends BaseTestCase
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
         $payment->method('getCode')->willReturn(PayoneConfig::METHOD_OBT_GIROPAY);
         $paymentMethods = [$payment];
+
+        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->paymentBan->method('getPaymentBans')->willReturn([]);
+
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $this->assertEmpty($result);
+    }
+
+    public function testAfterGetAvailableMethodsKlarna()
+    {
+        $this->consumerscore->method('sendRequest')->willReturn(['score' => 'Y']);
+        $this->consumerscoreHelper->method('getWorstScore')->willReturn('G');
+
+        $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
+
+        $paymentBase = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $paymentBase->method('getCode')->willReturn(PayoneConfig::METHOD_KLARNA_BASE);
+        $paymentInvoice = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $paymentInvoice->method('getCode')->willReturn(PayoneConfig::METHOD_KLARNA_INVOICE);
+
+        $paymentMethods = [$paymentBase, $paymentInvoice];
+
+        $this->quote->method('getCustomerId')->willReturn('5');
+        $this->paymentBan->method('getPaymentBans')->willReturn([]);
+
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $this->assertCount(2, $result);
+    }
+
+    public function testAfterGetAvailableMethodsRemoveKlarna()
+    {
+        $this->consumerscore->method('sendRequest')->willReturn(true);
+        $this->consumerscoreHelper->method('getWorstScore')->willReturn('G');
+
+        $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
+
+        $paymentBase = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $paymentBase->method('getCode')->willReturn(PayoneConfig::METHOD_KLARNA_BASE);
+
+        $paymentMethods = [$paymentBase];
 
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);

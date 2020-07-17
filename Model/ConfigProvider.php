@@ -219,6 +219,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected function getPayoneConfig()
     {
         return [
+            'locale' => $this->shopHelper->getLocale(),
+            'fullLocale' => $this->requestHelper->getConfigParam('code', 'locale', 'general'),
             'availableCardTypes' => $this->paymentHelper->getAvailableCreditcardTypes(),
             'fieldConfig' => $this->hostedIframeHelper->getHostedFieldConfig(),
             'sepaCountries' => $this->countryHelper->getDebitSepaCountries(),
@@ -254,6 +256,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId()),
             'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
             'currency' => $this->requestHelper->getConfigParam('currency'),
+            'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
         ];
     }
 
