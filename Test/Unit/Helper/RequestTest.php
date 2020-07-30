@@ -67,7 +67,7 @@ class RequestTest extends BaseTestCase
      */
     private $version = '1.2.3';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

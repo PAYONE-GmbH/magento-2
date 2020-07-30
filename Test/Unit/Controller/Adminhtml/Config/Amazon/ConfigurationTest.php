@@ -58,7 +58,7 @@ class ConfigurationTest extends BaseTestCase
      */
     private $jsonFactory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

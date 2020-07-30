@@ -52,7 +52,7 @@ class AddresscheckTest extends BaseTestCase
      */
     private $response;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 

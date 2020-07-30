@@ -51,7 +51,7 @@ class CreditmemoServiceTest extends BaseTestCase
      */
     private $checkoutSession;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -96,6 +96,7 @@ class CreditmemoServiceTest extends BaseTestCase
             throw new \Exception('Test');
         };
 
+        $this->checkoutSession->method('getPayoneDebitResponse')->willReturn(['status' => 'error']);
         $this->checkoutSession->method('getPayoneDebitRequest')->willReturn(['request' => 'debit']);
 
         $this->expectException(\Exception::class);

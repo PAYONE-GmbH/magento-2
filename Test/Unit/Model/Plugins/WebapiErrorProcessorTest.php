@@ -45,7 +45,7 @@ class WebapiErrorProcessorTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -56,8 +56,7 @@ class WebapiErrorProcessorTest extends BaseTestCase
     {
         $subject = $this->getMockBuilder(ErrorProcessor::class)->disableOriginalConstructor()->getMock();
 
-        $exception = $this->getMockBuilder(\Exception::class)->disableOriginalConstructor()->getMock();
-        $exception->method('getPrevious')->willReturn(false);
+        $exception = new \Exception();
 
         $result = $this->classToTest->beforeMaskException($subject, $exception);
 

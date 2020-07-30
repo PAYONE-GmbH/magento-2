@@ -56,7 +56,7 @@ class ButtonTest extends BaseTestCase
      */
     private $urlBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

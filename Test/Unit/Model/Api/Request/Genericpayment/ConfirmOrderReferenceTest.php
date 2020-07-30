@@ -53,14 +53,14 @@ class ConfirmOrderReferenceTest extends BaseTestCase
      */
     private $shopHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
-        
+
         $url = $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
         $url->method('getUrl')->willReturn('https://www.payone.com/');
 

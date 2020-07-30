@@ -59,7 +59,7 @@ class KlarnaHandlerTest extends BaseTestCase
      */
     private $startSession;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
@@ -71,21 +71,21 @@ class KlarnaHandlerTest extends BaseTestCase
         $responseFactory->method('create')->willReturn($this->response);
 
         $methodInstance = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
-        
+
         $dataHelper = $this->getMockBuilder(Data::class)->disableOriginalConstructor()->getMock();
         $dataHelper->method('getMethodInstance')->willReturn($methodInstance);
 
         $this->startSession = $this->getMockBuilder(StartSession::class)->disableOriginalConstructor()->getMock();
-        
+
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        
+
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->setMethods(['getQuote'])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
 
-        
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'responseFactory' => $responseFactory,
             'dataHelper' => $dataHelper,

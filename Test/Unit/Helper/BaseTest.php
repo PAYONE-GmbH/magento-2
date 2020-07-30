@@ -55,7 +55,7 @@ class BaseTest extends BaseTestCase
      */
     private $scopeConfig;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

@@ -52,7 +52,7 @@ class SafeInvoiceTest extends BaseTestCase
      */
     private $info;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

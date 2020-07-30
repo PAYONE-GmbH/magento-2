@@ -24,7 +24,7 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Controller\Mandate;
+namespace Payone\Core\Test\Unit\Controller\Amazon;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Model\Quote;
@@ -103,7 +103,7 @@ class LoadReviewTest extends BaseTestCase
      */
     private $coupon;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -458,9 +458,7 @@ class LoadReviewTest extends BaseTestCase
         $this->quote->method('getCouponCode')->willReturn('12345');
         $this->quote->method('getItemsCount')->willReturn(false);
 
-        $exception = $this->getMockBuilder(LocalizedException::class)->disableOriginalConstructor()->getMock();
-        $exception->method('getMessage')->willReturn('Error');
-
+        $exception = new LocalizedException(__('Error'));
         $this->coupon->method('load')->willThrowException($exception);
 
         $result = $this->classToTest->execute();

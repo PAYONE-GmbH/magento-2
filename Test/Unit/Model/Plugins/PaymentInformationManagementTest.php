@@ -59,7 +59,7 @@ class PaymentInformationManagementTest extends BaseTestCase
      */
     private $cartManagement;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

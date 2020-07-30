@@ -35,7 +35,7 @@ use Magento\Framework\DataObject;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class CreditcardTest extends BaseTestCase
+class IdealTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -47,7 +47,7 @@ class CreditcardTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

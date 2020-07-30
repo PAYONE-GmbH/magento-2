@@ -79,13 +79,13 @@ abstract class PayoneMethod extends BaseMethod
             $amount = $payment->getCreditmemo()->getGrandTotal(); // send display amount instead of base amount
         }
         $aResponse = $this->debitRequest->sendRequest($this, $payment, $amount);
-        if ($aResponse['status'] == 'ERROR') {
+        if (!$aResponse) {
+            throw new LocalizedException(__('Unkown error'));
+        } elseif ($aResponse['status'] == 'ERROR') {
             $this->checkoutSession->setPayoneDebitRequest($this->debitRequest->getParameters());
             $this->checkoutSession->setPayoneDebitResponse($this->debitRequest->getResponse());
             $this->checkoutSession->setPayoneDebitOrderId($this->debitRequest->getOrderId());
             throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
-        } elseif (!$aResponse) {
-            throw new LocalizedException(__('Unkown error'));
         }
     }
 
@@ -104,10 +104,10 @@ abstract class PayoneMethod extends BaseMethod
             $amount = $oInvoice->getGrandTotal(); // send display amount instead of base amount
         }
         $aResponse = $this->captureRequest->sendRequest($this, $payment, $amount);
-        if ($aResponse['status'] == 'ERROR') {// request returned an error
-            throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
-        } elseif (!$aResponse) {// response not existing
+        if (!$aResponse) {// response not existing
             throw new LocalizedException(__('Unkown error'));
+        } elseif ($aResponse['status'] == 'ERROR') {// request returned an error
+            throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
         }
     }
 

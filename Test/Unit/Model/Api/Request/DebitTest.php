@@ -60,7 +60,7 @@ class DebitTest extends BaseTestCase
      */
     private $shopHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 

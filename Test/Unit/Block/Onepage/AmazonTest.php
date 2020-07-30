@@ -70,7 +70,7 @@ class AmazonTest extends BaseTestCase
      */
     private $paymentHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -83,7 +83,7 @@ class AmazonTest extends BaseTestCase
         $context->method('getRequest')->willReturn($this->request);
 
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        
+
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->setMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError', 'getAmazonReferenceId', 'getTriggerInvalidPayment', 'getQuote'])

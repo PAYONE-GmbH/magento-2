@@ -51,7 +51,7 @@ class PaypalTest extends BaseTestCase
      */
     private $checkoutSession;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

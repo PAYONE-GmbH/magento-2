@@ -54,7 +54,7 @@ class CancellationTest extends BaseTestCase
      */
     private $order;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

@@ -52,7 +52,7 @@ class BarzahlenTest extends BaseTestCase
      */
     private $authorizationRequest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

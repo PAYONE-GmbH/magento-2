@@ -64,7 +64,7 @@ class CheckedAddressesTest extends BaseTestCase
      */
     private $connection;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

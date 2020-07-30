@@ -57,7 +57,7 @@ class ExportTest extends BaseTestCase
      */
     private $checksumCheck;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

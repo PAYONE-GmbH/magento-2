@@ -92,7 +92,7 @@ class BaseMethodTest extends BaseTestCase
      */
     private $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
