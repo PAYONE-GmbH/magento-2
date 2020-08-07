@@ -187,6 +187,9 @@ class Authorization extends AddressRequest
         $sNarrativeText = $this->toolkitHelper->getNarrativeText($oOrder, $oPayment);
         if (!empty($sNarrativeText)) {// narrative text existing?
             $this->addParameter('narrative_text', $sNarrativeText); // add narrative text parameter
+            if ($oPayment->needsTransactionParam() === true) {
+                $this->addParameter('transaction_param', $sNarrativeText);
+            }
         }
         $aPaymentParams = $oPayment->getPaymentSpecificParameters($oOrder); // get payment params specific to the payment type
         $this->aParameters = array_merge($this->aParameters, $aPaymentParams); // merge payment params with other params

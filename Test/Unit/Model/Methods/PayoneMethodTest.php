@@ -103,6 +103,12 @@ class PayoneMethodTest extends BaseTestCase
         $this->assertTrue($result);
     }
 
+    public function testNeedsTransactionParam()
+    {
+        $result = $this->classToTest->needsTransactionParam();
+        $this->assertFalse($result);
+    }
+
     public function testNeedsProductInfo()
     {
         $result = $this->classToTest->needsProductInfo();

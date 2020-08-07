@@ -57,6 +57,13 @@ class Paypal extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
+     * Determines if the transaction_param-parameter has to be added to the authorization-request
+     *
+     * @var bool
+     */
+    protected $blNeedsTransactionParam = true;
+
+    /**
      * Return success url for redirect payment types
      *
      * @param  Order $oOrder
