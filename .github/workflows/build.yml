@@ -66,7 +66,7 @@ jobs:
         --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin \
         --search-engine=elasticsearch7 --elasticsearch-host=localhost \
         --elasticsearch-port=9200
-        composer require payone-gmbh/magento-2 dev-master
+        composer require --ignore-platform-reqs payone-gmbh/magento-2 dev-master
         rm -rf /tmp/build/vendor/payone-gmbh/magento-2/*
         cp -R $GITHUB_WORKSPACE/* /tmp/build/vendor/payone-gmbh/magento-2
         php bin/magento setup:upgrade
