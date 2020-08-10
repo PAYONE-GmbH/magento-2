@@ -56,7 +56,7 @@ jobs:
       
     - name: Setup Magento 2 and run tests
       run: |
-        mysql -u root -Proot -e 'CREATE DATABASE IF NOT EXISTS magento;'
+        mysql -u root -password=root -e 'CREATE DATABASE IF NOT EXISTS magento;'
         git clone --depth=1 -b ${{ matrix.magento-versions }} https://github.com/magento/magento2 /tmp/build
         cd /tmp/build
         composer update
