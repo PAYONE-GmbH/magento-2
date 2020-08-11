@@ -86,14 +86,26 @@ class Invoice
     protected $oRequest;
 
     /**
+     * @var \Magento\Sales\Model\ResourceModel\Order\Tax\Item
+     */
+    private $taxItemResource;
+
+    /**
      * Constructor
      *
-     * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
+     * @param \Payone\Core\Helper\Toolkit                       $toolkitHelper Toolkit helper
+     * @param \Payone\Core\Helper\AmastyGiftcard                $amastyHelper
+     * @param \Magento\Sales\Model\ResourceModel\Order\Tax\Item $taxItemResource
      */
-    public function __construct(\Payone\Core\Helper\Toolkit $toolkitHelper, \Payone\Core\Helper\AmastyGiftcard $amastyHelper)
+    public function __construct(
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Payone\Core\Helper\AmastyGiftcard $amastyHelper,
+        \Magento\Sales\Model\ResourceModel\Order\Tax\Item $taxItemResource
+    )
     {
         $this->toolkitHelper = $toolkitHelper;
         $this->amastyHelper = $amastyHelper;
+        $this->taxItemResource = $taxItemResource;
     }
 
     /**
@@ -145,6 +157,17 @@ class Invoice
                 $this->addProductItem($oItem, $aPositions); // add product invoice params to request
             }
             $iQtyInvoiced += $oItem->getOrigData('qty_invoiced'); // get data pre-capture
+        }
+
+        if ($this->dTax === false) { // is dTax not set yet?
+            // This can happen, when a Creditmemo does not refund any products,
+            // but instead only shipments.
+            $aTaxItems = $this->taxItemResource->getTaxItemsByOrderId($oOrder->getId());
+            foreach ($aTaxItems as $aTaxItem) {
+                if ($aTaxItem['taxable_item_type'] == 'shipping') {
+                    $this->dTax = (float)$aTaxItem['tax_percent'];
+                }
+            }
         }
 
         $blFirstCapture = true; // Is first capture?

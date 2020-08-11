@@ -54,11 +54,17 @@ class InvoiceTest extends BaseTestCase
      */
     private $amastyHelper;
 
+    /**
+     * @var \Magento\Sales\Model\ResourceModel\Order\Tax\Item
+     */
+    private $taxItemResource;
+
     protected function setUp()
     {
         $objectManager = $this->getObjectManager();
 
         $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
+        $this->taxItemResource = $this->getMockBuilder(\Magento\Sales\Model\ResourceModel\Order\Tax\Item::class)->disableOriginalConstructor()->getMock();
         $this->toolkitHelper->method('getInvoiceAppendix')->willReturn('invoice appendix');
         $this->toolkitHelper->expects($this->any())
             ->method('formatNumber')
@@ -76,6 +82,7 @@ class InvoiceTest extends BaseTestCase
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'toolkitHelper' => $this->toolkitHelper,
             'amastyHelper' => $this->amastyHelper,
+            'taxItemResource' => $this->taxItemResource
         ]);
     }
 
@@ -122,6 +129,39 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn($expected);
+
+        $result = $this->classToTest->addProductInfo($authorization, $order, false);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testAddProductInfoNoProducts()
+    {
+        $this->toolkitHelper->method('getConfigParam')->willReturn('sku');
+        $this->amastyHelper->method('hasAmastyGiftcards')->willReturn(true);
+        $this->amastyHelper->method('getAmastyGiftCards')->willReturn([['base_gift_amount' => 5, 'gift_amount' => 5, 'code' => 'TEST']]);
+
+        $authorization = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
+
+        $items = [];
+        $taxItems = [
+            ['taxable_item_type' => 'whatever', 'tax_percent' => '32.00'],
+            ['taxable_item_type' => 'shipping', 'tax_percent' => '12.20'],
+            ['taxable_item_type' => 'something', 'tax_percent' => '3.00'],
+        ];
+
+        $orderId = -12;
+        $expected = 90;
+        $expectedTax = 12.2;
+
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getId')->willReturn($orderId);
+        $order->method('getAllItems')->willReturn($items);
+        $order->method('getBaseShippingInclTax')->willReturn(-5);
+        $order->method('getBaseDiscountAmount')->willReturn(-5);
+        $order->method('getCouponCode')->willReturn('test');
+        $order->method('getBaseGrandTotal')->willReturn($expected);
+
+        $this->taxItemResource->expects(self::once())->method('getTaxItemsByOrderId')->with($orderId)->willReturn($taxItems);
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
