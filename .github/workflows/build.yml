@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Build and Test with Magento 2.4
 
 on:
   push:
