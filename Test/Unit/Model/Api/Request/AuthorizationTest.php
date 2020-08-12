@@ -124,6 +124,7 @@ class AuthorizationTest extends BaseTestCase
         $payment->method('getClearingtype')->willReturn('wlt');
         $payment->method('getPaymentSpecificParameters')->willReturn([]);
         $payment->method('needsRedirectUrls')->willReturn(true);
+        $payment->method('needsTransactionParam')->willReturn(true);
         $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
         $payment->method('getErrorUrl')->willReturn('http://testdomain.com');
         $payment->method('getCancelUrl')->willReturn('http://testdomain.com');

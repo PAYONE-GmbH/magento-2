@@ -276,6 +276,16 @@ abstract class PayoneMethod extends BaseMethod
     }
 
     /**
+     * Return if transaction_param has to be added to the authroization request
+     *
+     * @return bool
+     */
+    public function needsTransactionParam()
+    {
+        return $this->blNeedsTransactionParam;
+    }
+
+    /**
      * Return if invoice data has to be added to the authroization request
      *
      * @return bool
