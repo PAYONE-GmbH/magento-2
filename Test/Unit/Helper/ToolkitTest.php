@@ -71,7 +71,7 @@ class ToolkitTest extends BaseTestCase
      */
     private $currency;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

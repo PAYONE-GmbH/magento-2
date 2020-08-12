@@ -52,7 +52,7 @@ class UpgradeDataTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -77,7 +77,7 @@ class UpgradeDataTest extends BaseTestCase
 
         $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $paymentHelper->method('getAvailablePaymentTypes')->willReturn(['payone_paypal']);
-        
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'salesSetupFactory' => $salesSetupFactory,
             'customerSetupFactory' => $customerSetupFactory,

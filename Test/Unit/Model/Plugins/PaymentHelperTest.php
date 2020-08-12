@@ -61,7 +61,7 @@ class PaymentHelperTest extends BaseTestCase
      */
     private $scopeConfig;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -71,7 +71,7 @@ class PaymentHelperTest extends BaseTestCase
         $context->method('getScopeConfig')->willReturn($this->scopeConfig);
 
         $methodInstance = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
-        
+
         $methodFactory = $this->getMockBuilder(Factory::class)->disableOriginalConstructor()->getMock();
         $methodFactory->method('create')->willReturn($methodInstance);
 

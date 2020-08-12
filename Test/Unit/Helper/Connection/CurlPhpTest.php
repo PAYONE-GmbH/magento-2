@@ -43,7 +43,7 @@ class CurlPhpTest extends BaseTestCase
      */
     private $curlPhp;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

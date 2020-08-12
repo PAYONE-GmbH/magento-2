@@ -79,7 +79,7 @@ class ApiTest extends BaseTestCase
      */
     private $connFsockopen;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

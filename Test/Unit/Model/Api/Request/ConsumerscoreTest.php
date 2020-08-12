@@ -61,7 +61,7 @@ class ConsumerscoreTest extends BaseTestCase
      */
     private $addressesChecked;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 

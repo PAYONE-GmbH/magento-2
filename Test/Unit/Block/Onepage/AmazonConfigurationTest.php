@@ -45,7 +45,7 @@ class AmazonConfigurationTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -61,7 +61,8 @@ class AmazonConfigurationTest extends BaseTestCase
                 'unsCanUseWebsiteValue',
                 'unsCanUseDefaultValue',
                 'getHtmlId',
-                'getLabel'
+                'getLabel',
+                'getOriginalData'
             ])
             ->getMock();
         $element->method('unsScope')->willReturn($element);
@@ -69,6 +70,7 @@ class AmazonConfigurationTest extends BaseTestCase
         $element->method('unsCanUseDefaultValue')->willReturn($element);
         $element->method('getHtmlId')->willReturn('test');
         $element->method('getLabel')->willReturn('test');
+        $element->method('getOriginalData')->willReturn(['button_label' => 'test']);
 
         $result = $this->classToTest->render($element);
         $this->assertNotEmpty($result);

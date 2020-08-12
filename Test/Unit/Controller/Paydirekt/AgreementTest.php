@@ -67,7 +67,7 @@ class AgreementTest extends BaseTestCase
      */
     private $customer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -86,13 +86,13 @@ class AgreementTest extends BaseTestCase
         $context->method('getRedirect')->willReturn($redirect);
 
         $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
-        
+
         $quoteAddress = $this->getMockBuilder(QuoteAddress::class)
             ->disableOriginalConstructor()
             ->setMethods(['setCollectShippingRates', 'importCustomerAddressData'])
             ->getMock();
         $quoteAddress->method('setCollectShippingRates')->willReturn($quoteAddress);
-        
+
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
         $quote->method('getPayment')->willReturn($payment);
         $quote->method('getBillingAddress')->willReturn($quoteAddress);
@@ -101,7 +101,7 @@ class AgreementTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(CheckoutSession::class)->disableOriginalConstructor()->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
-        
+
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
         $address->method('getDataModel')->willReturn($addressData);
@@ -123,7 +123,7 @@ class AgreementTest extends BaseTestCase
         $customerSession->method('getCustomer')->willReturn($this->customer);
 
         $this->paydirektAgreement = $this->getMockBuilder(PaydirektAgreement::class)->disableOriginalConstructor()->getMock();
-        
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $checkoutSession,

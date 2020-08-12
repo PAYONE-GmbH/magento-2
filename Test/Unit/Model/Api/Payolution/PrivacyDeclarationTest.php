@@ -50,7 +50,7 @@ class PrivacyDeclarationTest extends BaseTestCase
      */
     private $curl;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
