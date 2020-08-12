@@ -64,7 +64,7 @@ class ManagementTest extends BaseTestCase
      */
     private $savedPaymentData;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

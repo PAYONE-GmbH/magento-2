@@ -79,7 +79,7 @@ class ExpressTest extends BaseTestCase
      */
     private $checkoutHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

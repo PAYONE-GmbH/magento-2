@@ -54,7 +54,7 @@ class InvoiceTest extends BaseTestCase
      */
     private $amastyHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 

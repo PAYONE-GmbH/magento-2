@@ -38,7 +38,7 @@ class CreditcardCheckCvcTest extends BaseTestCase
      */
     private $classToTest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
         $this->classToTest = $objectManager->getObject(ClassToTest::class);

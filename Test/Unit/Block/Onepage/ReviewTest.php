@@ -110,7 +110,7 @@ class ReviewTest extends BaseTestCase
      */
     private $payment;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

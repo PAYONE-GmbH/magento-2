@@ -35,7 +35,7 @@ use Payone\Core\Model\Methods\Paypal;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class CaptureTest extends BaseTestCase
+class PayPalExpressTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -52,7 +52,7 @@ class CaptureTest extends BaseTestCase
      */
     private $shopHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 

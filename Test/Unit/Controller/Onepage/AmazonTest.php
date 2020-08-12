@@ -85,7 +85,7 @@ class AmazonTest extends BaseTestCase
      */
     private $customer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

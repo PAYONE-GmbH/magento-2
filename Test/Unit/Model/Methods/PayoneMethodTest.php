@@ -51,7 +51,7 @@ class PayoneMethodTest extends BaseTestCase
      */
     private $shopHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

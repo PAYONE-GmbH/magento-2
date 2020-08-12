@@ -49,7 +49,7 @@ class UpdateuserTest extends BaseTestCase
      */
     private $apiHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 

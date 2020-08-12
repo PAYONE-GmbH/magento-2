@@ -76,7 +76,7 @@ class AddresscheckTest extends BaseTestCase
      */
     private $quoteRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

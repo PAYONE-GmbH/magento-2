@@ -59,7 +59,7 @@ class InvoiceTest extends BaseTestCase
      */
     private $precheckRequest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

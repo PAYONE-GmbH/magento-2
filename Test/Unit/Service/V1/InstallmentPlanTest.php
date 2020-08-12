@@ -60,7 +60,7 @@ class InstallmentPlanTest extends BaseTestCase
      */
     private $calculation;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
