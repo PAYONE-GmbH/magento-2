@@ -72,7 +72,7 @@ class Currency implements ArrayInterface
             return $oStoreManager->getStore($aRequestParams['store'])->getBaseCurrencyCode();
         }
 
-        return $oStoreManager->getStore()->getBaseCurrencyCode();
+        return $oStoreManager->getStore(0)->getBaseCurrencyCode(); // storeId 0 = Default Config
     }
 
     /**
