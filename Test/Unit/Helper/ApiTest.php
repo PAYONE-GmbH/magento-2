@@ -85,7 +85,7 @@ class ApiTest extends BaseTestCase
      */
     private $store;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

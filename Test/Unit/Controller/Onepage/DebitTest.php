@@ -83,7 +83,7 @@ class DebitTest extends BaseTestCase
      */
     private $managemandateRequest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

@@ -32,7 +32,7 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class CashOnDeliveryTest extends BaseTestCase
+class PostFinanceCardTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,7 +44,7 @@ class CashOnDeliveryTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

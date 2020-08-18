@@ -244,15 +244,6 @@ class UpgradeData implements UpgradeDataInterface
             $this->convertPersonstatusMappingConfig($setup);
         }
 
-        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_installment_duration')) {
-            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
-            $salesInstaller->addAttribute(
-                'order',
-                'payone_installment_duration',
-                ['type' => 'integer', 'length' => null]
-            );
-        }
-
         if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_express_type')) {
             $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
             $salesInstaller->addAttribute(

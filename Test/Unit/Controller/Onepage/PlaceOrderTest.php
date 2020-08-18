@@ -75,7 +75,7 @@ class PlaceOrderTest extends BaseTestCase
      */
     private $request;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

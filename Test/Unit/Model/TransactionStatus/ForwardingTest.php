@@ -50,7 +50,7 @@ class ForwardingTest extends BaseTestCase
      */
     private $curl;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

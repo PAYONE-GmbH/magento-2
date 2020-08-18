@@ -57,7 +57,7 @@ class AppointedTest extends BaseTestCase
      */
     private $orderSender;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

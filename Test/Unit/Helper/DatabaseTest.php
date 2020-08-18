@@ -67,7 +67,7 @@ class DatabaseTest extends BaseTestCase
      */
     private $databaseResource;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

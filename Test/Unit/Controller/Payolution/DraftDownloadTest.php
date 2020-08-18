@@ -55,7 +55,7 @@ class DraftDownloadTest extends BaseTestCase
      */
     private $paymentHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

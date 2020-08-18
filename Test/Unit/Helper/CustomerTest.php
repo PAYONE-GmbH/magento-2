@@ -68,7 +68,7 @@ class CustomerTest extends BaseTestCase
      */
     private $region;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

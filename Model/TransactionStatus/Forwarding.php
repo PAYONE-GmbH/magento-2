@@ -123,7 +123,9 @@ class Forwarding
      */
     public function forwardAsyncRequest($aPostArray, $sUrl)
     {
-        $this->curl->setOption(CURLOPT_TIMEOUT_MS, 100);
+	// Increased timeout to 5500ms
+	// See payone-gmbh/magento-2 issue #316
+        $this->curl->setOption(CURLOPT_TIMEOUT_MS, 5500);
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
         $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
         try {

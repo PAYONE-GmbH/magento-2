@@ -62,7 +62,7 @@ class HostedIframeTest extends BaseTestCase
      */
     private $toolkitHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

@@ -60,7 +60,7 @@ class InvoiceTest extends BaseTestCase
      */
     private $store;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 

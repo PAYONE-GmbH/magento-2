@@ -179,7 +179,7 @@ class GenerateGiftCardAccountsInvoiceTest extends TestCase
         $this->assertNull($actual);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->sut = new GenerateGiftCardAccountsInvoice();
     }

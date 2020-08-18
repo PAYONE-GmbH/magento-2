@@ -49,7 +49,7 @@ class DebitTest extends BaseTestCase
      */
     private $countryHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

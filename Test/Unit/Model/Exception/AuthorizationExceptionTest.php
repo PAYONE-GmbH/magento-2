@@ -48,7 +48,7 @@ class AuthorizationExceptionTest extends BaseTestCase
      */
     private $expected = ['status' => 'OK'];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

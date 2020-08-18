@@ -73,7 +73,7 @@ class MethodListTest extends BaseTestCase
      */
     private $quote;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

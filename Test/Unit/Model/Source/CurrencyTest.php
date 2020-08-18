@@ -42,7 +42,7 @@ class CurrencyTest extends BaseTestCase
      * @var ClassToTest
      */
     private $classToTest;
-
+  
     /**
      * @var Context
      */
@@ -53,7 +53,7 @@ class CurrencyTest extends BaseTestCase
      */
     private $request;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
