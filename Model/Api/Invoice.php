@@ -86,6 +86,13 @@ class Invoice
     protected $oRequest;
 
     /**
+     * Current store code
+     *
+     * @var string
+     */
+    protected $sStoreCode;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
@@ -132,6 +139,7 @@ class Invoice
     public function addProductInfo(Base $oRequest, $oOrder, $aPositions = false, $blDebit = false, $dShippingCosts = false)
     {
         $this->oRequest = $oRequest; // write request to property for manipulation of the object
+        $this->setStoreCode($oOrder->getStore()->getCode());
         if ($oOrder instanceof Order) {
             $sInvoiceAppendix = $this->toolkitHelper->getInvoiceAppendix($oOrder); // get invoice appendix
             if (!empty($sInvoiceAppendix)) { // invoice appendix existing?
@@ -181,7 +189,7 @@ class Invoice
             }
             $iAmount = $this->convertItemAmount($dItemAmount);
             $dPrice = $oItem->getBasePriceInclTax();
-            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+            if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                 $dPrice = $oItem->getPriceInclTax();
             }
             $this->addInvoicePosition($oItem->getSku(), $dPrice, 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
@@ -218,7 +226,7 @@ class Invoice
         $dPrice = $dShippingCosts;
         if ($dPrice === false) {
             $dPrice = $oOrder->getBaseShippingInclTax();
-            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+            if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                 $dPrice = $oOrder->getShippingInclTax();
             }
         }
@@ -232,7 +240,7 @@ class Invoice
             if ($dPrice < 0) { // negative shipping cost
                 $sDelDesc = __('Deduction').' '.__('Shipping Costs'); // change item description to deduction
             }
-            $sShippingSku = $this->toolkitHelper->getConfigParam('sku', 'costs', 'payone_misc'); // get configured shipping SKU
+            $sShippingSku = $this->toolkitHelper->getConfigParam('sku', 'costs', 'payone_misc', $this->getStoreCode()); // get configured shipping SKU
             $this->addInvoicePosition($sShippingSku, $dPrice, 'shipment', 1, $sDelDesc, $this->dTax); // add invoice params to request
         }
     }
@@ -249,13 +257,13 @@ class Invoice
     {
         // discount costs existing or given for partial captures/debit?
         $dTransmitDiscount = $oOrder->getBaseDiscountAmount();
-        if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+        if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
             $dTransmitDiscount = $oOrder->getDiscountAmount();
         }
 
         if ($oOrder instanceof Quote) {
             $dTransmitDiscount = $oOrder->getBaseSubtotal() - $oOrder->getBaseSubtotalWithDiscount();
-            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+            if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                 $dTransmitDiscount = $oOrder->getSubtotal() - $oOrder->getSubtotalWithDiscount();
             }
         }
@@ -269,16 +277,16 @@ class Invoice
                 // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
                 // the calculated positions don't match, so we compensate for rounding-problems here
                 $dTotal = $oOrder->getBaseGrandTotal();
-                if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                     $dTotal = $oOrder->getGrandTotal();
                 }
                 $dDiff = ($this->dAmount + $dTransmitDiscount - $dTotal); // calc rounding discrepancy
                 $dDiscount -= $dDiff; // subtract difference from discount
             }
-            $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'discount', 'payone_misc'); // get configured discount SKU
+            $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'discount', 'payone_misc', $this->getStoreCode()); // get configured discount SKU
             $sDesc = (string)__('Discount'); // default description
             if ($oOrder->getCouponCode()) {// was a coupon code used?
-                $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc'); // get configured voucher SKU
+                $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc', $this->getStoreCode()); // get configured voucher SKU
                 $sDesc = (string)__('Coupon').' - '.$oOrder->getCouponCode(); // add counpon code to description
             }
             $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
@@ -304,7 +312,7 @@ class Invoice
             }
 
             $dTransmitDiscount = $aGiftCard['base_gift_amount'];
-            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+            if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                 $dTransmitDiscount = $aGiftCard['gift_amount'];
             }
             if ($dTransmitDiscount != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('discount', $aPositions) !== false))) {
@@ -314,7 +322,7 @@ class Invoice
                     // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
                     // the calculated positions don't match, so we compensate for rounding-problems here
                     $dTotal = $oOrder->getBaseGrandTotal();
-                    if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                    if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                         $dTotal = $oOrder->getGrandTotal();
                     }
                     $dDiff = ($this->dAmount + $dTransmitDiscount - $dTotal); // calc rounding discrepancy
@@ -322,7 +330,7 @@ class Invoice
                 }
 
                 if ($dDiscount != 0) {
-                    $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc'); // get configured voucher SKU
+                    $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc', $this->getStoreCode()); // get configured voucher SKU
                     $sDesc = (string)__('Amasty Coupon').' - '.$aGiftCard['code']; // add counpon code to description
                     $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
                 }
@@ -346,5 +354,26 @@ class Invoice
         } else { // return the integer value
             return intval($dItemAmount);
         }
+    }
+
+    /**
+     * Set store code
+     *
+     * @param  $sStoreCode
+     * @return void
+     */
+    protected function setStoreCode($sStoreCode)
+    {
+        $this->sStoreCode = $sStoreCode;
+    }
+
+    /**
+     * Returns store code
+     *
+     * @return string
+     */
+    protected function getStoreCode()
+    {
+        return $this->sStoreCode;
     }
 }

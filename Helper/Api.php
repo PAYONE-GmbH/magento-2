@@ -278,7 +278,11 @@ class Api extends Base
      */
     public function isInvoiceDataNeeded(PayoneMethod $oPayment)
     {
-        $blInvoiceEnabled = (bool)$this->getConfigParam('transmit_enabled', 'invoicing'); // invoicing enabled?
+        $sStoreCode = null;
+        if ($oPayment->getInfoInstance()->getOrder()) {
+            $sStoreCode = $oPayment->getInfoInstance()->getOrder()->getStore()->getCode();
+        }
+        $blInvoiceEnabled = (bool)$this->getConfigParam('transmit_enabled', 'invoicing', 'payone_general', $sStoreCode); // invoicing enabled?
         if ($blInvoiceEnabled || $oPayment->needsProductInfo()) {
             return true; // invoice data needed
         }
@@ -294,7 +298,7 @@ class Api extends Base
     public function getCurrencyFromOrder(SalesOrder $oOrder)
     {
         $sCurrency = $oOrder->getBaseCurrencyCode();
-        if ($this->getConfigParam('currency') == 'display') {
+        if ($this->getConfigParam('currency', 'global', 'payone_general', $oOrder->getStore()->getCode()) == 'display') {
             $sCurrency = $oOrder->getOrderCurrencyCode();
         }
         return $sCurrency;
@@ -309,7 +313,7 @@ class Api extends Base
     public function getCurrencyFromQuote(Quote $oQuote)
     {
         $sCurrency = $oQuote->getBaseCurrencyCode();
-        if ($this->getConfigParam('currency') == 'display') {
+        if ($this->getConfigParam('currency', 'global', 'payone_general', $oQuote->getStore()->getCode()) == 'display') {
             $sCurrency = $oQuote->getQuoteCurrencyCode();
         }
         return $sCurrency;
@@ -324,7 +328,7 @@ class Api extends Base
     public function getQuoteAmount(Quote $oQuote)
     {
         $dAmount = $oQuote->getBaseGrandTotal();
-        if ($this->getConfigParam('currency') == 'display') {
+        if ($this->getConfigParam('currency', 'global', 'payone_general', $oQuote->getStore()->getCode()) == 'display') {
             $dAmount = $oQuote->getGrandTotal(); // send display amount instead of base amount
         }
         return $dAmount;

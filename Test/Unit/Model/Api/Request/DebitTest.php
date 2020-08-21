@@ -158,7 +158,7 @@ class DebitTest extends BaseTestCase
     {
         $this->shopHelper->method('getConfigParam')->willReturnMap(
             [
-                ['currency', 'global', 'payone_general', null, 'display'],
+                ['currency', 'global', 'payone_general', 'default', 'display'],
                 ['invoice_appendix_refund', 'invoicing', 'payone_general', 'default', 'test']
             ]
         );

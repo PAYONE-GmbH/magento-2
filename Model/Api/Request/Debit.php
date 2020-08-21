@@ -119,13 +119,13 @@ class Debit extends Base
         }
         if (isset($aCreditmemo['shipping_amount']) && $aCreditmemo['shipping_amount'] != 0) {
             $aPositions['delcost'] = $oCreditmemo->getBaseShippingInclTax();
-            if ($this->shopHelper->getConfigParam('currency') == 'display') {
+            if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $this->storeCode) == 'display') {
                 $aPositions['delcost'] = $oCreditmemo->getShippingInclTax();
             }
         }
         if ($blFull !== true && $oCreditmemo->getBaseDiscountAmount() != 0) {
             $aPositions['discount'] = $oCreditmemo->getBaseDiscountAmount();
-            if ($this->shopHelper->getConfigParam('currency') == 'display') {
+            if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $this->storeCode) == 'display') {
                 $aPositions['discount'] = $oCreditmemo->getDiscountAmount();
             }
         }

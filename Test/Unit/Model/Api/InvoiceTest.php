@@ -36,6 +36,7 @@ use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order\Item;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Store\Model\Store;
 
 class InvoiceTest extends BaseTestCase
 {
@@ -53,6 +54,11 @@ class InvoiceTest extends BaseTestCase
      * @var AmastyGiftcard
      */
     private $amastyHelper;
+
+    /**
+     * @var Store
+     */
+    private $store;
 
     protected function setUp(): void
     {
@@ -72,6 +78,9 @@ class InvoiceTest extends BaseTestCase
             ]);
 
         $this->amastyHelper = $this->getMockBuilder(AmastyGiftcard::class)->disableOriginalConstructor()->getMock();
+
+        $this->store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $this->store->method('getCode')->willReturn('test');
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'toolkitHelper' => $this->toolkitHelper,
@@ -122,6 +131,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
@@ -148,6 +158,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn($expected);
         $order->method('getGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
@@ -174,6 +185,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn($expected);
         $order->method('getGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
@@ -197,6 +209,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $positions = ['12345test_123' => '1', 'delcost' => '10', 'discount' => '-10'];
 
@@ -222,6 +235,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $positions = ['12345test_123' => 1.7];
 
@@ -249,6 +263,7 @@ class InvoiceTest extends BaseTestCase
                 'getBaseDiscountAmount',
                 'getCouponCode',
                 'getBaseGrandTotal',
+                'getStore',
             ])
             ->getMock();
         $order->method('getAllItems')->willReturn($items);
@@ -256,6 +271,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn($expected);
+        $order->method('getStore')->willReturn($this->store);
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false, false, 5);
         $this->assertEquals($expected, $result);

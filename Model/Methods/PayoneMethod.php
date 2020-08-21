@@ -75,7 +75,7 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneDebit(InfoInterface $payment, $amount)
     {
-        if ($this->shopHelper->getConfigParam('currency') == 'display' && $payment->getCreditmemo()) {
+        if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $payment->getOrder()->getStore()->getCode()) == 'display' && $payment->getCreditmemo()) {
             $amount = $payment->getCreditmemo()->getGrandTotal(); // send display amount instead of base amount
         }
         $aResponse = $this->debitRequest->sendRequest($this, $payment, $amount);
@@ -99,7 +99,7 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneCapture(InfoInterface $payment, $amount)
     {
-        if ($this->shopHelper->getConfigParam('currency') == 'display' && $payment->getOrder()->hasInvoices()) {
+        if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $payment->getOrder()->getStore()->getCode()) == 'display' && $payment->getOrder()->hasInvoices()) {
             $oInvoice = $payment->getOrder()->getInvoiceCollection()->getLastItem();
             $amount = $oInvoice->getGrandTotal(); // send display amount instead of base amount
         }
@@ -139,7 +139,7 @@ abstract class PayoneMethod extends BaseMethod
         $oOrder = $payment->getOrder();
         $oOrder->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
 
-        if ($this->shopHelper->getConfigParam('currency') == 'display') {
+        if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $payment->getOrder()->getStore()->getCode()) == 'display') {
             $amount = $oOrder->getTotalDue(); // send display amount instead of base amount
         }
 

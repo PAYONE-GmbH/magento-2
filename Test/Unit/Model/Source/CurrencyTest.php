@@ -32,6 +32,9 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\Store;
+use Magento\Store\Model\Website;
+use Magento\Framework\View\Element\Template\Context;
+use Magento\Framework\App\RequestInterface;
 
 class CurrencyTest extends BaseTestCase
 {
@@ -39,6 +42,16 @@ class CurrencyTest extends BaseTestCase
      * @var ClassToTest
      */
     private $classToTest;
+  
+    /**
+     * @var Context
+     */
+    private $context;
+
+    /**
+     * @var RequestInterface
+     */
+    private $request;
 
     protected function setUp(): void
     {
@@ -49,17 +62,47 @@ class CurrencyTest extends BaseTestCase
         $store->method('getDefaultCurrencyCode')->willReturn('EUR');
         $store->method('getBaseCurrencyCode')->willReturn('USD');
 
+        $website = $this->getMockBuilder(Website::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getDefaultCurrencyCode', 'getBaseCurrencyCode'])
+            ->getMock();
+        $store->method('getDefaultCurrencyCode')->willReturn('EUR');
+        $store->method('getBaseCurrencyCode')->willReturn('USD');
+        
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
+        $storeManager->method('getWebsite')->willReturn($website);
+
+        $this->request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
+
+        $this->context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $this->context->method('getStoreManager')->willReturn($storeManager);
+        $this->context->method('getRequest')->willReturn($this->request);
 
         $objectManager = $this->getObjectManager();
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
-            'storeManager' => $storeManager
+            'context' => $this->context
         ]);
     }
 
     public function testToOptionArray()
     {
+        $result = $this->classToTest->toOptionArray();
+        $this->assertCount(2, $result);
+    }
+
+    public function testToOptionArrayWebsiteParam()
+    {
+        $this->request->method('getParams')->willReturn(['website' => '2']);
+
+        $result = $this->classToTest->toOptionArray();
+        $this->assertCount(2, $result);
+    }
+
+    public function testToOptionArrayStoreParam()
+    {
+        $this->request->method('getParams')->willReturn(['store' => '2']);
+
         $result = $this->classToTest->toOptionArray();
         $this->assertCount(2, $result);
     }
