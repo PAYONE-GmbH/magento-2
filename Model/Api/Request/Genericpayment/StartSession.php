@@ -97,7 +97,7 @@ class StartSession extends Base
             $this->addAddress($oShipping, true);
             $this->addParameter('add_paydata[shipping_email]', $sCustomerEmail);
             $this->addParameter('add_paydata[shipping_title]', '');
-            $this->addParameter('add_paydata[shipping_telephonenumber]', '');
+            $this->addParameter('add_paydata[shipping_telephonenumber]', $oShipping->getTelephone());
         }
 
         $this->addParameter('clearingtype', 'fnc');

@@ -109,7 +109,7 @@ class KlarnaBase extends PayoneMethod
         if ($oShipping) {
             $aBaseParams['add_paydata[shipping_email]'] = $oOrder->getCustomerEmail();
             $aBaseParams['add_paydata[shipping_title]'] = '';
-            $aBaseParams['add_paydata[shipping_telephonenumber]'] = '';
+            $aBaseParams['add_paydata[shipping_telephonenumber]'] = $oShipping->getTelephone();
         }
 
         $aSubTypeParams = $this->getSubTypeSpecificParameters($oOrder);
