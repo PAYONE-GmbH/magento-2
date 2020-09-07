@@ -92,6 +92,9 @@
     <type name="Magento\Payment\Helper\Data">
         <plugin sortOrder="5" name="payonePaymentData" type="Payone\Core\Model\Plugins\PaymentHelper"/>
     </type>
+    <type name="Magento\Quote\Model\QuoteValidator">
+        <plugin name="payoneQuoteValidator" type="Payone\Core\Model\Plugins\QuoteValidator" sortOrder="5"/>
+    </type>
     <type name="Payone\Core\Model\Logger\Info">
         <arguments>
             <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
