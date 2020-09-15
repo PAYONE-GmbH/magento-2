@@ -35,6 +35,7 @@ use Payone\Core\Setup\Tables\CheckedAddresses;
 use Payone\Core\Setup\Tables\PaymentBan;
 use Payone\Core\Setup\Tables\Transactionstatus;
 use Payone\Core\Setup\Tables\SavedPaymentData;
+use Payone\Core\Setup\Tables\RatepayProfileConfig;
 
 /**
  * Magento script for updating the database after the initial installation
@@ -146,6 +147,9 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
         }
         if (!$setup->getConnection()->isTableExists($setup->getTable(SavedPaymentData::TABLE_SAVED_PAYMENT_DATA))) {
             $this->addTable($setup, SavedPaymentData::getData());
+        }
+        if (!$setup->getConnection()->isTableExists($setup->getTable(RatepayProfileConfig::TABLE_RATEPAY_PROFILE_CONFIG))) {
+            $this->addTable($setup, RatepayProfileConfig::getData());
         }
     }
 

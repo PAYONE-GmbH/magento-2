@@ -32,7 +32,7 @@ namespace Payone\Core\Model;
 abstract class PayoneConfig
 {
     /* Module version */
-    const MODULE_VERSION = '3.1.0';
+    const MODULE_VERSION = '3.1.1';
 
     /* Authorization request types */
     const REQUEST_TYPE_PREAUTHORIZATION = 'preauthorization';
@@ -88,9 +88,13 @@ abstract class PayoneConfig
     const METHOD_KLARNA_INSTALLMENT = 'payone_klarna_installment';
     const METHOD_ALIPAY = 'payone_alipay';
     const METHOD_AMAZONPAY = 'payone_amazonpay';
+    const METHOD_RATEPAY_INVOICE = 'payone_ratepay_invoice';
+    const METHOD_RATEPAY_INSTALLMENT = 'payone_ratepay_installment'; // not implemented yet
+    const METHOD_RATEPAY_DEBIT = 'payone_ratepay_debit'; // not implemented yet
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
     const METHOD_GROUP_PAYOLUTION = 'payone_payolution';
     const METHOD_GROUP_KLARNA = 'payone_klarna';
+    const METHOD_GROUP_RATEPAY = 'payone_klarna';
 }

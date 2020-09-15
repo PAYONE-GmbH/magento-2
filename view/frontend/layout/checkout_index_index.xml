@@ -29,6 +29,7 @@
         <css src="Payone_Core::css/payolution.css"/>
         <css src="Payone_Core::css/creditcard.css"/>
         <css src="Payone_Core::css/klarna.css"/>
+        <css src="Payone_Core::css/payone.css"/>
     </head>
     <body>
         <referenceBlock name="checkout.root">
@@ -124,6 +125,9 @@
                                                                         <item name="payone_klarna_installment" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
+                                                                        <item name="payone_ratepay_invoice" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        </item>
                                                                     </item>
                                                                 </item>
                                                             </item>
@@ -143,6 +147,7 @@
         <referenceBlock name="content">
             <block class="Payone\Core\Block\ClientApi" name="payone_client_api" template="client_api.phtml"/>
             <block class="Payone\Core\Block\RedirectReturn" name="payone_redirect_return" template="redirect_return.phtml"/>
+            <block class="Payone\Core\Block\RatepayDeviceFingerprint" name="payone_ratepay_device_fingerprint" template="ratepay_device_fingerprint.phtml"/>
         </referenceBlock>
     </body>
 </page>

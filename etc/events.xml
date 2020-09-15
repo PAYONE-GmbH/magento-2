@@ -52,4 +52,7 @@
     <event name="payone_core_transactionstatus_failed">
         <observer name="payone_transactionstatus_failed" instance="Payone\Core\Observer\Transactionstatus\Failed" />
     </event>
+    <event name="admin_system_config_changed_section_payone_payment">
+        <observer name="payone_payment_core_save_after" instance="Payone\Core\Observer\PaymentSystemConfigChanged" />
+    </event>
 </config>

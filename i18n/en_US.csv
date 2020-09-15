@@ -39,3 +39,10 @@
 "PUG","Postal address details correct but building unknown (PUG)"
 "PUZ","Person has moved, address not corrected (PUZ)"
 "UKN","Unknown return values are mapped to UKN (UKN)"
+
+"ratepay_legal_text_snippet_1","With clicking on"
+"ratepay_legal_text_snippet_2","you agree to the"
+"ratepay_legal_text_snippet_3","Ratepay Terms of Payment"
+"ratepay_legal_text_snippet_4","as well as to the performance of a"
+"ratepay_legal_text_snippet_5","risk check by Ratepay"
+"ratepay_legal_text_snippet_6","."

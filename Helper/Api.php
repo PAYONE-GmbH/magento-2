@@ -305,6 +305,21 @@ class Api extends Base
     }
 
     /**
+     * Return base or display amount of the order depending on the config
+     *
+     * @param  SalesOrder $oQuote
+     * @return float
+     */
+    public function getOrderAmount(SalesOrder $oOrder)
+    {
+        $dAmount = $oOrder->getBaseGrandTotal();
+        if ($this->getConfigParam('currency', 'global', 'payone_general', $oOrder->getStore()->getCode()) == 'display') {
+            $dAmount = $oOrder->getGrandTotal(); // send display amount instead of base amount
+        }
+        return $dAmount;
+    }
+
+    /**
      * Return base or display currency of the quote depending on the config
      *
      * @param  Quote $oQuote
