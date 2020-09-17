@@ -93,6 +93,9 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getConfigParamByPath($sPath, $sStoreCode = null)
     {
+        if (!$sStoreCode) {
+            $sStoreCode = $this->storeManager->getStore()->getCode();
+        }
         return $this->scopeConfig->getValue($sPath, ScopeInterface::SCOPE_STORES, $sStoreCode);
     }
 

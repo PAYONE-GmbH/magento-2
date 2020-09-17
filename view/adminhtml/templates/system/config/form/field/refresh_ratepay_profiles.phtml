@@ -39,7 +39,6 @@
                         if (response.responseText != 'false' && response.responseText.isJSON()) {
                             response = response.responseText.evalJSON();
                             if (response.success == true) {
-                                alert('OK');
                                 location.reload();
                             } else {
                                 alert(response.errormessage);

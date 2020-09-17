@@ -57,6 +57,13 @@ class RatepayBase extends PayoneMethod
     protected $apiHelper;
 
     /**
+     * Payment ban resource model
+     *
+     * @var \Payone\Core\Model\ResourceModel\PaymentBan
+     */
+    protected $paymentBan;
+
+    /**
      * Clearingtype for PAYONE authorization request
      *
      * @var string
@@ -88,6 +95,13 @@ class RatepayBase extends PayoneMethod
     ];
 
     /**
+     * Payment ban duration in hours
+     *
+     * @var int
+     */
+    protected $iBanDuration = 48;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\Model\Context                        $context
@@ -107,6 +121,7 @@ class RatepayBase extends PayoneMethod
      * @param \Payone\Core\Model\ResourceModel\SavedPaymentData       $savedPaymentData
      * @param \Payone\Core\Helper\Ratepay                             $ratepayHelper
      * @param \Payone\Core\Helper\Api                                 $apiHelper
+     * @param \Payone\Core\Model\ResourceModel\PaymentBan             $paymentBan
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
      * @param array                                                   $data
@@ -129,6 +144,7 @@ class RatepayBase extends PayoneMethod
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
         \Payone\Core\Helper\Ratepay $ratepayHelper,
         \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Model\ResourceModel\PaymentBan $paymentBan,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -136,6 +152,7 @@ class RatepayBase extends PayoneMethod
         parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $savedPaymentData, $resource, $resourceCollection, $data);
         $this->ratepayHelper = $ratepayHelper;
         $this->apiHelper = $apiHelper;
+        $this->paymentBan = $paymentBan;
     }
 
     /**
@@ -245,5 +262,58 @@ class RatepayBase extends PayoneMethod
         }
 
         return $blParentReturn;
+    }
+
+    /**
+     * Perform certain actions with the response
+     *
+     * @param  array $aResponse
+     * @param  Order $oOrder
+     * @param  float $amount
+     * @return array
+     */
+    protected function handleResponse($aResponse, Order $oOrder, $amount)
+    {
+        if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
+            && isset($aResponse['errorcode']) && $aResponse['errorcode'] == '307'
+        ) {
+            if (!empty($oOrder->getCustomerId())) {
+                $this->paymentBan->addPaymentBan($this->getCode(), $oOrder->getCustomerId(), $this->iBanDuration);
+            } else { // guest checkout
+                $aBans = $this->checkoutSession->getPayonePaymentBans();
+                if (!$aBans) {
+                    $aBans = [];
+                }
+                $aBans[$this->getCode()] = $this->paymentBan->getBanEndDate($this->iBanDuration);
+                $this->checkoutSession->setPayonePaymentBans($aBans);
+            }
+        }
+        return $aResponse;
+    }
+
+    /**
+     * Return capture parameters specific to this payment type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getPaymentSpecificCaptureParameters(Order $oOrder)
+    {
+        return [
+            'add_paydata[shop_id]' => $oOrder->getPayoneRatepayShopId()
+        ];
+    }
+
+    /**
+     * Return debit parameters specific to this payment type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getPaymentSpecificDebitParameters(Order $oOrder)
+    {
+        return [
+            'add_paydata[shop_id]' => $oOrder->getPayoneRatepayShopId()
+        ];
     }
 }

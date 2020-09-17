@@ -29,9 +29,10 @@ define(
         'mage/url',
         'mage/utils/wrapper',
         'Magento_Ui/js/model/messageList',
-        'Magento_Checkout/js/model/payment/method-list'
+        'Magento_Checkout/js/model/payment/method-list',
+        'Magento_Checkout/js/model/quote'
     ],
-    function ($, url, wrapper, globalMessageList, methodList) {
+    function ($, url, wrapper, globalMessageList, methodList, quote) {
         'use strict';
 
         return function (targetModule) {
@@ -51,6 +52,11 @@ define(
                             targetModule.disablePaymentType(value.method);
                         }
                     });
+                }
+                if (response.status != 401) {
+                    if(response.responseJSON.message.indexOf('307 -') !== -1 && quote.paymentMethod().method.indexOf('payone_ratepay') !== -1) {
+                        targetModule.disablePaymentType(quote.paymentMethod().method);
+                    }
                 }
                 return origReturn;
             });

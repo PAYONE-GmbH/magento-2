@@ -195,6 +195,8 @@ class Debit extends Base
             $this->addParameter('bic', $sBic);
         }
 
+        $this->aParameters = array_merge($this->aParameters, $oPayment->getPaymentSpecificDebitParameters($oOrder));
+
         $aResponse = $this->send($oPayment);
 
         return $aResponse;

@@ -82,6 +82,7 @@ class Api extends Base
         'mandate_identification' => 'payone_mandate_id',
         'workorderid' => 'payone_workorder_id',
         'add_paydata[installment_duration]' => 'payone_installment_duration',
+        'add_paydata[shop_id]' => 'payone_ratepay_shop_id',
     ];
 
     /**

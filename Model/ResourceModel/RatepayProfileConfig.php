@@ -187,14 +187,13 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
      *
      * @param  string $sShopId
      * @param  array  $aProfileResponse
-     * @return $this
+     * @return void
      */
     public function insertProfileConfig($sShopId, $aProfileResponse)
     {
         $data = $this->getDataArray($aProfileResponse);
         $data['shop_id'] = $sShopId;
         $this->getConnection()->insert($this->getMainTable(), $data);
-        return $this;
     }
 
     /**
@@ -242,7 +241,6 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
         ];
 
         $sShopId = $this->getConnection()->fetchOne($oSelect, $aParams);
-        error_log(date('Y-m-d H:i:s - ')."ShopID: ".$sShopId."\n", 3, dirname(__FILE__).'/shopId.log');
         if (empty($sShopId)) {
             return false;
         }

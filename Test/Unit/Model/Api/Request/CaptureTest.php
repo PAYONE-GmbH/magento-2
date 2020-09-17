@@ -81,6 +81,7 @@ class CaptureTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
+        $payment->method('getPaymentSpecificCaptureParameters')->willReturn([]);
 
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
@@ -127,6 +128,7 @@ class CaptureTest extends BaseTestCase
     {
         $payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
+        $payment->method('getPaymentSpecificCaptureParameters')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
