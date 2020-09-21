@@ -29,6 +29,7 @@ namespace Payone\Core\Helper;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Sales\Model\Order as SalesOrder;
+use Payone\Core\Model\Methods\Ratepay\RatepayBase;
 
 /**
  * Helper class for everything that has to do with APIs
@@ -275,14 +276,20 @@ class Api extends Base
      * Check if invoice-data has to be added to the authorization request
      *
      * @param  PayoneMethod $oPayment
+     * @param  array|null   $aPositions
      * @return bool
      */
-    public function isInvoiceDataNeeded(PayoneMethod $oPayment)
+    public function isInvoiceDataNeeded(PayoneMethod $oPayment, $aPositions = null)
     {
         $sStoreCode = null;
         if ($oPayment->getInfoInstance()->getOrder()) {
             $sStoreCode = $oPayment->getInfoInstance()->getOrder()->getStore()->getCode();
         }
+
+        if ($oPayment instanceof RatepayBase && is_array($aPositions) && empty($aPositions)) { // empty array means products and shipping costs were deselected
+            return false; // RatePay demands that adjustment refunds without products and shipping costs are sent without basket info
+        }
+
         $blInvoiceEnabled = (bool)$this->getConfigParam('transmit_enabled', 'invoicing', 'payone_general', $sStoreCode); // invoicing enabled?
         if ($blInvoiceEnabled || $oPayment->needsProductInfo()) {
             return true; // invoice data needed

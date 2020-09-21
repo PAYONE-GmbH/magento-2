@@ -175,7 +175,7 @@ class Debit extends Base
             $this->addParameter('invoiceappendix', $sRefundAppendix);
         }
 
-        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $aPositions)) {
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
