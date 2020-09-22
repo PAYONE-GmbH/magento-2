@@ -97,6 +97,15 @@ class BaseTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetConfigParamByPath()
+    {
+        $expected = 'authorization';
+
+        $this->scopeConfig->method('getValue')->willReturn($expected);
+        $result = $this->base->getConfigParamByPath('payone_payment/payone_ratepay_invoice/request_type');
+        $this->assertEquals($expected, $result);
+    }
+
     public function testGetConfigParamAllStores()
     {
         $this->scopeConfig->expects($this->any())

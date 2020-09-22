@@ -175,7 +175,7 @@ class Debit extends Base
             $this->addParameter('invoiceappendix', $sRefundAppendix);
         }
 
-        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $aPositions)) {
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
@@ -194,6 +194,8 @@ class Debit extends Base
             $this->addParameter('iban', $sIban);
             $this->addParameter('bic', $sBic);
         }
+
+        $this->aParameters = array_merge($this->aParameters, $oPayment->getPaymentSpecificDebitParameters($oOrder));
 
         $aResponse = $this->send($oPayment);
 

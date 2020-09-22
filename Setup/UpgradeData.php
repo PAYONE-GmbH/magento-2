@@ -272,6 +272,15 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_ratepay_shop_id')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_ratepay_shop_id',
+                ['type' => 'varchar', 'length' => 32, 'default' => '']
+            );
+        }
+
         $this->deactivateNewPaymentMethods($setup);
 
         if (version_compare($context->getVersion(), '2.8.0', '<=')) { // pre update version is less than or equal to 2.8.0

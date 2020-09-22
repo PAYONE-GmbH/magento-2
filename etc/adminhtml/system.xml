@@ -205,18 +205,23 @@
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
 
-                <field id="payone_klarna_invoice" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="payone_klarna_invoice" translate="label" sortOrder="280" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Klarna "Pay Later"</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <field id="payone_klarna_debit" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="payone_klarna_debit" translate="label" sortOrder="290" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Klarna "Pay Now"</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <field id="payone_klarna_installment" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="payone_klarna_installment" translate="label" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Klarna "Slice It"</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
+                <field id="payone_ratepay_invoice" translate="label" sortOrder="310" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ratepay Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
@@ -267,6 +272,7 @@
             <include path="Payone_Core::system/payone_klarna_invoice.xml"/>
             <include path="Payone_Core::system/payone_klarna_debit.xml"/>
             <include path="Payone_Core::system/payone_klarna_installment.xml"/>
+            <include path="Payone_Core::system/payone_ratepay_invoice.xml"/>
         </section>
         <section id="payone_protect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>PROTECT</label>
@@ -488,6 +494,12 @@
                 <label>Invoicing Data - Voucher</label>
                 <field id="sku" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>SKU</label>
+                </field>
+            </group>
+            <group id="ratepay" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Ratepay</label>
+                <field id="devicefingerprint_snippet_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Device Fingerprint Snippet-Id</label>
                 </field>
             </group>
         </section>

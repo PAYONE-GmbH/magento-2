@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,37 +19,31 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-#row_payone_general_payone_config_general_statusmapping_creditcard TD.label,
-#row_payone_misc_payone_config_misc_transactionstatus_forwarding_config TD.label{
-    width: 1%;
-}
 
-#row_payone_general_payone_config_general_statusmapping_creditcard TD.value,
-#row_payone_misc_payone_config_misc_transactionstatus_forwarding_config TD.value{
-    width: 100%
-}
+namespace Payone\Core\Model\Methods\Ratepay;
 
-#row_payone_misc_payone_config_misc_transactionstatus_forwarding_config TABLE.admin__control-table {
-    min-width: 724px;
-}
+use Payone\Core\Model\PayoneConfig;
 
-.ratepayProfile {
-    border: 1px solid #cbd3d4;
-    box-sizing: border-box;
-    border-collapse: separate;
-    display: table;
-    border-spacing: 2px;
-}
+/**
+ * Model for Ratepay invoice payment method
+ */
+class Invoice extends RatepayBase
+{
+    /**
+     * Payment method code
+     *
+     * @var string
+     */
+    protected $_code = PayoneConfig::METHOD_RATEPAY_INVOICE;
 
-.ratepayProfile TD {
-    padding-top: 0!important;
-}
-
-.ratepayProfile TD.label {
-    border-right: 1px solid #cbd3d4;
-    width: 38%;
+    /**
+     * Payment method sub type
+     *
+     * @var string
+     */
+    protected $sSubType = self::METHOD_RATEPAY_SUBTYPE_INVOICE;
 }

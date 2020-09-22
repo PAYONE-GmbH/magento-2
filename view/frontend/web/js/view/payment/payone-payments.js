@@ -131,6 +131,10 @@ define(
             {
                 type: 'payone_klarna_installment',
                 component: 'Payone_Core/js/view/payment/method-renderer/klarna_installment-method'
+            },
+            {
+                type: 'payone_ratepay_invoice',
+                component: 'Payone_Core/js/view/payment/method-renderer/ratepay_invoice-method'
             }
         );
         /** Add view logic here if needed */

@@ -231,6 +231,28 @@ abstract class PayoneMethod extends BaseMethod
     }
 
     /**
+     * Return capture parameters specific to this payment type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getPaymentSpecificCaptureParameters(Order $oOrder)
+    {
+        return []; // filled in child classes
+    }
+
+    /**
+     * Return debit parameters specific to this payment type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getPaymentSpecificDebitParameters(Order $oOrder)
+    {
+        return []; // filled in child classes
+    }
+
+    /**
      * Return success url for redirect payment types
      *
      * @param  Order $oOrder

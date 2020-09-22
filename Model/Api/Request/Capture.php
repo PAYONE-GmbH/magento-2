@@ -133,6 +133,8 @@ class Capture extends Base
 
         $this->addParameter('settleaccount', 'auto');
 
+        $this->aParameters = array_merge($this->aParameters, $oPayment->getPaymentSpecificCaptureParameters($oOrder));
+
         if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions); // add invoice parameters
         }

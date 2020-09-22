@@ -19,20 +19,23 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Model\Methods;
+namespace Payone\Core\Test\Unit\Observer;
 
-use Payone\Core\Model\Methods\Invoice as ClassToTest;
+use Magento\Framework\DataObject;
+use Payone\Core\Helper\Ratepay;
+use Payone\Core\Observer\PaymentSystemConfigChanged as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Sales\Model\Order;
+use Magento\Framework\Event\Observer;
+use Magento\Payment\Model\Info;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class InvoiceTest extends BaseTestCase
+class PaymentSystemConfigChangedTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -48,24 +51,24 @@ class InvoiceTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $ratepayHelper = $this->getMockBuilder(Ratepay::class)->disableOriginalConstructor()->getMock();
+        $ratepayHelper->method('getPaymentMethodFromPath')->willReturn('payone_ratepay_invoice');
+        $ratepayHelper->method('getRatepayShopConfigByPath')->willReturn([['shop_id' => '12345', 'currency' => 'EUR']]);
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'ratepayHelper' => $ratepayHelper
+        ]);
     }
 
-    public function testGetPaymentSpecificParameters()
+    public function testExecute()
     {
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $observer = $this->getMockBuilder(Observer::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getChangedPaths'])
+            ->getMock();
+        $observer->method('getChangedPaths')->willReturn(['payone_payment/ratepay_invoice/ratepay_shop_config']);
 
-        $result = $this->classToTest->getPaymentSpecificParameters($order);
-        $expected = [];
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testGetPaymentSpecificCaptureParameters()
-    {
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
-        
-        $expected = [];
-        $result = $this->classToTest->getPaymentSpecificCaptureParameters($order);
-        $this->assertEquals($expected, $result);
+        $result = $this->classToTest->execute($observer);
+        $this->assertNull($result);
     }
 }

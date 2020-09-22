@@ -1124,3 +1124,12 @@
 
 "Register for paydirekt oneKlick","Für paydirekt oneKlick registrieren"
 "Please check your email account for the paydirekt registration email before continuing.","Bitte prüfen Sie Ihr Email-Konto bzgl. der Registrierungs-Email von paydirekt bevor Sie fortfahren."
+
+"ratepay_legal_text_snippet_1","Mit Klicken auf"
+"ratepay_legal_text_snippet_2","erklären Sie sich mit den"
+"ratepay_legal_text_snippet_3","Ratepay Zahlungsbedingungen"
+"ratepay_legal_text_snippet_4","sowie mit der Durchführung einer"
+"ratepay_legal_text_snippet_5","Risikoprüfung durch Ratepay"
+"ratepay_legal_text_snippet_6","einverstanden."
+
+"Ratepay payment with differing billing- and shipping-address is not supported","Die Zahlung mit Ratepay bei abweichender Rechnungs- und Lieferadressen wird nicht unterstützt"

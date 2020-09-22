@@ -64,7 +64,7 @@ class OrderPaymentPlaceEnd implements ObserverInterface
         'amazon_reference_id',
         'order_reference_details_executed',
         'trigger_invalid_payment',
-
+        'payone_ratepay_device_fingerprint_token'
     ];
 
     /**

@@ -19,20 +19,24 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Model\Methods;
+namespace Payone\Core\Test\Unit\Block;
 
-use Payone\Core\Model\Methods\Invoice as ClassToTest;
+use Payone\Core\Block\RatepayDeviceFingerprint as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Sales\Model\Order;
+use Magento\Checkout\Model\Session;
+use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\Quote\Address;
+use Magento\Quote\Model\Quote\Payment;
+use Payone\Core\Helper\Ratepay;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class InvoiceTest extends BaseTestCase
+class RatepayDeviceFingerprintTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,28 +48,37 @@ class InvoiceTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var Ratepay|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $ratepayHelper;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $this->ratepayHelper = $this->getMockBuilder(Ratepay::class)->disableOriginalConstructor()->getMock();
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'ratepayHelper' => $this->ratepayHelper
+        ]);
     }
 
-    public function testGetPaymentSpecificParameters()
+    public function testGetDevicefingerprintSnippetId()
     {
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $expected = "ratepay";
+        $this->ratepayHelper->method("getConfigParam")->willReturn($expected);
 
-        $result = $this->classToTest->getPaymentSpecificParameters($order);
-        $expected = [];
+        $result = $this->classToTest->getDevicefingerprintSnippetId();
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetPaymentSpecificCaptureParameters()
+    public function testGetDevicefingerprintToken()
     {
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
-        
-        $expected = [];
-        $result = $this->classToTest->getPaymentSpecificCaptureParameters($order);
+        $expected = "12345";
+        $this->ratepayHelper->method("getRatepayDeviceFingerprintToken")->willReturn($expected);
+
+        $result = $this->classToTest->getDevicefingerprintToken();
         $this->assertEquals($expected, $result);
     }
 }

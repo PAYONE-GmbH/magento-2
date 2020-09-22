@@ -336,6 +336,38 @@ class ApiTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetOrderAmountBase()
+    {
+        $expected = '100';
+
+        $oOrder = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseGrandTotal', 'getStore'])
+            ->getMock();
+        $oOrder->method('getBaseGrandTotal')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
+
+        $result = $this->api->getOrderAmount($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetOrderAmountDisplay()
+    {
+        $this->scopeConfig->method('getValue')->willReturn('display');
+        $expected = '100';
+
+        $oOrder = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseGrandTotal', 'getGrandTotal', 'getStore'])
+            ->getMock();
+        $oOrder->method('getBaseGrandTotal')->willReturn(200);
+        $oOrder->method('getGrandTotal')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
+
+        $result = $this->api->getOrderAmount($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
     public function testGetCurrencyFromQuoteBase()
     {
         $expected = 'EUR';
