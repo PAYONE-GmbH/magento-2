@@ -96,5 +96,5 @@ abstract class PayoneConfig
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
     const METHOD_GROUP_PAYOLUTION = 'payone_payolution';
     const METHOD_GROUP_KLARNA = 'payone_klarna';
-    const METHOD_GROUP_RATEPAY = 'payone_klarna';
+    const METHOD_GROUP_RATEPAY = 'payone_ratepay';
 }

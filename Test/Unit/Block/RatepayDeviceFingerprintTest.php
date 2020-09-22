@@ -36,7 +36,7 @@ use Payone\Core\Helper\Ratepay;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class RatepayDeviceFingerprint extends BaseTestCase
+class RatepayDeviceFingerprintTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
