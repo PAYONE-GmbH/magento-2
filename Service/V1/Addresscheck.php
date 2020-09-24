@@ -164,10 +164,10 @@ class Addresscheck implements AddresscheckInterface
      */
     protected function handleAddresscheck(AddresscheckResponse $oResponse, AddressInterface $oAddress, $blIsBillingAddress) {
         $aResponse = $this->addresscheck->getResponse($oAddress, $blIsBillingAddress);
-        if (is_array($aResponse)) { // is a real response existing?
+        if (is_array($aResponse) && array_key_exists('wrongCountry', $aResponse) === false) { // is a real response existing?
             $this->addScoreToSession($oAddress, $blIsBillingAddress);
             $oResponse = $this->handleResponse($oResponse, $oAddress, $aResponse);
-        } elseif ($aResponse === true) { // check lifetime still valid, set success to true
+        } elseif ($aResponse === true || isset($aResponse['wrongCountry'])) { // set success to true
             $oResponse->setData('success', true);
         }
         return $oResponse;
