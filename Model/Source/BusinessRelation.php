@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -29,19 +29,15 @@ namespace Payone\Core\Model\Source;
 use Magento\Framework\Option\ArrayInterface;
 
 /**
- * Source class for existing BankaccountCheck types
+ * Source class for existing BusinessRelation types
  */
-class AddressCheckType implements ArrayInterface
+class BusinessRelation implements ArrayInterface
 {
-    const NONE = 'NO';
-    const BASIC = 'BA';
-    const PERSON = 'PE';
-    const BONIVERSUM_BASIC = 'BB';
-    const BONIVERSUM_PERSON = 'PB';
-    const ADDRESSCHECK_SCHUFA = 'BS';
+    const B2B = 'b2b';
+    const B2C = 'b2c';
 
     /**
-     * Return existing address check types
+     * Return existing business relation types
      *
      * @return array
      */
@@ -49,28 +45,12 @@ class AddressCheckType implements ArrayInterface
     {
         return [
             [
-                'value' => self::NONE,
-                'label' => __('None'),
+                'value' => self::B2B,
+                'label' => __('B2B'),
             ],
             [
-                'value' => self::BASIC,
-                'label' => __('Basic')
-            ],
-            [
-                'value' => self::PERSON,
-                'label' => __('Person')
-            ],
-            [
-                'value' => self::BONIVERSUM_BASIC,
-                'label' => __('Boniversum Basic')
-            ],
-            [
-                'value' => self::BONIVERSUM_PERSON,
-                'label' => __('Boniversum Person')
-            ],
-            [
-                'value' => self::ADDRESSCHECK_SCHUFA,
-                'label' => __('AddressCheck SCHUFA')
+                'value' => self::B2C,
+                'label' => __('B2C')
             ],
         ];
     }
@@ -83,12 +63,8 @@ class AddressCheckType implements ArrayInterface
     public static function getAvailableOptions()
     {
         return [
-            self::NONE,
-            self::BASIC,
-            self::PERSON,
-            self::BONIVERSUM_BASIC,
-            self::BONIVERSUM_PERSON,
-            self::ADDRESSCHECK_SCHUFA,
+            self::B2B,
+            self::B2C,
         ];
     }
 }

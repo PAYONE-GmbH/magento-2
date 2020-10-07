@@ -138,9 +138,11 @@ class ProtectFunnel
      * @param  string           $sConsumerscoreType
      * @param  string           $sAddresscheckType
      * @param  string|null      $sSimpleProtectVersion
+     * @param  string|null      $sBusinessRelation
+     * @param  string|null      $sBirthday
      * @return ConsumerscoreResponse|bool
      */
-    public function executeConsumerscore(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType = AddressCheckType::NONE, $sSimpleProtectVersion = null)
+    public function executeConsumerscore(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType = AddressCheckType::NONE, $sSimpleProtectVersion = null, $sBusinessRelation = null, $sBirthday = null)
     {
         if ($oAddress->getCountryId() != 'DE') {
             return true; // Consumerscore is only available for german addresses
@@ -150,10 +152,14 @@ class ProtectFunnel
             $sAddresscheckType = AddressCheckType::BONIVERSUM_PERSON; // 'Boniversum Person' needs to be enforced in this case
         }
 
+        if ($sConsumerscoreType == CreditratingCheckType::SCHUFA_SHORT || $sConsumerscoreType == CreditratingCheckType::SCHUFA_MIDDLE) {
+            $sAddresscheckType = AddressCheckType::ADDRESSCHECK_SCHUFA; // 'AddressCheck Schufa' needs to be enforced in this case
+        }
+
         $this->validateConsumerscoreType($sConsumerscoreType);
         $this->validateAddresscheckType($sAddresscheckType);
 
-        $aResponse = $this->consumerscore->sendRequest($oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion);
+        $aResponse = $this->consumerscore->sendRequest($oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion, $sBusinessRelation, $sBirthday);
 
         return new ConsumerscoreResponse($aResponse);
     }

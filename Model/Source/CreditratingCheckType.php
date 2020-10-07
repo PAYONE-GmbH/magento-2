@@ -37,6 +37,8 @@ class CreditratingCheckType implements ArrayInterface
     const INFOSCORE_ALL = 'IA';
     const INFOSCORE_ALL_BONI = 'IB';
     const BONIVERSUM_VERITA = 'CE';
+    const SCHUFA_SHORT = 'SFS';
+    const SCHUFA_MIDDLE = 'SFM';
 
     /**
      * Return existing address check types
@@ -62,6 +64,14 @@ class CreditratingCheckType implements ArrayInterface
                 'value' => self::BONIVERSUM_VERITA,
                 'label' => __('Boniversum VERITA Score')
             ],
+            [
+                'value' => self::SCHUFA_SHORT,
+                'label' => __('SCHUFA credit worthiness SHORT')
+            ],
+            [
+                'value' => self::SCHUFA_MIDDLE,
+                'label' => __('SCHUFA credit worthiness MIDDLE')
+            ],
         ];
     }
 
@@ -76,7 +86,9 @@ class CreditratingCheckType implements ArrayInterface
             self::INFOSCORE_HARD,
             self::INFOSCORE_ALL,
             self::INFOSCORE_ALL_BONI,
-            self::BONIVERSUM_VERITA
+            self::BONIVERSUM_VERITA,
+            self::SCHUFA_SHORT,
+            self::SCHUFA_MIDDLE,
         ];
     }
 }
