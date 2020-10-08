@@ -273,6 +273,7 @@
             <include path="Payone_Core::system/payone_klarna_debit.xml"/>
             <include path="Payone_Core::system/payone_klarna_installment.xml"/>
             <include path="Payone_Core::system/payone_ratepay_invoice.xml"/>
+            <include path="Payone_Core::system/payone_wechatpay.xml"/>
         </section>
         <section id="payone_protect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>PROTECT</label>

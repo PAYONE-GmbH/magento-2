@@ -1,5 +1,3 @@
-<?php
-
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,51 +17,25 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
+define(
+    [
+        'Payone_Core/js/view/payment/method-renderer/base'
+    ],
+    function (Component) {
+        'use strict';
+        return Component.extend({
+            defaults: {
+                template: 'Payone_Core/payment/wechatpay'
+            },
 
-namespace Payone\Core\Model\Methods;
-
-use Payone\Core\Model\PayoneConfig;
-use Magento\Sales\Model\Order;
-
-/**
- * Model for AliPay payment method
- */
-class AliPay extends PayoneMethod
-{
-    /**
-     * Payment method code
-     *
-     * @var string
-     */
-    protected $_code = PayoneConfig::METHOD_ALIPAY;
-
-    /**
-     * Clearingtype for PAYONE authorization request
-     *
-     * @var string
-     */
-    protected $sClearingtype = 'wlt';
-
-    /**
-     * Determines if the redirect-parameters have to be added
-     * to the authorization-request
-     *
-     * @var bool
-     */
-    protected $blNeedsRedirectUrls = true;
-
-    /**
-     * Return parameters specific to this payment type
-     *
-     * @param  Order $oOrder
-     * @return array
-     */
-    public function getPaymentSpecificParameters(Order $oOrder)
-    {
-        return ['wallettype' => 'ALP'];
+            /** Returns payment method instructions */
+            getInstructions: function () {
+                return window.checkoutConfig.payment.instructions[this.item.method];
+            }
+        });
     }
-}
+);

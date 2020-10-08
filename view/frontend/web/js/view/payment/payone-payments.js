@@ -135,6 +135,10 @@ define(
             {
                 type: 'payone_ratepay_invoice',
                 component: 'Payone_Core/js/view/payment/method-renderer/ratepay_invoice-method'
+            },
+            {
+                type: 'payone_wechatpay',
+                component: 'Payone_Core/js/view/payment/method-renderer/wechatpay-method'
             }
         );
         /** Add view logic here if needed */

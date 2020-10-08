@@ -19,51 +19,47 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Methods;
+namespace Payone\Core\Test\Unit\Model\Methods;
 
-use Payone\Core\Model\PayoneConfig;
+use Payone\Core\Model\Methods\WeChatPay as ClassToTest;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
-/**
- * Model for AliPay payment method
- */
-class AliPay extends PayoneMethod
+class WeChatPayTest extends BaseTestCase
 {
     /**
-     * Payment method code
-     *
-     * @var string
+     * @var ClassToTest
      */
-    protected $_code = PayoneConfig::METHOD_ALIPAY;
+    private $classToTest;
 
     /**
-     * Clearingtype for PAYONE authorization request
-     *
-     * @var string
+     * @var ObjectManager|PayoneObjectManager
      */
-    protected $sClearingtype = 'wlt';
+    private $objectManager;
 
-    /**
-     * Determines if the redirect-parameters have to be added
-     * to the authorization-request
-     *
-     * @var bool
-     */
-    protected $blNeedsRedirectUrls = true;
-
-    /**
-     * Return parameters specific to this payment type
-     *
-     * @param  Order $oOrder
-     * @return array
-     */
-    public function getPaymentSpecificParameters(Order $oOrder)
+    protected function setUp(): void
     {
-        return ['wallettype' => 'ALP'];
+        $this->objectManager = $this->getObjectManager();
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+    }
+
+    public function testGetPaymentSpecificParameters()
+    {
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->getPaymentSpecificParameters($order);
+        $expected = [
+            'wallettype' => 'WCP',
+            'api_version' => '3.10'
+        ];
+        $this->assertEquals($expected, $result);
     }
 }
