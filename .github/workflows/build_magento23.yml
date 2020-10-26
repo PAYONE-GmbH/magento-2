@@ -1,0 +1,63 @@
+name: Build and Test with Magento 2.3
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 15
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.3']
+        magento-versions: ['2.3']
+
+    services:
+      mysql:
+        image: mysql:8.0.20
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+        - 3306
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install PHP
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: mbstring, gd, bcmath, ctype, curl, dom, hash, iconv, intl, openssl, simplexml, soap, xsl, zip
+        tools: composer:v1
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Start MySQL
+      run: sudo /etc/init.d/mysql start
+      
+    - name: PHP Syntax Checker
+      run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
+      
+    - name: Setup Magento 2 and run tests
+      run: |
+        mysql -u root --password=root -e 'CREATE DATABASE IF NOT EXISTS magento;'
+        git clone --depth=1 -b ${{ matrix.magento-versions }} https://github.com/magento/magento2 /tmp/build
+        cd /tmp/build
+        composer update
+        php bin/magento setup:install --base-url=http://magebuild.integrations.p1-test.de/build/ \
+        --db-host=localhost --db-name=magento --db-user=root --db-password=root --admin-firstname=Dieter \
+        --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo \
+        --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin \
+
+        composer require --ignore-platform-reqs payone-gmbh/magento-2 dev-master
+        rm -rf /tmp/build/vendor/payone-gmbh/magento-2/*
+        cp -R $GITHUB_WORKSPACE/* /tmp/build/vendor/payone-gmbh/magento-2
+        php bin/magento setup:upgrade
+        php bin/magento setup:di:compile
+        php bin/magento cache:clean
+        ./vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist vendor/payone-gmbh/magento-2/Test/Unit
