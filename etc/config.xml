@@ -71,7 +71,7 @@
                 <order_status>pending</order_status>
                 <title>PAYONE - Advance Payment</title>
                 <allowspecific>0</allowspecific>
-                <create_invoice>0</create_invoice>
+                <create_invoice>1</create_invoice>
                 <group>payone</group>
             </payone_advance_payment>
             <payone_invoice translate="title" module="Payone_Core">
