@@ -89,10 +89,11 @@ class AppointedTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save'])
+            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save', 'canInvoice'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getPayoneAuthmode')->willReturn('authorization');
+        $order->method('canInvoice')->willReturn(true);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
@@ -115,10 +116,11 @@ class AppointedTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save'])
+            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save', 'canInvoice'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getPayoneAuthmode')->willReturn('authorization');
+        $order->method('canInvoice')->willReturn(true);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
