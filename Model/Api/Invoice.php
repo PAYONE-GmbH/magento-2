@@ -163,8 +163,8 @@ class Invoice
         if ($aPositions === false || $blFirstCapture === true || $blDebit === true) {
             $this->addShippingItem($oOrder, $aPositions, $blDebit, $dShippingCosts); // add shipping invoice params to request
             $this->addGiftCardItem($oOrder);  // add gift card invoice params to request
-            $this->addAmastyGiftcards($oOrder, $aPositions, $blDebit); // add amasty giftcard invoice params to request
             $this->addDiscountItem($oOrder, $aPositions, $blDebit); // add discount invoice params to request
+            $this->addAmastyGiftcards($oOrder, $aPositions, $blDebit); // add amasty giftcard invoice params to request
         }
         return $this->dAmount;
     }
