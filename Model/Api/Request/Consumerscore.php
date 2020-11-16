@@ -41,15 +41,23 @@ class Consumerscore extends AddressRequest
      * @param  string           $sConsumerscoreType
      * @param  string           $sAddresscheckType
      * @param  string|null      $sSimpleProtectVersion
+     * @param  string|null      $sBusinessRelation
+     * @param  string|null      $sBirthday
      * @return array|bool
      */
-    public function sendRequest(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion = null)
+    public function sendRequest(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion = null, $sBusinessRelation = null, $sBirthday = null)
     {
         $this->addParameter('request', 'consumerscore');
         $this->addParameter('mode', $sMode); //Operationmode live or test
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); //ID of PayOne Sub-Account
         $this->addParameter('addresschecktype', $sAddresscheckType);
         $this->addParameter('consumerscoretype', $sConsumerscoreType);
+        if ($sBusinessRelation !== null) {
+            $this->addParameter('businessrelation', $sBusinessRelation);
+        }
+        if ($sBirthday !== null) {
+            $this->addParameter('birthday', date('Ymd', strtotime($sBirthday)));
+        }
         $this->addParameter('language', $this->shopHelper->getLocale());
         $this->addAddress($oAddress);
 
