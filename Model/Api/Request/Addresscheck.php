@@ -122,7 +122,7 @@ class Addresscheck extends AddressRequest
      */
     protected function validateTypeToCountry($sAddresscheckType, \Magento\Quote\Api\Data\AddressInterface $oAddress)
     {
-        if ($sAddresscheckType == 'PE' && $oAddress->getCountryId() != 'DE') {
+        if (in_array($sAddresscheckType, ['PE', 'BB', 'PB']) && $oAddress->getCountryId() != 'DE') {
             //AddressCheck Person only available for germany
             return false;
         }
