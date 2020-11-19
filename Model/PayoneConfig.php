@@ -87,6 +87,7 @@ abstract class PayoneConfig
     const METHOD_KLARNA_DEBIT = 'payone_klarna_debit';
     const METHOD_KLARNA_INSTALLMENT = 'payone_klarna_installment';
     const METHOD_ALIPAY = 'payone_alipay';
+    const METHOD_WECHATPAY = 'payone_wechatpay';
     const METHOD_AMAZONPAY = 'payone_amazonpay';
     const METHOD_RATEPAY_INVOICE = 'payone_ratepay_invoice';
     const METHOD_RATEPAY_INSTALLMENT = 'payone_ratepay_installment'; // not implemented yet
