@@ -67,6 +67,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_KLARNA_INVOICE,
         PayoneConfig::METHOD_KLARNA_INSTALLMENT,
         PayoneConfig::METHOD_WECHATPAY,
+        PayoneConfig::METHOD_RATEPAY_INVOICE,
     ];
 
     /**
@@ -101,6 +102,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_KLARNA_INVOICE => 'wlt',
         PayoneConfig::METHOD_KLARNA_INSTALLMENT => 'wlt',
         PayoneConfig::METHOD_WECHATPAY => 'wlt',
+        PayoneConfig::METHOD_RATEPAY_INVOICE => 'fnc',
     ];
 
     /**

@@ -208,8 +208,28 @@ class Invoice
         }
 
         foreach($giftCards as $giftCard) {
-            $this->addInvoicePosition($giftCard['c'], -$giftCard['authorized'], 'voucher', 1, 'Giftcard', 0);
+            $giftCardAmount = $this->getGiftCardAmount($giftCard);
+            $this->addInvoicePosition($giftCard['c'], $giftCardAmount, 'voucher', 1, 'Giftcard', 0);
         }
+    }
+
+    /**
+     * return giftcard-amount based on magento version
+     *
+     * @param $aGiftCard
+     * @return
+     */
+    private function getGiftCardAmount($aGiftCard)
+    {
+        // up to Magento 2.3.4 giftcard-amount is saved in 'authorized', again in 2.4
+        if (array_key_exists('authorized', $aGiftCard)) {
+            return -$aGiftCard['authorized'];
+        }
+        // in Magento 2.3.5 the array has slightly changed, giftcard-amount is only saved in 'ba'
+        if (array_key_exists('ba', $aGiftCard)) {
+            return -$aGiftCard['ba'];
+        }
+        return 0;
     }
 
     /**
