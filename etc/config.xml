@@ -263,6 +263,15 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_ratepay_invoice>
+            <payone_wechatpay translate="title" module="Payone_Core">
+                <active>1</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\WeChatPay</model>
+                <order_status>pending</order_status>
+                <title>PAYONE - WeChatPay</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_wechatpay>
             <payone_trustly translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
@@ -312,6 +321,7 @@
                 <payone_klarna_debit>{"_payone_status_mapping11":{"txaction":"appointed","state_status":"processing"}}</payone_klarna_debit>
                 <payone_klarna_installment>{"_payone_status_mapping12":{"txaction":"appointed","state_status":"processing"}}</payone_klarna_installment>
                 <payone_ratepay_invoice>{"_payone_status_mapping13":{"txaction":"appointed","state_status":"processing"}}</payone_ratepay_invoice>
+                <payone_wechatpay>{"_payone_status_wechatpay":{"txaction":"appointed","state_status":"processing"}}</payone_wechatpay>
                 <payone_trustly>{"_payone_status_trustly":{"txaction":"appointed","state_status":"processing"}}</payone_trustly>
             </statusmapping>
             <creditcard>
@@ -447,6 +457,9 @@
             <payone_ratepay_invoice>
                 <use_global>1</use_global>
             </payone_ratepay_invoice>
+            <payone_wechatpay>
+                <use_global>1</use_global>
+            </payone_wechatpay>
             <payone_trustly>
                 <use_global>1</use_global>
             </payone_trustly>

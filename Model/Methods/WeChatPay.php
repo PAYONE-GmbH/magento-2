@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -30,16 +30,16 @@ use Payone\Core\Model\PayoneConfig;
 use Magento\Sales\Model\Order;
 
 /**
- * Model for AliPay payment method
+ * Model for WeChatPay payment method
  */
-class AliPay extends PayoneMethod
+class WeChatPay extends PayoneMethod
 {
     /**
      * Payment method code
      *
      * @var string
      */
-    protected $_code = PayoneConfig::METHOD_ALIPAY;
+    protected $_code = PayoneConfig::METHOD_WECHATPAY;
 
     /**
      * Clearingtype for PAYONE authorization request
@@ -64,6 +64,9 @@ class AliPay extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        return ['wallettype' => 'ALP'];
+        return [
+            'wallettype' => 'WCP',
+            'api_version' => '3.10'
+        ];
     }
 }

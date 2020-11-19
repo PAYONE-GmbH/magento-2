@@ -109,6 +109,9 @@
         <method name="payone_ratepay_invoice">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="payone_wechatpay">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
         <method name="payone_trustly">
             <allow_multiple_address>0</allow_multiple_address>
         </method>

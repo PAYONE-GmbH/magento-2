@@ -137,6 +137,10 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/ratepay_invoice-method'
             },
             {
+                type: 'payone_wechatpay',
+                component: 'Payone_Core/js/view/payment/method-renderer/wechatpay-method'
+            },
+            {
                 type: 'payone_trustly',
                 component: 'Payone_Core/js/view/payment/method-renderer/trustly-method'
             }

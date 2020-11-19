@@ -225,6 +225,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
+                <field id="payone_wechatpay" translate="label" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>WeChatPay</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
                 <field id="payone_trustly" translate="label" sortOrder="330" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Trustly</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -278,6 +283,7 @@
             <include path="Payone_Core::system/payone_klarna_debit.xml"/>
             <include path="Payone_Core::system/payone_klarna_installment.xml"/>
             <include path="Payone_Core::system/payone_ratepay_invoice.xml"/>
+            <include path="Payone_Core::system/payone_wechatpay.xml"/>
             <include path="Payone_Core::system/payone_trustly.xml"/>
         </section>
         <section id="payone_protect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
