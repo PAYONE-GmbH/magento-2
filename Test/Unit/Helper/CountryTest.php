@@ -34,6 +34,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Directory\Model\Country as CoreCountry;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -98,7 +99,7 @@ class CountryTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetDebitSepaCountriesEmpty()
+    public function testGetEnabledCountriesEmpty()
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
@@ -107,12 +108,12 @@ class CountryTest extends BaseTestCase
                     ['payone_payment/payone_debit/sepa_country', ScopeInterface::SCOPE_STORES, null, null]
                 ]
             );
-        $result = $this->country->getDebitSepaCountries();
+        $result = $this->country->getEnabledCountries(PayoneConfig::METHOD_DEBIT);
         $expected = [];
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetDebitSepaCountries()
+    public function testGetEnabledCountries()
     {
         $this->coreCountry->method('loadByCode')->willReturn($this->coreCountry);
         $this->scopeConfig->expects($this->any())
@@ -122,7 +123,7 @@ class CountryTest extends BaseTestCase
                     ['payone_payment/payone_debit/sepa_country', ScopeInterface::SCOPE_STORES, null, 'DE']
                 ]
             );
-        $result = $this->country->getDebitSepaCountries();
+        $result = $this->country->getEnabledCountries(PayoneConfig::METHOD_DEBIT);
         $expected = [['id' => 'DE', 'title' => 'Deutschland']];
         $this->assertEquals($expected, $result);
     }

@@ -79,7 +79,7 @@ class ConfigProviderTest extends BaseTestCase
 
         $this->dataHelper = $this->getMockBuilder(Data::class)->disableOriginalConstructor()->getMock();
         $countryHelper = $this->getMockBuilder(Country::class)->disableOriginalConstructor()->getMock();
-        $countryHelper->method('getDebitSepaCountries')->willReturn([['id' => 'DE', 'title' => 'Deutschland']]);
+        $countryHelper->method('getEnabledCountries')->willReturn([['id' => 'DE', 'title' => 'Deutschland']]);
         $customerHelper = $this->getMockBuilder(Customer::class)->disableOriginalConstructor()->getMock();
         $customerHelper->method('customerHasGivenGender')->willReturn(true);
         $customerHelper->method('getCustomerBirthday')->willReturn(false);

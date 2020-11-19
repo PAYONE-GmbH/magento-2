@@ -96,11 +96,11 @@ class Country extends \Payone\Core\Helper\Base
      *
      * @return array
      */
-    public function getDebitSepaCountries()
+    public function getEnabledCountries($sPaymentMethod)
     {
         $aReturn = [];
 
-        $sCountries = $this->getConfigParam('sepa_country', PayoneConfig::METHOD_DEBIT, 'payone_payment');
+        $sCountries = $this->getConfigParam('sepa_country', $sPaymentMethod, 'payone_payment');
         if ($sCountries) {
             $aCountries = explode(',', $sCountries);
             foreach ($aCountries as $sCountryCode) {

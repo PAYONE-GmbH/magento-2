@@ -19,20 +19,22 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Block\Form;
+namespace Payone\Core\Test\Unit\Model\Methods;
 
-use Payone\Core\Block\Form\Debit as ClassToTest;
+use Magento\Framework\DataObject;
+use Magento\Payment\Model\InfoInterface;
+use Payone\Core\Model\Methods\Trustly as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Sales\Model\Order;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-use Payone\Core\Helper\Country;
 
-class DebitTest extends BaseTestCase
+class TrustlyTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -44,35 +46,37 @@ class DebitTest extends BaseTestCase
      */
     private $objectManager;
 
-    /**
-     * @var Country
-     */
-    private $countryHelper;
-
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->countryHelper = $this->getMockBuilder(Country::class)->disableOriginalConstructor()->getMock();
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'countryHelper' => $this->countryHelper
-        ]);
+        $info = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
+        $info->method('getAdditionalInformation')->willReturn('info');
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $this->classToTest->setInfoInstance($info);
     }
 
-    public function testGetSepaCountries()
+    public function testGetPaymentSpecificParameters()
     {
-        $expected = [['id' => 'DE', 'title' => 'Deutschland']];
-        $this->countryHelper->method('getEnabledCountries')->willReturn($expected);
-        $result = $this->classToTest->getSepaCountries();
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->getPaymentSpecificParameters($order);
+        $expected = [
+            'onlinebanktransfertype' => 'TRL',
+            'api_version' => '3.10',
+            'bankcountry' => 'info',
+            'iban' => 'info',
+            'bic' => 'info',
+        ];
         $this->assertEquals($expected, $result);
     }
 
-    public function testIsBicNeeded()
+    public function testAssignData()
     {
-        $expected = true;
-        $this->countryHelper->method('getConfigParam')->willReturn($expected);
+        $data = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->isBicNeeded();
-        $this->assertEquals($expected, $result);
+        $result = $this->classToTest->assignData($data);
+        $this->assertInstanceOf(ClassToTest::class, $result);
     }
 }

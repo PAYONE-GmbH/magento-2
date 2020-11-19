@@ -139,6 +139,10 @@ define(
             {
                 type: 'payone_wechatpay',
                 component: 'Payone_Core/js/view/payment/method-renderer/wechatpay-method'
+            },
+            {
+                type: 'payone_trustly',
+                component: 'Payone_Core/js/view/payment/method-renderer/trustly-method'
             }
         );
         /** Add view logic here if needed */
