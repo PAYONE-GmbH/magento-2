@@ -323,4 +323,11 @@ class AddresscheckTest extends BaseTestCase
         $result = $this->classToTest->getResponse($address);
         $this->assertTrue($result);
     }
+
+    public function testGetErrorMessageByResponse()
+    {
+        $aResponse = ['wrongCountry' => 1];
+        $result = $this->classToTest->getErrorMessageByResponse($aResponse);
+        $this->assertFalse($result);
+    }
 }

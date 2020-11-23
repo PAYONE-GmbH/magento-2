@@ -291,6 +291,10 @@ class Addresscheck
     public function getErrorMessageByResponse($aResponse)
     {
         $sErrorMessage = false;
+        if (isset($aResponse['wrongCountry'])) {
+            return $sErrorMessage;
+        }
+
         if (!isset($aResponse['status'])) { // the response doesnt have the expected format
             $sErrorMessage = 'An error occured during the addresscheck.';
         } elseif ($aResponse['status'] == 'INVALID') {
