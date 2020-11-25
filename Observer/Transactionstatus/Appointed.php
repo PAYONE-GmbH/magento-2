@@ -127,7 +127,7 @@ class Appointed implements ObserverInterface
         }
 
         // preauthorization-orders and advance payment should not create an invoice
-        if ($oOrder->getPayoneAuthmode() !== 'authorization' || $oOrder->getPayment()->getMethodInstance()->getCode() === PayoneConfig::METHOD_ADVANCE_PAYMENT){
+        if ($oOrder->getPayoneAuthmode() !== 'authorization' || $oOrder->getPayment()->getMethodInstance()->getCode() === PayoneConfig::METHOD_ADVANCE_PAYMENT || !$oOrder->canInvoice()){
             return;
         }
 
