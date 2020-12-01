@@ -36,8 +36,7 @@ define(
         return Component.extend({
             defaults: {
                 template: 'Payone_Core/payment/creditcard',
-                firstname: '',
-                lastname: '',
+                cardholder: '',
                 pseudocardpan: '',
                 saveData: 0,
                 showNewData: false
@@ -46,8 +45,7 @@ define(
             initObservable: function () {
                 this._super()
                     .observe([
-                        'firstname',
-                        'lastname',
+                        'cardholder',
                         'pseudocardpan',
                         'saveData',
                         'showNewData'
@@ -60,8 +58,7 @@ define(
                 if (parentReturn.additional_data === null) {
                     parentReturn.additional_data = {};
                 }
-                parentReturn.additional_data.firstname = this.firstname();
-                parentReturn.additional_data.lastname = this.lastname();
+                parentReturn.additional_data.cardholder = this.cardholder();
                 parentReturn.additional_data.pseudocardpan = $('#' + this.getCode() + '_pseudocardpan').val();
                 if (typeof window.checkoutConfig.payment.payone.ccCheckResponse !== "undefined") {
                     parentReturn.additional_data.truncatedcardpan = window.checkoutConfig.payment.payone.ccCheckResponse.truncatedcardpan;
@@ -70,7 +67,10 @@ define(
                 }
                 if (this.isSaveDataEnabled()) {
                     parentReturn.additional_data.saveData = this.saveData();
-                    parentReturn.additional_data.selectedData = this.getSelectedSavedData();
+                    parentReturn.additional_data.selectedData = this.getSelectedSavedCardPan();
+                    if (parentReturn.additional_data.selectedData !== 'new') {
+                        parentReturn.additional_data.cardholder = this.getSelectedSavedCardholder();
+                    }
                 }
                 return parentReturn;
             },
@@ -139,22 +139,42 @@ define(
             getSavedPaymentData: function () {
                 return window.checkoutConfig.payment.payone.savedPaymentData;
             },
-            getSelectedSavedData: function () {
+            getSelectedSavedCardPan: function () {
                 return $('input[name=' + this.getCode() +'_saved_data]:checked').val();
             },
-            getSelectedSavedCardExpireData: function () {
-                var sSelectedCardPan = this.getSelectedSavedData();
+            getSelectedSavedData: function () {
+                var sSelectedCardPan = this.getSelectedSavedCardPan();
                 var aSavedPaymentData = this.getSavedPaymentData();
                 for (var i = 0; i < aSavedPaymentData.length; i++) {
                     if (aSavedPaymentData[i].payment_data.cardpan == sSelectedCardPan) {
-                        return aSavedPaymentData[i].payment_data.cardexpiredate;
+                        return aSavedPaymentData[i].payment_data;
                     }
                 }
                 return false;
             },
+            getSelectedSavedCardholder: function () {
+                var aSelectedData = this.getSelectedSavedData();
+                if (aSelectedData !== false) {
+                    return aSelectedData.cardholder;
+                }
+                return false;
+            },
+            getSelectedSavedCardExpireData: function () {
+                var aSelectedData = this.getSelectedSavedData();
+                if (aSelectedData !== false) {
+                    return aSelectedData.cardexpiredate;
+                }
+                return false;
+            },
             isSavedPaymentDataUsed: function () {
-                var sSelectedSavedData = this.getSelectedSavedData();
+                var sSelectedSavedData = this.getSelectedSavedCardPan();
                 if (this.useSaveDataMode() && sSelectedSavedData && sSelectedSavedData != 'new') {
+                    return true;
+                }
+                return false;
+            },
+            isCardholderDataValid: function (sCardholder) {
+                if (sCardholder.search(/[^a-zA-Z ]+/) === -1) {
                     return true;
                 }
                 return false;
@@ -210,12 +230,16 @@ define(
                         this.messageContainer.addErrorMessage({'message': $t('Please choose the creditcard type.')});
                         return false;
                     }
-                    if (this.firstname() == '') {
-                        this.messageContainer.addErrorMessage({'message': $t('Please enter the firstname.')});
+                    if (this.cardholder() == '') {
+                        this.messageContainer.addErrorMessage({'message': $t('Please enter the cardholder information.')});
                         return false;
                     }
-                    if (this.lastname() == '') {
-                        this.messageContainer.addErrorMessage({'message': $t('Please enter the lastname.')});
+                    if (this.cardholder().length > 50) {
+                        this.messageContainer.addErrorMessage({'message': $t('The cardholder information entered is too long.')});
+                        return false;
+                    }
+                    if (this.isCardholderDataValid(this.cardholder()) === false) {
+                        this.messageContainer.addErrorMessage({'message': $t('The cardholder information contains invalid characters.')});
                         return false;
                     }
                 } else if (!this.isMinValidityCorrect(this.getSelectedSavedCardExpireData())) {
