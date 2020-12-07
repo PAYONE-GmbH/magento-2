@@ -120,18 +120,29 @@ class InvoiceTest extends BaseTestCase
         $this->amastyHelper->method('getAmastyGiftCards')->willReturn([['base_gift_amount' => 5, 'gift_amount' => 5, 'code' => 'TEST']]);
 
         $authorization = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
-
+        
         $items = [$this->getItemMock()];
+        
+        $expected = 75;
 
-        $expected = 85;
-
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order = $this->getMockBuilder(Order::class)
+            ->setMethods([
+                'getAllItems',
+                'getBaseShippingInclTax',
+                'getBaseDiscountAmount',
+                'getCouponCode',
+                'getBaseGrandTotal',
+                'getStore',
+                'getGiftCards'
+            ])
+            ->disableOriginalConstructor()->getMock();
         $order->method('getAllItems')->willReturn($items);
         $order->method('getBaseShippingInclTax')->willReturn(-5);
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
         $order->method('getBaseGrandTotal')->willReturn($expected);
         $order->method('getStore')->willReturn($this->store);
+        $order->method('getGiftCards')->willReturn('[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
@@ -147,9 +158,21 @@ class InvoiceTest extends BaseTestCase
 
         $items = [$this->getItemMock()];
 
-        $expected = 101;
+        $expected = 91;
 
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order = $this->getMockBuilder(Order::class)
+            ->setMethods([
+                'getAllItems',
+                'getBaseShippingInclTax',
+                'getShippingInclTax',
+                'getBaseDiscountAmount',
+                'getDiscountAmount',
+                'getCouponCode',
+                'getBaseGrandTotal',
+                'getGrandTotal',
+                'getStore',
+                'getGiftCards'
+            ])->disableOriginalConstructor()->getMock();
         $order->method('getAllItems')->willReturn($items);
         $order->method('getBaseShippingInclTax')->willReturn(-5);
         $order->method('getShippingInclTax')->willReturn(-7);
@@ -159,6 +182,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseGrandTotal')->willReturn($expected);
         $order->method('getGrandTotal')->willReturn($expected);
         $order->method('getStore')->willReturn($this->store);
+        $order->method('getGiftCards')->willReturn('[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
