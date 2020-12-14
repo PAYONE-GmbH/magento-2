@@ -111,7 +111,7 @@ class SavedPaymentDataTest extends BaseTestCase
 
     public function testDeletePaymentData()
     {
-        $data = ['a' => 'b', '1' => '2'];
+        $data = ['a' => 'b', '1' => '2', 'firstname' => 'A', 'lastname' => 'B'];
         $fetchReturn = [
             [
                 'id' => 5,

@@ -75,8 +75,7 @@ class Creditcard extends PayoneMethod
         'cardtype',
         'cardexpiredate',
         'selectedData',
-        'firstname',
-        'lastname',
+        'cardholder',
 
     ];
 
@@ -93,6 +92,7 @@ class Creditcard extends PayoneMethod
         if (!empty($sSelectedData) && $sSelectedData != 'new') {
             $aReturn['pseudocardpan'] = $this->getInfoInstance()->getAdditionalInformation('selectedData');
         }
+        $aReturn['cardholder'] = $this->getInfoInstance()->getAdditionalInformation('cardholder');
         return $aReturn;
     }
 
@@ -152,8 +152,7 @@ class Creditcard extends PayoneMethod
         if (isset($aAdditionalData['pseudocardpan']) && isset($aAdditionalData['truncatedcardpan'])) {
             $this->addValueToArray($aReturn, $aAdditionalData, 'cardpan', 'pseudocardpan');
             $this->addValueToArray($aReturn, $aAdditionalData, 'masked', 'truncatedcardpan');
-            $this->addValueToArray($aReturn, $aAdditionalData, 'firstname', 'firstname');
-            $this->addValueToArray($aReturn, $aAdditionalData, 'lastname', 'lastname');
+            $this->addValueToArray($aReturn, $aAdditionalData, 'cardholder', 'cardholder');
             $this->addValueToArray($aReturn, $aAdditionalData, 'cardtype', 'cardtype');
             $this->addValueToArray($aReturn, $aAdditionalData, 'cardexpiredate', 'cardexpiredate');
         }

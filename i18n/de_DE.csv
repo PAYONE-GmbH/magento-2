@@ -992,6 +992,7 @@
 "Card Verification Number","Pruefziffer:"
 "Firstname","Vorname"
 "Lastname","Nachname"
+"Cardholder","Karteninhaber"
 "What is this?","Was ist das?"
 "Please enter complete data.","Bitte geben Sie die Kreditkartendaten vollstaendig ein."
 "Expiry date invalid. Please verify your card data.","Ablauf-Datum ungueltig. Bitte pruefen Sie ihre Kartendaten."
@@ -1012,6 +1013,9 @@
 "Please choose the bank country.","Bitte waehlen Sie das Land der Bank aus."
 
 "Please choose the creditcard type.","Bitte waehlen Sie den Kreditkarten-Typ aus."
+"Please enter the cardholder information.","Bitte geben Sie den Karteninhaber."
+"The cardholder information entered is too long.","Der eingegebene Karteninhaber Name ist zu lang."
+"The cardholder information contains invalid characters.","Das Karteninhaber Feld beinhaltet unzulässige Zeichen."
 "Please enter the firstname.","Bitte geben Sie den Vornamen ein."
 "Please enter the lastname.","Bitte geben Sie den Nachnamen ein."
 
