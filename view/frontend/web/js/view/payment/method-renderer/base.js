@@ -70,8 +70,6 @@ define(
             handleSetPaymentInformation: function(sUrl) {
                 var self = this;
 
-                // update payment method information if additional data was changed
-                this.selectPaymentMethod();
                 this.isPlaceOrderActionAllowed(false);
 
                 $.when(
