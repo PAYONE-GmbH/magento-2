@@ -80,6 +80,14 @@ class KlarnaBase extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
+     * Determines if the invoice information has to be added
+     * to the authorization-request
+     *
+     * @var bool
+     */
+    protected $blNeedsProductInfo = true;
+
+    /**
      * Info instructions block path
      *
      * @var string
