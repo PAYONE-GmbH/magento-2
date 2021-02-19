@@ -116,7 +116,7 @@ class Invoice
      */
     protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat)
     {
-        $this->oRequest->addParameter('id['.$this->iIndex.']', $sId); // add invoice item id
+        $this->oRequest->addParameter('id['.$this->iIndex.']', $this->formatSku($sId)); // add invoice item id
         $this->oRequest->addParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100); // expected in smallest unit of currency
         $this->oRequest->addParameter('it['.$this->iIndex.']', $sItemType); // add invoice item type
         $this->oRequest->addParameter('no['.$this->iIndex.']', $iAmount); // add invoice item amount
@@ -395,5 +395,18 @@ class Invoice
     protected function getStoreCode()
     {
         return $this->sStoreCode;
+    }
+    
+    /**
+     * Returns formatted sku
+     *
+     * @param string $sSku
+     * @return string
+     */
+    protected function formatSku($sSku)
+    {
+        $sSku = str_replace(',', '', $sSku); // remove comma from sku
+        $sSku = substr($sSku, 0, 32); // limit sku to 32 chars
+        return $sSku;
     }
 }
