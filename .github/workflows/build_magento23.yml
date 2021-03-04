@@ -20,11 +20,11 @@ jobs:
 
     services:
       mysql:
-        image: mysql:8.0.20
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
-        - 3306
+        - 3306:3306
 
     steps:
     - uses: actions/checkout@v2
@@ -36,9 +36,6 @@ jobs:
         tools: composer:v1
     - name: Validate composer.json and composer.lock
       run: composer validate
-
-    - name: Start MySQL
-      run: sudo /etc/init.d/mysql start
       
     - name: PHP Syntax Checker
       run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
@@ -50,7 +47,7 @@ jobs:
         cd /tmp/build
         composer update
         php bin/magento setup:install --base-url=http://magebuild.integrations.p1-test.de/build/ \
-        --db-host=localhost --db-name=magento --db-user=root --db-password=root --admin-firstname=Dieter \
+        --db-host=127.0.0.1 --db-name=magento --db-user=root --db-password=root --admin-firstname=Dieter \
         --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo \
         --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin \
 
