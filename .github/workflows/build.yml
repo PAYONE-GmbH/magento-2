@@ -24,7 +24,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
-        - 3306
+                - 3306:3306
 
     steps:
     - uses: actions/checkout@v2
@@ -49,15 +49,12 @@ jobs:
       with:
         stack-version: 7.6.0
 
-    - name: Start MySQL
-      run: sudo /etc/init.d/mysql start
-      
     - name: PHP Syntax Checker
       run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
       
     - name: Setup Magento 2 and run tests
       run: |
-        mysql -u root --password=root -e 'CREATE DATABASE IF NOT EXISTS magento;'
+        mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
         git clone --depth=1 -b ${{ matrix.magento-versions }} https://github.com/magento/magento2 /tmp/build
         cd /tmp/build
         composer update
