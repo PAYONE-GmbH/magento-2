@@ -89,7 +89,7 @@ class Cancellation
 
                     $quoteId = $this->checkoutSession->getLastQuoteId();
                     $oOldQuote = $this->quoteRepository->get($quoteId);
-                    if ($oOldQuote && $oOldQuote->getId()) {
+                    if ($oOldQuote && $oOldQuote->getId() && $oOldQuote->getId() != $oCurrentQuote->getId()) {
                         $oCurrentQuote->merge($oOldQuote);
                         $oCurrentQuote->collectTotals();
                         $oCurrentQuote->save();

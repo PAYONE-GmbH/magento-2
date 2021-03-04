@@ -58,8 +58,11 @@ class CancellationTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('getId')->willReturn(123);
+        $currentQuote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $currentQuote->method('getId')->willReturn(123);
+
+        $oldQuote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $oldQuote->method('getId')->willReturn(321);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -79,7 +82,7 @@ class CancellationTest extends BaseTestCase
             ->getMock();
         $checkoutSession->method('getPayoneCustomerIsRedirected')->willReturn(true);
         $checkoutSession->method('getLastOrderId')->willReturn(123);
-        $checkoutSession->method('getQuote')->willReturn($quote);
+        $checkoutSession->method('getQuote')->willReturn($currentQuote);
         $checkoutSession->method('getLastQuoteId')->willReturn(123);
         $checkoutSession->method('unsLastQuoteId')->willReturn($checkoutSession);
         $checkoutSession->method('unsLastSuccessQuoteId')->willReturn($checkoutSession);
@@ -97,7 +100,7 @@ class CancellationTest extends BaseTestCase
         $orderFactory->method('create')->willReturn($this->order);
 
         $quoteRepository = $this->getMockBuilder(QuoteRepository::class)->disableOriginalConstructor()->getMock();
-        $quoteRepository->method('get')->willReturn($quote);
+        $quoteRepository->method('get')->willReturn($oldQuote);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'checkoutSession' => $checkoutSession,
