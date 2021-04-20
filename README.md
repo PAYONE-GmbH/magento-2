@@ -11,7 +11,7 @@ The PAYONE payment extension for Magento 2 is massively reworked since the first
 *	Optional multi-partial capture for partial deliveries
 *	Supports simplified PCI DSS conformity in accordance with SAQ A
 *	Payment methods can be automatically hidden depending on the amount of the order and the credit rating of the customer
-*	Find all currently supported payment methods on www.payone.com/magento
+*	Find all currently supported payment methods on https://docs.payone.com/x/WoAS
 
 ## Installation
 *	Go to your installation directory of Magento 2 and perform the following commands
