@@ -135,9 +135,11 @@ define(
                 if (this.validate() && additionalValidators.validate()) {
                     window.payolution_installment = this;
                     window.switchInstallmentPlan = window.switchInstallmentPlan || function (sKey, sCode, iInstallments) {
-                            window.payolution_installment.switchInstallmentPlan(sKey, sCode, iInstallments);
-                        }
-                    installmentplan(this, '19601212');
+                        window.payolution_installment.switchInstallmentPlan(sKey, sCode, iInstallments);
+                    };
+                    if (this.requestBirthday() == true && this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
+                        installmentplan(this, this.birthyear() + this.birthmonth() + this.birthday());
+                    }
                 }
             },
             switchInstallmentPlan: function (sKey, sCode, iInstallments) {
