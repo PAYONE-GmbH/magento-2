@@ -178,7 +178,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Invoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Paysafe Pay Later™ Invoice</title>
+                <title>PAYONE - Unzer Invoice</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_invoice>
@@ -187,7 +187,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Debit</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Paysafe Pay Later™ Debit</title>
+                <title>PAYONE - Unzer Debit</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_debit>
@@ -196,7 +196,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Installment</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Paysafe Pay Later™ Installment</title>
+                <title>PAYONE - Unzer Installment</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_installment>

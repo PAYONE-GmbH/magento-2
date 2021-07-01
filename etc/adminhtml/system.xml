@@ -180,17 +180,17 @@
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_invoice" translate="label" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Paysafe Pay Later™ Invoice</label>
+                    <label>Unzer Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_debit" translate="label" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Paysafe Pay Later™ Debit</label>
+                    <label>Unzer Debit</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_payolution_installment" translate="label" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Paysafe Pay Later™ Installment</label>
+                    <label>Unzer Installment</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>

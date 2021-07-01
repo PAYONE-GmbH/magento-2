@@ -114,7 +114,7 @@ define(
                     return false;
                 }
                 if (this.agreement() == false) {
-                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Paysafe Pay Later™!')});
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Unzer!')});
                     return false;
                 }
                 if ($('#' + this.getCode() + '_installmentplan').html() != '' && $('#' + this.getCode() + '_duration').val() == '') {
