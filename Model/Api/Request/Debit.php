@@ -56,6 +56,16 @@ class Debit extends Base
      */
     protected $toolkitHelper;
 
+
+    const AREA_CODE = \Magento\Framework\App\Area::AREA_ADMINHTML;
+
+    /**
+     * State resolving
+     *
+     * @var \Magento\Framework\App\State
+     */
+    protected $state;
+
     /**
      * Constructor
      *
@@ -66,6 +76,7 @@ class Debit extends Base
      * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
      * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
+     * @param \Magento\Framework\App\State            $state
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
@@ -74,12 +85,14 @@ class Debit extends Base
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
         \Payone\Core\Helper\Database $databaseHelper,
-        \Payone\Core\Helper\Toolkit $toolkitHelper
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Magento\Framework\App\State $state
     ) {
         parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
         $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
         $this->toolkitHelper = $toolkitHelper;
+        $this->state = $state;
     }
 
     /**
@@ -102,6 +115,10 @@ class Debit extends Base
     protected function getInvoiceList(Order $oOrder, Creditmemo $oCreditmemo)
     {
         $aCreditmemo = $this->getCreditmemoRequestParams();
+
+        if (empty($aCreditmemo) && $this->state->getAreaCode() != self::AREA_CODE) {
+            $aCreditmemo = $this->getCreditMemoData($oCreditmemo);
+        }
 
         $aPositions = [];
         $blFull = true;
@@ -295,5 +312,32 @@ class Debit extends Base
             throw new LocalizedException(__('The given BIC is invalid!'));
         }
         return true;
+    }
+
+    /**
+     * Emulate the getCreditmemoRequestParams method for creditmemos that are not created via adminhtml
+     *
+     * @param $oCreditmemo
+     * @return array
+     */
+    protected function getCreditMemoData($oCreditmemo)
+    {
+        $data = [];
+        foreach ($oCreditmemo->getItems() as $item) {
+            if ($item->getQty() <= 0 || $item->getOrderItem()->isDummy()){
+                continue;
+            }
+            $data['items'][$item->getOrderItemId()]['qty'] = $item->getQty();
+        }
+        $data['do_offline'] = 0;
+        $data['comment_text'] = '';
+        $data['shipping_amount'] = 0;
+        if ($oCreditmemo->getAdjustment() > 0) {
+            $data['adjustment_positive'] = $oCreditmemo->getAdjustment();
+        } else if ($oCreditmemo->getAdjustment() < 0) {
+            $data['adjustment_negative'] = $oCreditmemo->getAdjustment() * -1;
+        }
+
+        return $data;
     }
 }
