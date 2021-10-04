@@ -222,6 +222,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'locale' => $this->shopHelper->getLocale(),
             'fullLocale' => $this->requestHelper->getConfigParam('code', 'locale', 'general'),
             'availableCardTypes' => $this->paymentHelper->getAvailableCreditcardTypes(),
+            'availableApplePayTypes' => $this->paymentHelper->getAvailableApplePayTypes(),
             'fieldConfig' => $this->hostedIframeHelper->getHostedFieldConfig(),
             'sepaCountries' => $this->countryHelper->getEnabledCountries(PayoneConfig::METHOD_DEBIT),
             'trustlyCountries' => $this->countryHelper->getEnabledCountries(PayoneConfig::METHOD_TRUSTLY),
@@ -259,6 +260,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
             'currency' => $this->requestHelper->getConfigParam('currency'),
             'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
+            'storeName' => $this->shopHelper->getStoreName(),
         ];
     }
 

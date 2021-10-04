@@ -93,6 +93,7 @@ abstract class PayoneConfig
     const METHOD_RATEPAY_INSTALLMENT = 'payone_ratepay_installment'; // not implemented yet
     const METHOD_RATEPAY_DEBIT = 'payone_ratepay_debit'; // not implemented yet
     const METHOD_TRUSTLY = 'payone_trustly';
+    const METHOD_APPLEPAY = 'payone_applepay';
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';

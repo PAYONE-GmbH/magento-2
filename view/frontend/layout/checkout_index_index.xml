@@ -30,6 +30,7 @@
         <css src="Payone_Core::css/creditcard.css"/>
         <css src="Payone_Core::css/klarna.css"/>
         <css src="Payone_Core::css/payone.css"/>
+        <css src="Payone_Core::css/applepay.css"/>
     </head>
     <body>
         <referenceBlock name="checkout.root">
@@ -132,6 +133,9 @@
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
                                                                         <item name="payone_trustly" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        </item>
+                                                                        <item name="payone_applepay" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
                                                                     </item>

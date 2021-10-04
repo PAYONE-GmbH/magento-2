@@ -69,6 +69,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_WECHATPAY,
         PayoneConfig::METHOD_RATEPAY_INVOICE,
         PayoneConfig::METHOD_TRUSTLY,
+        PayoneConfig::METHOD_APPLEPAY,
     ];
 
     /**
@@ -105,6 +106,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_WECHATPAY => 'wlt',
         PayoneConfig::METHOD_RATEPAY_INVOICE => 'fnc',
         PayoneConfig::METHOD_TRUSTLY => 'sb',
+        PayoneConfig::METHOD_APPLEPAY => 'wlt',
     ];
 
     /**
@@ -163,6 +165,22 @@ class Payment extends \Payone\Core\Helper\Base
                     'cvc_length' => $aAllTypes[$sTypeId]['cvc_length'],
                 ];
             }
+        }
+        return $aReturn;
+    }
+
+    /**
+     * Returns configured available apple pay types
+     *
+     * @return array
+     */
+    public function getAvailableApplePayTypes()
+    {
+        $aReturn = [];
+
+        $sApplePayTypes = $this->getConfigParam('types', PayoneConfig::METHOD_APPLEPAY, 'payone_payment');
+        if ($sApplePayTypes) {
+            return explode(',', $sApplePayTypes);
         }
         return $aReturn;
     }

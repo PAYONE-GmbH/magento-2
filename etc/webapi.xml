@@ -92,4 +92,21 @@
             <parameter name="cartId" force="true">%cart_id%</parameter>
         </data>
     </route>
+
+    <route url="/V1/guest-carts/:cartId/payone-getApplePaySession" method="POST">
+        <service class="Payone\Core\Api\ApplePayInterface" method="getApplePaySession"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <route url="/V1/carts/mine/payone-getApplePaySession" method="POST">
+        <service class="Payone\Core\Api\ApplePayInterface" method="getApplePaySession"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
 </routes>
