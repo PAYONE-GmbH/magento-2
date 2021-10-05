@@ -77,7 +77,7 @@ class Upload extends \Magento\Framework\App\Config\Value
         $tmpPath = $this->_tmpDirectory->getRelativePath($value['tmp_name']);
         if ($tmpPath && $this->_tmpDirectory->isExist($tmpPath)) {
             if (!$this->_tmpDirectory->stat($tmpPath)['size']) {
-                throw new \Magento\Framework\Exception\LocalizedException(__('The PayPal certificate file is empty.'));
+                throw new \Magento\Framework\Exception\LocalizedException(__('The certificate file is empty.'));
             }
             $this->setValue($value['name']);
 

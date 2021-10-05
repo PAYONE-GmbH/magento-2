@@ -7,6 +7,13 @@ use Payone\Core\Model\PayoneConfig;
 class SessionHandler
 {
     /**
+     * Magento 2 Curl library
+     *
+     * @var \Magento\Framework\HTTP\Client\Curl
+     */
+    protected $curl;
+
+    /**
      * Payone shop helper object
      *
      * @var \Payone\Core\Helper\Shop
@@ -21,15 +28,25 @@ class SessionHandler
     protected $applePayHelper;
 
     /**
+     * Request URL for collecting the Apple Pay session
+     *
+     * @var string
+     */
+    protected $applePaySessionUrl =  "https://apple-pay-gateway-cert.apple.com/paymentservices/startSession";
+
+    /**
      * Constructor
      *
-     * @param \Payone\Core\Helper\Shop     $shopHelper
-     * @param \Payone\Core\Helper\ApplePay $applePayHelper
+     * @param \Magento\Framework\HTTP\Client\Curl $curl
+     * @param \Payone\Core\Helper\Shop            $shopHelper
+     * @param \Payone\Core\Helper\ApplePay        $applePayHelper
      */
     public function __construct(
+        \Magento\Framework\HTTP\Client\Curl $curl,
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\ApplePay $applePayHelper
     ) {
+        $this->curl = $curl;
         $this->shopHelper = $shopHelper;
         $this->applePayHelper = $applePayHelper;
     }
@@ -59,11 +76,8 @@ class SessionHandler
         $sCertFile = $this->shopHelper->getConfigParam("certificate_file", PayoneConfig::METHOD_APPLEPAY, "payment");
         $sCertFilePath = $this->applePayHelper->getApplePayUploadPath().$sCertFile;
 
-        if (empty($sCertFile)) {
-            throw new \Exception("Certificate file not configured");
-        }
-        if (!file_exists($sCertFilePath)) {
-            throw new \Exception("Certificate file not existing ".$sCertFilePath);
+        if ($this->applePayHelper->hasCertificateFile() === false) {
+            throw new \Exception("Certificate file not configured or missing");
         }
         return $sCertFilePath;
     }
@@ -79,11 +93,8 @@ class SessionHandler
         $sPrivateKeyFile = $this->shopHelper->getConfigParam("private_key_file", PayoneConfig::METHOD_APPLEPAY, "payment");
         $sPrivateKeyFilePath = $this->applePayHelper->getApplePayUploadPath().$sPrivateKeyFile;
 
-        if (empty($sPrivateKeyFile)) {
-            throw new \Exception("Private key file not configured");
-        }
-        if (!file_exists($sPrivateKeyFilePath)) {
-            throw new \Exception("Private key file not existing");
+        if ($this->applePayHelper->hasPrivateKeyFile() === false) {
+            throw new \Exception("Private key file not configured or missing");
         }
         return $sPrivateKeyFilePath;
     }
@@ -103,23 +114,19 @@ class SessionHandler
             'initiativeContext' => $this->getShopDomain(),
         ];
 
-        $ch = curl_init("https://apple-pay-gateway-cert.apple.com/paymentservices/startSession");
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($aRequest));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_SSLCERT, $this->getCertificateFilePath());
-        curl_setopt($ch, CURLOPT_SSLKEY, $this->getPrivateKeyFilePath());
+        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, 0);
+        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, 0);
+        $this->curl->setOption(CURLOPT_RETURNTRANSFER, 1);
+        $this->curl->setOption(CURLOPT_RETURNTRANSFER, 1);
+        $this->curl->setOption(CURLOPT_SSLCERT, $this->getCertificateFilePath());
+        $this->curl->setOption(CURLOPT_SSLKEY, $this->getPrivateKeyFilePath());
 
         $sKeyPass = $this->shopHelper->getConfigParam("private_key_password", PayoneConfig::METHOD_APPLEPAY, "payment");
         if (!empty($sKeyPass)) {
-            curl_setopt($ch, CURLOPT_KEYPASSWD, $sKeyPass);
+            $this->curl->setOption( CURLOPT_KEYPASSWD, $sKeyPass);
         }
 
-        $sOutput = curl_exec($ch);
-
-        return $sOutput;
+        $this->curl->post($this->applePaySessionUrl, json_encode($aRequest));
+        return $this->curl->getBody();
     }
 }

@@ -49,6 +49,9 @@ class ApplePay extends PayoneMethod
      */
     protected $sClearingtype = 'wlt';
 
+    /**
+     * @var \Payone\Core\Helper\ApplePay
+     */
     protected $applePayHelper;
 
     /**

@@ -229,4 +229,23 @@ class PaymentTest extends BaseTestCase
         $result = $this->payment->getKlarnaMethodTitles();
         $this->assertCount(3, $result);
     }
+
+    public function testGetAvailableApplePayTypes()
+    {
+        $types = 'visa,mastercard';
+        $this->scopeConfig->method('getValue')->willReturn($types);
+
+
+        $result = $this->payment->getAvailableApplePayTypes();
+        $this->assertCount(2, $result);
+    }
+
+    public function testGetAvailableApplePayTypesEmpty()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(null);
+
+
+        $result = $this->payment->getAvailableApplePayTypes();
+        $this->assertCount(0, $result);
+    }
 }

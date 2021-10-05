@@ -84,6 +84,15 @@ class PrivacyDeclarationTest extends BaseTestCase
         $this->assertNotEmpty($result);
     }
 
+    public function testGetPayolutionAcceptanceException()
+    {
+        $this->shopHelper->method('getConfigParam')->willReturn(true);
+        $this->curl->method('getBody')->willThrowException(new \Exception("Error"));
+
+        $result = $this->classToTest->getPayolutionAcceptanceText('payone_paymentcode');
+        $this->assertNotEmpty($result);
+    }
+
     public function testGetPayolutionAcceptanceTextNotActive()
     {
         $this->shopHelper->method('getConfigParam')->willReturn(false);
