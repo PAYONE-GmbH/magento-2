@@ -55,6 +55,17 @@ class ApplePay extends PayoneMethod
     protected $applePayHelper;
 
     /**
+     * Mapping ApplePay cardtype to Payone cardtype
+     *
+     * @var array
+     */
+    protected $cardTypeMapping = [
+        'visa' => 'V',
+        'mastercard' => 'M',
+        'girocard' => 'G',
+    ];
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\Model\Context                        $context
@@ -123,6 +134,21 @@ class ApplePay extends PayoneMethod
     }
 
     /**
+     * Maps ApplePay cardtype to Payone cardtype
+     *
+     * @param  array $aToken
+     * @return string
+     */
+    protected function getPayoneCardType($aToken)
+    {
+        $sCardType = "?";
+        if (isset($aToken['paymentMethod']['network']) && isset($this->cardTypeMapping[strtolower($aToken['paymentMethod']['network'])])) {
+            $sCardType = $this->cardTypeMapping[strtolower($aToken['paymentMethod']['network'])];
+        }
+        return $sCardType;
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder
@@ -141,6 +167,7 @@ class ApplePay extends PayoneMethod
         $aParams = [
             'wallettype' => 'APL',
             'api_version' => '3.11',
+            'cardtype'                                              => $this->getPayoneCardType($aToken),
             'add_paydata[paymentdata_token_data]'                   => $aToken['paymentData']['data'],
             'add_paydata[paymentdata_token_signature]'              => $aToken['paymentData']['signature'],
             'add_paydata[paymentdata_token_version]'                => $aToken['paymentData']['version'],

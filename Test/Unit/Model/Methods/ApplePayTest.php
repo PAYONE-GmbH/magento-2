@@ -66,16 +66,21 @@ class ApplePayTest extends BaseTestCase
     /**
      * @var array
      */
-    private $token = ['paymentData' => [
-        'data' => 'value',
-        'signature' => 'value',
-        'version' => 'value',
-        'header' => [
-            'ephemeralPublicKey' => 'value',
-            'publicKeyHash' => 'value',
-            'transactionId' => 'value',
+    private $token = [
+        'paymentData' => [
+            'data' => 'value',
+            'signature' => 'value',
+            'version' => 'value',
+            'header' => [
+                'ephemeralPublicKey' => 'value',
+                'publicKeyHash' => 'value',
+                'transactionId' => 'value',
+            ],
         ],
-    ]];
+        'paymentMethod' => [
+            'network' => 'Visa'
+        ],
+    ];
 
     protected function setUp(): void
     {
@@ -135,7 +140,21 @@ class ApplePayTest extends BaseTestCase
         $result = $this->classToTest->getPaymentSpecificParameters($order);
 
         $this->assertTrue(is_array($result));
-        $this->assertCount(8, $result);
+        $this->assertCount(9, $result);
+    }
+
+    public function testGetPaymentSpecificParametersCardtypeMissing()
+    {
+        $token = $this->token;
+        unset($token['paymentMethod']);
+        $this->info->method('getAdditionalInformation')->willReturn(json_encode($token));
+
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->getPaymentSpecificParameters($order);
+
+        $this->assertTrue(is_array($result));
+        $this->assertCount(9, $result);
     }
 
     public function testGetPaymentSpecificParametersException()
