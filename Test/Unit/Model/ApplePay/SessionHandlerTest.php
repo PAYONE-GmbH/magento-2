@@ -34,7 +34,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\HTTP\Client\Curl;
 
-class ForwardingTest extends BaseTestCase
+class SessionHandlerTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
