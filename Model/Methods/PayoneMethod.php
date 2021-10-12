@@ -75,9 +75,6 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneDebit(InfoInterface $payment, $amount)
     {
-        if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $payment->getOrder()->getStore()->getCode()) == 'display' && $payment->getCreditmemo()) {
-            $amount = $payment->getCreditmemo()->getGrandTotal(); // send display amount instead of base amount
-        }
         $aResponse = $this->debitRequest->sendRequest($this, $payment, $amount);
         if (!$aResponse) {
             throw new LocalizedException(__('Unkown error'));
@@ -99,10 +96,6 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneCapture(InfoInterface $payment, $amount)
     {
-        if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $payment->getOrder()->getStore()->getCode()) == 'display' && $payment->getOrder()->hasInvoices()) {
-            $oInvoice = $payment->getOrder()->getInvoiceCollection()->getLastItem();
-            $amount = $oInvoice->getGrandTotal(); // send display amount instead of base amount
-        }
         $aResponse = $this->captureRequest->sendRequest($this, $payment, $amount);
         if (!$aResponse) {// response not existing
             throw new LocalizedException(__('Unkown error'));

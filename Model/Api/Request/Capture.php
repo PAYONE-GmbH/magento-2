@@ -29,6 +29,7 @@ namespace Payone\Core\Model\Api\Request;
 use Magento\Payment\Model\InfoInterface;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Invoice;
 
 /**
  * Class for the PAYONE Server API request "capture"
@@ -73,25 +74,27 @@ class Capture extends Base
     /**
      * Generate position list for invoice data transmission
      *
-     * @param Order $oOrder
+     * @param  Order   $oOrder
+     * @param  Invoice $oInvoice
      * @return array|false
      */
-    protected function getInvoiceList(Order $oOrder)
+    protected function getInvoiceList(Order $oOrder, Invoice $oInvoice)
     {
-        $aInvoice = $this->shopHelper->getRequestParameter('invoice');
-
         $aPositions = [];
         $blFull = true;
-        if ($aInvoice && array_key_exists('items', $aInvoice) !== false) {
-            foreach ($oOrder->getAllItems() as $oItem) {
-                if (isset($aInvoice['items'][$oItem->getItemId()]) && $aInvoice['items'][$oItem->getItemId()] > 0) {
-                    $aPositions[$oItem->getProductId().$oItem->getSku()] = $aInvoice['items'][$oItem->getItemId()];
-                    if ($aInvoice['items'][$oItem->getItemId()] != $oItem->getQtyOrdered()) {
+        foreach ($oOrder->getAllItems() as $oItem) {
+            $blFound = false;
+            foreach ($oInvoice->getAllItems() as $oInvoiceItem) {
+                if ($oInvoiceItem->getOrderItemId() == $oItem->getItemId() && $oInvoiceItem->getQty() > 0) {
+                    $blFound = true;
+                    $aPositions[$oItem->getProductId().$oItem->getSku()] = $oInvoiceItem->getQty();
+                    if ($oInvoiceItem->getQty() != $oItem->getQtyOrdered()) {
                         $blFull = false;
                     }
-                } elseif (!$oItem->getParentItemId()) { // dont set invoice list to not full on variant dummy items
-                    $blFull = false;
                 }
+            }
+            if ($blFound === false) {
+                $blFull = false;
             }
         }
         if ($blFull === true) {
@@ -114,7 +117,12 @@ class Capture extends Base
 
         $this->setStoreCode($oOrder->getStore()->getCode());
 
-        $aPositions = $this->getInvoiceList($oOrder);
+        $oInvoice = $oPaymentInfo->getOrder()->getInvoiceCollection()->getLastItem();
+        $aPositions = $this->getInvoiceList($oOrder, $oInvoice);
+
+        if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $this->storeCode) == 'display') {
+            $dAmount = $oInvoice->getGrandTotal(); // send display amount instead of base amount
+        }
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
 
