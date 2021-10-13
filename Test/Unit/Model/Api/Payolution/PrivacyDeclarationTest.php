@@ -32,6 +32,7 @@ use Payone\Core\Helper\Shop;
 use Magento\Framework\HTTP\Client\Curl;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\App\Cache;
 
 class PrivacyDeclarationTest extends BaseTestCase
 {
@@ -50,6 +51,11 @@ class PrivacyDeclarationTest extends BaseTestCase
      */
     private $curl;
 
+    /**
+     * @var Cache|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $cache;
+
     protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
@@ -59,19 +65,34 @@ class PrivacyDeclarationTest extends BaseTestCase
 
         $this->curl = $this->getMockBuilder(Curl::class)->disableOriginalConstructor()->getMock();
 
+        $this->cache = $this->getMockBuilder(Cache::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'shopHelper' => $this->shopHelper,
-            'curl' => $this->curl
+            'curl' => $this->curl,
+            'cache' => $this->cache
         ]);
     }
 
     public function testGetPayolutionAcceptanceText()
     {
         $this->shopHelper->method('getConfigParam')->willReturn(true);
+        $this->cache->method('load')->willReturn(false);
         $this->curl->method('getBody')->willReturn('<body>Weg damit<header>payolution</header>Test</body>');
 
         $result = $this->classToTest->getPayolutionAcceptanceText('payone_paymentcode');
         $expected = '<header>payolution</header>Test';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetPayolutionAcceptanceFromCache()
+    {
+        $expected = 'Cache text';
+
+        $this->shopHelper->method('getConfigParam')->willReturn(true);
+        $this->cache->method('load')->willReturn($expected);
+
+        $result = $this->classToTest->getPayolutionAcceptanceText('payone_paymentcode');
         $this->assertEquals($expected, $result);
     }
 
