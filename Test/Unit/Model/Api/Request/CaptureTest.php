@@ -38,6 +38,9 @@ use Magento\Sales\Model\Order\Item;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\Store;
+use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\Invoice\Item as InvoiceItem;
+use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 
 class CaptureTest extends BaseTestCase
 {
@@ -78,6 +81,7 @@ class CaptureTest extends BaseTestCase
     {
         $invoice = ['items' => ['id' => 1]];
         $this->shopHelper->method('getRequestParameter')->willReturn($invoice);
+        $this->shopHelper->method('getConfigParam')->willReturn("display");
 
         $payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -100,14 +104,26 @@ class CaptureTest extends BaseTestCase
             ->getMock();
         $store->method('getCode')->willReturn('default');
 
+        $invoiceItem = $this->getMockBuilder(InvoiceItem::class)->disableOriginalConstructor()->getMock();
+        $invoiceItem->method("getOrderItemId")->willReturn("id");
+        $invoiceItem->method("getQty")->willReturn(2);
+
+        $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
+        $invoice->method("getGrandTotal")->willReturn(47.11);
+        $invoice->method("getAllItems")->willReturn([$invoiceItem]);
+
+        $invoiceCollection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()->getMock();
+        $invoiceCollection->method("getLastItem")->willReturn($invoice);
+        
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getAllItems', 'getStore'])
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getAllItems', 'getStore', 'getInvoiceCollection'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
         $order->method('getAllItems')->willReturn([$item, $item_missing]);
         $order->method('getStore')->willReturn($store);
+        $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
@@ -135,13 +151,34 @@ class CaptureTest extends BaseTestCase
             ->getMock();
         $store->method('getCode')->willReturn(null);
 
+        $item = $this->getMockBuilder(Item::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered'])
+            ->getMock();
+        $item->method('getItemId')->willReturn('id');
+        $item->method('getProductId')->willReturn('sku');
+        $item->method('getQtyOrdered')->willReturn(2);
+
+        $invoiceItem = $this->getMockBuilder(InvoiceItem::class)->disableOriginalConstructor()->getMock();
+        $invoiceItem->method("getOrderItemId")->willReturn("id");
+        $invoiceItem->method("getQty")->willReturn(2);
+
+        $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
+        $invoice->method("getGrandTotal")->willReturn("needed?");
+        $invoice->method("getAllItems")->willReturn([$invoiceItem]);
+
+        $invoiceCollection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()->getMock();
+        $invoiceCollection->method("getLastItem")->willReturn($invoice);
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getStore'])
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getStore', 'getInvoiceCollection', 'getAllItems'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
         $order->method('getStore')->willReturn($store);
+        $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
+        $order->method('getAllItems')->willReturn([$item]);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
