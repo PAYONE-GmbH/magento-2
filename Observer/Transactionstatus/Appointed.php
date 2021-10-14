@@ -131,16 +131,18 @@ class Appointed implements ObserverInterface
             return;
         }
 
-        $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
-        $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
-        $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
-        $oInvoice->register();
-        $oInvoice->save();
+        if ($oOrder->getInvoiceCollection()->count() == 0) {
+            $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
+            $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
+            $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
+            $oInvoice->register();
+            $oInvoice->save();
 
-        $oOrder->save();
+            $oOrder->save();
 
-        if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
-            $this->invoiceSender->send($oInvoice);
+            if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
+                $this->invoiceSender->send($oInvoice);
+            }
         }
     }
 }
