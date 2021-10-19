@@ -31,6 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\App\ProductMetadata;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\Store;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
@@ -65,9 +66,13 @@ class ShopTest extends BaseTestCase
         $productMetadata->method('getEdition')->willReturn('Community');
         $productMetadata->method('getVersion')->willReturn('2.0.0');
 
-        $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
+        $store = $this->getMockBuilder(Store::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getId', 'getName', 'getBaseUrl'])
+            ->getMock();
         $store->method('getId')->willReturn(1);
         $store->method('getName')->willReturn('test');
+        $store->method('getBaseUrl')->willReturn('http://www.magento2test.com');
 
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
@@ -102,6 +107,13 @@ class ShopTest extends BaseTestCase
     {
         $result = $this->shop->getStoreName();
         $expected = 'test';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetStoreBaseUrl()
+    {
+        $result = $this->shop->getStoreBaseUrl();
+        $expected = 'http://www.magento2test.com';
         $this->assertEquals($expected, $result);
     }
 

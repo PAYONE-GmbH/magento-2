@@ -34,6 +34,7 @@
     <preference for="Payone\Core\Api\AmazonPayInterface" type="Payone\Core\Service\V1\AmazonPay" />
     <preference for="Payone\Core\Api\Data\AmazonPayResponseInterface" type="Payone\Core\Service\V1\Data\AmazonPayResponse" />
     <preference for="Payone\Core\Api\KlarnaHandlerInterface" type="Payone\Core\Service\V1\KlarnaHandler" />
+    <preference for="Payone\Core\Api\ApplePayInterface" type="Payone\Core\Service\V1\ApplePay" />
     <preference for="Payone\Core\Api\Data\KlarnaHandlerResponseInterface" type="Payone\Core\Service\V1\Data\KlarnaHandlerResponse" />
     <virtualType name="Payone\Core\Model\ResourceModel\ApiLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>

@@ -155,7 +155,11 @@ class PrivacyDeclaration
         }
 
         $sCompany = $this->shopHelper->getConfigParam('company', $sPaymentCode, 'payone_payment');
-        $sPage = $this->getAcceptanceTextFromPayolution($sCompany);
+        try {
+            $sPage = $this->getAcceptanceTextFromPayolution($sCompany);
+        } catch (\Exception $exception) {
+            $sPage = false;
+        }
         if (!$sPage) {
             $sPage = $this->getFallbackText($sCompany);
         }

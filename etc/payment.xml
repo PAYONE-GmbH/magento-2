@@ -115,5 +115,8 @@
         <method name="payone_trustly">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="payone_applepay">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
     </methods>
 </payment>

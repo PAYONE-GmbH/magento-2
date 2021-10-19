@@ -143,6 +143,10 @@ define(
             {
                 type: 'payone_trustly',
                 component: 'Payone_Core/js/view/payment/method-renderer/trustly-method'
+            },
+            {
+                type: 'payone_applepay',
+                component: 'Payone_Core/js/view/payment/method-renderer/applepay-method'
             }
         );
         /** Add view logic here if needed */
