@@ -83,16 +83,6 @@ class Debit extends Base
     }
 
     /**
-     * Get creditmemo array from request parameters
-     *
-     * @return mixed
-     */
-    protected function getCreditmemoRequestParams()
-    {
-        return $this->shopHelper->getRequestParameter('creditmemo');
-    }
-
-    /**
      * Generate position list for invoice data transmission
      *
      * @param  Order      $oOrder
@@ -101,27 +91,26 @@ class Debit extends Base
      */
     protected function getInvoiceList(Order $oOrder, Creditmemo $oCreditmemo)
     {
-        $aCreditmemo = $this->getCreditmemoRequestParams();
-
         $aPositions = [];
         $blFull = true;
-        if ($aCreditmemo && array_key_exists('items', $aCreditmemo) !== false) {
-            foreach ($oOrder->getAllItems() as $oItem) {
-                if (isset($aCreditmemo['items'][$oItem->getItemId()]) && $aCreditmemo['items'][$oItem->getItemId()]['qty'] > 0) {
-                    $aPositions[$oItem->getProductId().$oItem->getSku()] = $aCreditmemo['items'][$oItem->getItemId()]['qty'];
-                    if ($aCreditmemo['items'][$oItem->getItemId()]['qty'] != $oItem->getQtyOrdered()) {
+        foreach ($oOrder->getAllItems() as $oItem) {
+            $blFound = false;
+            foreach ($oCreditmemo->getAllItems() as $oCreditMemoItem) {
+                if ($oCreditMemoItem->getOrderItemId() == $oItem->getItemId() && $oCreditMemoItem->getQty() > 0) {
+                    $blFound = true;
+                    $aPositions[$oItem->getProductId().$oItem->getSku()] = $oCreditMemoItem->getQty();
+                    if ($oCreditMemoItem->getQty() != $oItem->getQtyOrdered()) {
                         $blFull = false;
                     }
-                } elseif (!$oItem->getParentItemId()) { // dont set invoice list to not full on variant dummy items
-                    $blFull = false;
                 }
             }
-        }
-        if (isset($aCreditmemo['shipping_amount']) && $aCreditmemo['shipping_amount'] != 0) {
-            $aPositions['delcost'] = $oCreditmemo->getBaseShippingInclTax();
-            if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $this->storeCode) == 'display') {
-                $aPositions['delcost'] = $oCreditmemo->getShippingInclTax();
+            if ($blFound === false) {
+                $blFull = false;
             }
+        }
+
+        if ($oCreditmemo->getBaseShippingInclTax() != 0) {
+            $aPositions['delcost'] = $oCreditmemo->getBaseShippingInclTax();
         }
         if ($blFull !== true && $oCreditmemo->getBaseDiscountAmount() != 0) {
             $aPositions['discount'] = $oCreditmemo->getBaseDiscountAmount();
@@ -129,7 +118,7 @@ class Debit extends Base
                 $aPositions['discount'] = $oCreditmemo->getDiscountAmount();
             }
         }
-        if ($blFull === true && (!isset($aCreditmemo['shipping_amount']) || $aCreditmemo['shipping_amount'] == $oOrder->getBaseShippingInclTax())) {
+        if ($blFull === true && $oCreditmemo->getBaseShippingInclTax() == $oOrder->getBaseShippingInclTax()) {
             $aPositions = false; // false = full debit
         }
         return $aPositions;
@@ -151,6 +140,10 @@ class Debit extends Base
 
         $oCreditmemo = $oPaymentInfo->getCreditmemo();
         $aPositions = $this->getInvoiceList($oOrder, $oCreditmemo);
+
+        if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $this->storeCode) == 'display') {
+            $dAmount = $oCreditmemo->getGrandTotal(); // send display amount instead of base amount
+        }
 
         $iTxid = $oPaymentInfo->getParentTransactionId();
         if (strpos($iTxid, '-') !== false) {
@@ -179,15 +172,14 @@ class Debit extends Base
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
-        $aCreditmemo = $this->getCreditmemoRequestParams();
         $sIban = false;
         $sBic = false;
         if (!empty($oOrder->getPayoneRefundIban()) && !empty($oOrder->getPayoneRefundBic())) {
             $sIban = $oOrder->getPayoneRefundIban();
             $sBic = $oOrder->getPayoneRefundBic();
-        } elseif (isset($aCreditmemo['payone_iban']) && isset($aCreditmemo['payone_bic'])) {
-            $sIban = $aCreditmemo['payone_iban'];
-            $sBic = $aCreditmemo['payone_bic'];
+        } elseif ($oCreditmemo->getPayoneIban() && $oCreditmemo->getPayoneBic()) {
+            $sIban = $oCreditmemo->getPayoneIban();
+            $sBic = $oCreditmemo->getPayoneBic();
         }
 
         if ($sIban !== false && $sBic !== false && $this->isSepaDataValid($sIban, $sBic)) {

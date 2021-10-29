@@ -39,6 +39,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Helper\Shop;
 use Magento\Sales\Model\Order\Item;
+use Magento\Sales\Model\Order\Creditmemo\Item as CreditmemoItem;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Store\Model\Store;
@@ -130,13 +131,28 @@ class DebitTest extends BaseTestCase
 
         $payment = $this->getPaymentMock();
 
+        $item = $this->getMockBuilder(Item::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
+            ->getMock();
+        $item->method('getItemId')->willReturn('id');
+        $item->method('getProductId')->willReturn('sku');
+        $item->method('getQtyOrdered')->willReturn(2);
+        $item->method('getParentItemId')->willReturn(null);
+
         $order = $this->getOrderMock();
         $order->method('getPayoneRefundIban')->willReturn('DE85123456782599100003');
         $order->method('getPayoneRefundBic')->willReturn('TESTTEST');
+        $order->method('getAllItems')->willReturn([$item]);
+
+        $creditmemoItem = $this->getMockBuilder(CreditmemoItem::class)->disableOriginalConstructor()->getMock();
+        $creditmemoItem->method("getOrderItemId")->willReturn("id");
+        $creditmemoItem->method("getQty")->willReturn(2);
 
         $oCreditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
         $oCreditmemo->method('getBaseDiscountAmount')->willReturn(0);
         $oCreditmemo->method('getDiscountAmount')->willReturn(0);
+        $oCreditmemo->method('getAllItems')->willReturn([$creditmemoItem]);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
@@ -184,9 +200,15 @@ class DebitTest extends BaseTestCase
         $order = $this->getOrderMock();
         $order->method('getAllItems')->willReturn([$item, $item_missing]);
 
+        $creditmemoItem = $this->getMockBuilder(CreditmemoItem::class)->disableOriginalConstructor()->getMock();
+        $creditmemoItem->method("getOrderItemId")->willReturn("id");
+        $creditmemoItem->method("getQty")->willReturn(2);
+
         $oCreditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
         $oCreditmemo->method('getBaseDiscountAmount')->willReturn(-5);
         $oCreditmemo->method('getDiscountAmount')->willReturn(-5);
+        $oCreditmemo->method('getAllItems')->willReturn([$creditmemoItem]);
+        $oCreditmemo->method('getBaseShippingInclTax')->willReturn(3);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
@@ -210,13 +232,28 @@ class DebitTest extends BaseTestCase
 
         $payment = $this->getPaymentMock();
 
+        $item = $this->getMockBuilder(Item::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
+            ->getMock();
+        $item->method('getItemId')->willReturn('id');
+        $item->method('getProductId')->willReturn('sku');
+        $item->method('getQtyOrdered')->willReturn(2);
+        $item->method('getParentItemId')->willReturn(null);
+
         $order = $this->getOrderMock();
         $order->method('getPayoneRefundIban')->willReturn('12345');
         $order->method('getPayoneRefundBic')->willReturn('TESTTEST');
+        $order->method('getAllItems')->willReturn([$item]);
+
+        $creditmemoItem = $this->getMockBuilder(CreditmemoItem::class)->disableOriginalConstructor()->getMock();
+        $creditmemoItem->method("getOrderItemId")->willReturn("id");
+        $creditmemoItem->method("getQty")->willReturn(2);
 
         $oCreditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
         $oCreditmemo->method('getBaseDiscountAmount')->willReturn(0);
         $oCreditmemo->method('getDiscountAmount')->willReturn(0);
+        $oCreditmemo->method('getAllItems')->willReturn([$creditmemoItem]);
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
@@ -240,13 +277,33 @@ class DebitTest extends BaseTestCase
 
         $payment = $this->getPaymentMock();
 
-        $order = $this->getOrderMock();
-        $order->method('getPayoneRefundIban')->willReturn('DE85123456782599100003');
-        $order->method('getPayoneRefundBic')->willReturn('12345');
+        $item = $this->getMockBuilder(Item::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
+            ->getMock();
+        $item->method('getItemId')->willReturn('id');
+        $item->method('getProductId')->willReturn('sku');
+        $item->method('getQtyOrdered')->willReturn(2);
+        $item->method('getParentItemId')->willReturn(null);
 
-        $oCreditmemo = $this->getMockBuilder(Creditmemo::class)->disableOriginalConstructor()->getMock();
+        $order = $this->getOrderMock();
+        $order->method('getPayoneRefundIban')->willReturn(false);
+        $order->method('getPayoneRefundBic')->willReturn(false);
+        $order->method('getAllItems')->willReturn([$item]);
+
+        $creditmemoItem = $this->getMockBuilder(CreditmemoItem::class)->disableOriginalConstructor()->getMock();
+        $creditmemoItem->method("getOrderItemId")->willReturn("id");
+        $creditmemoItem->method("getQty")->willReturn(2);
+
+        $oCreditmemo = $this->getMockBuilder(Creditmemo::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseDiscountAmount', 'getDiscountAmount', 'getAllItems', 'getPayoneIban', 'getPayoneBic'])
+            ->getMock();
         $oCreditmemo->method('getBaseDiscountAmount')->willReturn(0);
         $oCreditmemo->method('getDiscountAmount')->willReturn(0);
+        $oCreditmemo->method('getAllItems')->willReturn([$creditmemoItem]);
+        $oCreditmemo->method('getPayoneIban')->willReturn('DE85123456782599100003');
+        $oCreditmemo->method('getPayoneBic')->willReturn('12345');
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()

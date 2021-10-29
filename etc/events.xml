@@ -55,4 +55,7 @@
     <event name="admin_system_config_changed_section_payone_payment">
         <observer name="payone_payment_core_save_after" instance="Payone\Core\Observer\PaymentSystemConfigChanged" />
     </event>
+    <event name="adminhtml_sales_order_creditmemo_register_before">
+        <observer name="payone_adminhtml_sales_order_creditmemo_register_before" instance="Payone\Core\Observer\CreditmemoRegisterBefore" />
+    </event>
 </config>
