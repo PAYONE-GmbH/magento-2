@@ -28,11 +28,13 @@
             <values>
                 <value id="payone_payone_frame" type="host">secure.pay1.de</value>
                 <value id="payone_amazon_payments" type="host">payments.amazon.de</value>
+                <value id="payone_jsctool_frame" type="host">www.jsctool.com</value>
             </values>
         </policy>
         <policy id="connect-src">
             <values>
                 <value id="payone_amazon_payments" type="host">payments.amazon.de</value>
+                <value id="payone_ratepay_connect" type="host">d.ratepay.com</value>
             </values>
         </policy>
     </policies>
