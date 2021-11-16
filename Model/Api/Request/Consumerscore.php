@@ -97,9 +97,11 @@ class Consumerscore extends AddressRequest
      * Send request "addresscheck" to PAYONE server API
      *
      * @param  AddressInterface $oAddress
+     * @param  string $sGender
+     * @param  string $sBirthday
      * @return array|bool
      */
-    public function sendRequest(AddressInterface $oAddress)
+    public function sendRequest(AddressInterface $oAddress, $sGender = null, $sBirthday = null)
     {
         if (!$this->isCheckEnabled() || $oAddress->getCountryId() != 'DE') {
             return true;
@@ -113,6 +115,13 @@ class Consumerscore extends AddressRequest
         $this->addParameter('addresschecktype', $this->getCombinedAdressCheckType());
         $this->addParameter('consumerscoretype', $sType);
         $this->addParameter('language', $this->shopHelper->getLocale());
+
+        if ($sType == CreditratingCheckType::BONIVERSUM_VERITA && $sGender !== null) {
+            $this->addParameter('gender', $sGender);
+        }
+        if ($sType == CreditratingCheckType::BONIVERSUM_VERITA && $sBirthday !== null) {
+            $this->addParameter('birthday', $sBirthday);
+        }
 
         $this->addAddress($oAddress);
         if ($this->addressesChecked->wasAddressCheckedBefore($oAddress, $sType,true) === false) {

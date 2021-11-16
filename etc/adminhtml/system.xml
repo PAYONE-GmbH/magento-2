@@ -411,6 +411,14 @@
                     <label>Creditrating-Checktype</label>
                     <source_model>Payone\Core\Model\Source\CreditratingCheckType</source_model>
                 </field>
+                <field id="config_hint" translate="label" type="label" sortOrder="92" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label></label>
+                    <comment>When using the Boniversum creditrating type the gender and birthday of the customer has to known. Please set both of these fields to required under Backend -&gt; Stores -&gt; Configuration -&gt; Customers -&gt; Customer Configuration -&gt; Name and Address Options -&gt; Show Date of Birth / Show Gender. If you see this warning, your configuration is wrong.</comment>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\Label</frontend_model>
+                    <depends>
+                        <field id="type">CE</field>
+                    </depends>
+                </field>
                 <field id="addresscheck" translate="label" type="select" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Combine credit rating with address check</label>
                     <comment>This will always be 'Boniversum Person' when Creditrating-Checktype is 'Boniversum VERITA Score'</comment>
