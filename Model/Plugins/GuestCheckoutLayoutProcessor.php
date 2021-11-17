@@ -32,23 +32,31 @@ class GuestCheckoutLayoutProcessor
     protected $checkoutSession;
 
     /**
+     * @var \Magento\Framework\View\Asset\Repository
+     */
+    protected $assetRepo;
+
+    /**
      * GuestCheckoutLayoutProcessor constructor.
      *
      * @param \Magento\Customer\Api\CustomerMetadataInterface $customerMetadata
      * @param \Magento\Framework\Serialize\Serializer\Json $json
      * @param \Payone\Core\Helper\Checkout $checkoutHelper
      * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Framework\View\Asset\Repository $assetRepo
      */
     public function __construct(
         \Magento\Customer\Api\CustomerMetadataInterface $customerMetadata,
         \Magento\Framework\Serialize\Serializer\Json $json,
         \Payone\Core\Helper\Checkout $checkoutHelper,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Framework\View\Asset\Repository $assetRepo
     ) {
         $this->json = $json;
         $this->customerMetaData = $customerMetadata;
         $this->checkoutHelper = $checkoutHelper;
         $this->checkoutSession = $checkoutSession;
+        $this->assetRepo = $assetRepo;
     }
 
     /**
@@ -95,6 +103,10 @@ class GuestCheckoutLayoutProcessor
         return $jsLayout;
     }
 
+    /**
+     * @param $jsLayout
+     * @return void
+     */
     private function addGenderField(&$jsLayout)
     {
         $options = $this->getGenderOptions() ?: [];
@@ -121,6 +133,10 @@ class GuestCheckoutLayoutProcessor
         }
     }
 
+    /**
+     * @param $jsLayout
+     * @return void
+     */
     private function addBirthdayField(&$jsLayout)
     {
         $enabled  = $this->isEnabled();
@@ -140,7 +156,7 @@ class GuestCheckoutLayoutProcessor
                         'maxDate' => "-1d",
                         'yearRange' => "-120y:c+nn",
                         'showsTime' => false,
-                        'buttonImage' => "https://robert.demoshop.fatchip.de/pub/static/version1635258604/frontend/Magento/luma/de_DE/Magento_Theme/calendar.png" /// @TODO
+                        'buttonImage' => $this->assetRepo->getUrlWithParams('Magento_Theme::calendar.png', ['_secure' => true])
                     ],
                 ],
                 'label' => __('Date of Birth'),
@@ -171,21 +187,30 @@ class GuestCheckoutLayoutProcessor
         }
     }
 
+    /**
+     * @return array
+     */
     private function getGenderOptions()
     {
         $optionsData = [];
-        $options = $this->_getAttribute('gender')->getOptions() ?: [];
 
-        foreach ($options as $option) {
-            $optionsData[] = [
-                'label' => __($option->getLabel()),
-                'value' => $option->getValue()
-            ];
+        $attribute = $this->_getAttribute('gender');
+        if ($attribute) {
+            $options =  $attribute->getOptions() ?: [];
+
+            foreach ($options as $option) {
+                $optionsData[] = [
+                    'label' => __($option->getLabel()),
+                    'value' => $option->getValue()
+                ];
+            }
         }
-
         return $optionsData;
     }
 
+    /**
+     * @return bool
+     */
     public function isEnabled()
     {
         return $this->_getAttribute('gender') ? (bool)$this->_getAttribute('gender')->isVisible() : false;

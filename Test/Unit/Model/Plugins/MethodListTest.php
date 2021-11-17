@@ -141,7 +141,7 @@ class MethodListTest extends BaseTestCase
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertInstanceOf(MethodInterface::class, $result[0]);
     }
 
@@ -159,7 +159,7 @@ class MethodListTest extends BaseTestCase
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertInstanceOf(MethodInterface::class, $result[0]);
     }
 
@@ -177,7 +177,7 @@ class MethodListTest extends BaseTestCase
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertEmpty($result);
     }
 
@@ -196,7 +196,7 @@ class MethodListTest extends BaseTestCase
         $ban = [PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00'];
         $this->paymentBan->method('getPaymentBans')->willReturn($ban);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertEmpty($result);
     }
 
@@ -213,7 +213,7 @@ class MethodListTest extends BaseTestCase
 
         $this->quote->method('getCustomerId')->willReturn(null);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertEmpty($result);
     }
 
@@ -231,7 +231,7 @@ class MethodListTest extends BaseTestCase
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertEmpty($result);
     }
 
@@ -249,7 +249,7 @@ class MethodListTest extends BaseTestCase
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertEmpty($result);
     }
 
@@ -270,7 +270,7 @@ class MethodListTest extends BaseTestCase
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertCount(2, $result);
     }
 
@@ -289,7 +289,7 @@ class MethodListTest extends BaseTestCase
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
-        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods);
+        $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
         $this->assertEmpty($result);
     }
 }
