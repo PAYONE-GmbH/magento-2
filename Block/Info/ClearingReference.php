@@ -55,6 +55,8 @@ class ClearingReference extends Base
                 $data[(string)__('IBAN')] = $oStatus->getClearingBankiban();
                 $data[(string)__('BIC')] = $oStatus->getClearingBankbic();
                 $data[(string)__('Bank')] = $oStatus->getClearingBankname();
+                $data[(string)__('Bank country')] = $oStatus->getClearingBankcountry();
+                $data[(string)__('Bank city')] = $oStatus->getClearingBankcity();
             }
             $data[(string)__('Payone Transaction ID')] = $sTransId;
             $data[(string)__('Payment reference')] = $this->getInfo()->getOrder()->getPayoneClearingReference();
