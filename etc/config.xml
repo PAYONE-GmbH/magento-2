@@ -32,7 +32,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\CashOnDelivery</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Cash on Delivery</title>
+                <title>PAYONE Cash on Delivery</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_cash_on_delivery>
@@ -41,7 +41,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Creditcard</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Creditcard</title>
+                <title>PAYONE Credit Card</title>
                 <auto_cardtype_detection>0</auto_cardtype_detection>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
@@ -51,7 +51,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Debit</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Debit</title>
+                <title>PAYONE Direct Debit</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_debit>
@@ -60,7 +60,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Paypal</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - PayPal</title>
+                <title>PAYONE PayPal</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_paypal>
@@ -69,7 +69,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\AdvancePayment</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Advance Payment</title>
+                <title>PAYONE Prepayment</title>
                 <allowspecific>0</allowspecific>
                 <create_invoice>1</create_invoice>
                 <group>payone</group>
@@ -79,7 +79,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Invoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Invoice</title>
+                <title>PAYONE Invoice</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_invoice>
@@ -88,7 +88,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\SofortUeberweisung</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - SOFORT Überweisung</title>
+                <title>PAYONE Sofort</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_sofortueberweisung>
@@ -97,7 +97,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\Giropay</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - giropay</title>
+                <title>PAYONE Giropay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_giropay>
@@ -106,7 +106,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\Eps</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - eps - Online-Ueberweisung</title>
+                <title>PAYONE - eps</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_eps>
@@ -115,7 +115,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\PostFinanceEFinance</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - PostFinance E-Finance</title>
+                <title>PAYONE PostFinance E-Finance</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_postfinance_efinance>
@@ -124,7 +124,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\PostFinanceCard</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - PostFinance Card</title>
+                <title>PAYONE PostFinance Card</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_postfinance_card>
@@ -133,7 +133,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\Ideal</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - iDeal</title>
+                <title>PAYONE iDEAL</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_ideal>
@@ -142,7 +142,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\Przelewy</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Przelewy24</title>
+                <title>PAYONE Przelewy24</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_przelewy>
@@ -151,7 +151,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Barzahlen</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Barzahlen</title>
+                <title>PAYONE Barzahlen</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_barzahlen>
@@ -160,7 +160,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Paydirekt</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Paydirekt</title>
+                <title>PAYONE paydirekt</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_paydirekt>
@@ -169,7 +169,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\SafeInvoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Safe Invoice</title>
+                <title>PAYONE Secure Invoice</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_safe_invoice>
@@ -178,7 +178,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Invoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Unzer Invoice</title>
+                <title>PAYONE Unzer Rechnungskauf</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_invoice>
@@ -187,7 +187,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Debit</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Unzer Debit</title>
+                <title>PAYONE Unzer Lastschrift</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_debit>
@@ -196,7 +196,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Payolution\Installment</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Unzer Installment</title>
+                <title>PAYONE Unzer Ratenkauf</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_payolution_installment>
@@ -205,7 +205,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\AliPay</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - AliPay</title>
+                <title>PAYONE Alipay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_alipay>
@@ -214,7 +214,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\AmazonPay</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - AmazonPay</title>
+                <title>	PAYONE Amazon Pay</title>
                 <request_type>preauthorization</request_type>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
@@ -224,7 +224,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Klarna\KlarnaBase</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Klarna</title>
+                <title>	PAYONE Klarna Payments</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_klarna_base>
@@ -233,7 +233,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Klarna\Invoice</model>
                 <order_status>pending</order_status>
-                <title>Pay Later.</title>
+                <title>PAYONE Klarna Rechnung</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_klarna_invoice>
@@ -242,7 +242,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Klarna\Debit</model>
                 <order_status>pending</order_status>
-                <title>Pay Now.</title>
+                <title>	PAYONE Klarna Sofort bezahlen</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_klarna_debit>
@@ -251,7 +251,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Klarna\Installment</model>
                 <order_status>pending</order_status>
-                <title>Slice It.</title>
+                <title>PAYONE Klarna Ratenkauf</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_klarna_installment>
@@ -260,7 +260,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Ratepay\Invoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Ratepay Invoice</title>
+                <title>	PAYONE Ratepay Open Invoice</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_ratepay_invoice>
@@ -269,7 +269,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\WeChatPay</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - WeChatPay</title>
+                <title>	PAYONE WeChat Pay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_wechatpay>
@@ -278,7 +278,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Trustly</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Trustly</title>
+                <title>PAYONE Trustly</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_trustly>
@@ -287,7 +287,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\ApplePay</model>
                 <order_status>pending</order_status>
-                <title>PAYONE - Apple Pay</title>
+                <title>	PAYONE Apple Pay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_applepay>
