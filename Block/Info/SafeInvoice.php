@@ -49,8 +49,6 @@ class SafeInvoice extends Base
             $oStatus = $this->getAppointedStatus();
             $data[(string)__('Payment reference')] = $sTransId;
             $data[(string)__('Accountholder')] = $oStatus->getClearingBankaccountholder();
-            $data[(string)__('Accountnumber')] = $oStatus->getClearingBankaccount();
-            $data[(string)__('Bank code')] = $oStatus->getClearingBankcode();
             $data[(string)__('IBAN')] = $oStatus->getClearingBankiban();
             $data[(string)__('BIC')] = $oStatus->getClearingBankbic();
             $data[(string)__('Bank')] = $oStatus->getClearingBankname();
