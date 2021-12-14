@@ -214,7 +214,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\AmazonPay</model>
                 <order_status>pending</order_status>
-                <title>	PAYONE Amazon Pay</title>
+                <title>PAYONE Amazon Pay</title>
                 <request_type>preauthorization</request_type>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
@@ -224,7 +224,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Klarna\KlarnaBase</model>
                 <order_status>pending</order_status>
-                <title>	PAYONE Klarna Payments</title>
+                <title>PAYONE Klarna Payments</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_klarna_base>
@@ -242,7 +242,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Klarna\Debit</model>
                 <order_status>pending</order_status>
-                <title>	PAYONE Klarna Sofort bezahlen</title>
+                <title>PAYONE Klarna Sofort bezahlen</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_klarna_debit>
@@ -260,7 +260,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Ratepay\Invoice</model>
                 <order_status>pending</order_status>
-                <title>	PAYONE Ratepay Open Invoice</title>
+                <title>PAYONE Ratepay Open Invoice</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_ratepay_invoice>
@@ -269,7 +269,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\WeChatPay</model>
                 <order_status>pending</order_status>
-                <title>	PAYONE WeChat Pay</title>
+                <title>PAYONE WeChat Pay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_wechatpay>
@@ -287,7 +287,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\ApplePay</model>
                 <order_status>pending</order_status>
-                <title>	PAYONE Apple Pay</title>
+                <title>PAYONE Apple Pay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_applepay>
