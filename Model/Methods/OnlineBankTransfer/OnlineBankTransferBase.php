@@ -42,6 +42,7 @@ class OnlineBankTransferBase extends \Payone\Core\Model\Methods\PayoneMethod
     const METHOD_OBT_SUBTYPE_POSTFINANCE_CARD = 'PFC';
     const METHOD_OBT_SUBTYPE_IDEAL = 'IDL';
     const METHOD_OBT_SUBTYPE_PRZELEWY = 'P24';
+    const METHOD_OBT_SUBTYPE_BANCONTACT = 'BCT';
 
     /**
      * Info instructions block path
