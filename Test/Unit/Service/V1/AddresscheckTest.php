@@ -76,7 +76,7 @@ class AddresscheckTest extends BaseTestCase
 
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
         $result = $result->__toArray();
         $this->assertFalse($result['success']);
     }
@@ -88,7 +88,7 @@ class AddresscheckTest extends BaseTestCase
 
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
@@ -103,7 +103,7 @@ class AddresscheckTest extends BaseTestCase
 
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
         $result = $result->__toArray();
         $this->assertFalse($result['success']);
         $this->assertEquals($expected, $result['errormessage']);
@@ -119,7 +119,7 @@ class AddresscheckTest extends BaseTestCase
 
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->checkAddress($addressData, true, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, true, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
@@ -135,7 +135,7 @@ class AddresscheckTest extends BaseTestCase
 
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->checkAddress($addressData, true, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, true, false, 100);
         $result = $result->__toArray();
         $this->assertFalse($result['success']);
         $this->assertEquals($expected, $result['errormessage']);
@@ -151,7 +151,7 @@ class AddresscheckTest extends BaseTestCase
         $this->addresscheck->method('isAddressCorrected')->willReturn(true);
         $this->addresscheck->method('correctAddress')->willReturn($addressData);
 
-        $result = $this->classToTest->checkAddress($addressData, true, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, true, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
         $this->assertNotEmpty($result['confirmMessage']);
@@ -168,7 +168,7 @@ class AddresscheckTest extends BaseTestCase
         $this->addresscheck->method('isAddressCorrected')->willReturn(true);
         $this->addresscheck->method('correctAddress')->willReturn($addressData);
 
-        $result = $this->classToTest->checkAddress($addressData, true, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, true, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
         $this->assertNotEmpty($result['confirmMessage']);

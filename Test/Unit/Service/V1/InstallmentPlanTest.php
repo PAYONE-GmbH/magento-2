@@ -128,7 +128,7 @@ class InstallmentPlanTest extends BaseTestCase
         ];
         $this->calculation->method('sendRequest')->willReturn($calculation);
 
-        $result = $this->classToTest->getInstallmentPlan('19900909');
+        $result = $this->classToTest->getInstallmentPlan(4711, '19900909');
         $this->assertTrue($result->getSuccess());
     }
 
@@ -137,7 +137,7 @@ class InstallmentPlanTest extends BaseTestCase
         $precheck = ['status' => 'ERROR', 'errorcode' => '123', 'customermessage' => 'error'];
         $this->precheck->method('sendRequest')->willReturn($precheck);
 
-        $result = $this->classToTest->getInstallmentPlan('19900909');
+        $result = $this->classToTest->getInstallmentPlan(4711, '19900909');
         $this->assertFalse($result->getSuccess());
     }
 
@@ -149,7 +149,7 @@ class InstallmentPlanTest extends BaseTestCase
         $calculation = ['status' => 'ERROR', 'errorcode' => '123', 'customermessage' => 'error'];
         $this->calculation->method('sendRequest')->willReturn($calculation);
 
-        $result = $this->classToTest->getInstallmentPlan('19900909');
+        $result = $this->classToTest->getInstallmentPlan(4711, '19900909');
         $this->assertFalse($result->getSuccess());
     }
 
@@ -157,7 +157,7 @@ class InstallmentPlanTest extends BaseTestCase
     {
         $this->precheck->method('sendRequest')->willReturn(false);
 
-        $result = $this->classToTest->getInstallmentPlan('19900909');
+        $result = $this->classToTest->getInstallmentPlan(4711, '19900909');
         $this->assertFalse($result->getSuccess());
     }
 }

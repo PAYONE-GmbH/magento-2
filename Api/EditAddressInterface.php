@@ -33,8 +33,9 @@ interface EditAddressInterface
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
      *
+     * @param  string $cartId
      * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
      * @return \Payone\Core\Service\V1\Data\EditAddressResponse
      */
-    public function editAddress(\Magento\Quote\Api\Data\AddressInterface $addressData);
+    public function editAddress($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData);
 }

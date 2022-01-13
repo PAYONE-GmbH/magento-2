@@ -119,6 +119,9 @@ define(
                 var session = new ApplePaySession(3, params);
                 var self = this;
                 session.onvalidatemerchant = function(event) {
+                    var request = {
+                        cartId: quote.getQuoteId()
+                    };
                     var serviceUrl = urlBuilder.createUrl('/carts/mine/payone-getApplePaySession', {});
                     if (!customer.isLoggedIn()) {
                         serviceUrl = urlBuilder.createUrl('/guest-carts/:quoteId/payone-getApplePaySession', {
@@ -127,7 +130,8 @@ define(
                     }
 
                     return storage.post(
-                        serviceUrl
+                        serviceUrl,
+                        JSON.stringify(request)
                     ).done(
                         function (response) {
                             if (response.success === true && response.session !== undefined) {

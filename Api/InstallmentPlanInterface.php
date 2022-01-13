@@ -33,9 +33,10 @@ interface InstallmentPlanInterface
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
      *
+     * @param  string $cartId
      * @param  string $birthday
      * @param  string $email
      * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
      */
-    public function getInstallmentPlan($birthday, $email = false);
+    public function getInstallmentPlan($cartId, $birthday, $email = false);
 }
