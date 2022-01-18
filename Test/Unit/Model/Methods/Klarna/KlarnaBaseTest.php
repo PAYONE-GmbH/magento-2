@@ -69,7 +69,7 @@ class KlarnaBaseTest extends BaseTestCase
         $order->method('getCustomerEmail')->willReturn('tester@payone.de');
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
-        $this->assertCount(7, $result);
+        $this->assertCount(8, $result);
     }
 
     public function testAssignData()
