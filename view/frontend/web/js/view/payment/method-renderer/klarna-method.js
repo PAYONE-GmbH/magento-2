@@ -115,6 +115,7 @@ define(
                 }
 
                 var request = {
+                    cartId: quote.getQuoteId(),
                     paymentCode: methodeCode,
                     shippingCosts: this.getShippingCosts(),
                     customerEmail: this.getCustomerEmail()

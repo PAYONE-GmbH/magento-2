@@ -105,6 +105,7 @@ class KlarnaBase extends PayoneMethod
         $aBaseParams = [
             'financingtype' => $this->getSubType(),
             'add_paydata[authorization_token]' => $this->getInfoInstance()->getAdditionalInformation('authorization_token'),
+            'customerid' => '', // Klarna payment methods return an error when customerid is transmitted...
         ];
 
         $oBilling = $oOrder->getBillingAddress();

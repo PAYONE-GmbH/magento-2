@@ -45,6 +45,7 @@ define([
             serviceUrl = urlBuilder.createUrl('/carts/mine/payone-addresscheck', {});
         }
         var request = {
+            cartId: quote.getQuoteId(),
             addressData: addressData,
             isBillingAddress: isBillingAddress,
             isVirtual: quote.isVirtual(),

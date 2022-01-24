@@ -74,7 +74,7 @@ class ApplePayTest extends BaseTestCase
     {
         $this->sessionHandler->method('getApplePaySession')->willReturn("ApplePay Session");
 
-        $result = $this->classToTest->getApplePaySession();
+        $result = $this->classToTest->getApplePaySession(4711);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
@@ -83,7 +83,7 @@ class ApplePayTest extends BaseTestCase
     {
         $this->sessionHandler->method('getApplePaySession')->willThrowException(new \Exception("Error"));
 
-        $result = $this->classToTest->getApplePaySession();
+        $result = $this->classToTest->getApplePaySession(4711);
         $result = $result->__toArray();
         $this->assertFalse($result['success']);
     }
