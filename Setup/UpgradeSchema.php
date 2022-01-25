@@ -131,6 +131,34 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS), 'clearing_bankcity')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'clearing_bankcity',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 64,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Clearing bank country',
+                    'after' => 'clearing_bankiban',
+                ]
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS), 'clearing_bankcountry')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'clearing_bankcountry',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 32,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Clearing bank country',
+                    'after' => 'clearing_bankiban',
+                ]
+            );
+        }
     }
 
     /**

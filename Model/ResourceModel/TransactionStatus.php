@@ -196,6 +196,8 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
                 'clearing_bankname' => $this->getParam('clearing_bankname'),
                 'clearing_bankbic' => $this->getParam('clearing_bankbic'),
                 'clearing_bankiban' => $this->getParam('clearing_bankiban'),
+                'clearing_bankcountry' => $this->getParam('clearing_bankcountry'),
+                'clearing_bankcity' => $this->getParam('clearing_bankcity'),
                 'clearing_legalnote' => $this->getParam('clearing_legalnote'),
                 'clearing_duedate' => $this->getParam('clearing_duedate'),
                 'clearing_reference' => $this->getParam('clearing_reference'),
