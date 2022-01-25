@@ -57,7 +57,9 @@ class ClearingReference extends Base
                 $data[(string)__('Bank')] = $oStatus->getClearingBankname();
             }
             $data[(string)__('Payone Transaction ID')] = $sTransId;
-            $data[(string)__('Payment reference')] = $this->getInfo()->getOrder()->getPayoneClearingReference();
+            if (!empty($this->getInfo()->getOrder()->getPayoneClearingReference())) {
+                $data[(string)__('Payment reference')] = $this->getInfo()->getOrder()->getPayoneClearingReference();
+            }
         }
         return $transport->setData(array_merge($data, $transport->getData()));
     }

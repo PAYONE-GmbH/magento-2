@@ -46,7 +46,7 @@ class Bancontact extends OnlineBankTransferBase
      *
      * @var string
      */
-    protected $_infoBlockType = 'Payone\Core\Block\Info\Base';
+    protected $_infoBlockType = 'Payone\Core\Block\Info\ClearingReference';
 
     /**
      * Payment method sub type
