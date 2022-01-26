@@ -94,6 +94,7 @@ abstract class PayoneConfig
     const METHOD_RATEPAY_DEBIT = 'payone_ratepay_debit'; // not implemented yet
     const METHOD_TRUSTLY = 'payone_trustly';
     const METHOD_APPLEPAY = 'payone_applepay';
+    const METHOD_BANCONTACT = 'payone_bancontact';
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';

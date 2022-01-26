@@ -70,6 +70,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_RATEPAY_INVOICE,
         PayoneConfig::METHOD_TRUSTLY,
         PayoneConfig::METHOD_APPLEPAY,
+        PayoneConfig::METHOD_BANCONTACT,
     ];
 
     /**
@@ -107,6 +108,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_RATEPAY_INVOICE => 'fnc',
         PayoneConfig::METHOD_TRUSTLY => 'sb',
         PayoneConfig::METHOD_APPLEPAY => 'wlt',
+        PayoneConfig::METHOD_BANCONTACT => 'sb',
     ];
 
     /**
