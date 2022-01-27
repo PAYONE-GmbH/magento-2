@@ -147,7 +147,7 @@ class ConsumerscoreTest extends BaseTestCase
             ]);
 
         /** @var AddressInterface $address */
-        $result = $this->classToTest->sendRequest($address);
+        $result = $this->classToTest->sendRequest($address, 'f', '19540717');
         ConsumerscoreTest::assertArrayHasKey('status', $result);
         ConsumerscoreTest::assertEquals(
             AddressCheckType::BONIVERSUM_PERSON,

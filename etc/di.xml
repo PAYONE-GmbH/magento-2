@@ -72,6 +72,9 @@
     <type name="Magento\Quote\Model\ShippingAddressManagement">
         <plugin name="Payone_Core_Plugin_ShippingAddressManagement" type="Payone\Core\Model\Plugins\ShippingAddressManagement" sortOrder="1" />
     </type>
+    <type name="Magento\Checkout\Model\ShippingInformationManagement">
+        <plugin name="Payone_Core_Plugin_ShippingInformationManagement" type="Payone\Core\Model\Plugins\ShippingInformationManagement" sortOrder="1" />
+    </type>
     <type name="Magento\Quote\Model\BillingAddressManagement">
         <plugin name="Payone_Core_Plugin_BillingAddressManagement" type="Payone\Core\Model\Plugins\BillingAddressManagement" sortOrder="1" />
     </type>
@@ -95,6 +98,9 @@
     </type>
     <type name="Magento\Quote\Model\QuoteValidator">
         <plugin name="payoneQuoteValidator" type="Payone\Core\Model\Plugins\QuoteValidator" sortOrder="5"/>
+    </type>
+    <type name="Magento\Checkout\Block\Checkout\LayoutProcessor">
+        <plugin name="guest_checkout_layout_processor" type="Payone\Core\Model\Plugins\GuestCheckoutLayoutProcessor" sortOrder="300"/>
     </type>
     <type name="Payone\Core\Model\Logger\Info">
         <arguments>

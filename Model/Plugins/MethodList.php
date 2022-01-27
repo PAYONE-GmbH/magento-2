@@ -75,6 +75,13 @@ class MethodList
     protected $addresscheck;
 
     /**
+     * Payone customer helper
+     *
+     * @var \Payone\Core\Helper\Customer
+     */
+    protected $customerHelper;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
@@ -82,19 +89,22 @@ class MethodList
      * @param \Magento\Checkout\Model\Session              $checkoutSession
      * @param \Payone\Core\Model\ResourceModel\PaymentBan  $paymentBan
      * @param \Payone\Core\Model\Risk\Addresscheck         $addresscheck
+     * @param \Payone\Core\Helper\Customer                 $customerHelper
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\ResourceModel\PaymentBan $paymentBan,
-        \Payone\Core\Model\Risk\Addresscheck $addresscheck
+        \Payone\Core\Model\Risk\Addresscheck $addresscheck,
+        \Payone\Core\Helper\Customer $customerHelper
     ) {
         $this->consumerscore = $consumerscore;
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->checkoutSession = $checkoutSession;
         $this->paymentBan = $paymentBan;
         $this->addresscheck = $addresscheck;
+        $this->customerHelper = $customerHelper;
     }
 
     /**
@@ -130,7 +140,7 @@ class MethodList
      */
     protected function getScoreByCreditrating(AddressInterface $oShipping)
     {
-        $aResponse = $this->consumerscore->sendRequest($oShipping);
+        $aResponse = $this->consumerscore->sendRequest($oShipping, $this->customerHelper->getCustomerGender(), $this->customerHelper->getCustomerBirthday());
         if ($aResponse === true) {// creditrating not executed because of a previous check
             $this->consumerscoreHelper->copyOldStatusToNewAddress($oShipping);
         }
@@ -288,11 +298,12 @@ class MethodList
 
     /**
      *
-     * @param  OrigMethodList    $subject
-     * @param  MethodInterface[] $aPaymentMethods
+     * @param  OrigMethodList                        $subject
+     * @param  MethodInterface[]                     $aPaymentMethods
+     * @param  \Magento\Quote\Api\Data\CartInterface $quote
      * @return MethodInterface[]
      */
-    public function afterGetAvailableMethods(OrigMethodList $subject, $aPaymentMethods)
+    public function afterGetAvailableMethods(OrigMethodList $subject, $aPaymentMethods, \Magento\Quote\Api\Data\CartInterface $quote)
     {
         $oQuote = $this->getQuote();
         $oShipping = $oQuote->getShippingAddress();
