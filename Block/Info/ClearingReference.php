@@ -50,8 +50,6 @@ class ClearingReference extends Base
             if ($oStatus->getClearingBankcode()) {
                 $data[(string)__('Please transfer the order amount to this bank account')] = '';
                 $data[(string)__('Accountholder')] = $oStatus->getClearingBankaccountholder();
-                $data[(string)__('Accountnumber')] = $oStatus->getClearingBankaccount();
-                $data[(string)__('Bank code')] = $oStatus->getClearingBankcode();
                 $data[(string)__('IBAN')] = $oStatus->getClearingBankiban();
                 $data[(string)__('BIC')] = $oStatus->getClearingBankbic();
                 $data[(string)__('Bank')] = $oStatus->getClearingBankname();

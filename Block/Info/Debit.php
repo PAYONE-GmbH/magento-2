@@ -56,12 +56,6 @@ class Debit extends Base
         } elseif (isset($aRaw['bic'])) {
             $data[(string)__('BIC')] = $aRaw['bic'];
         }
-        if (isset($aRaw['bankaccount'])) {
-            $data[(string)__('Account number')] = $aRaw['bankaccount'];
-        }
-        if (isset($aRaw['bankcode'])) {
-            $data[(string)__('Bank code')] = $aRaw['bankcode'];
-        }
 
         $sTransId = $oInfo->getLastTransId();
         if ($sTransId == '') {
