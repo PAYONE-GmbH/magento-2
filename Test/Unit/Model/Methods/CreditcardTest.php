@@ -26,7 +26,9 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\Store;
+use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Creditcard as ClassToTest;
@@ -56,6 +58,16 @@ class CreditcardTest extends BaseTestCase
      */
     private $info;
 
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
+     * @var Payment|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $paymentHelper;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -84,10 +96,16 @@ class CreditcardTest extends BaseTestCase
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
 
+        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
+
+        $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'toolkitHelper' => $toolkitHelper,
+            'scopeConfig' => $this->scopeConfig,
             'shopHelper' => $shopHelper,
-            'checkoutSession' => $checkoutSession
+            'checkoutSession' => $checkoutSession,
+            'paymentHelper' => $this->paymentHelper,
         ]);
         $this->classToTest->setInfoInstance($this->info);
     }
@@ -128,6 +146,34 @@ class CreditcardTest extends BaseTestCase
 
         $result = $this->classToTest->assignData($data);
         $this->assertInstanceOf(ClassToTest::class, $result);
+    }
+
+    public function testIsAvailableParent()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(0);
+
+        $result = $this->classToTest->isAvailable();
+        $this->assertFalse($result);
+    }
+
+    public function testIsAvailableTrue()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(1);
+
+        $this->paymentHelper->method("getAvailableCreditcardTypes")->willReturn(['visa']);
+
+        $result = $this->classToTest->isAvailable();
+        $this->assertTrue($result);
+    }
+
+    public function testIsAvailableFalse()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(1);
+
+        $this->paymentHelper->method("getAvailableCreditcardTypes")->willReturn(false);
+
+        $result = $this->classToTest->isAvailable();
+        $this->assertFalse($result);
     }
 
     public function testAssignDataNoOrder()
