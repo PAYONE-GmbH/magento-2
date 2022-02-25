@@ -71,6 +71,16 @@ class TransactionStatusTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetRawStatusArrayException()
+    {
+        $aStatus = ['test1' => html_entity_decode("&nbsp;")];
+        $this->classToTest->setData('raw_status', utf8_encode(serialize($aStatus)));
+        $this->toolkitHelper->method('isUTF8')->willReturn(true);
+
+        $result = $this->classToTest->getRawStatusArray();
+        $this->assertCount(1, $result);
+    }
+
     public function testGetRawStatusArray()
     {
         $this->toolkitHelper->method('isUTF8')->willReturn(true);
