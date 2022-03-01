@@ -87,6 +87,11 @@ class UpgradeData implements UpgradeDataInterface
     protected $paymentHelper;
 
     /**
+     * @var \Magento\Framework\Serialize\Serializer\Serialize
+     */
+    protected $serialize;
+
+    /**
      * Constructor
      *
      * @param SalesSetupFactory     $salesSetupFactory
@@ -95,6 +100,7 @@ class UpgradeData implements UpgradeDataInterface
      * @param WriterInterface       $configWriter
      * @param StoreManagerInterface $storeManager
      * @param CustomerSetupFactory  $customerSetupFactory
+     * @param \Magento\Framework\Serialize\Serializer\Serialize $serialize
      */
     public function __construct(
         SalesSetupFactory $salesSetupFactory,
@@ -102,7 +108,8 @@ class UpgradeData implements UpgradeDataInterface
         Payment $paymentHelper,
         WriterInterface $configWriter,
         StoreManagerInterface $storeManager,
-        CustomerSetupFactory $customerSetupFactory
+        CustomerSetupFactory $customerSetupFactory,
+        \Magento\Framework\Serialize\Serializer\Serialize $serialize
     ) {
         $this->salesSetupFactory = $salesSetupFactory;
         $this->shopHelper = $shopHelper;
@@ -110,6 +117,7 @@ class UpgradeData implements UpgradeDataInterface
         $this->configWriter = $configWriter;
         $this->storeManager = $storeManager;
         $this->customerSetupFactory = $customerSetupFactory;
+        $this->serialize = $serialize;
     }
 
     /**
@@ -317,7 +325,7 @@ class UpgradeData implements UpgradeDataInterface
     protected function convertSerializedDataToJson(ModuleDataSetupInterface $setup, $serializedRows)
     {
         foreach ($serializedRows as $id => $serializedRow) {
-            $aValue = unserialize($serializedRow['value']);
+            $aValue = $this->serialize->unserialize($serializedRow['value']);
             $sNewValue = json_encode($aValue);
 
             $data = ['value' => $sNewValue];

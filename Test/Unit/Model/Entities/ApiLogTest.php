@@ -30,6 +30,7 @@ use Payone\Core\Model\Entities\ApiLog as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\Serialize\Serializer\Serialize;
 
 class ApiLogTest extends BaseTestCase
 {
@@ -47,9 +48,11 @@ class ApiLogTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
+        $oSerialize = $this->objectManager->getObject(Serialize::class);
+
         $data = [
-            'raw_request' => serialize(['request' => 'authorization']),
-            'raw_response' => serialize(['status' => 'APPROVED']),
+            'raw_request' => $oSerialize->serialize(['request' => 'authorization']),
+            'raw_response' => $oSerialize->serialize(['status' => 'APPROVED']),
         ];
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

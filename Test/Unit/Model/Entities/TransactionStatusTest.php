@@ -31,6 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\Serialize\Serializer\Serialize;
 
 class TransactionStatusTest extends BaseTestCase
 {
@@ -53,7 +54,9 @@ class TransactionStatusTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $data = ['raw_status' => serialize(['status' => 'status', 'array' => ['key' => 'value'], 'number' => 15])];
+        $oSerialize = $this->objectManager->getObject(Serialize::class);
+
+        $data = ['raw_status' => $oSerialize->serialize(['status' => 'status', 'array' => ['key' => 'value'], 'number' => 15])];
         $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

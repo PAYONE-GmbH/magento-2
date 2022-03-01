@@ -154,7 +154,7 @@ class ChecksumCheck
         foreach ($aFiles as $sFilePath) {
             $sFullFilePath = $this->getBasePath().$sFilePath;
             if (file_exists($sFullFilePath)) {
-                $aChecksums[md5($sFilePath)] = md5_file($sFullFilePath); // Create md5 checksum of the file
+                $aChecksums[hash("md5", $sFilePath)] = md5_file($sFullFilePath); // Create md5 checksum of the file
             }
         }
         return $aChecksums;

@@ -87,7 +87,7 @@ class Index extends Action
                 $sXml = $this->configExport->generateConfigExportXml();
                 if ($sXml !== false) {
                     $oResultRaw->setHeader("Content-Type", "text/xml; charset=\"utf8\"", true);
-                    $oResultRaw->setHeader("Content-Disposition", "attachment; filename=\"payone_config_export" . date('Y-m-d H-i-s') . "_" . md5($sXml) . ".xml\"", true);
+                    $oResultRaw->setHeader("Content-Disposition", "attachment; filename=\"payone_config_export" . date('Y-m-d H-i-s') . "_" . hash("md5", $sXml) . ".xml\"", true);
                     $oResultRaw->setContents($sXml);
                 }
             } catch (\Exception $e) {

@@ -201,7 +201,7 @@ class Ratepay extends \Payone\Core\Helper\Base
      */
     protected function generateDeviceFingerprintToken()
     {
-        return md5($this->checkoutSession->getQuote()->getCustomer()->getId().'_'.microtime());
+        return hash("md5", $this->checkoutSession->getQuote()->getCustomer()->getId().'_'.microtime());
     }
 
     /**

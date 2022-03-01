@@ -33,16 +33,16 @@ class SerializedOrJson extends Value
     /**
      * PAYONE Base helper
      *
-     * @var \Payone\Core\Helper\Base
+     * @var \Payone\Core\Helper\Toolkit
      */
-    protected $baseHelper;
+    protected $toolkitHelper;
 
     /**
      * @param \Magento\Framework\Model\Context                             $context
      * @param \Magento\Framework\Registry                                  $registry
      * @param \Magento\Framework\App\Config\ScopeConfigInterface           $config
      * @param \Magento\Framework\App\Cache\TypeListInterface               $cacheTypeList
-     * @param \Payone\Core\Helper\Base                                     $baseHelper
+     * @param \Payone\Core\Helper\Toolkit                                  $toolkitHelper
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null           $resourceCollection
      * @param array                                                        $data
@@ -52,13 +52,13 @@ class SerializedOrJson extends Value
         \Magento\Framework\Registry $registry,
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
         \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
-        \Payone\Core\Helper\Base $baseHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
-        $this->baseHelper = $baseHelper;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -68,7 +68,7 @@ class SerializedOrJson extends Value
     {
         if (!is_array($this->getValue())) {
             $value = $this->getValue();
-            $this->setValue(empty($value) ? false : $this->baseHelper->unserialize($value));
+            $this->setValue(empty($value) ? false : $this->toolkitHelper->unserialize($value));
         }
     }
 
@@ -80,7 +80,7 @@ class SerializedOrJson extends Value
         $value = $this->getValue();
         if (is_array($value)) {
             unset($value['__empty']);
-            $value = $this->baseHelper->serialize($value);
+            $value = $this->toolkitHelper->serialize($value);
         }
         $this->setValue($value);
         return parent::beforeSave();

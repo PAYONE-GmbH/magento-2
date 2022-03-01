@@ -129,18 +129,4 @@ class BaseTest extends BaseTestCase
         $result = $this->base->getRequestParameter('param');
         $this->assertEquals($expected, $result);
     }
-
-    public function testUnserialize()
-    {
-        $expected = ['test' => '123'];
-        $result = $this->base->unserialize(json_encode($expected));
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testSerialize()
-    {
-        $input = ['test' => '123'];
-        $result = $this->base->serialize($input);
-        $this->assertEquals(json_encode($input), $result);
-    }
 }

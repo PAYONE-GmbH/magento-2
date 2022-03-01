@@ -48,6 +48,11 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $toolkitHelper;
 
     /**
+     * @var \Magento\Framework\Serialize\Serializer\Serialize
+     */
+    protected $serialize;
+
+    /**
      * Fields that need to be masked before written in to the API log
      *
      * @var array
@@ -63,17 +68,20 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Payone\Core\Helper\Shop $shopHelper
      * @param \Payone\Core\Helper\Toolkit $toolkitHelper
+     * @param \Magento\Framework\Serialize\Serializer\Serialize $serialize
      * @param string $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Magento\Framework\Serialize\Serializer\Serialize $serialize,
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
         $this->shopHelper = $shopHelper;
         $this->toolkitHelper = $toolkitHelper;
+        $this->serialize = $serialize;
     }
 
     /**
@@ -169,8 +177,8 @@ class ApiLog extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 'mid' => $this->getParamValue($aRequest, 'mid'),
                 'aid' => $this->getParamValue($aRequest, 'aid', '0'),
                 'portalid' => $this->getParamValue($aRequest, 'portalid'),
-                'raw_request' => serialize($aRequest),
-                'raw_response' => serialize($aResponse),
+                'raw_request' => $this->serialize->serialize($aRequest),
+                'raw_response' => $this->serialize->serialize($aResponse),
             ]
         );
         return $this;

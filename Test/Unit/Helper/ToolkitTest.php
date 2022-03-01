@@ -139,7 +139,7 @@ class ToolkitTest extends BaseTestCase
                 ]
             );
 
-        $hash = md5($key);
+        $hash = hash("md5", $key);
         $result = $this->toolkit->isKeyValid($hash);
         $this->assertTrue($result);
 
@@ -263,5 +263,19 @@ class ToolkitTest extends BaseTestCase
         $expected = 'DE 85xx xxxx xxxx xxxx 0003';
         $result = $this->toolkit->maskIban('DE85123456782599100003');
         $this->assertEquals($expected, $result);
+    }
+
+    public function testUnserialize()
+    {
+        $expected = ['test' => '123'];
+        $result = $this->toolkit->unserialize(json_encode($expected));
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testSerialize()
+    {
+        $input = ['test' => '123'];
+        $result = $this->toolkit->serialize($input);
+        $this->assertEquals(json_encode($input), $result);
     }
 }
