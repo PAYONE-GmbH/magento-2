@@ -79,8 +79,10 @@ class TransactionStatusTest extends BaseTestCase
 
     public function testGetRawStatusArrayException()
     {
+        $oSerialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
+
         $aStatus = ['test1' => html_entity_decode("&nbsp;")];
-        $this->classToTest->setData('raw_status', utf8_encode(serialize($aStatus)));
+        $this->classToTest->setData('raw_status', utf8_encode($oSerialize->serialize($aStatus)));
         $this->toolkitHelper->method('isUTF8')->willReturn(true);
 
         $result = $this->classToTest->getRawStatusArray();
