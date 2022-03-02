@@ -42,11 +42,17 @@ class TransactionStatus extends AbstractModel
     protected $toolkitHelper;
 
     /**
+     * @var \Magento\Framework\Serialize\Serializer\Serialize
+     */
+    protected $serialize;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\Model\Context                        $context
      * @param \Magento\Framework\Registry                             $registry
      * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
+     * @param \Magento\Framework\Serialize\Serializer\Serialize       $serialize
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
      * @param array                                                   $data
@@ -55,12 +61,14 @@ class TransactionStatus extends AbstractModel
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Magento\Framework\Serialize\Serializer\Serialize $serialize,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->toolkitHelper = $toolkitHelper;
+        $this->serialize = $serialize;
     }
 
     /**
@@ -104,10 +112,10 @@ class TransactionStatus extends AbstractModel
         $sRequest = $this->getData($sKey);
         if ($sRequest) {
             try {
-                $aRequest = unserialize($sRequest);
+                $aRequest = $this->serialize->unserialize($sRequest);
             } catch(\Exception $exc) {
                 if ($this->toolkitHelper->isUTF8($sRequest)) {
-                    $aRequest = unserialize(utf8_decode($sRequest));
+                    $aRequest = $this->serialize->unserialize(utf8_decode($sRequest));
                 }
             }
             if (is_array($aRequest)) {

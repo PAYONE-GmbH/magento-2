@@ -119,21 +119,29 @@ class Payment extends \Payone\Core\Helper\Base
     protected $savedPaymentData;
 
     /**
+     * @var Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context             $context
      * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
      * @param \Payone\Core\Helper\Shop                          $shopHelper
      * @param \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
+     * @param \Payone\Core\Helper\Toolkit                       $toolkitHelper
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
+        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         parent::__construct($context, $storeManager, $shopHelper);
         $this->savedPaymentData = $savedPaymentData;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -226,7 +234,7 @@ class Payment extends \Payone\Core\Helper\Base
     public function getStatusMappingByCode($sPaymentCode)
     {
         $sStatusMapping = $this->getConfigParam($sPaymentCode, 'statusmapping');
-        $aStatusMapping = $this->unserialize($sStatusMapping);
+        $aStatusMapping = $this->toolkitHelper->unserialize($sStatusMapping);
         $aCleanMapping = [];
         if ($aStatusMapping) {
             foreach ($aStatusMapping as $aMap) {
@@ -285,7 +293,7 @@ class Payment extends \Payone\Core\Helper\Base
     public function getKlarnaStoreIds()
     {
         $aStoreIds = [];
-        $aKlarnaConfig = $this->unserialize($this->getConfigParam('klarna_config', PayoneConfig::METHOD_KLARNA, 'payone_payment'));
+        $aKlarnaConfig = $this->toolkitHelper->unserialize($this->getConfigParam('klarna_config', PayoneConfig::METHOD_KLARNA, 'payone_payment'));
         if (!is_array($aKlarnaConfig)) {
             return $aStoreIds;
         }

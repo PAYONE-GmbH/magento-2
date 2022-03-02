@@ -72,7 +72,8 @@ class ConfigTest extends BaseTestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
-        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+        $oSerialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, ['serialize' => $oSerialize]);
 
         $this->config = $this->objectManager->getObject(Config::class, [
             'context' => $context,

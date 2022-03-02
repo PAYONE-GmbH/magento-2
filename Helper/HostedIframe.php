@@ -62,15 +62,18 @@ class HostedIframe extends \Payone\Core\Helper\Base
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Shop                   $shopHelper
      * @param \Payone\Core\Helper\Payment                $paymentHelper
+     * @param \Payone\Core\Helper\Toolkit                $toolkitHelper
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Helper\Payment $paymentHelper
+        \Payone\Core\Helper\Payment $paymentHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         parent::__construct($context, $storeManager, $shopHelper);
         $this->paymentHelper = $paymentHelper;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -84,7 +87,7 @@ class HostedIframe extends \Payone\Core\Helper\Base
             $this->aHostedParams = [];
             $sHostedParams = $this->getConfigParam('cc_template', 'creditcard'); // get params from config
             if ($sHostedParams) { // params set in config?
-                $aHostedParams = $this->unserialize($sHostedParams); // array from serialized string
+                $aHostedParams = $this->toolkitHelper->unserialize($sHostedParams); // array from serialized string
                 if (is_array($aHostedParams) && !empty($aHostedParams)) {
                     $this->aHostedParams = $aHostedParams;
                 }

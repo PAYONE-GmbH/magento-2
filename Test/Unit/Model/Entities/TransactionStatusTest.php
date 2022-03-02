@@ -59,9 +59,12 @@ class TransactionStatusTest extends BaseTestCase
         $data = ['raw_status' => $oSerialize->serialize(['status' => 'status', 'array' => ['key' => 'value'], 'number' => 15])];
         $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
 
+        $serialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'data' => $data,
-            'toolkitHelper' => $this->toolkitHelper
+            'toolkitHelper' => $this->toolkitHelper,
+            'serialize' => $serialize,
         ]);
     }
 
