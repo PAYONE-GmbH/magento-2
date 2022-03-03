@@ -40,7 +40,7 @@ class Payment extends \Payone\Core\Helper\Base
      *
      * @var array
      */
-    protected $aAvailablePayments = [
+    public static $aAvailablePayments = [
         PayoneConfig::METHOD_CREDITCARD,
         PayoneConfig::METHOD_DEBIT,
         PayoneConfig::METHOD_PAYPAL,
@@ -151,7 +151,7 @@ class Payment extends \Payone\Core\Helper\Base
      */
     public function getAvailablePaymentTypes()
     {
-        return $this->aAvailablePayments;
+        return self::$aAvailablePayments;
     }
 
     /**

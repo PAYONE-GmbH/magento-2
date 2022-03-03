@@ -77,10 +77,11 @@ class CurlCli
         $sPostUrl = $aParsedRequestUrl['scheme']."://".$aParsedRequestUrl['host'].$aParsedRequestUrl['path'];
         $sPostData = $aParsedRequestUrl['query'];
 
-        $sCommand = $sCurlPath." -m 45 -k -d \"".$sPostData."\" ".$sPostUrl;
+        $sCommand = $sCurlPath." -m 45 -s -k -d \"".$sPostData."\" ".$sPostUrl;
 
         try {
-            $aResponse = $this->shell->execute($sCommand);
+            $sResponse = $this->shell->execute($sCommand);
+            $aResponse = explode(PHP_EOL, $sResponse);
         } catch(\Exception $exc) {
             $aResponse = ["connection-type: 2 - errormessage=curl error(".$exc->getMessage().")"];
         }

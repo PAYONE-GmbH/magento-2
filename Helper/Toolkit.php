@@ -38,13 +38,6 @@ use Magento\Framework\Exception\LocalizedException;
 class Toolkit extends \Payone\Core\Helper\Base
 {
     /**
-     * PAYONE payment helper
-     *
-     * @var \Payone\Core\Helper\Payment
-     */
-    protected $paymentHelper;
-
-    /**
      * @var \Magento\Framework\Serialize\Serializer\Serialize
      */
     protected $serialize;
@@ -54,19 +47,16 @@ class Toolkit extends \Payone\Core\Helper\Base
      *
      * @param \Magento\Framework\App\Helper\Context             $context
      * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
-     * @param \Payone\Core\Helper\Payment                       $paymentHelper
      * @param \Payone\Core\Helper\Shop                          $shopHelper
      * @param \Magento\Framework\Serialize\Serializer\Serialize $serialize
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Payone\Core\Helper\Payment $paymentHelper,
         \Payone\Core\Helper\Shop $shopHelper,
         \Magento\Framework\Serialize\Serializer\Serialize $serialize
     ) {
         parent::__construct($context, $storeManager, $shopHelper);
-        $this->paymentHelper = $paymentHelper;
         $this->serialize = $serialize;
     }
 
@@ -79,7 +69,7 @@ class Toolkit extends \Payone\Core\Helper\Base
     protected function getAllPayoneSecurityKeysByStoreCode($sStoreCode)
     {
         $aKeys = [];
-        foreach ($this->paymentHelper->getAvailablePaymentTypes() as $sPaymentCode) {
+        foreach (Payment::$aAvailablePayments as $sPaymentCode) {
             $iUseGlobal = $this->getConfigParam('use_global', $sPaymentCode, 'payone_payment', $sStoreCode);
             if ($iUseGlobal == '0') {
                 $aKeys[] = $this->getConfigParam('key', $sPaymentCode, 'payone_payment', $sStoreCode);
