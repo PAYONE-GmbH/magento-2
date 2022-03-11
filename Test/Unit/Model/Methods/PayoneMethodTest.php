@@ -51,7 +51,7 @@ class PayoneMethodTest extends BaseTestCase
      */
     private $shopHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -101,6 +101,12 @@ class PayoneMethodTest extends BaseTestCase
     {
         $result = $this->classToTest->needsRedirectUrls();
         $this->assertTrue($result);
+    }
+
+    public function testNeedsTransactionParam()
+    {
+        $result = $this->classToTest->needsTransactionParam();
+        $this->assertFalse($result);
     }
 
     public function testNeedsProductInfo()

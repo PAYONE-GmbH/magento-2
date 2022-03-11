@@ -34,3 +34,20 @@
 #row_payone_misc_payone_config_misc_transactionstatus_forwarding_config TABLE.admin__control-table {
     min-width: 724px;
 }
+
+.ratepayProfile {
+    border: 1px solid #cbd3d4;
+    box-sizing: border-box;
+    border-collapse: separate;
+    display: table;
+    border-spacing: 2px;
+}
+
+.ratepayProfile TD {
+    padding-top: 0!important;
+}
+
+.ratepayProfile TD.label {
+    border-right: 1px solid #cbd3d4;
+    width: 38%;
+}

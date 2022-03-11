@@ -45,7 +45,12 @@ class ForwardingTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    /**
+     * @var Curl
+     */
+    private $curl;
+
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -53,12 +58,13 @@ class ForwardingTest extends BaseTestCase
 
         $configHelper = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
         $configHelper->method('getForwardingUrls')->willReturn($forwarding);
+        $configHelper->method('getConfigParam')->willReturn(true);
 
-        $curl = $this->getMockBuilder(Curl::class)->disableOriginalConstructor()->getMock();
+        $this->curl = $this->getMockBuilder(Curl::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'configHelper' => $configHelper,
-            'curl' => $curl
+            'curl' => $this->curl
         ]);
     }
 
@@ -67,6 +73,28 @@ class ForwardingTest extends BaseTestCase
         $post = ['txid' => '12345', 'txaction' => 'appointed', 'array' => ['te' => 'st']];
 
         $result = $this->classToTest->handleForwardings($post);
+        $this->assertNull($result);
+    }
+
+    public function testHandleForwardingsException()
+    {
+        $post = ['txid' => '12345', 'txaction' => 'appointed'];
+
+        $exception = new \Exception();
+        $this->curl->method('post')->willThrowException($exception);
+
+        $result = $this->classToTest->handleForwardings($post);
+        $this->assertNull($result);
+    }
+
+    public function testForwardAsyncRequest()
+    {
+        $post = ['txid' => '12345', 'txaction' => 'appointed'];
+
+        $exception = new \Exception();
+        $this->curl->method('post')->willThrowException($exception);
+
+        $result = $this->classToTest->forwardAsyncRequest($post, 'http://testdomain.com');
         $this->assertNull($result);
     }
 }

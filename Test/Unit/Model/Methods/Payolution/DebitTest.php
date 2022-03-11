@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods\Payolution;
 
+use Magento\Store\Model\Store;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Payolution\Debit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -57,7 +58,7 @@ class DebitTest extends BaseTestCase
      */
     private $precheckRequest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -67,7 +68,11 @@ class DebitTest extends BaseTestCase
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn('value');
 
+        $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote->method('getStore')->willReturn($store);
 
         $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
@@ -96,7 +101,11 @@ class DebitTest extends BaseTestCase
         $payment->method('getOrder')->willReturn($order);
         $payment->method('getAdditionalInformation')->willReturn(['iban' => '12345']);
 
+        $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
         $order->method('getPayment')->willReturn($payment);
+        $order->method('getStore')->willReturn($store);
 
         $result = $this->classToTest->authorize($payment, 100);
         $this->assertInstanceOf(ClassToTest::class, $result);

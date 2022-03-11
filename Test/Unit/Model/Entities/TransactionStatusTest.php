@@ -49,7 +49,7 @@ class TransactionStatusTest extends BaseTestCase
      */
     private $toolkitHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -69,6 +69,16 @@ class TransactionStatusTest extends BaseTestCase
         $result = $this->classToTest->getRawStatusArray();
         $expected = ['array' => ['key' => 'value'], 'number' => 15, 'status' => 'status'];
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetRawStatusArrayException()
+    {
+        $aStatus = ['test1' => html_entity_decode("&nbsp;")];
+        $this->classToTest->setData('raw_status', utf8_encode(serialize($aStatus)));
+        $this->toolkitHelper->method('isUTF8')->willReturn(true);
+
+        $result = $this->classToTest->getRawStatusArray();
+        $this->assertCount(1, $result);
     }
 
     public function testGetRawStatusArray()

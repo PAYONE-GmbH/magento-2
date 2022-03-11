@@ -1,0 +1,40 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2021 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+#$aShopConfigs = $this->getRatepayShopConfig();
+?>
+<?php if ($this->isConfigurationComplete() === false): ?>
+    <div style="color: #9F6000;background-color: #FEEFB3;padding:1em;">
+        <?php if ($this->hasMerchantId() === false): ?>
+            <?php echo __('Apple Pay Merchant Id is missing.'); ?><br>
+        <?php endif; ?>
+        <?php if ($this->hasCertificateFile() === false): ?>
+            <?php echo __('Certificate file is missing.'); ?><br>
+        <?php endif; ?>
+        <?php if ($this->hasPrivateKeyFile() === false): ?>
+            <?php echo __('Private key is missing.'); ?><br>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>

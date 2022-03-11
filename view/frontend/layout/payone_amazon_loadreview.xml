@@ -41,7 +41,7 @@
                     <block class="Magento\Checkout\Block\Item\Price\Renderer" name="checkout.onepage.review.item.price.rowtotal.excl" template="onepage/review/item/price/row_excl_tax.phtml"/>
                     <block class="Magento\Checkout\Block\Item\Price\Renderer" name="checkout.onepage.review.item.price.rowtotal.incl" template="onepage/review/item/price/row_incl_tax.phtml"/>
                 </block>
-                <block class="Magento\Checkout\Block\Cart\Totals" name="payone_onepage_review_details_totals" as="totals" template="Payone_Core::onepage/review/totals.phtml"/>
+                <block class="Payone\Core\Block\Onepage\Totals" name="payone_onepage_review_details_totals" as="totals" template="Payone_Core::onepage/review/totals.phtml"/>
             </block>
         </block>
     </container>

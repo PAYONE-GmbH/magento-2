@@ -68,7 +68,12 @@ class CustomerTest extends BaseTestCase
      */
     private $region;
 
-    protected function setUp()
+    /**
+     * @var Session|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $checkoutSession;
+
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -86,8 +91,11 @@ class CustomerTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
         $quote->method('getCustomer')->willReturn($this->coreCustomer);
 
-        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
-        $checkoutSession->method('getQuote')->willReturn($quote);
+        $this->checkoutSession = $this->getMockBuilder(Session::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getQuote', 'getPayoneGuestGender', 'getPayoneGuestDateofbirth'])
+            ->getMock();
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
 
         $this->region = $this->getMockBuilder(Region::class)
             ->disableOriginalConstructor()
@@ -99,40 +107,67 @@ class CustomerTest extends BaseTestCase
         $this->customer = $this->objectManager->getObject(Customer::class, [
             'context' => $context,
             'storeManager' => $storeManager,
-            'checkoutSession' => $checkoutSession,
+            'checkoutSession' => $this->checkoutSession,
             'regionFactory' => $regionFactory
         ]);
     }
 
-    public function testCustomerHasGivenGender()
+    public function testGetCustomerGenderFemale()
     {
-        $this->coreCustomer->method('getGender')->willReturn('m');
-        $result = $this->customer->customerHasGivenGender();
-        $expected = true;
+        $this->checkoutSession->method('getPayoneGuestGender')->willReturn(null);
+        $this->coreCustomer->method('getGender')->willReturn(2);
+        $result = $this->customer->getCustomerGender();
+        $expected = 'f';
         $this->assertEquals($expected, $result);
     }
 
-    public function testCustomerHasGivenGenderFalse()
+    public function testGetCustomerGenderMale()
     {
+        $this->checkoutSession->method('getPayoneGuestGender')->willReturn(null);
+        $this->coreCustomer->method('getGender')->willReturn(1);
+        $result = $this->customer->getCustomerGender();
+        $expected = 'm';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetCustomerGenderNull()
+    {
+        $this->checkoutSession->method('getPayoneGuestGender')->willReturn(null);
         $this->coreCustomer->method('getGender')->willReturn(null);
-        $result = $this->customer->customerHasGivenGender();
-        $expected = false;
+        $result = $this->customer->getCustomerGender();
+        $this->assertNull($result);
+    }
+
+    public function testGetCustomerGenderSession()
+    {
+        $this->checkoutSession->method('getPayoneGuestGender')->willReturn(3);
+        $result = $this->customer->getCustomerGender();
+        $expected = 'd';
         $this->assertEquals($expected, $result);
     }
 
     public function testCustomerHasGivenBirthday()
     {
-        $expected = '1999-19-09';
-        $this->coreCustomer->method('getDob')->willReturn($expected);
+        $this->checkoutSession->method('getPayoneGuestDateofbirth')->willReturn(null);
+        $expected = '19851130';
+        $this->coreCustomer->method('getDob')->willReturn('11/30/1985');
         $result = $this->customer->getCustomerBirthday();
         $this->assertEquals($expected, $result);
     }
 
-    public function testCustomerHasGivenBirthdayFalse()
+    public function testCustomerHasGivenBirthdayNull()
     {
+        $this->checkoutSession->method('getPayoneGuestDateofbirth')->willReturn(null);
         $this->coreCustomer->method('getDob')->willReturn(null);
         $result = $this->customer->getCustomerBirthday();
-        $expected = false;
+        $this->assertNull($result);
+    }
+
+    public function testCustomerHasGivenBirthdaySession()
+    {
+        $this->checkoutSession->method('getPayoneGuestDateofbirth')->willReturn('11/09/1985');
+        $expected = '19851109';
+        $result = $this->customer->getCustomerBirthday();
         $this->assertEquals($expected, $result);
     }
 

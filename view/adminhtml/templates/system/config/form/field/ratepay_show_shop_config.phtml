@@ -1,0 +1,58 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2016 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+$aShopConfigs = $this->getRatepayShopConfig();
+?>
+<div>
+    <?php if (empty($aShopConfigs)): ?>
+        <?php echo __('Payment method has no configured Ratepay shop configs'); ?>
+    <?php else: ?>
+        <?php foreach ($aShopConfigs as $aProfile): ?>
+            <strong><?php echo __('Shop-ID'); ?>:</strong> <?php echo $aProfile['shop_id']; ?>
+            <table class="ratepayProfile">
+                <tr>
+                    <td class="label"><?php echo __('Currency'); ?></td>
+                    <td><?php echo $aProfile['currency']; ?></td>
+                </tr>
+                <tr>
+                    <td class="label"><?php echo __('Invoice country'); ?></td>
+                    <td><?php echo $aProfile['country_code_billing']; ?></td>
+                </tr>
+                <tr>
+                    <td class="label"><?php echo __('Shipping country'); ?></td>
+                    <td><?php echo $aProfile['country_code_delivery']; ?></td>
+                </tr>
+                <tr>
+                    <td class="label"><?php echo __('Min. basket'); ?></td>
+                    <td><?php echo number_format($aProfile['tx_limit_invoice_min'], '0', '', ''); ?></td>
+                </tr>
+                <tr>
+                    <td class="label"><?php echo __('Max. basket'); ?></td>
+                    <td><?php echo number_format($aProfile['tx_limit_invoice_max'], '0', '', ''); ?></td>
+                </tr>
+            </table><br>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>

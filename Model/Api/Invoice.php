@@ -28,6 +28,8 @@ namespace Payone\Core\Model\Api;
 
 use Payone\Core\Model\Api\Request\Base;
 use Magento\Sales\Model\Order;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
+use Magento\Quote\Model\Quote;
 
 /**
  * Collect all invoice parameters
@@ -70,6 +72,13 @@ class Invoice
     protected $toolkitHelper;
 
     /**
+     * PAYONE amasty helper
+     *
+     * @var \Payone\Core\Helper\AmastyGiftcard
+     */
+    protected $amastyHelper;
+
+    /**
      * Request object
      *
      * @var Base
@@ -77,13 +86,21 @@ class Invoice
     protected $oRequest;
 
     /**
+     * Current store code
+     *
+     * @var string
+     */
+    protected $sStoreCode;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
      */
-    public function __construct(\Payone\Core\Helper\Toolkit $toolkitHelper)
+    public function __construct(\Payone\Core\Helper\Toolkit $toolkitHelper, \Payone\Core\Helper\AmastyGiftcard $amastyHelper)
     {
         $this->toolkitHelper = $toolkitHelper;
+        $this->amastyHelper = $amastyHelper;
     }
 
     /**
@@ -99,7 +116,7 @@ class Invoice
      */
     protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat)
     {
-        $this->oRequest->addParameter('id['.$this->iIndex.']', $sId); // add invoice item id
+        $this->oRequest->addParameter('id['.$this->iIndex.']', $this->formatSku($sId)); // add invoice item id
         $this->oRequest->addParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100); // expected in smallest unit of currency
         $this->oRequest->addParameter('it['.$this->iIndex.']', $sItemType); // add invoice item type
         $this->oRequest->addParameter('no['.$this->iIndex.']', $iAmount); // add invoice item amount
@@ -112,23 +129,27 @@ class Invoice
     /**
      * Add invoicing data to the request and return the summed invoicing amount
      *
-     * @param  Base  $oRequest   Request object
-     * @param  Order $oOrder     Order object
-     * @param  array $aPositions Is given with non-complete captures or debits
-     * @param  bool  $blDebit    Is the call coming from a debit request
+     * @param  Base     $oRequest       Request object
+     * @param  object   $oOrder         Order object
+     * @param  array    $aPositions     Is given with non-complete captures or debits
+     * @param  bool     $blDebit        Is the call coming from a debit request
+     * @param  double   $dShippingCosts Shipping costs - needed for Klarna start_session
      * @return integer
      */
-    public function addProductInfo(Base $oRequest, Order $oOrder, $aPositions = false, $blDebit = false)
+    public function addProductInfo(Base $oRequest, $oOrder, $aPositions = false, $blDebit = false, $dShippingCosts = false)
     {
         $this->oRequest = $oRequest; // write request to property for manipulation of the object
-        $sInvoiceAppendix = $this->toolkitHelper->getInvoiceAppendix($oOrder); // get invoice appendix
-        if (!empty($sInvoiceAppendix)) {// invoice appendix existing?
-            $this->oRequest->addParameter('invoiceappendix', $sInvoiceAppendix); // add appendix to request
+        $this->setStoreCode($oOrder->getStore()->getCode());
+        if ($oOrder instanceof Order) {
+            $sInvoiceAppendix = $this->toolkitHelper->getInvoiceAppendix($oOrder); // get invoice appendix
+            if (!empty($sInvoiceAppendix)) { // invoice appendix existing?
+                $this->oRequest->addParameter('invoiceappendix', $sInvoiceAppendix); // add appendix to request
+            }
         }
 
         $iQtyInvoiced = 0;
         foreach ($oOrder->getAllItems() as $oItem) { // add invoice items for all order items
-            if ($oItem->isDummy() === false) { // prevent variant-products of adding 2 items
+            if (($oOrder instanceof Order && $oItem->isDummy() === false) || ($oOrder instanceof Quote && $oItem->getParentItemId() === null)) { // prevent variant-products of adding 2 items
                 $this->addProductItem($oItem, $aPositions); // add product invoice params to request
             }
             $iQtyInvoiced += $oItem->getOrigData('qty_invoiced'); // get data pre-capture
@@ -140,8 +161,10 @@ class Invoice
         }
 
         if ($aPositions === false || $blFirstCapture === true || $blDebit === true) {
-            $this->addShippingItem($oOrder, $aPositions, $blDebit); // add shipping invoice params to request
+            $this->addShippingItem($oOrder, $aPositions, $blDebit, $dShippingCosts); // add shipping invoice params to request
+            $this->addGiftCardItem($oOrder);  // add gift card invoice params to request
             $this->addDiscountItem($oOrder, $aPositions, $blDebit); // add discount invoice params to request
+            $this->addAmastyGiftcards($oOrder, $aPositions, $blDebit); // add amasty giftcard invoice params to request
         }
         return $this->dAmount;
     }
@@ -158,12 +181,15 @@ class Invoice
         $sPositionKey = $oItem->getProductId().$oItem->getSku();
         if ($aPositions === false || array_key_exists($sPositionKey, $aPositions) !== false) { // full or single-invoice?
             $dItemAmount = $oItem->getQtyOrdered(); // get ordered item amount
+            if ($oItem instanceof QuoteItem) {
+                $dItemAmount = $oItem->getQty();
+            }
             if ($aPositions !== false && array_key_exists($sPositionKey, $aPositions) !== false) { // product existing in single-invoice?
                 $dItemAmount = $aPositions[$sPositionKey]; // use amount from single-invoice
             }
             $iAmount = $this->convertItemAmount($dItemAmount);
             $dPrice = $oItem->getBasePriceInclTax();
-            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+            if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                 $dPrice = $oItem->getPriceInclTax();
             }
             $this->addInvoicePosition($oItem->getSku(), $dPrice, 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
@@ -173,22 +199,60 @@ class Invoice
         }
     }
 
+    protected function addGiftCardItem($oOrder)
+    {
+        $giftCards = json_decode($oOrder->getData('gift_cards'), true);
+
+        if(empty($giftCards) || !is_array($giftCards)) {
+            return;
+        }
+
+        foreach($giftCards as $giftCard) {
+            $giftCardAmount = $this->getGiftCardAmount($giftCard);
+            $this->addInvoicePosition($giftCard['c'], $giftCardAmount, 'voucher', 1, 'Giftcard', 0);
+        }
+    }
+
+    /**
+     * return giftcard-amount based on magento version
+     *
+     * @param $aGiftCard
+     * @return
+     */
+    private function getGiftCardAmount($aGiftCard)
+    {
+        // up to Magento 2.3.4 giftcard-amount is saved in 'authorized', again in 2.4
+        if (array_key_exists('authorized', $aGiftCard)) {
+            return -$aGiftCard['authorized'];
+        }
+        // in Magento 2.3.5 the array has slightly changed, giftcard-amount is only saved in 'ba'
+        if (array_key_exists('ba', $aGiftCard)) {
+            return -$aGiftCard['ba'];
+        }
+        return 0;
+    }
+
     /**
      * Add invoicing item for shipping
      *
-     * @param  Order $oOrder
-     * @param  array $aPositions
-     * @param  bool  $blDebit
+     * @param  Order    $oOrder
+     * @param  array    $aPositions
+     * @param  bool     $blDebit
+     * @param  double   $dShippingCosts
      * @return void
      */
-    protected function addShippingItem(Order $oOrder, $aPositions, $blDebit)
+    protected function addShippingItem($oOrder, $aPositions, $blDebit, $dShippingCosts = false)
     {
-        // shipping costs existing or given for partial captures/debits?
-        if ($oOrder->getBaseShippingInclTax() != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('delcost', $aPositions) !== false))) {
+        $dPrice = $dShippingCosts;
+        if ($dPrice === false) {
             $dPrice = $oOrder->getBaseShippingInclTax();
-            if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+            if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                 $dPrice = $oOrder->getShippingInclTax();
             }
+        }
+
+        // shipping costs existing or given for partial captures/debits?
+        if ($dPrice != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('delcost', $aPositions) !== false))) {
             if ($aPositions !== false && array_key_exists('delcost', $aPositions) !== false) { // product existing in single-invoice?
                 $dPrice = $aPositions['delcost'];
             }
@@ -196,7 +260,7 @@ class Invoice
             if ($dPrice < 0) { // negative shipping cost
                 $sDelDesc = __('Deduction').' '.__('Shipping Costs'); // change item description to deduction
             }
-            $sShippingSku = $this->toolkitHelper->getConfigParam('sku', 'costs', 'payone_misc'); // get configured shipping SKU
+            $sShippingSku = $this->toolkitHelper->getConfigParam('sku', 'costs', 'payone_misc', $this->getStoreCode()); // get configured shipping SKU
             $this->addInvoicePosition($sShippingSku, $dPrice, 'shipment', 1, $sDelDesc, $this->dTax); // add invoice params to request
         }
     }
@@ -209,35 +273,88 @@ class Invoice
      * @param  bool  $blDebit
      * @return void
      */
-    protected function addDiscountItem(Order $oOrder, $aPositions, $blDebit)
+    protected function addDiscountItem($oOrder, $aPositions, $blDebit)
     {
         // discount costs existing or given for partial captures/debit?
         $dTransmitDiscount = $oOrder->getBaseDiscountAmount();
-        if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+        if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
             $dTransmitDiscount = $oOrder->getDiscountAmount();
         }
+
+        if ($oOrder instanceof Quote) {
+            $dTransmitDiscount = $oOrder->getBaseSubtotal() - $oOrder->getBaseSubtotalWithDiscount();
+            if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
+                $dTransmitDiscount = $oOrder->getSubtotal() - $oOrder->getSubtotalWithDiscount();
+            }
+        }
+
         if ($dTransmitDiscount != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('discount', $aPositions) !== false))) {
             if ($aPositions !== false && array_key_exists('discount', $aPositions) !== false) {
                 $dTransmitDiscount = $aPositions['discount'];
             }
             $dDiscount = $this->toolkitHelper->formatNumber($dTransmitDiscount); // format discount
-            if ($aPositions === false) {// full invoice?
+            if ($aPositions === false && $this->amastyHelper->hasAmastyGiftcards($oOrder->getQuoteId()) === false) {
                 // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
                 // the calculated positions don't match, so we compensate for rounding-problems here
                 $dTotal = $oOrder->getBaseGrandTotal();
-                if ($this->toolkitHelper->getConfigParam('currency') == 'display') {
+                if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                     $dTotal = $oOrder->getGrandTotal();
                 }
                 $dDiff = ($this->dAmount + $dTransmitDiscount - $dTotal); // calc rounding discrepancy
                 $dDiscount -= $dDiff; // subtract difference from discount
             }
-            $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'discount', 'payone_misc'); // get configured discount SKU
+            $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'discount', 'payone_misc', $this->getStoreCode()); // get configured discount SKU
             $sDesc = (string)__('Discount'); // default description
             if ($oOrder->getCouponCode()) {// was a coupon code used?
-                $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc'); // get configured voucher SKU
+                $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc', $this->getStoreCode()); // get configured voucher SKU
                 $sDesc = (string)__('Coupon').' - '.$oOrder->getCouponCode(); // add counpon code to description
             }
             $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
+        }
+    }
+
+    /**
+     * Adding amasty giftcards to request
+     *
+     * @param  Order $oOrder
+     * @param  array $aPositions
+     * @param  bool  $blDebit
+     * @return void
+     */
+    protected function addAmastyGiftcards($oOrder, $aPositions, $blDebit)
+    {
+        $aGiftCards = $this->amastyHelper->getAmastyGiftCards($oOrder->getQuoteId());
+        for ($i = 0; $i < count($aGiftCards); $i++) {
+            $aGiftCard = $aGiftCards[$i];
+            $blIsLastGiftcard = false;
+            if ($i + 1 == count($aGiftCards)) {
+                $blIsLastGiftcard = true;
+            }
+
+            $dTransmitDiscount = $aGiftCard['base_gift_amount'];
+            if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
+                $dTransmitDiscount = $aGiftCard['gift_amount'];
+            }
+            if ($dTransmitDiscount != 0 && ($aPositions === false || ($blDebit === false || array_key_exists('discount', $aPositions) !== false))) {
+                $dTransmitDiscount = $dTransmitDiscount * -1;
+                $dDiscount = $this->toolkitHelper->formatNumber($dTransmitDiscount); // format discount
+                if ($aPositions === false && $blIsLastGiftcard === true) {
+                    // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
+                    // the calculated positions don't match, so we compensate for rounding-problems here
+                    $dTotal = $oOrder->getBaseGrandTotal();
+                    if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
+                        $dTotal = $oOrder->getGrandTotal();
+                    }
+                    $dDiff = ($this->dAmount + $dTransmitDiscount - $dTotal); // calc rounding discrepancy
+                    $dDiscount -= $dDiff; // subtract difference from discount
+                }
+
+                if ($dDiscount != 0) {
+                    $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc', $this->getStoreCode()); // get configured voucher SKU
+                    $sDesc = (string)__('Amasty Coupon').' - '.$aGiftCard['code']; // add counpon code to description
+                    $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
+                }
+            }
         }
     }
 
@@ -257,5 +374,39 @@ class Invoice
         } else { // return the integer value
             return intval($dItemAmount);
         }
+    }
+
+    /**
+     * Set store code
+     *
+     * @param  $sStoreCode
+     * @return void
+     */
+    protected function setStoreCode($sStoreCode)
+    {
+        $this->sStoreCode = $sStoreCode;
+    }
+
+    /**
+     * Returns store code
+     *
+     * @return string
+     */
+    protected function getStoreCode()
+    {
+        return $this->sStoreCode;
+    }
+    
+    /**
+     * Returns formatted sku
+     *
+     * @param string $sSku
+     * @return string
+     */
+    protected function formatSku($sSku)
+    {
+        $sSku = str_replace(',', '', $sSku); // remove comma from sku
+        $sSku = substr($sSku, 0, 32); // limit sku to 32 chars
+        return $sSku;
     }
 }

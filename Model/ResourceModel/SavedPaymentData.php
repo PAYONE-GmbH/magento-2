@@ -187,6 +187,9 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     {
         if (!empty($aData['payment_data'])) {
             $aData['payment_data'] = $this->decryptPaymentData($aData['payment_data']);
+            if (!empty($aData['payment_data']['firstname']) && !empty($aData['payment_data']['lastname'])) {
+                $aData['payment_data']['cardholder'] = $aData['payment_data']['firstname'].' '.$aData['payment_data']['lastname'];
+            }
         }
         return $aData;
     }

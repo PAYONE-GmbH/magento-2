@@ -18,7 +18,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -29,6 +29,7 @@
                name="payment[method]"
                class="radio"
                data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        <input type="hidden" name="payment[klarna_subtype]" value="" id="klarna_subtype">
         <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
     </div>
 
@@ -41,191 +42,74 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        
-        <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
-            <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
-                <!-- ko if: requestTelephone() -->
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_telephone'}" class="label">
-                        <span><!-- ko i18n: 'Telephone'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[telephone]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_telephone',
-                                    title: $t('Telephone'),
-                                    'data-container': getCode() + '-telephone'},
-                              value: telephone,
-                              valueUpdate: 'keyup' "/>
-                    </div>
-                </div>
-                <!--/ko-->
-                
-                <!-- ko if: requestBirthday() -->
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_birthday'}" class="label">
-                        <span><!-- ko i18n: 'Birthday'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[birthday]" class="input-text" value=""
-                               style="width:auto;margin-right:10px;"
-                               size="3" maxlength="2"
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_birthday',
-                                    title: $t('Day of birth'),
-                                    'data-container': getCode() + '-birthday'},
-                              value: birthday,
-                              valueUpdate: 'keyup' "/>
-                        <input type="text" name="payment[birthmonth]" class="input-text" value=""
-                               style="width:auto;margin-right:10px;"
-                               size="3" maxlength="2"
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_birthmonth',
-                                    title: $t('Month of birth'),
-                                    'data-container': getCode() + '-birthmonth'},
-                              value: birthmonth,
-                              valueUpdate: 'keyup' "/>
-                        <input type="text" name="payment[birthyear]" class="input-text" value=""
-                               style="width:auto;margin-right:10px;"
-                               size="8" maxlength="4"
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_birthyear',
-                                    title: $t('Year of birth'),
-                                    'data-container': getCode() + '-birthyear'},
-                              value: birthyear,
-                              valueUpdate: 'keyup' "/> <!-- ko i18n: '(DD.MM.YYYY)'--><!-- /ko -->
-                    </div>
-                </div>
-                <!--/ko-->
-
-                <!-- ko if: requestAddressAddInfo() -->
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_addinfo'}" class="label">
-                        <span><!-- ko i18n: 'Additional info'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[addinfo]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_addinfo',
-                                    title: $t('Additional info'),
-                                    'data-container': getCode() + '-addinfo'},
-                              value: addinfo,
-                              valueUpdate: 'keyup' "/>
-                    </div>
-                </div>
-                <!--/ko-->
-                
-                <!-- ko if: requestDelAddressAddInfo() -->
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_del_addinfo'}" class="label">
-                        <span><!-- ko i18n: 'Additional info del. address'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[del_addinfo]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_del_addinfo',
-                                    title: $t('Additional info del. address'),
-                                    'data-container': getCode() + '-del_addinfo'},
-                              value: delAddinfo,
-                              valueUpdate: 'keyup' "/>
-                    </div>
-                </div>
-                <!--/ko-->
-                
-                <!-- ko if: requestGender() -->
-                <div class="field required">
-                    <label data-bind="attr: {for: getCode() + '_gender'}" class="label">
-                        <span><!-- ko i18n: 'Gender'--><!-- /ko --></span>
-                    </label>
-                    <div class='control'>
-                        <select style="width:200px;" name="payment[klarna_gender]" class="select"
-                            data-bind=" attr: {id: getCode() + '_gender', 'data-container': getCode() + '_gender'},
-                                        enable: true,
-                                        value: gender">
-                            <option value=""><!-- ko i18n: '--Please Select--'--><!-- /ko --></option>
-                            <option value="m"><!-- ko i18n: 'Male'--><!-- /ko --></option>
-                            <option value="f"><!-- ko i18n: 'Female'--><!-- /ko --></option>
-                        </select>
-                    </div>
-                </div>
-                <!--/ko-->
-                
-                <!-- ko if: requestPersonalId() -->
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_personal_id'}" class="label">
-                        <span><!-- ko i18n: 'Personal-ID'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[personal_id]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_personal_id',
-                                    title: $t('Personal-ID'),
-                                    'data-container': getCode() + '-personal_id'},
-                              value: personalId,
-                              valueUpdate: 'keyup' "/>
-                    </div>
-                </div>
-                <!--/ko-->
-
-                <div id="payone_klarna_invoice_terms_div">
-                    <span id="payone_klarna_invoice_terms"></span>
-                    <span data-bind="html: loadKlarnaTerms()" style="display:none;"></span>
-                </div><br>
-
-                <!-- ko if: requestAgreement() -->
-                <input type="checkbox" data-bind="attr: {id: getCode() + '_additional_fields_agreement_checkbox'}, checked: agreement" />
-                <label data-bind="attr: {for: getCode() + '_additional_fields_agreement_checkbox'}" class="required" style="float:none;">
-                    <!-- ko if: getBillingCountry() == "DE" -->
-                        <!-- ko i18n: 'I agree with the transmission of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.'--><!-- /ko --><br>
-                        <!-- ko i18n: 'My'--><!-- /ko -->
-                        <a data-bind="attr: {'href': getKlarnaUrl('de')}" style="float:none; margin:0;" target="_blank">
-                            <!-- ko i18n: 'acceptance'--><!-- /ko -->
-                        </a>
-                        <!-- ko i18n: 'can be revoked for the future any time.'--><!-- /ko -->
-                        <!-- ko i18n: 'The general terms and conditions of the dealer apply.'--><!-- /ko -->
-                        <em style="float:none; position:relative;">*</em>
-                    <!--/ko-->
-                    <!-- ko if: getBillingCountry() == "AT" -->
-                        <!-- ko i18n: 'I agree with the processing of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.'--><!-- /ko --><br>
-                        <!-- ko i18n: 'My'--><!-- /ko -->
-                        <a data-bind="attr: {'href': getKlarnaUrl('at')}" style="float:none; margin:0;" target="_blank">
-                            <!-- ko i18n: 'acceptance'--><!-- /ko -->
-                        </a>
-                        <!-- ko i18n: 'can be revoked for the future any time.'--><!-- /ko -->
-                        <!-- ko i18n: 'The general terms and conditions of the dealer apply.'--><!-- /ko -->
-                        <em style="float:none; position:relative;">*</em>
-                    <!--/ko-->
-                </label>
-                <!--/ko-->
-            </fieldset>
-        </form>
-        
         <p data-bind="html: getInstructions()"></p>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
-                <!-- ko template: getTemplate() --><!-- /ko -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        <div class="actions-toolbar">
-            <div class="primary">
-                <button class="action primary checkout"
-                        type="submit"
-                        data-bind="
+        <div data-role="checkout-payone-boni-agreement">
+            <div class="checkout-payone-boni-agreement">
+                <!-- ko if: (isAgreementVisible()) -->
+                <!-- ko if: (canShowPaymentHintText()) -->
+                <div>
+                    <strong><span data-bind="html: getPaymentHintText()"></span></strong>
+                </div>
+                <!-- /ko -->
+                <!-- ko if: (canShowAgreementMessage()) -->
+                <div>
+                    <input type="checkbox"
+                           data-bind="attr: {
+                                                'id': 'payone_boni_agreement_' + getCode(),
+                                                'name': 'payone_boni_agreement',
+                                                'value': '1'}" />
+                    <label data-bind="attr: {'for': 'payone_boni_agreement_' + getCode()}">
+                        <span data-bind="html: getAgreementMessage()"></span>
+                    </label>
+                </div>
+                <!-- /ko -->
+                <!-- /ko -->
+            </div>
+        </div>
+        <div id="klarna_method_selection" style="display: none;">
+            <span class="klarnaSelectionText">
+                <!-- ko i18n: 'Please choose your desired Klarna payment method:'--><!-- /ko -->
+            </span>
+            <!-- ko if: (isKlarnaMethodActive('payone_klarna_invoice')) -->
+                <a id="payone_klarna_invoice_selection" data-bind="click: startKlarnaCheckout">
+                    <img src="https://x.klarnacdn.net/payment-method/assets/badges/generic/klarna.svg" />
+                    <span data-bind="text: getKlarnaMethodTitle('payone_klarna_invoice')"></span>
+                    <div></div>
+                </a>
+            <!-- /ko -->
+            <!-- ko if: (isKlarnaMethodActive('payone_klarna_debit')) -->
+                <a id="payone_klarna_debit_selection" data-bind="click: startKlarnaCheckout">
+                    <img src="https://x.klarnacdn.net/payment-method/assets/badges/generic/klarna.svg" />
+                    <span data-bind="text: getKlarnaMethodTitle('payone_klarna_debit')"></span>
+                    <div></div>
+                </a>
+            <!-- /ko -->
+            <!-- ko if: (isKlarnaMethodActive('payone_klarna_installment')) -->
+                <a id="payone_klarna_installment_selection" data-bind="click: startKlarnaCheckout">
+                    <img src="https://x.klarnacdn.net/payment-method/assets/badges/generic/klarna.svg" />
+                    <span data-bind="text: getKlarnaMethodTitle('payone_klarna_installment')"></span>
+                    <div></div>
+                </a>
+            <!-- /ko -->
+            <div id="klarnaInvoiceWidgetContainer" style="display: none;"></div>
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button class="action primary checkout" type="submit" style="display:none;"
+                            data-bind="
                         click: continueToPayone,
-                        attr: {title: $t('Place Order')},
+                        attr: {id: 'klarna_placeOrder', title: $t('Place Order')},
                         enable: (getCode() == isChecked()),
                         css: {disabled: !isPlaceOrderActionAllowed()}
                         "
-                        disabled>
-                    <span data-bind="i18n: 'Place Order'"></span>
-                </button>
+                            disabled>
+                        <span data-bind="i18n: 'Place Order'"></span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

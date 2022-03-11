@@ -36,7 +36,7 @@ use Payone\Core\Helper\Payment;
 use Payone\Core\Observer\AddPaydirektOneklickButton as ClassToTest;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
-use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Customer\Model\Session;
 use Magento\Customer\Model\Customer;
 
 class AddPaydirektOneklickButtonTest extends BaseTestCase
@@ -57,11 +57,11 @@ class AddPaydirektOneklickButtonTest extends BaseTestCase
     private $paymentHelper;
 
     /**
-     * @var CustomerSession|\PHPUnit_Framework_MockObject_MockObject
+     * @var Session|\PHPUnit_Framework_MockObject_MockObject
      */
     private $customerSession;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -73,7 +73,7 @@ class AddPaydirektOneklickButtonTest extends BaseTestCase
             ->getMock();
         $customer->method('getPayonePaydirektRegistered')->willReturn(true);
 
-        $this->customerSession = $this->getMockBuilder(CustomerSession::class)->disableOriginalConstructor()->getMock();
+        $this->customerSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
         $this->customerSession->method('getCustomer')->willReturn($customer);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

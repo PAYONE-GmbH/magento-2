@@ -31,12 +31,45 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Payone\Core\Helper\Consumerscore;
 use Magento\Sales\Model\Order\Payment;
+use Magento\Checkout\Model\Session;
 
 /**
  * Event class to set the orderstatus to new and pending
  */
 class OrderPaymentPlaceEnd implements ObserverInterface
 {
+    /**
+     * Checkout session object
+     *
+     * @var Session
+     */
+    protected $checkoutSession;
+
+    /**
+     * Array of keys to remove from session after payment was successful
+     *
+     * @var array
+     */
+    protected $aCheckoutSessionClearList = [
+        'is_payone_redirect_cancellation',
+        'amazon_workorder_id',
+        'amazon_address_token',
+        'amazon_reference_id',
+        'order_reference_details_executed',
+        'trigger_invalid_payment',
+        'payone_ratepay_device_fingerprint_token'
+    ];
+
+    /**
+     * Constructor
+     *
+     * @param Session       $checkoutSession
+     */
+    public function __construct(Session $checkoutSession)
+    {
+        $this->checkoutSession = $checkoutSession;
+    }
+
     /**
      * Handle order status
      *
@@ -65,5 +98,27 @@ class OrderPaymentPlaceEnd implements ObserverInterface
     {
         // set status to new - pending on new orders
         $this->handleOrderStatus($observer);
+
+        $this->clearSession($this->checkoutSession, $this->aCheckoutSessionClearList);
+    }
+
+    /**
+     * Unset given keys from session object
+     *
+     * @param  Session $oSession
+     * @param  array   $aClearParamList
+     * @return void
+     */
+    protected function clearSession($oSession, $aClearParamList)
+    {
+        $aSessionData = $oSession->getData();
+        foreach ($aSessionData as $sKey => $sValue) {
+            foreach ($aClearParamList as $sDeleteKey) {
+                if (stripos($sKey, $sDeleteKey) !== false) {
+                    $oSession->unsetData($sKey);
+                    break;
+                }
+            }
+        }
     }
 }

@@ -59,7 +59,12 @@ class ConfirmOrderErrorTest extends BaseTestCase
      */
     private $checkoutSession;
 
-    protected function setUp()
+    /**
+     * @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $request;
+
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -71,13 +76,12 @@ class ConfirmOrderErrorTest extends BaseTestCase
 
         $messageManager = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()->getMock();
 
-        $request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
-        $request->method('getParam')->willReturn('Abandoned');
+        $this->request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
 
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->method('getResultFactory')->willReturn($resultFactory);
         $context->method('getMessageManager')->willReturn($messageManager);
-        $context->method('getRequest')->willReturn($request);
+        $context->method('getRequest')->willReturn($this->request);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -87,6 +91,7 @@ class ConfirmOrderErrorTest extends BaseTestCase
                 'unsAmazonAddressToken',
                 'unsAmazonReferenceId',
                 'unsOrderReferenceDetailsExecuted',
+                'setTriggerInvalidPayment',
             ])
             ->getMock();
 
@@ -96,8 +101,18 @@ class ConfirmOrderErrorTest extends BaseTestCase
         ]);
     }
 
+    public function testExecuteAbandoned()
+    {
+        $this->request->method('getParam')->willReturn('Abandoned');
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Redirect::class, $result);
+    }
+
     public function testExecute()
     {
+        $this->request->method('getParam')->willReturn('Not Abandoned');
+
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Redirect::class, $result);
     }

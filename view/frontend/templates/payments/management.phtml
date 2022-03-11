@@ -42,7 +42,7 @@
                 <tr>
                     <td class="col cardtype"><img src="<?php echo $block->getCardtypeUrl($data); ?>"></td>
                     <td class="col masked"><?php echo __('ends with').' -'.substr($data['payment_data']['masked'], strlen($data['payment_data']['masked']) - 4, 4); ?></td>
-                    <td class="col default"><?php echo $data['payment_data']['firstname'].' '.$data['payment_data']['lastname']; ?></td>
+                    <td class="col default"><?php echo $data['payment_data']['cardholder']; ?></td>
                     <td class="col expirationdate"><?php echo substr($data['payment_data']['cardexpiredate'], 2, 2).'/20'.substr($data['payment_data']['cardexpiredate'], 0, 2); ?></td>
                     <td class="col default"><?php echo $data['is_default'] == 1 ? __('Yes') : __('No'); ?></td>
                     <td class="col created_at"><?php echo $data['created_at']; ?></td>

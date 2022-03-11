@@ -27,6 +27,7 @@
 namespace Payone\Core\Model\Api\Request\Genericpayment;
 
 use Payone\Core\Model\Methods\PayoneMethod;
+use Magento\Quote\Model\Quote;
 
 /**
  * Class for the PAYONE Server API request genericpayment - "getorderreferencedetails"
@@ -37,12 +38,13 @@ class GetOrderReferenceDetails extends Base
      * Send request to PAYONE Server-API with request-type "genericpayment" and action "getorderreferencedetails"
      *
      * @param  PayoneMethod $oPayment payment object
+     * @param  Quote        $oQuote
      * @param  string       $sWorkorderId
      * @param  string       $sAmazonReferenceId
      * @param  string       $sAmazonAddressToken
      * @return array
      */
-    public function sendRequest(PayoneMethod $oPayment, $sWorkorderId, $sAmazonReferenceId, $sAmazonAddressToken)
+    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote, $sWorkorderId, $sAmazonReferenceId, $sAmazonAddressToken)
     {
         $this->addParameter('request', 'genericpayment');
         $this->addParameter('add_paydata[action]', 'getorderreferencedetails');
@@ -58,7 +60,7 @@ class GetOrderReferenceDetails extends Base
         $this->addParameter('clearingtype', $oPayment->getClearingtype());
         $this->addParameter('wallettype', 'AMZ');
 
-        $this->addParameter('currency', 'EUR'); // no currency given in admin-context
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote));
 
         return $this->send($oPayment);
     }

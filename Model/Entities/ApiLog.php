@@ -27,12 +27,42 @@
 namespace Payone\Core\Model\Entities;
 
 use Magento\Framework\Model\AbstractModel;
+use Payone\Core\Helper\Toolkit;
 
 /**
  * ApiLog entity model
  */
 class ApiLog extends AbstractModel
 {
+    /**
+     * Toolkit helper object
+     *
+     * @var Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\Model\Context                        $context
+     * @param \Magento\Framework\Registry                             $registry
+     * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
+     * @param array                                                   $data
+     */
+    public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        $this->toolkitHelper = $toolkitHelper;
+    }
+
     /**
      * Initialize resource model
      *
@@ -41,6 +71,22 @@ class ApiLog extends AbstractModel
     protected function _construct()
     {
         $this->_init('Payone\Core\Model\ResourceModel\ApiLog');
+    }
+
+    /**
+     * Encode the array content for correct displaying
+     *
+     * @param  array $aArray
+     * @return array
+     */
+    protected function formatArray($aArray)
+    {
+        foreach ($aArray as $sKey => $mValue) {
+            if (!$this->toolkitHelper->isUTF8($mValue)) {
+                $aArray[$sKey] = utf8_encode($mValue);
+            }
+        }
+        return $aArray;
     }
 
     /**
@@ -55,9 +101,15 @@ class ApiLog extends AbstractModel
         $aReturn = [];
         $sRequest = $this->getData($sKey);
         if ($sRequest) {
-            $aRequest = unserialize($sRequest);
+            try {
+                $aRequest = unserialize($sRequest);
+            } catch(\Exception $exc) {
+                if ($this->toolkitHelper->isUTF8($sRequest)) {
+                    $aRequest = unserialize(utf8_decode($sRequest));
+                }
+            }
             if (is_array($aRequest)) {
-                $aReturn = $aRequest;
+                $aReturn = $this->formatArray($aRequest);
             }
         }
         if ($blSort) {

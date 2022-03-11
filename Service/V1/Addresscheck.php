@@ -91,13 +91,14 @@ class Addresscheck implements AddresscheckInterface
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
      *
+     * @param  string $cartId
      * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
      * @param  bool $isBillingAddress
      * @param  bool $isVirtual
      * @param  double $dTotal
      * @return \Payone\Core\Service\V1\Data\AddresscheckResponse
      */
-    public function checkAddress(\Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal)
+    public function checkAddress($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal)
     {
         /** @var AddresscheckResponse $oResponse */
         $oResponse = $this->responseFactory->create();
@@ -108,7 +109,7 @@ class Addresscheck implements AddresscheckInterface
                 $mResponse = $this->simpleProtect->handleEnterOrChangeBillingAddress($addressData, $isBillingAddress, $dTotal);
             } else {
                 $mResponse = $this->simpleProtect->handleEnterOrChangeShippingAddress($addressData, $isBillingAddress, $dTotal);
-            }
+        }
 
             if (!empty($mResponse)) {
                 $oResponse->setData('success', true);

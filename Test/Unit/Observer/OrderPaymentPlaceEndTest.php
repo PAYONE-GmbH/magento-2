@@ -37,6 +37,7 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Checkout\Model\Session;
 
 class OrderPaymentPlaceEndTest extends BaseTestCase
 {
@@ -50,11 +51,22 @@ class OrderPaymentPlaceEndTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    /**
+     * @var Session|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $checkoutSession;
+
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, []);
+        $this->checkoutSession = $this->getMockBuilder(Session::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getIsPayoneRedirectCancellation', 'unsIsPayoneRedirectCancellation', 'getQuote', 'getData', 'unsetData'])
+            ->getMock();
+        $this->checkoutSession->method('getData')->willReturn(['amazon_workorder_id' => '12345']);
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, ['checkoutSession' => $this->checkoutSession]);
     }
 
     public function testExecute()

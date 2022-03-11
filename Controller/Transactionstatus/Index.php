@@ -93,7 +93,7 @@ class Index extends \Payone\Core\Controller\ExternalAction
      * @param \Payone\Core\Helper\Order                          $orderHelper
      * @param \Payone\Core\Model\Handler\TransactionStatus       $transactionStatusHandler,
      * @param \Magento\Framework\Controller\Result\RawFactory    $resultRawFactory
-     * @param \Payone\Core\Model\Handler\SubstituteOrder   $substituteOrder
+     * @param \Payone\Core\Model\Handler\SubstituteOrder         $substituteOrder
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,

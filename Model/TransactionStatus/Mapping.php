@@ -76,7 +76,7 @@ class Mapping
             $sStatus = $aStatusMapping[$sAction];
 
             $sMsg = 'Received PAYONE status "'.$sAction.'". Order set to "'.$sStatus.'" by PAYONE StatusMapping';
-            $oOrder->addStatusHistoryComment($sMsg, $sStatus);
+            $oOrder->addStatusToHistory($sStatus, $sMsg, false);
 
             $sState = $this->databaseHelper->getStateByStatus($sStatus);
             if ($sState) {

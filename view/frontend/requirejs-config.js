@@ -37,6 +37,12 @@ var config = {
             },
             'Magento_Checkout/js/model/error-processor': {
                 'Payone_Core/js/model/error-processor-mixin': true
+            },
+            'Magento_Tax/js/view/checkout/summary/grand-total': {
+                'Payone_Core/js/view/checkout/summary/grand-total-mixin': true
+            },
+            'Magento_Checkout/js/action/select-payment-method': {
+                'Payone_Core/js/action/select-payment-method-mixin': true
             }
         }
     }

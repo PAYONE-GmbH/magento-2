@@ -103,10 +103,13 @@ class TransactionStatus extends AbstractModel
         $aReturn = [];
         $sRequest = $this->getData($sKey);
         if ($sRequest) {
-            if ($this->toolkitHelper->isUTF8($sRequest)) {
-                $sRequest = utf8_decode($sRequest); // needed for unserializing the array
+            try {
+                $aRequest = unserialize($sRequest);
+            } catch(\Exception $exc) {
+                if ($this->toolkitHelper->isUTF8($sRequest)) {
+                    $aRequest = unserialize(utf8_decode($sRequest));
+                }
             }
-            $aRequest = unserialize($sRequest);
             if (is_array($aRequest)) {
                 $aReturn = $this->formatArray($aRequest);
             }

@@ -49,7 +49,7 @@ class LinkTest extends BaseTestCase
      */
     private $baseHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

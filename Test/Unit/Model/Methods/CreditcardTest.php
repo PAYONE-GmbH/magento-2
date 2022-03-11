@@ -56,7 +56,7 @@ class CreditcardTest extends BaseTestCase
      */
     private $info;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -97,7 +97,10 @@ class CreditcardTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
-        $expected = ['pseudocardpan' => 'info'];
+        $expected = [
+            'pseudocardpan' => 'info',
+            'cardholder' => 'info'
+        ];
         $this->assertEquals($expected, $result);
     }
 

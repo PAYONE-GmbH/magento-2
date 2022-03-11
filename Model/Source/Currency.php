@@ -29,6 +29,7 @@ namespace Payone\Core\Model\Source;
 use Magento\Framework\Option\ArrayInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\View\Element\Template\Context;
 
 /**
  * Source class for currency to transmit
@@ -39,18 +40,39 @@ class Currency implements ArrayInterface
     /**
      * Store object
      *
-     * @var Store
+     * @var Context
      */
-    private $store;
+    private $context;
 
     /**
      * Constructor
      *
-     * @param StoreManagerInterface $storeManager
+     * @param Context $context
      */
-    public function __construct(StoreManagerInterface $storeManager)
+    public function __construct(Context $context)
     {
-        $this->store = $storeManager->getStore();
+        $this->context = $context;
+    }
+
+    /**
+     * Returns current base currency code
+     * Seems like Magento2 framework doesn't have a reliable method to get the current scope in backend configuration..
+     *
+     * @return string
+     */
+    protected function getBaseCurrencyCode()
+    {
+        $aRequestParams = $this->context->getRequest()->getParams();
+        $oStoreManager = $this->context->getStoreManager();
+        if (isset($aRequestParams['website'])) {
+            return $oStoreManager->getWebsite($aRequestParams['website'])->getBaseCurrencyCode();
+        }
+
+        if (isset($aRequestParams['store'])) {
+            return $oStoreManager->getStore($aRequestParams['store'])->getBaseCurrencyCode();
+        }
+
+        return $oStoreManager->getStore(0)->getBaseCurrencyCode(); // storeId 0 = Default Config
     }
 
     /**
@@ -63,7 +85,7 @@ class Currency implements ArrayInterface
         return [
             [
                 'value' => 'base',
-                'label' => __('Base Currency').' ('.$this->store->getBaseCurrencyCode().')'
+                'label' => __('Base Currency').' ('.$this->getBaseCurrencyCode().')'
             ],
             [
                 'value' => 'display',

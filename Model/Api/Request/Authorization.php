@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Model\Api\Request;
 
+use Payone\Core\Model\Methods\Klarna\KlarnaBase;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Sales\Model\Order;
@@ -108,7 +109,9 @@ class Authorization extends AddressRequest
 
         $this->addParameter('request', $oPayment->getAuthorizationMode()); // add request type
         $this->addParameter('mode', $oPayment->getOperationMode()); // add mode ( live or test )
-        $this->addParameter('customerid', $oOrder->getCustomerId()); // add customer id
+        if ($this->shopHelper->getConfigParam('transmit_customerid') == '1') {
+            $this->addParameter('customerid', $oOrder->getCustomerId()); // add customer id
+        }
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // add sub account id
         $this->setAuthorizationParameters($oPayment, $oOrder, $dAmount); // set authorization params
 
@@ -184,6 +187,9 @@ class Authorization extends AddressRequest
         $sNarrativeText = $this->toolkitHelper->getNarrativeText($oOrder, $oPayment);
         if (!empty($sNarrativeText)) {// narrative text existing?
             $this->addParameter('narrative_text', $sNarrativeText); // add narrative text parameter
+            if ($oPayment->needsTransactionParam() === true) {
+                $this->addParameter('transaction_param', preg_replace('/[^0-9A-Z._\/\-]/i', "", $sNarrativeText));
+            }
         }
         $aPaymentParams = $oPayment->getPaymentSpecificParameters($oOrder); // get payment params specific to the payment type
         $this->aParameters = array_merge($this->aParameters, $aPaymentParams); // merge payment params with other params

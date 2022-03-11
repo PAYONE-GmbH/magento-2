@@ -49,7 +49,7 @@ class EditAddressTest extends BaseTestCase
      */
     private $response;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
@@ -75,7 +75,7 @@ class EditAddressTest extends BaseTestCase
     {
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->editAddress($addressData);
+        $result = $this->classToTest->editAddress(4711, $addressData);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }

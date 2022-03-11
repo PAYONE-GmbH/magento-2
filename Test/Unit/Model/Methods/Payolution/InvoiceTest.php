@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods\Payolution;
 
+use Magento\Store\Model\Store;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Methods\Payolution\Invoice as ClassToTest;
@@ -59,7 +60,7 @@ class InvoiceTest extends BaseTestCase
      */
     private $precheckRequest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -69,7 +70,11 @@ class InvoiceTest extends BaseTestCase
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn('value');
 
+        $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote->method('getStore')->willReturn($store);
 
         $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
@@ -102,7 +107,11 @@ class InvoiceTest extends BaseTestCase
         $payment->method('getOrder')->willReturn($order);
         $payment->method('getAdditionalInformation')->willReturn([]);
 
+        $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
         $order->method('getPayment')->willReturn($payment);
+        $order->method('getStore')->willReturn($store);
 
         $result = $this->classToTest->authorize($payment, 100);
         $this->assertInstanceOf(ClassToTest::class, $result);
@@ -113,7 +122,11 @@ class InvoiceTest extends BaseTestCase
         $response = ['status' => 'ERROR', 'errorcode' => '123', 'customermessage' => 'error'];
         $this->precheckRequest->method('sendRequest')->willReturn($response);
 
+        $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getStore')->willReturn($store);
 
         $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $payment->method('getOrder')->willReturn($order);
@@ -148,7 +161,8 @@ class InvoiceTest extends BaseTestCase
             'workorderid' => '1',
             'birthday' => '1',
             'add_paydata[b2b]' => 'yes',
-            'add_paydata[company_trade_registry_number]' => '1'
+            'add_paydata[company_trade_registry_number]' => '1',
+            'add_paydata[company_uid]' => '1',
         ];
         $this->assertEquals($expected, $result);
     }

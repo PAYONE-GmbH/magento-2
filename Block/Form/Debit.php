@@ -62,7 +62,7 @@ class Debit extends Base
      */
     public function getSepaCountries()
     {
-        return $this->countryHelper->getDebitSepaCountries();
+        return $this->countryHelper->getEnabledCountries(PayoneConfig::METHOD_DEBIT);
     }
 
     /**

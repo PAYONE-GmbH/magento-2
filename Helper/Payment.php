@@ -54,8 +54,6 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_POSTFINANCE_CARD,
         PayoneConfig::METHOD_OBT_IDEAL,
         PayoneConfig::METHOD_OBT_PRZELEWY,
-        PayoneConfig::METHOD_BILLSAFE,
-        PayoneConfig::METHOD_KLARNA,
         PayoneConfig::METHOD_BARZAHLEN,
         PayoneConfig::METHOD_PAYDIREKT,
         PayoneConfig::METHOD_SAFE_INVOICE,
@@ -64,6 +62,15 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT,
         PayoneConfig::METHOD_ALIPAY,
         PayoneConfig::METHOD_AMAZONPAY,
+        PayoneConfig::METHOD_KLARNA_BASE,
+        PayoneConfig::METHOD_KLARNA_DEBIT,
+        PayoneConfig::METHOD_KLARNA_INVOICE,
+        PayoneConfig::METHOD_KLARNA_INSTALLMENT,
+        PayoneConfig::METHOD_WECHATPAY,
+        PayoneConfig::METHOD_RATEPAY_INVOICE,
+        PayoneConfig::METHOD_TRUSTLY,
+        PayoneConfig::METHOD_APPLEPAY,
+        PayoneConfig::METHOD_BANCONTACT,
     ];
 
     /**
@@ -86,8 +93,6 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_PRZELEWY => 'sb',
         PayoneConfig::METHOD_PAYPAL => 'wlt',
         PayoneConfig::METHOD_PAYDIREKT => 'wlt',
-        PayoneConfig::METHOD_BILLSAFE => 'fnc',
-        PayoneConfig::METHOD_KLARNA => 'fnc',
         PayoneConfig::METHOD_BARZAHLEN => 'csh',
         PayoneConfig::METHOD_SAFE_INVOICE => 'rec',
         PayoneConfig::METHOD_PAYOLUTION_INVOICE => 'fnc',
@@ -95,6 +100,15 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT => 'fnc',
         PayoneConfig::METHOD_ALIPAY => 'wlt',
         PayoneConfig::METHOD_AMAZONPAY => 'wlt',
+        PayoneConfig::METHOD_KLARNA_BASE => 'wlt',
+        PayoneConfig::METHOD_KLARNA_DEBIT => 'wlt',
+        PayoneConfig::METHOD_KLARNA_INVOICE => 'wlt',
+        PayoneConfig::METHOD_KLARNA_INSTALLMENT => 'wlt',
+        PayoneConfig::METHOD_WECHATPAY => 'wlt',
+        PayoneConfig::METHOD_RATEPAY_INVOICE => 'fnc',
+        PayoneConfig::METHOD_TRUSTLY => 'sb',
+        PayoneConfig::METHOD_APPLEPAY => 'wlt',
+        PayoneConfig::METHOD_BANCONTACT => 'sb',
     ];
 
     /**
@@ -146,13 +160,29 @@ class Payment extends \Payone\Core\Helper\Base
             $aAllTypes = CreditcardTypes::getCreditcardTypes();
 
             $aCreditcardTypes = explode(',', $sCreditcardTypes);
-            foreach ($aCreditcardTypes as $sType) {
+            foreach ($aCreditcardTypes as $sTypeId) {
                 $aReturn[] = [
-                    'id' => $sType,
-                    'title' => $aAllTypes[$sType]['name'],
-                    'cvc_length' => $aAllTypes[$sType]['cvc_length'],
+                    'id' => $aAllTypes[$sTypeId]['cardtype'],
+                    'title' => $aAllTypes[$sTypeId]['name'],
+                    'cvc_length' => $aAllTypes[$sTypeId]['cvc_length'],
                 ];
             }
+        }
+        return $aReturn;
+    }
+
+    /**
+     * Returns configured available apple pay types
+     *
+     * @return array
+     */
+    public function getAvailableApplePayTypes()
+    {
+        $aReturn = [];
+
+        $sApplePayTypes = $this->getConfigParam('types', PayoneConfig::METHOD_APPLEPAY, 'payone_payment');
+        if ($sApplePayTypes) {
+            return explode(',', $sApplePayTypes);
         }
         return $aReturn;
     }
@@ -293,5 +323,17 @@ class Payment extends \Payone\Core\Helper\Base
             $sSandbox = '/sandbox';
         }
         return "https://static-eu.payments-amazon.com/OffAmazonPayments/eur".$sSandbox."/lpa/js/Widgets.js";
+    }
+
+    /**
+     * Returns method titles of Klarna payment methods
+     */
+    public function getKlarnaMethodTitles()
+    {
+        return [
+            PayoneConfig::METHOD_KLARNA_INVOICE => $this->getConfigParam('title', PayoneConfig::METHOD_KLARNA_INVOICE, 'payment'),
+            PayoneConfig::METHOD_KLARNA_DEBIT => $this->getConfigParam('title', PayoneConfig::METHOD_KLARNA_DEBIT, 'payment'),
+            PayoneConfig::METHOD_KLARNA_INSTALLMENT => $this->getConfigParam('title', PayoneConfig::METHOD_KLARNA_INSTALLMENT, 'payment'),
+        ];
     }
 }

@@ -47,22 +47,32 @@ class Amazon extends Template
     protected $paymentHelper;
 
     /**
+     * PAYONE api helper
+     *
+     * @var \Payone\Core\Helper\Api
+     */
+    protected $apiHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Checkout\Model\Session                  $checkoutSession
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Payone\Core\Helper\Payment                      $paymentHelper
+     * @param \Payone\Core\Helper\Api                          $apiHelper
      * @param array                                            $data
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\View\Element\Template\Context $context,
         \Payone\Core\Helper\Payment $paymentHelper,
+        \Payone\Core\Helper\Api $apiHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->checkoutSession = $checkoutSession;
         $this->paymentHelper = $paymentHelper;
+        $this->apiHelper = $apiHelper;
     }
 
     /**
@@ -83,6 +93,16 @@ class Amazon extends Template
     public function getSellerId()
     {
         return $this->paymentHelper->getConfigParam('seller_id', PayoneConfig::METHOD_AMAZONPAY, 'payone_payment');
+    }
+
+    /**
+     * Returns currency
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->apiHelper->getCurrencyFromQuote($this->checkoutSession->getQuote());
     }
 
     /**
@@ -146,5 +166,15 @@ class Amazon extends Template
     public function getOrderReferenceId()
     {
         return $this->checkoutSession->getAmazonReferenceId();
+    }
+
+    /**
+     * Returns if invalidPayment javascript method has to be started after initialization
+     *
+     * @return bool
+     */
+    public function triggerInvalidPayment()
+    {
+        return !empty($this->checkoutSession->getTriggerInvalidPayment());
     }
 }

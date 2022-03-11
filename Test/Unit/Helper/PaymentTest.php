@@ -60,7 +60,7 @@ class PaymentTest extends BaseTestCase
      */
     private $toolkitHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -90,7 +90,7 @@ class PaymentTest extends BaseTestCase
 
     public function testGetAvailableCreditcardTypes()
     {
-        $creditcardTypes = 'V,M';
+        $creditcardTypes = 'visa,mastercard';
         $expected = [
             ['id' => 'V', 'title' => 'Visa', 'cvc_length' => 3],
             ['id' => 'M', 'title' => 'Mastercard', 'cvc_length' => 3]
@@ -212,5 +212,30 @@ class PaymentTest extends BaseTestCase
         $this->scopeConfig->method('getValue')->willReturn('test');
         $result = $this->payment->getAmazonPayWidgetUrl();
         $this->assertNotEmpty($result);
+    }
+
+    public function testGetKlarnaMethodTitles()
+    {
+        $result = $this->payment->getKlarnaMethodTitles();
+        $this->assertCount(3, $result);
+    }
+
+    public function testGetAvailableApplePayTypes()
+    {
+        $types = 'visa,mastercard';
+        $this->scopeConfig->method('getValue')->willReturn($types);
+
+
+        $result = $this->payment->getAvailableApplePayTypes();
+        $this->assertCount(2, $result);
+    }
+
+    public function testGetAvailableApplePayTypesEmpty()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(null);
+
+
+        $result = $this->payment->getAvailableApplePayTypes();
+        $this->assertCount(0, $result);
     }
 }

@@ -23,7 +23,7 @@
  */
 define(
     [
-        'Magento_Checkout/js/view/payment/default'
+        'Payone_Core/js/view/payment/method-renderer/base'
     ],
     function (Component) {
         'use strict';

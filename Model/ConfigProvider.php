@@ -84,7 +84,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @var \Magento\Framework\Escaper
      */
     protected $escaper;
-
+    
     /**
      * Privacy declaration object
      *
@@ -202,8 +202,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         return [
             'b2bMode' => [
                 'invoice' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_INVOICE, 'payone_payment'),
-                'debit' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_DEBIT, 'payone_payment'),
-                'installment' => $this->requestHelper->getConfigParam('b2b_mode', PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT, 'payone_payment'),
             ],
             'privacyDeclaration' => [
                 'invoice' => $this->privacyDeclaration->getPayolutionAcceptanceText(PayoneConfig::METHOD_PAYOLUTION_INVOICE),
@@ -221,14 +219,19 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected function getPayoneConfig()
     {
         return [
+            'locale' => $this->shopHelper->getLocale(),
+            'fullLocale' => $this->requestHelper->getConfigParam('code', 'locale', 'general'),
             'availableCardTypes' => $this->paymentHelper->getAvailableCreditcardTypes(),
+            'availableApplePayTypes' => $this->paymentHelper->getAvailableApplePayTypes(),
             'fieldConfig' => $this->hostedIframeHelper->getHostedFieldConfig(),
-            'sepaCountries' => $this->countryHelper->getDebitSepaCountries(),
+            'sepaCountries' => $this->countryHelper->getEnabledCountries(PayoneConfig::METHOD_DEBIT),
+            'trustlyCountries' => $this->countryHelper->getEnabledCountries(PayoneConfig::METHOD_TRUSTLY),
             'hostedRequest' => $this->requestHelper->getHostedIframeRequest(),
             'mandateManagementActive' => $this->paymentHelper->isMandateManagementActive(),
             'checkCvc' => (bool)$this->paymentHelper->isCheckCvcActive(),
             'ccMinValidity' => $this->requestHelper->getConfigParam('min_validity_period', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'requestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
+            'trustlyRequestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_TRUSTLY, 'payone_payment'),
             'requestIbanBicSofortUeberweisung' => (bool)$this->requestHelper->getConfigParam('show_iban', PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG, 'payone_payment'),
             'validateBankCode' => (bool)$this->requestHelper->getConfigParam('check_bankaccount', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
             'disableSafeInvoice' => (bool)$this->requestHelper->getConfigParam('disable_after_refusal', PayoneConfig::METHOD_SAFE_INVOICE, 'payone_payment'),
@@ -237,7 +240,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'blockedMessage' => $this->paymentHelper->getBankaccountCheckBlockedMessage(),
             'epsBankGroups' => Eps::getBankGroups(),
             'idealBankGroups' => Ideal::getBankGroups(),
-            'customerHasGivenGender' => $this->customerHelper->customerHasGivenGender(),
             'customerBirthday' => $this->customerHelper->getCustomerBirthday(),
             'addresscheckBillingEnabled' => $this->simpleProtect->isAddresscheckBillingEnabled(),
             'addresscheckShippingEnabled' => $this->simpleProtect->isAddresscheckShippingEnabled(),
@@ -245,11 +247,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'payolution' => $this->getPayolutionConfig(),
             'canceledPaymentMethod' => $this->getCanceledPaymentMethod(),
             'isError' => $this->checkoutSession->getPayoneIsError(),
-            'klarnaStoreIds' => $this->paymentHelper->getKlarnaStoreIds(),
             'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>='),
             'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId()),
             'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
+            'currency' => $this->requestHelper->getConfigParam('currency'),
+            'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
+            'storeName' => $this->shopHelper->getStoreName(),
         ];
     }
 

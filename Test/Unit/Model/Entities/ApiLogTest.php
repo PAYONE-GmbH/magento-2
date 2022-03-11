@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Entities;
 
+use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Entities\ApiLog as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -43,7 +44,12 @@ class ApiLogTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    /**
+     * @var Toolkit|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $toolkitHelper;
+
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -51,9 +57,11 @@ class ApiLogTest extends BaseTestCase
             'raw_request' => serialize(['request' => 'authorization']),
             'raw_response' => serialize(['status' => 'APPROVED']),
         ];
+        $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'data' => $data
+            'data' => $data,
+            'toolkitHelper' => $this->toolkitHelper
         ]);
     }
 
@@ -62,6 +70,16 @@ class ApiLogTest extends BaseTestCase
         $result = $this->classToTest->getRawRequestArray();
         $expected = ['request' => 'authorization'];
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetRawStatusArrayException()
+    {
+        $aStatus = ['test1' => html_entity_decode("&nbsp;")];
+        $this->classToTest->setData('raw_request', utf8_encode(serialize($aStatus)));
+        $this->toolkitHelper->method('isUTF8')->willReturn(true);
+
+        $result = $this->classToTest->getRawRequestArray();
+        $this->assertCount(1, $result);
     }
 
     public function testGetRawResponseArray()

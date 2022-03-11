@@ -11,7 +11,7 @@ The PAYONE payment extension for Magento 2 is massively reworked since the first
 *	Optional multi-partial capture for partial deliveries
 *	Supports simplified PCI DSS conformity in accordance with SAQ A
 *	Payment methods can be automatically hidden depending on the amount of the order and the credit rating of the customer
-*	Find all currently supported payment methods on www.payone.com/magento
+*	Find all currently supported payment methods on https://docs.payone.com/x/WoAS
 
 ## Installation
 *	Go to your installation directory of Magento 2 and perform the following commands
@@ -23,7 +23,9 @@ The PAYONE payment extension for Magento 2 is massively reworked since the first
 ## Magento Version Support
 We follow Magento's version lifetime according to their [Enterprise Agreement](https://magento.com/legal/terms/enterprise-agreement#support). In theory, Magento 2.0 is still supported, but not actively tested.
 
-Support for Magento 2.1 will be phased out in June 2019. From that date, we will discontinue actively testing Magento 2.1.
+Support for Magento 2.1 was phased out in June 2019. From that date, we discontinued actively testing Magento 2.1.
+
+Support for Magento 2.2 was phased out in December 2019. From that date, we discontinued actively testing Magento 2.2. Subsequently, it will be removed from our build matrix in the future.
 
 ## More information
 *	For documentation see: https://docs.payone.com/display/public/INT/Magento+2+Plugin

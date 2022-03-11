@@ -118,7 +118,7 @@ define([
             }
             var country = address.countryId;
             if (!address.countryId) {
-                country = address.country_id
+                country = address.country_id;
             }
             return address.firstname + address.lastname + street.join("") + address.postcode + address.city + country;
         },
@@ -131,7 +131,23 @@ define([
                 this.setShippingInformation();
             }
         },
+        addExtensionAttributesToShippingAddress: function () {
+            var shippingAddress = quote.shippingAddress();
+            if (shippingAddress.extension_attributes === undefined) {
+                shippingAddress.extension_attributes = {};
+            }
+            if (this.source.get('shippingAddress').gender !== undefined) {
+                shippingAddress.extension_attributes.gender = this.source.get('shippingAddress').gender;
+            }
+            if (this.source.get('shippingAddress').dob !== undefined) {
+                shippingAddress.extension_attributes.dateofbirth = this.source.get('shippingAddress').dob;
+            }
+            quote.shippingAddress(shippingAddress);
+        },
         setShippingInformation: function () {
+            if (this.source.get('shippingAddress').gender !== undefined || this.source.get('shippingAddress').dob !== undefined) {
+                this.addExtensionAttributesToShippingAddress();
+            }
             if (!this.payoneCheckAddress()) {
                 return this._super();
             }

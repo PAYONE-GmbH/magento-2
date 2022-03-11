@@ -44,7 +44,7 @@ class InvoiceTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -57,6 +57,15 @@ class InvoiceTest extends BaseTestCase
 
         $result = $this->classToTest->getPaymentSpecificParameters($order);
         $expected = [];
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetPaymentSpecificCaptureParameters()
+    {
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        
+        $expected = [];
+        $result = $this->classToTest->getPaymentSpecificCaptureParameters($order);
         $this->assertEquals($expected, $result);
     }
 }

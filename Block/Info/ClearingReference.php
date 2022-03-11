@@ -50,14 +50,16 @@ class ClearingReference extends Base
             if ($oStatus->getClearingBankcode()) {
                 $data[(string)__('Please transfer the order amount to this bank account')] = '';
                 $data[(string)__('Accountholder')] = $oStatus->getClearingBankaccountholder();
-                $data[(string)__('Accountnumber')] = $oStatus->getClearingBankaccount();
-                $data[(string)__('Bank code')] = $oStatus->getClearingBankcode();
                 $data[(string)__('IBAN')] = $oStatus->getClearingBankiban();
                 $data[(string)__('BIC')] = $oStatus->getClearingBankbic();
                 $data[(string)__('Bank')] = $oStatus->getClearingBankname();
+                $data[(string)__('Bank country')] = $oStatus->getClearingBankcountry();
+                $data[(string)__('Bank city')] = $oStatus->getClearingBankcity();
             }
             $data[(string)__('Payone Transaction ID')] = $sTransId;
-            $data[(string)__('Payment reference')] = $this->getInfo()->getOrder()->getPayoneClearingReference();
+            if (!empty($this->getInfo()->getOrder()->getPayoneClearingReference())) {
+                $data[(string)__('Payment reference')] = $this->getInfo()->getOrder()->getPayoneClearingReference();
+            }
         }
         return $transport->setData(array_merge($data, $transport->getData()));
     }

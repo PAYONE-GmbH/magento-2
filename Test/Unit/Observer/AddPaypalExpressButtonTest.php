@@ -68,7 +68,7 @@ class AddPaypalExpressButtonTest extends BaseTestCase
      */
     private $simpleProtect;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

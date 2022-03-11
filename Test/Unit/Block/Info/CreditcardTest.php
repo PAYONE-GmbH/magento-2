@@ -57,7 +57,7 @@ class CreditcardTest extends BaseTestCase
      */
     private $info;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -95,7 +95,7 @@ class CreditcardTest extends BaseTestCase
 
     public function testPrepareSpecificInformation()
     {
-        $this->transactionStatus->method('getCardtype')->willReturn('V');
+        $this->transactionStatus->method('getCardtype')->willReturn('visa');
 
         $this->info->method('getLastTransId')->willReturn('12345');
 

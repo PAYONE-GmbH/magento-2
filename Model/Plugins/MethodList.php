@@ -60,8 +60,8 @@ class MethodList
     /**
      * Constructor
      *
-     * @param \Magento\Checkout\Model\Session                $checkoutSession
-     * @param \Payone\Core\Model\ResourceModel\PaymentBan    $paymentBan
+     * @param \Magento\Checkout\Model\Session              $checkoutSession
+     * @param \Payone\Core\Model\ResourceModel\PaymentBan  $paymentBan
      * @param \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
      */
     public function __construct(
@@ -147,12 +147,45 @@ class MethodList
     }
 
     /**
+     * Removes Klarna base methode if there are no Klarna sub-types available
+     *
+     * @param  array $aPaymentMethods
+     * @return array
+     */
+    public function checkKlarnaMethods($aPaymentMethods)
+    {
+        $iKeyKlarna = false;
+        $blHasKlarnaSubtypes = false;
+        $aKlarnaSubtypes = [
+            PayoneConfig::METHOD_KLARNA_INVOICE,
+            PayoneConfig::METHOD_KLARNA_DEBIT,
+            PayoneConfig::METHOD_KLARNA_INSTALLMENT
+        ];
+        for($i = 0; $i < count($aPaymentMethods); $i++) {
+            if (isset($aPaymentMethods[$i])) {
+                if ($aPaymentMethods[$i]->getCode() == PayoneConfig::METHOD_KLARNA_BASE) {
+                    $iKeyKlarna = $i;
+                }
+                if (in_array($aPaymentMethods[$i]->getCode(), $aKlarnaSubtypes) === true) {
+                    $blHasKlarnaSubtypes = true;
+                    break;
+                }
+            }
+        }
+
+        if ($iKeyKlarna !== false && $blHasKlarnaSubtypes === false) {
+            unset($aPaymentMethods[$iKeyKlarna]);
+        }
+        return $aPaymentMethods;
+    }
+
+    /**
      * Plugin for methot getAvailableMethods
      *
      * Used to filter out payment methods
      *
-     * @param  OrigMethodList    $subject
-     * @param  MethodInterface[] $aPaymentMethods
+     * @param  OrigMethodList                        $subject
+     * @param  MethodInterface[]                     $aPaymentMethods
      * @return MethodInterface[]
      */
     public function afterGetAvailableMethods(OrigMethodList $subject, $aPaymentMethods)
@@ -166,6 +199,7 @@ class MethodList
 
         $aPaymentMethods = $this->removeBannedPaymentMethods($aPaymentMethods, $oQuote);
         $aPaymentMethods = $this->removeAmazonPay($aPaymentMethods);
+        $aPaymentMethods = $this->checkKlarnaMethods($aPaymentMethods);
 
         return $aPaymentMethods;
     }

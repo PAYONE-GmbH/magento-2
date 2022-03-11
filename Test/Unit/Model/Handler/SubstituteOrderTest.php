@@ -52,7 +52,7 @@ class SubstituteOrderTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
