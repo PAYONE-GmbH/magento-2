@@ -255,7 +255,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'isError' => $this->checkoutSession->getPayoneIsError(),
             'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>='),
             'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
-            'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId()),
+            'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId(), PayoneConfig::METHOD_CREDITCARD),
             'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
             'currency' => $this->requestHelper->getConfigParam('currency'),
             'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
