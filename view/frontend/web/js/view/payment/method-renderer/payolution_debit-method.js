@@ -115,6 +115,10 @@ define(
                     this.messageContainer.addErrorMessage({'message': $t('Please confirm the SEPA mandate!')});
                     return false;
                 }
+                if (this.requestBirthday() == true && !this.isDateValid(this.birthyear(), this.birthmonth(), this.birthday())) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid date.')});
+                    return false;
+                }
                 if (this.requestBirthday() == true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
                     this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
                     return false;

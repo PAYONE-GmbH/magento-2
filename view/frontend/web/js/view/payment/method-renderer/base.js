@@ -103,11 +103,23 @@ define(
                 }
             },
 
-            isBirthdayValid: function (iYear, iMonth, iDay) {
+            isDateValid: function (iYear, iMonth, iDay) {
                 if (!$.isNumeric(iYear) || !$.isNumeric(iMonth) || !$.isNumeric(iDay)) {
                     return false;
                 }
 
+                var sBirthDate = iYear + "-" + iMonth + "-" + iDay;
+                var oBirthDate = new Date(sBirthDate);
+
+                if (oBirthDate.toString() === 'Invalid Date' || oBirthDate.getFullYear() !== parseInt(iYear) ||
+                    oBirthDate.getMonth() + 1 !== parseInt(iMonth) || oBirthDate.getDate() !== parseInt(iDay)) {
+                    return false;
+                }
+
+                return true;
+            },
+
+            isBirthdayValid: function (iYear, iMonth, iDay) {
                 var sBirthDate = iYear + "-" + iMonth + "-" + iDay;
                 var oBirthDate = new Date(sBirthDate);
                 var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
