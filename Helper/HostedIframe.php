@@ -150,7 +150,7 @@ class HostedIframe extends \Payone\Core\Helper\Base
     {
         $aLenghts = [];
         foreach (CreditcardTypes::getCreditcardTypes() as $sType => $aType) {
-            $aLenghts[$sType] = $aType['cvc_length'];
+            $aLenghts[$aType['cardtype']] = $aType['cvc_length'];
         }
         return $aLenghts;
     }
