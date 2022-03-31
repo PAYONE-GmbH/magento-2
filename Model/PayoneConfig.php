@@ -32,7 +32,7 @@ namespace Payone\Core\Model;
 abstract class PayoneConfig
 {
     /* Module version */
-    const MODULE_VERSION = '2.8.0';
+    const MODULE_VERSION = '3.4.1';
 
     /* Authorization request types */
     const REQUEST_TYPE_PREAUTHORIZATION = 'preauthorization';
@@ -75,16 +75,26 @@ abstract class PayoneConfig
     const METHOD_OBT_POSTFINANCE_CARD = 'payone_obt_postfinance_card';
     const METHOD_OBT_IDEAL = 'payone_obt_ideal';
     const METHOD_OBT_PRZELEWY = 'payone_obt_przelewy';
-    const METHOD_BILLSAFE = 'payone_billsafe';
-    const METHOD_KLARNA = 'payone_klarna';
+    const METHOD_KLARNA = 'payone_klarna'; // method was deleted but constant is still useful for unit tests
     const METHOD_BARZAHLEN = 'payone_barzahlen';
     const METHOD_PAYDIREKT = 'payone_paydirekt';
     const METHOD_SAFE_INVOICE = 'payone_safe_invoice';
     const METHOD_PAYOLUTION_INVOICE = 'payone_payolution_invoice';
     const METHOD_PAYOLUTION_DEBIT = 'payone_payolution_debit';
     const METHOD_PAYOLUTION_INSTALLMENT = 'payone_payolution_installment';
+    const METHOD_KLARNA_BASE = 'payone_klarna_base';
+    const METHOD_KLARNA_INVOICE = 'payone_klarna_invoice';
+    const METHOD_KLARNA_DEBIT = 'payone_klarna_debit';
+    const METHOD_KLARNA_INSTALLMENT = 'payone_klarna_installment';
     const METHOD_ALIPAY = 'payone_alipay';
+    const METHOD_WECHATPAY = 'payone_wechatpay';
     const METHOD_AMAZONPAY = 'payone_amazonpay';
+    const METHOD_RATEPAY_INVOICE = 'payone_ratepay_invoice';
+    const METHOD_RATEPAY_INSTALLMENT = 'payone_ratepay_installment'; // not implemented yet
+    const METHOD_RATEPAY_DEBIT = 'payone_ratepay_debit'; // not implemented yet
+    const METHOD_TRUSTLY = 'payone_trustly';
+    const METHOD_APPLEPAY = 'payone_applepay';
+    const METHOD_BANCONTACT = 'payone_bancontact';
 
     /* Express checkout types */
     const EXPRESS_PAYPAL = self::METHOD_PAYPAL;
@@ -93,4 +103,6 @@ abstract class PayoneConfig
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
     const METHOD_GROUP_PAYOLUTION = 'payone_payolution';
+    const METHOD_GROUP_KLARNA = 'payone_klarna';
+    const METHOD_GROUP_RATEPAY = 'payone_ratepay';
 }

@@ -46,10 +46,10 @@ class Database extends \Payone\Core\Helper\Base
     /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Helper\Context      $context
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Payone\Core\Helper\Shop                   $shopHelper
-     * @param \Magento\Framework\App\ResourceConnection  $resource
+     * @param \Magento\Framework\App\Helper\Context             $context
+     * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
+     * @param \Payone\Core\Helper\Shop                          $shopHelper
+     * @param \Magento\Framework\App\ResourceConnection         $resource
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -191,59 +191,6 @@ class Database extends \Payone\Core\Helper\Base
             $sScopeId = $this->storeManager->getStore()->getId();
         }
         return $this->getDb()->fetchOne($oSelect, ['path' => $sPath, 'scope' => $sScope, 'scope_id' => $sScopeId]);
-    }
-
-    /**
-     * Get the address status from a previous order address
-     *
-     * @param  AddressInterface $oAddress
-     * @param  bool             $blIsCreditrating
-     * @return string
-     */
-    public function getOldAddressStatus(AddressInterface $oAddress, $blIsCreditrating = true)
-    {
-        $sSelectField = 'payone_protect_score';
-        if ($blIsCreditrating === false) {
-            $sSelectField = 'payone_addresscheck_score';
-        }
-
-        $aParams = [
-            'firstname' => $oAddress->getFirstname(),
-            'lastname' => $oAddress->getLastname(),
-            'street' => $oAddress->getStreet()[0],
-            'city' => $oAddress->getCity(),
-            'region' => $oAddress->getRegion(),
-            'postcode' => $oAddress->getPostcode(),
-            'country_id' => $oAddress->getCountryId(),
-        ];
-
-        $oSelect = $this->getDb()
-            ->select()
-            ->from($this->databaseResource->getTableName('quote_address'), [$sSelectField])
-            ->where("firstname = :firstname")
-            ->where("lastname = :lastname")
-            ->where("street = :street")
-            ->where("city = :city")
-            ->where("region = :region")
-            ->where("postcode = :postcode")
-            ->where("country_id = :country_id")
-            ->where($sSelectField." != ''")
-            ->order('address_id DESC')
-            ->limit(1);
-
-        if (!empty($oAddress->getId())) {
-            $oSelect->where("address_id != :curr_id");
-            $aParams['curr_id'] = $oAddress->getId();
-        }
-        if (!empty($oAddress->getCustomerId())) {
-            $oSelect->where("customer_id = :cust_id");
-            $aParams['cust_id'] = $oAddress->getCustomerId();
-        }
-        if (!empty($oAddress->getAddressType())) {
-            $oSelect->where("address_type = :addr_type");
-            $aParams['addr_type'] = $oAddress->getAddressType();
-        }
-        return $this->getDb()->fetchOne($oSelect, $aParams);
     }
 
     /**

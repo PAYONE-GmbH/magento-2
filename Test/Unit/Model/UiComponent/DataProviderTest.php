@@ -52,7 +52,7 @@ class DataProviderTest extends BaseTestCase
      */
     private $filterBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

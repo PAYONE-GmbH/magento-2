@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Helper;
 
+use Magento\Payment\Model\Info;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Helper\Api;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
@@ -79,19 +80,35 @@ class ApiTest extends BaseTestCase
      */
     private $connFsockopen;
 
-    protected function setUp()
+    /**
+     * @var StoreInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $store;
+
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
+        $this->store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
+        $this->store->method('getCode')->willReturn('test');
+
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getStore')->willReturn($this->store);
+        
+        $paymentInfo = $this->getMockBuilder(Info::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getOrder'])
+            ->getMock();
+        $paymentInfo->method('getOrder')->willReturn($order);
+
         $this->payment = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
+        $this->payment->method('getInfoInstance')->willReturn($paymentInfo);
+
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
         $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);
 
-        $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
-        $store->method('getCode')->willReturn('test');
-
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
-        $storeManager->method('getStore')->willReturn($store);
+        $storeManager->method('getStore')->willReturn($this->store);
 
         $this->connCurlPhp = $this->getMockBuilder(CurlPhp::class)->disableOriginalConstructor()->getMock();
         $this->connCurlCli = $this->getMockBuilder(CurlCli::class)->disableOriginalConstructor()->getMock();
@@ -299,6 +316,7 @@ class ApiTest extends BaseTestCase
 
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('getBaseCurrencyCode')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
 
         $result = $this->api->getCurrencyFromOrder($oOrder);
         $this->assertEquals($expected, $result);
@@ -312,8 +330,41 @@ class ApiTest extends BaseTestCase
         $oOrder = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $oOrder->method('getBaseCurrencyCode')->willReturn('USD');
         $oOrder->method('getOrderCurrencyCode')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
 
         $result = $this->api->getCurrencyFromOrder($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetOrderAmountBase()
+    {
+        $expected = '100';
+
+        $oOrder = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseGrandTotal', 'getStore'])
+            ->getMock();
+        $oOrder->method('getBaseGrandTotal')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
+
+        $result = $this->api->getOrderAmount($oOrder);
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetOrderAmountDisplay()
+    {
+        $this->scopeConfig->method('getValue')->willReturn('display');
+        $expected = '100';
+
+        $oOrder = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getBaseGrandTotal', 'getGrandTotal', 'getStore'])
+            ->getMock();
+        $oOrder->method('getBaseGrandTotal')->willReturn(200);
+        $oOrder->method('getGrandTotal')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
+
+        $result = $this->api->getOrderAmount($oOrder);
         $this->assertEquals($expected, $result);
     }
 
@@ -323,9 +374,10 @@ class ApiTest extends BaseTestCase
 
         $oOrder = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseCurrencyCode'])
+            ->setMethods(['getBaseCurrencyCode', 'getStore'])
             ->getMock();
         $oOrder->method('getBaseCurrencyCode')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
 
         $result = $this->api->getCurrencyFromQuote($oOrder);
         $this->assertEquals($expected, $result);
@@ -338,10 +390,11 @@ class ApiTest extends BaseTestCase
 
         $oOrder = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
+            ->setMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode', 'getStore'])
             ->getMock();
         $oOrder->method('getBaseCurrencyCode')->willReturn($expected);
         $oOrder->method('getQuoteCurrencyCode')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
 
         $result = $this->api->getCurrencyFromQuote($oOrder);
         $this->assertEquals($expected, $result);
@@ -353,9 +406,10 @@ class ApiTest extends BaseTestCase
 
         $oOrder = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseGrandTotal'])
+            ->setMethods(['getBaseGrandTotal', 'getStore'])
             ->getMock();
         $oOrder->method('getBaseGrandTotal')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
 
         $result = $this->api->getQuoteAmount($oOrder);
         $this->assertEquals($expected, $result);
@@ -368,10 +422,11 @@ class ApiTest extends BaseTestCase
 
         $oOrder = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseGrandTotal', 'getGrandTotal'])
+            ->setMethods(['getBaseGrandTotal', 'getGrandTotal', 'getStore'])
             ->getMock();
         $oOrder->method('getBaseGrandTotal')->willReturn(200);
         $oOrder->method('getGrandTotal')->willReturn($expected);
+        $oOrder->method('getStore')->willReturn($this->store);
 
         $result = $this->api->getQuoteAmount($oOrder);
         $this->assertEquals($expected, $result);

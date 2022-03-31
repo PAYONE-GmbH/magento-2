@@ -75,7 +75,7 @@ class PlaceOrderTest extends BaseTestCase
      */
     private $request;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -151,6 +151,7 @@ class PlaceOrderTest extends BaseTestCase
                 'setPayoneUserAgent',
                 'unsPayoneUserAgent',
                 'setPayoneExpressType',
+                'setIsPayonePayPalExpress',
             ])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
@@ -159,6 +160,7 @@ class PlaceOrderTest extends BaseTestCase
         $this->checkoutSession->method('unsPayoneWorkorderId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('unsIsPayonePayPalExpress')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('unsPayoneUserAgent')->willReturn($this->checkoutSession);
+        $this->checkoutSession->method('setIsPayonePayPalExpress')->willReturn(true);
 
         $this->agreementValidator = $this->getMockBuilder(AgreementsValidatorInterface::class)->disableOriginalConstructor()->getMock();
         $this->agreementValidator->method('isValid')->willReturn(false);

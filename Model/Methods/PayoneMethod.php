@@ -75,17 +75,14 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneDebit(InfoInterface $payment, $amount)
     {
-        if ($this->shopHelper->getConfigParam('currency') == 'display' && $payment->getCreditmemo()) {
-            $amount = $payment->getCreditmemo()->getGrandTotal(); // send display amount instead of base amount
-        }
         $aResponse = $this->debitRequest->sendRequest($this, $payment, $amount);
-        if ($aResponse['status'] == 'ERROR') {
+        if (!$aResponse) {
+            throw new LocalizedException(__('Unkown error'));
+        } elseif ($aResponse['status'] == 'ERROR') {
             $this->checkoutSession->setPayoneDebitRequest($this->debitRequest->getParameters());
             $this->checkoutSession->setPayoneDebitResponse($this->debitRequest->getResponse());
             $this->checkoutSession->setPayoneDebitOrderId($this->debitRequest->getOrderId());
             throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
-        } elseif (!$aResponse) {
-            throw new LocalizedException(__('Unkown error'));
         }
     }
 
@@ -99,15 +96,11 @@ abstract class PayoneMethod extends BaseMethod
      */
     protected function sendPayoneCapture(InfoInterface $payment, $amount)
     {
-        if ($this->shopHelper->getConfigParam('currency') == 'display' && $payment->getOrder()->hasInvoices()) {
-            $oInvoice = $payment->getOrder()->getInvoiceCollection()->getLastItem();
-            $amount = $oInvoice->getGrandTotal(); // send display amount instead of base amount
-        }
         $aResponse = $this->captureRequest->sendRequest($this, $payment, $amount);
-        if ($aResponse['status'] == 'ERROR') {// request returned an error
-            throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
-        } elseif (!$aResponse) {// response not existing
+        if (!$aResponse) {// response not existing
             throw new LocalizedException(__('Unkown error'));
+        } elseif ($aResponse['status'] == 'ERROR') {// request returned an error
+            throw new LocalizedException(__($aResponse['errorcode'].' - '.$aResponse['customermessage']));
         }
     }
 
@@ -139,7 +132,7 @@ abstract class PayoneMethod extends BaseMethod
         $oOrder = $payment->getOrder();
         $oOrder->setCanSendNewEmailFlag(false); // dont send email now, will be sent on appointed
 
-        if ($this->shopHelper->getConfigParam('currency') == 'display') {
+        if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $payment->getOrder()->getStore()->getCode()) == 'display') {
             $amount = $oOrder->getTotalDue(); // send display amount instead of base amount
         }
 
@@ -231,6 +224,28 @@ abstract class PayoneMethod extends BaseMethod
     }
 
     /**
+     * Return capture parameters specific to this payment type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getPaymentSpecificCaptureParameters(Order $oOrder)
+    {
+        return []; // filled in child classes
+    }
+
+    /**
+     * Return debit parameters specific to this payment type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getPaymentSpecificDebitParameters(Order $oOrder)
+    {
+        return []; // filled in child classes
+    }
+
+    /**
      * Return success url for redirect payment types
      *
      * @param  Order $oOrder
@@ -273,6 +288,16 @@ abstract class PayoneMethod extends BaseMethod
     public function needsRedirectUrls()
     {
         return $this->blNeedsRedirectUrls;
+    }
+
+    /**
+     * Return if transaction_param has to be added to the authroization request
+     *
+     * @return bool
+     */
+    public function needsTransactionParam()
+    {
+        return $this->blNeedsTransactionParam;
     }
 
     /**

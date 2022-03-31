@@ -78,7 +78,7 @@ class IndexTest extends BaseTestCase
      */
     private $request;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -112,7 +112,10 @@ class IndexTest extends BaseTestCase
             ->getMock();
         $resultRawFactory->method('create')->willReturn($rawResponse);
 
-        $substituteOrder = $this->getMockBuilder(SubstituteOrder::class)->disableOriginalConstructor()->getMock();
+        $substituteOrder = $this->getMockBuilder(SubstituteOrder::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createSubstituteOrder'])
+            ->getMock();
         $substituteOrder->method('createSubstituteOrder')->willReturn($this->order);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

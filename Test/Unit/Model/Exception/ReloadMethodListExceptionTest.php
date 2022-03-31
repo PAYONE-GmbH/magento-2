@@ -31,7 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class FilterMethodListExceptionTest extends BaseTestCase
+class ReloadMethodListExceptionTest extends BaseTestCase
 {
     /**
      * @var ClassToTest

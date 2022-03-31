@@ -38,7 +38,7 @@ class AddressCheckTypeTest extends BaseTestCase
      */
     private $classToTest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
         $this->classToTest = $objectManager->getObject(ClassToTest::class);
@@ -47,6 +47,6 @@ class AddressCheckTypeTest extends BaseTestCase
     public function testToOptionArray()
     {
         $result = $this->classToTest->toOptionArray();
-        $this->assertCount(5, $result);
+        $this->assertCount(6, $result);
     }
 }

@@ -57,7 +57,7 @@
                                 <img data-bind="attr: {src: 'https://cdn.pay1.de/cc/' + $data.payment_data.cardtype.toLowerCase() + '/s/default.png'}"/>
                                 <!-- ko i18n: 'ends with'--><!-- /ko -->
                                 <span data-bind="text: '-' + $data.payment_data.masked.substring(($data.payment_data.masked.length-4), $data.payment_data.masked.length)"></span>
-                                <span data-bind="text: $data.payment_data.firstname + ' ' + $data.payment_data.lastname" class="cardholder"></span>
+                                <span data-bind="text: $data.payment_data.cardholder" class="cardholder"></span>
                                 <span data-bind="text: $data.payment_data.cardexpiredate.substring(2, 4) + '/20' + $data.payment_data.cardexpiredate.substring(0, 2)"></span>
                             </label>
                         </div>
@@ -94,32 +94,17 @@
                     <!--/ko-->
 
                     <div class="field number required">
-                        <label data-bind="attr: {for: getCode() + '_firstname'}" class="label">
-                            <span><!-- ko i18n: 'Firstname'--><!-- /ko --></span>
+                        <label data-bind="attr: {for: getCode() + '_cardholder'}" class="label">
+                            <span><!-- ko i18n: 'Cardholder'--><!-- /ko --></span>
                         </label>
                         <div class="control">
-                            <input type="text" name="payment[cc_firstname]" class="input-text" value=""
+                            <input type="text" name="payment[cc_cardholder]" class="input-text" value=""
                                    data-bind="attr: {
                                         autocomplete: off,
-                                        id: getCode() + '_firstname',
-                                        title: $t('Firstname'),
-                                        'data-container': getCode() + '-firstname'},
-                                  value: firstname,
-                                  valueUpdate: 'keyup' "/>
-                        </div>
-                    </div>
-                    <div class="field number required">
-                        <label data-bind="attr: {for: getCode() + '_lastname'}" class="label">
-                            <span><!-- ko i18n: 'Lastname'--><!-- /ko --></span>
-                        </label>
-                        <div class="control">
-                            <input type="text" name="payment[cc_lastname]" class="input-text" value=""
-                                   data-bind="attr: {
-                                        autocomplete: off,
-                                        id: getCode() + '_lastname',
-                                        title: $t('Lastname'),
-                                        'data-container': getCode() + '-lastname'},
-                                  value: lastname,
+                                        id: getCode() + '_cardholder',
+                                        title: $t('Cardholder'),
+                                        'data-container': getCode() + '-cardholder'},
+                                  value: cardholder,
                                   valueUpdate: 'keyup' "/>
                         </div>
                     </div>
@@ -186,6 +171,29 @@
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
+        </div>
+        <div data-role="checkout-payone-boni-agreement">
+            <div class="checkout-payone-boni-agreement">
+                <!-- ko if: (isAgreementVisible()) -->
+                    <!-- ko if: (canShowPaymentHintText()) -->
+                        <div>
+                            <strong><span data-bind="html: getPaymentHintText()"></span></strong>
+                        </div>
+                    <!-- /ko -->
+                    <!-- ko if: (canShowAgreementMessage()) -->
+                        <div>
+                            <input type="checkbox"
+                                   data-bind="attr: {
+                                                        'id': 'payone_boni_agreement_' + getCode(),
+                                                        'name': 'payone_boni_agreement',
+                                                        'value': '1'}" />
+                            <label data-bind="attr: {'for': 'payone_boni_agreement_' + getCode()}">
+                                <span data-bind="html: getAgreementMessage()"></span>
+                            </label>
+                        </div>
+                    <!-- /ko -->
+                <!-- /ko -->
+            </div>
         </div>
         <div class="actions-toolbar">
             <div class="primary">

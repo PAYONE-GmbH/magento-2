@@ -30,7 +30,7 @@ use Payone\Core\Model\PayoneConfig;
 use Magento\Sales\Model\Order;
 
 /**
- * Model for PayPal payment method
+ * Model for AliPay payment method
  */
 class AliPay extends PayoneMethod
 {

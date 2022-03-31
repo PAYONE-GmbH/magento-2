@@ -49,7 +49,7 @@ class DebitTest extends BaseTestCase
      */
     private $countryHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -62,7 +62,7 @@ class DebitTest extends BaseTestCase
     public function testGetSepaCountries()
     {
         $expected = [['id' => 'DE', 'title' => 'Deutschland']];
-        $this->countryHelper->method('getDebitSepaCountries')->willReturn($expected);
+        $this->countryHelper->method('getEnabledCountries')->willReturn($expected);
         $result = $this->classToTest->getSepaCountries();
         $this->assertEquals($expected, $result);
     }

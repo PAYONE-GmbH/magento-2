@@ -31,10 +31,10 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Payone\Core\Setup\Tables\Api;
-use Payone\Core\Setup\Tables\CheckedAddresses;
 use Payone\Core\Setup\Tables\PaymentBan;
 use Payone\Core\Setup\Tables\Transactionstatus;
 use Payone\Core\Setup\Tables\SavedPaymentData;
+use Payone\Core\Setup\Tables\RatepayProfileConfig;
 
 /**
  * Magento script for updating the database after the initial installation
@@ -77,6 +77,36 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+
+
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS), 'clearing_bankcity')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'clearing_bankcity',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 64,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Clearing bank country',
+                    'after' => 'clearing_bankiban',
+                ]
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS), 'clearing_bankcountry')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'clearing_bankcountry',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 32,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Clearing bank country',
+                    'after' => 'clearing_bankiban',
+                ]
+            );
+        }
     }
 
     /**
@@ -93,6 +123,9 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
         }
         if (!$setup->getConnection()->isTableExists($setup->getTable(SavedPaymentData::TABLE_SAVED_PAYMENT_DATA))) {
             $this->addTable($setup, SavedPaymentData::getData());
+        }
+        if (!$setup->getConnection()->isTableExists($setup->getTable(RatepayProfileConfig::TABLE_RATEPAY_PROFILE_CONFIG))) {
+            $this->addTable($setup, RatepayProfileConfig::getData());
         }
     }
 

@@ -39,6 +39,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Payone\Core\Helper\Base;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 
 class AppointedTest extends BaseTestCase
 {
@@ -57,7 +58,7 @@ class AppointedTest extends BaseTestCase
      */
     private $orderSender;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -87,12 +88,17 @@ class AppointedTest extends BaseTestCase
         $payment->method('getLastTransId')->willReturn('123');
         $payment->method('getMethodInstance')->willReturn($method);
 
+        $invoiceCollection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()->getMock();
+        $invoiceCollection->method('count')->willReturn(0);
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save'])
+            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save', 'canInvoice', 'getInvoiceCollection'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getPayoneAuthmode')->willReturn('authorization');
+        $order->method('canInvoice')->willReturn(true);
+        $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
@@ -113,12 +119,17 @@ class AppointedTest extends BaseTestCase
         $payment->method('getLastTransId')->willReturn('123');
         $payment->method('getMethodInstance')->willReturn($method);
 
+        $invoiceCollection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()->getMock();
+        $invoiceCollection->method('count')->willReturn(0);
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save'])
+            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save', 'canInvoice', 'getInvoiceCollection'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getPayoneAuthmode')->willReturn('authorization');
+        $order->method('canInvoice')->willReturn(true);
+        $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);

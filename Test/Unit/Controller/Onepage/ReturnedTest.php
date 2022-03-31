@@ -68,7 +68,7 @@ class ReturnedTest extends BaseTestCase
      */
     private $databaseHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

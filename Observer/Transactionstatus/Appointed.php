@@ -127,20 +127,22 @@ class Appointed implements ObserverInterface
         }
 
         // preauthorization-orders and advance payment should not create an invoice
-        if ($oOrder->getPayoneAuthmode() != 'authorization' || $oOrder->getPayment()->getMethodInstance()->getCode() == PayoneConfig::METHOD_ADVANCE_PAYMENT){
+        if ($oOrder->getPayoneAuthmode() !== 'authorization' || $oOrder->getPayment()->getMethodInstance()->getCode() === PayoneConfig::METHOD_ADVANCE_PAYMENT || !$oOrder->canInvoice()){
             return;
         }
 
-        $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
-        $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
-        $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
-        $oInvoice->register();
-        $oInvoice->save();
+        if ($oOrder->getInvoiceCollection()->count() == 0) {
+            $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
+            $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
+            $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
+            $oInvoice->register();
+            $oInvoice->save();
 
-        $oOrder->save();
+            $oOrder->save();
 
-        if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
-            $this->invoiceSender->send($oInvoice);
+            if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
+                $this->invoiceSender->send($oInvoice);
+            }
         }
     }
 }

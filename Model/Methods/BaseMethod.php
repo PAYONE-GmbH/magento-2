@@ -115,6 +115,13 @@ abstract class BaseMethod extends AbstractMethod
     protected $blNeedsRedirectUrls = false;
 
     /**
+     * Determines if the transaction_param-parameter has to be added to the authorization-request
+     *
+     * @var bool
+     */
+    protected $blNeedsTransactionParam = false;
+
+    /**
      * Determines if the invoice information has to be added
      * to the authorization-request
      *

@@ -31,6 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Methods\Paypal;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -52,7 +53,7 @@ class SetOrderReferenceDetailsTest extends BaseTestCase
      */
     private $shopHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
@@ -75,12 +76,19 @@ class SetOrderReferenceDetailsTest extends BaseTestCase
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getClearingtype')->willReturn('fnc');
 
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getGrandTotal'])
+            ->getMock();
+        $quote->method('getGrandTotal')->willReturn(100);
+
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('getCurrencyFromQuote')->willReturn('EUR');
 
-        $result = $this->classToTest->sendRequest($payment, 100,'123', '123', '123');
+        $result = $this->classToTest->sendRequest($payment, $quote,'123', '123', '123');
         $this->assertEquals($response, $result);
     }
 }

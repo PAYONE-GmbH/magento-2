@@ -47,8 +47,8 @@ class PrivacyDeclaration
      */
     protected $sFallback = "
         <header>
-            <strong>Ergänzende Hinweise zur Datenschutzerklärung für Kauf auf Rechnung, per Ratenzahlung und direkter SEPA-Lastschrift von Test GmbH (im Folgenden: „wir“)</strong></br>
-            <span><i>(Stand: 08.05.2018)</i></span>
+            <strong>Ergänzende Hinweise zur Datenschutzerklärung für Kauf auf Rechnung, per Ratenzahlung und direkter SEPA-Lastschrift von Testfirma GmbH (im Folgenden: „wir“)</strong></br>
+            <span><i>(Stand: 16.10.2020)</i></span>
         </header>
         <ol>
             <li><p>Durch die Auswahl eines Kaufs auf Rechnung, per Ratenzahlung oder direkter SEPA-Lastschrift, stimmen Sie den Datenschutzbestimmungen der payolution GmbH und der Weiterverarbeitung Ihrer persönlichen Daten zu. Diese Bestimmungen sind nachstehend ausschließlich zu Informationszwecken erneut aufgeführt.</p></li>
@@ -60,30 +60,31 @@ class PrivacyDeclaration
                     <li>CRIF AG, Hagenholzstrasse 81, 8050 Zürich, Schweiz</li>
                     <li>CRIF Bürgel GmbH, Radlkoferstraße 2, 81373 München, Deutschland</li>
                     <li>SCHUFA Holding AG, Kormoranweg 5, 65201 Wiesbaden, Deutschland</li>
-                    <li>KSV1870 Information GmbH, Wagenseilgasse 7, 1120 Wien, Österreich</li>
+                    <li>KSV1870 Information GmbH, Wagenseilgasse 7, 1100 Wien, Österreich</li>
                     <li>Creditreform Boniversum GmbH, Hellersbergstr. 11, 41460 Neuss, Deutschland</li>
-                    <li>infoscore Consumer Data GmbH, Rheinstrasse 99, 76532 Baden-Baden, Deutschland</li>
+                    <li><a href=\"https://finance.arvato.com/icdinfoblatt\">infoscore Consumer Data GmbH, Rheinstrasse 99, 76532 Baden-Baden, Deutschland</a></li>
                     <li>ProfileAddress Direktmarketing GmbH, Altmannsdorfer Strasse 311, 1230 Wien, Österreich</li>
                     <li>Emailage LTD, 1 Fore Street Ave, London, EC2Y 5EJ, Vereinigtes Königreich</li>
-                    <li>ThreatMetrix, Inc.,160 W Santa Clara St., Suite 1400, San Jose, CA 95113, USA</li>
-                    <li>payolution GmbH, Am Euro Platz 2, 1120 Wien, Österreich</li>
+                    <li>ThreatMetrix, The Base 3/F, Tower C, Evert van de Beekstraat 1, 1118 CL Schiphol, Niederlande</li>
+                    <li>payolution GmbH, Columbuscenter, Columbusplatz 7-8, 1100 Wien, Österreich</li>
+                    <li>Universum Business GmbH, Hanauer Landstr. 164, 60314 Frankfurt am Main, Deutschland</li>
                 </ul>
                 <p>Die payolution GmbH wird Ihre Angaben zur Bankverbindung (insbesondere Bankleitzahl und Kontonummer) zum Zwecke der Kontonummernprüfung an die SCHUFA Holding AG übermitteln. Die SCHUFA prüft anhand dieser Daten zunächst, ob die von Ihnen gemachten Angaben zur Bankverbindung plausibel sind. Die SCHUFA überprüft, ob die zur Prüfung verwendeten Daten ggf. in Ihrem Datenbestand gespeichert sind und übermittelt sodann das Ergebnis der Überprüfung an payolution zurück. Ein weiterer Datenaustausch wie die Bekanntgabe von Bonitätsinformationen oder eine Übermittlung abweichender Bankverbindungsdaten sowie Speicherung Ihrer Daten im SCHUFA-Datenbestand finden im Rahmen der Kontonummernprüfung nicht statt. Es wird aus Nachweisgründen allein die Tatsache der Überprüfung der Bankverbindungsdaten bei der SCHUFA gespeichert.</p>
                 <p>Im Fall von vertragswidrigem Verhalten (z. B. Bestehen unstrittiger Forderungen) ist die payolution GmbH ebenfalls zur Speicherung, Verarbeitung, Verwendung von Daten und deren Übermittlung an die o. g. Kreditauskunfteien berechtigt.</p>
             </li>
             <li><p>Gemäß den Bestimmungen des Bürgerlichen Gesetzbuches über Finanzierungshilfen zwischen Händlern und Konsumenten sind wir gesetzlich zur Prüfung Ihrer Kreditwürdigkeit verpflichtet.</p></li>
-            <li><p>Im Falle eines Kaufs auf Rechnung, per Ratenzahlung oder direkter SEPA-Lastschrift, werden wir Daten zu den Einzelheiten des entsprechenden Zahlungsvorgangs (Ihre Personendaten, Kaufpreis, Bedingungen des Zahlungsvorgangs, Beginn der Zahlung) und die Vertragsbedingungen (z. B. vorzeitige Zahlung, Verlängerung der Vertragslaufzeit, erfolgte Zahlungen) an die payolution GmbH übermitteln. Nach Zuweisung der Kaufpreisforderung wird das Bankinstitut, dem die Forderung zugewiesen wurde, die genannte Datenübermittlung vornehmen. Wir und/oder das Bankinstitut sind entsprechend der Zuweisung der Kaufpreisforderung ebenfalls zur Meldung von Daten über vertragswidriges Verhalten (z. B. Beendigung der Zahlungsvereinbarung, Zwangsvollstreckungsmaßnahmen) an die payolution GmbH angewiesen. Gemäß den Datenschutzbestimmungen erfolgen diese Meldungen ausschließlich, wenn diese zur Sicherstellung des rechtmäßigen Interesses der Vertragspartner der payolution GmbH oder der Allgemeinheit erforderlich sind und Ihre rechtmäßigen Interessen dadurch nicht beeinträchtigt werden. Die payolution GmbH wird die Daten speichern, um seinen Vertragspartnern, die Konsumenten Ratenzahlungen oder sonstige Kreditvereinbarungen im gewerblichen Rahmen gewähren, Informationen zur Einschätzung der Kreditwürdigkeit von Kunden zur Verfügung stellen zu können. Mit der payolution GmbH in einem Vertragsverhältnis stehende gewerbliche Inkassounternehmen können Adressinformationen zur Ermittlung von Debitoren zur Verfügung gestellt werden. Die payolution GmbH ist dazu angehalten, seinen Vertragspartnern nur dann Daten zu übermitteln, wenn ein glaubwürdiges und rechtmäßiges Interesse an der Datenübermittlung besteht. Die payolution GmbH ist dazu angehalten, ausschließlich objektive Daten ohne Spezifikation an das entsprechende Bankinstitut zu übermitteln. Informationen über subjektive Werteinschätzungen und persönliches Einkommen sind in den von der payolution GmbH zur Verfügung gestellten Informationen nicht enthalten.</p></li>
+            <li><p>Im Falle eines Kaufs auf Rechnung, per Ratenzahlung oder direkter SEPA-Lastschrift, werden wir Daten zu den Einzelheiten des entsprechenden Zahlungsvorgangs (Ihre Personendaten, Kaufpreis, Bedingungen des Zahlungsvorgangs, Beginn der Zahlung) und die Vertragsbedingungen (z. B. vorzeitige Zahlung, Verlängerung der Vertragslaufzeit, erfolgte Zahlungen) an die payolution GmbH übermitteln. Nach Abtretung der Kaufpreisforderung wird das Bankinstitut, dem die Forderung abgetreten wurde, die genannte Datenübermittlung vornehmen. Wir und/oder das Bankinstitut sind entsprechend der Abtretung der Kaufpreisforderung ebenfalls zur Meldung von Daten über vertragswidriges Verhalten (z. B. Beendigung der Zahlungsvereinbarung, Zwangsvollstreckungsmaßnahmen) an die payolution GmbH angewiesen. Gemäß den Datenschutzbestimmungen erfolgen diese Meldungen ausschließlich, wenn diese zur Sicherstellung des rechtmäßigen Interesses der Vertragspartner der payolution GmbH oder der Allgemeinheit erforderlich sind und Ihre rechtmäßigen Interessen dadurch nicht beeinträchtigt werden. Die payolution GmbH wird die Daten speichern, um seinen Vertragspartnern, die Konsumenten Ratenzahlungen oder sonstige Kreditvereinbarungen im gewerblichen Rahmen gewähren, Informationen zur Einschätzung der Kreditwürdigkeit von Kunden zur Verfügung stellen zu können. Mit der payolution GmbH in einem Vertragsverhältnis stehende gewerbliche Inkassounternehmen können Adressinformationen zur Ermittlung von Debitoren zur Verfügung gestellt werden. Die payolution GmbH ist dazu angehalten, seinen Vertragspartnern nur dann Daten zu übermitteln, wenn ein glaubwürdiges und rechtmäßiges Interesse an der Datenübermittlung besteht. Die payolution GmbH ist dazu angehalten, ausschließlich objektive Daten ohne Spezifikation an das entsprechende Bankinstitut zu übermitteln. Informationen über subjektive Werteinschätzungen und persönliches Einkommen sind in den von der payolution GmbH zur Verfügung gestellten Informationen nicht enthalten.</p></li>
             <li><p>Sie können Ihre Zustimmung zur Datenverarbeitung zum Zwecke der Auftragsabwicklung jederzeit widerrufen. Die o. g. gesetzlichen Verpflichtungen zur Prüfung Ihrer Kreditwürdigkeit bleiben von solchen Widerrufen unberührt.</p></li>
             <li><p>Sie sind uns gegenüber zur Angabe von ausschließlich wahrheitsgemäßen und korrekten Informationen verpflichtet.</p></li>
-            <li><p>Weitere Informationen über die Verarbeitung Ihrer persönlichen Daten finden Sie in der vollständigen Datenschutzrichtlinie hier: <a href=\"https://www.paysafe.com/legal-and-compliance/privacy-policy/\">https://www.paysafe.com/legal-and-compliance/privacy-policy/</a></p></li>
-            <li><p>Sie können ebenfalls den Sachbearbeiter für Datenschutz der Paysafe Group unter der folgenden Adresse kontaktieren:</p></li>
+            <li><p>Weitere Informationen über die Verarbeitung Ihrer persönlichen Daten finden Sie in der vollständigen Datenschutzrichtlinie hier: <a href=\"https://www.unzer.com/de/privacy-payolution-consumers/\">https://www.unzer.com/de/privacy-payolution-consumers/</a></p></li>
+            <li><p>Sie können ebenfalls den Sachbearbeiter für Datenschutz der Unzer Group unter der folgenden Adresse kontaktieren:</p></li>
         </ol>
         
         <footer>
-            datenschutz@payolution.com<br />
+            datenschutz-vie@unzer.com<br />
             payolution GmbH<br />
-            Am Euro Platz 2<br />
-            1120 Wien<br />
+            Columbuscenter, Columbusplatz 7-8<br />
+            1100 Wien<br />
             Registrierungscode – Datenverarbeitung (DVR): 4008655
         </footer>
     ";
@@ -103,18 +104,27 @@ class PrivacyDeclaration
     protected $curl;
 
     /**
+     * @var \Magento\Framework\App\CacheInterface
+     */
+    protected $cache;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop $shopHelper
+     * @param \Magento\Framework\HTTP\Client\Curl $curl
+     * @param \Magento\Framework\App\CacheInterface $cache
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
-        \Magento\Framework\HTTP\Client\Curl $curl
+        \Magento\Framework\HTTP\Client\Curl $curl,
+        \Magento\Framework\App\CacheInterface $cache
     ) {
         $this->shopHelper = $shopHelper;
         $this->curl = $curl;
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
         $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
+        $this->cache = $cache;
     }
 
     /**
@@ -126,6 +136,13 @@ class PrivacyDeclaration
     protected function getAcceptanceTextFromPayolution($sCompany)
     {
         $sUrl = $this->sAcceptanceBaseUrl.'?mId='.base64_encode($sCompany).'&lang='.$this->shopHelper->getLocale();
+        $cacheKey = 'PAYONE_ACCEPTANCE_TEXT_' . sha1($sUrl);
+        $cache = $this->cache->load($cacheKey);
+
+        if ($cache !== false) {
+            return $cache;
+        }
+
         $this->curl->get($sUrl);
         $sContent = $this->curl->getBody();
         $sPage = false;
@@ -138,6 +155,7 @@ class PrivacyDeclaration
                 //remove everything before the <header> tag ( a window.close link which wouldn't work in the given context )
                 $sPage = substr($sPage, stripos($sPage, '<header>'));
             }
+            $this->cache->save($sPage, $cacheKey, [], 86400);
         }
         return $sPage;
     }
@@ -155,7 +173,11 @@ class PrivacyDeclaration
         }
 
         $sCompany = $this->shopHelper->getConfigParam('company', $sPaymentCode, 'payone_payment');
-        $sPage = $this->getAcceptanceTextFromPayolution($sCompany);
+        try {
+            $sPage = $this->getAcceptanceTextFromPayolution($sCompany);
+        } catch (\Exception $exception) {
+            $sPage = false;
+        }
         if (!$sPage) {
             $sPage = $this->getFallbackText($sCompany);
         }

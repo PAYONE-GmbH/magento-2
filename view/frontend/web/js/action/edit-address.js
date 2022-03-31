@@ -27,13 +27,15 @@ define([
     'jquery',
     'Magento_Checkout/js/model/url-builder',
     'mage/storage',
+    'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/full-screen-loader'
-], function ($, urlBuilder, storage, fullScreenLoader) {
+], function ($, urlBuilder, storage, quote, fullScreenLoader) {
     'use strict';
 
     return function (addressData) {
         var serviceUrl = urlBuilder.createUrl('/carts/mine/payone-editAddress', {});
         var request = {
+            cartId: quote.getQuoteId(),
             addressData: addressData
         };
 

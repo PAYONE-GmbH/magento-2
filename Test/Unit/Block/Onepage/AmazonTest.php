@@ -26,11 +26,13 @@
 
 namespace Payone\Core\Test\Unit\Block\Onepage;
 
+use Magento\Quote\Model\Quote;
 use Payone\Core\Block\Onepage\Amazon as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\UrlInterface;
+use Payone\Core\Helper\Api;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Payment;
@@ -68,7 +70,7 @@ class AmazonTest extends BaseTestCase
      */
     private $paymentHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -80,17 +82,24 @@ class AmazonTest extends BaseTestCase
         $context->method('getUrlBuilder')->willReturn($this->urlBuilder);
         $context->method('getRequest')->willReturn($this->request);
 
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError', 'getAmazonReferenceId'])
+            ->setMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError', 'getAmazonReferenceId', 'getTriggerInvalidPayment', 'getQuote'])
             ->getMock();
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
 
         $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+
+        $apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
+        $apiHelper->method('getCurrencyFromQuote')->willReturn('EUR');
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $this->checkoutSession,
             'paymentHelper' => $this->paymentHelper,
+            'apiHelper' => $apiHelper
         ]);
     }
 
@@ -112,6 +121,12 @@ class AmazonTest extends BaseTestCase
 
         $result = $this->classToTest->getSellerId();
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetCurrency()
+    {
+        $result = $this->classToTest->getCurrency();
+        $this->assertEquals('EUR', $result);
     }
 
     public function testGetCartUrl()
@@ -177,5 +192,21 @@ class AmazonTest extends BaseTestCase
 
         $result = $this->classToTest->getOrderReferenceId();
         $this->assertEquals($expected, $result);
+    }
+
+    public function testTriggerInvalidPayment()
+    {
+        $this->checkoutSession->method('getTriggerInvalidPayment')->willReturn(null);
+
+        $result = $this->classToTest->triggerInvalidPayment();
+        $this->assertFalse($result);
+    }
+
+    public function testTriggerInvalidPaymentTrue()
+    {
+        $this->checkoutSession->method('getTriggerInvalidPayment')->willReturn(['a']);
+
+        $result = $this->classToTest->triggerInvalidPayment();
+        $this->assertTrue($result);
     }
 }

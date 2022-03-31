@@ -55,7 +55,7 @@ class AddresscheckTest extends BaseTestCase
      */
     private $simpleProtect;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
@@ -80,7 +80,7 @@ class AddresscheckTest extends BaseTestCase
 
         $this->simpleProtect->method('handleEnterOrChangeBillingAddress')->willReturn($addressData);
 
-        $result = $this->classToTest->checkAddress($addressData, true, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, true, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
@@ -91,7 +91,7 @@ class AddresscheckTest extends BaseTestCase
 
         $this->simpleProtect->method('handleEnterOrChangeShippingAddress')->willReturn($addressData);
 
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
@@ -103,7 +103,7 @@ class AddresscheckTest extends BaseTestCase
 
         $this->simpleProtect->method('handleEnterOrChangeShippingAddress')->willReturn($addressData);
 
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
@@ -116,7 +116,7 @@ class AddresscheckTest extends BaseTestCase
 
         $this->simpleProtect->method('handleEnterOrChangeShippingAddress')->willThrowException($exception);
 
-        $result = $this->classToTest->checkAddress($addressData, false, false, 100);
+        $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
         $result = $result->__toArray();
         $this->assertFalse($result['success']);
     }

@@ -40,6 +40,7 @@ define(
                 birthmonth: '',
                 birthyear: '',
                 tradeRegistryNumber: '',
+                companyUid: '',
                 iban: '',
                 bic: '',
                 agreement: false
@@ -51,6 +52,7 @@ define(
                         'birthmonth',
                         'birthyear',
                         'tradeRegistryNumber',
+                        'companyUid',
                         'iban',
                         'bic',
                         'agreement'
@@ -67,10 +69,6 @@ define(
                 }
                 if (this.requestBirthday()) {
                     parentReturn.additional_data.dateofbirth = this.birthyear() + this.birthmonth() + this.birthday();
-                }
-                if (this.isB2bMode()) {
-                    parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
-                    parentReturn.additional_data.b2bmode = true;
                 }
                 parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
                 parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
@@ -102,20 +100,13 @@ define(
                 $('#' + this.getCode() + '_overlay').hide();
             },
             getPrivacyDeclaration: function () {
-                return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.invoice;
-            },
-            isB2bMode: function () {
-                if (window.checkoutConfig.payment.payone.payolution.b2bMode.invoice == true &&
-                    quote.billingAddress() != null &&
-                    typeof quote.billingAddress().company != 'undefined' &&
-                    quote.billingAddress().company != ''
-                ) {
-                    return true;
-                }
-                return false;
+                return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.installment;
             },
             requestBirthday: function () {
-                return !this.isB2bMode();
+                if (quote.billingAddress() == null) {
+                    return false;
+                }
+                return true;
             },
             validate: function () {
                 if (this.requestBirthday() == true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
@@ -123,7 +114,7 @@ define(
                     return false;
                 }
                 if (this.agreement() == false) {
-                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Paysafe Pay Later™!')});
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Unzer!')});
                     return false;
                 }
                 if ($('#' + this.getCode() + '_installmentplan').html() != '' && $('#' + this.getCode() + '_duration').val() == '') {
@@ -144,9 +135,11 @@ define(
                 if (this.validate() && additionalValidators.validate()) {
                     window.payolution_installment = this;
                     window.switchInstallmentPlan = window.switchInstallmentPlan || function (sKey, sCode, iInstallments) {
-                            window.payolution_installment.switchInstallmentPlan(sKey, sCode, iInstallments);
-                        }
-                    installmentplan(this, '19601212');
+                        window.payolution_installment.switchInstallmentPlan(sKey, sCode, iInstallments);
+                    };
+                    if (this.requestBirthday() == true && this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
+                        installmentplan(this, this.birthyear() + this.birthmonth() + this.birthday());
+                    }
                 }
             },
             switchInstallmentPlan: function (sKey, sCode, iInstallments) {

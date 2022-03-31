@@ -36,6 +36,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Framework\Exception\LocalizedException;
+use Payone\Core\Model\ResourceModel\TransactionStatus;
 
 class CancellationTest extends BaseTestCase
 {
@@ -54,12 +55,20 @@ class CancellationTest extends BaseTestCase
      */
     private $order;
 
-    protected function setUp()
+    /**
+     * @var TransactionStatus|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $transactionStatus;
+
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
-        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
-        $quote->method('getId')->willReturn(123);
+        $currentQuote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $currentQuote->method('getId')->willReturn(123);
+
+        $oldQuote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $oldQuote->method('getId')->willReturn(321);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -79,7 +88,7 @@ class CancellationTest extends BaseTestCase
             ->getMock();
         $checkoutSession->method('getPayoneCustomerIsRedirected')->willReturn(true);
         $checkoutSession->method('getLastOrderId')->willReturn(123);
-        $checkoutSession->method('getQuote')->willReturn($quote);
+        $checkoutSession->method('getQuote')->willReturn($currentQuote);
         $checkoutSession->method('getLastQuoteId')->willReturn(123);
         $checkoutSession->method('unsLastQuoteId')->willReturn($checkoutSession);
         $checkoutSession->method('unsLastSuccessQuoteId')->willReturn($checkoutSession);
@@ -97,23 +106,47 @@ class CancellationTest extends BaseTestCase
         $orderFactory->method('create')->willReturn($this->order);
 
         $quoteRepository = $this->getMockBuilder(QuoteRepository::class)->disableOriginalConstructor()->getMock();
-        $quoteRepository->method('get')->willReturn($quote);
+        $quoteRepository->method('get')->willReturn($oldQuote);
+
+        $this->transactionStatus = $this->getMockBuilder(TransactionStatus::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'checkoutSession' => $checkoutSession,
             'orderFactory' => $orderFactory,
-            'quoteRepository' => $quoteRepository
+            'quoteRepository' => $quoteRepository,
+            'transactionStatus' => $this->transactionStatus
         ]);
     }
 
     public function testHandle()
     {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn(null);
+
+        $result = $this->classToTest->handle();
+        $this->assertNull($result);
+    }
+
+    public function testHandleHasInvoice()
+    {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn(null);
+        $this->order->method('hasInvoices')->willReturn(true);
+
+        $result = $this->classToTest->handle();
+        $this->assertNull($result);
+    }
+
+    public function testHandleHasAppointed()
+    {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn('12345');
+
         $result = $this->classToTest->handle();
         $this->assertNull($result);
     }
 
     public function testExecuteException()
     {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn(null);
+
         $exception = new \Exception();
         $this->order->method('cancel')->willThrowException($exception);
 
@@ -123,6 +156,8 @@ class CancellationTest extends BaseTestCase
 
     public function testExecuteLocalizedException()
     {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn(null);
+
         $exception = new LocalizedException(__('An error occured'));
         $this->order->method('cancel')->willThrowException($exception);
 

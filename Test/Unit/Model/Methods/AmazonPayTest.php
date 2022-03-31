@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods;
 
+use Magento\Store\Model\Store;
 use Payone\Core\Model\Methods\AmazonPay as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
@@ -64,7 +65,7 @@ class AmazonPayTest extends BaseTestCase
      */
     private $authorizationRequest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -151,7 +152,12 @@ class AmazonPayTest extends BaseTestCase
     public function testAuthorize()
     {
         $this->checkoutSession->method('getAmazonRetryAsync')->willReturn(true);
+
+        $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getStore')->willReturn($store);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);

@@ -70,7 +70,9 @@ class PaydirektAgreement extends AddressRequest
         $this->addParameter('currency', $oQuote->getQuoteCurrencyCode());
         $this->addParameter('amount', '1');
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // add sub account id
-        $this->addParameter('customerid', $oCustomer->getId());
+        if ($this->shopHelper->getConfigParam('transmit_customerid') == '1') {
+            $this->addParameter('customerid', $oCustomer->getId());
+        }
         $this->addParameter('customer_is_present', 'yes');
         $this->addParameter('reference', 'custnr_'.$oCustomer->getId());
         $this->addParameter('add_paydata[device_id]', '1');

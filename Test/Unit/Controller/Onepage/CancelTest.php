@@ -66,7 +66,7 @@ class CancelTest extends BaseTestCase
      */
     private $order;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -110,6 +110,7 @@ class CancelTest extends BaseTestCase
                 'unsPayoneWorkorderId',
                 'unsIsPayonePayPalExpress',
                 'restoreQuote',
+                'getPayoneWorkorderId',
             ])
             ->getMock();
         $this->checkoutSession->method('getLastOrderId')->willReturn('12345');
@@ -144,6 +145,14 @@ class CancelTest extends BaseTestCase
 
     public function testExecute()
     {
+        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn(null);
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Redirect::class, $result);
+    }
+
+    public function testExecutePayPalExpress()
+    {
+        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Redirect::class, $result);
     }

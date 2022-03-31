@@ -41,7 +41,7 @@ use Magento\Directory\Model\Region;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class OrderTestTest extends BaseTestCase
+class OrderTest extends BaseTestCase
 {
     /**
      * @var ObjectManager|PayoneObjectManager
@@ -68,7 +68,7 @@ class OrderTestTest extends BaseTestCase
      */
     private $customerHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

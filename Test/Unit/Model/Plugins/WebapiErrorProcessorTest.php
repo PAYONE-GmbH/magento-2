@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2019 Payone GmbH
+ * @copyright 2003 - 2020 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -45,7 +45,7 @@ class WebapiErrorProcessorTest extends BaseTestCase
      */
     private $objectManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -56,8 +56,7 @@ class WebapiErrorProcessorTest extends BaseTestCase
     {
         $subject = $this->getMockBuilder(ErrorProcessor::class)->disableOriginalConstructor()->getMock();
 
-        $exception = $this->getMockBuilder(\Exception::class)->disableOriginalConstructor()->getMock();
-        $exception->method('getPrevious')->willReturn(false);
+        $exception = new \Exception();
 
         $result = $this->classToTest->beforeMaskException($subject, $exception);
 

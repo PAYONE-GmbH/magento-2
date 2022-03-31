@@ -43,6 +43,13 @@ class Ideal extends OnlineBankTransferBase
     protected $_code = PayoneConfig::METHOD_OBT_IDEAL;
 
     /**
+     * Info instructions block path
+     *
+     * @var string
+     */
+    protected $_infoBlockType = 'Payone\Core\Block\Info\ClearingReference';
+
+    /**
      * Payment method sub type
      *
      * @var string

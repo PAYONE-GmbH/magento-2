@@ -55,7 +55,7 @@ class BaseTest extends BaseTestCase
      */
     private $scopeConfig;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
@@ -94,6 +94,15 @@ class BaseTest extends BaseTestCase
                 ]
             );
         $result = $this->base->getConfigParam('request_type');
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetConfigParamByPath()
+    {
+        $expected = 'authorization';
+
+        $this->scopeConfig->method('getValue')->willReturn($expected);
+        $result = $this->base->getConfigParamByPath('payone_payment/payone_ratepay_invoice/request_type');
         $this->assertEquals($expected, $result);
     }
 

@@ -42,10 +42,11 @@ class Consumerscore extends AddressRequest
      * @param  string           $sAddresscheckType
      * @param  string|null      $sSimpleProtectVersion
      * @param  string|null      $sBusinessRelation
+     * @param  string|null      $sGender
      * @param  string|null      $sBirthday
      * @return array|bool
      */
-    public function sendRequest(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion = null, $sBusinessRelation = null, $sBirthday = null)
+    public function sendRequest(AddressInterface $oAddress, $sMode, $sConsumerscoreType, $sAddresscheckType, $sSimpleProtectVersion = null, $sBusinessRelation = null, $sBirthday = null, $sGender = null)
     {
         $this->addParameter('request', 'consumerscore');
         $this->addParameter('mode', $sMode); //Operationmode live or test
@@ -57,6 +58,9 @@ class Consumerscore extends AddressRequest
         }
         if ($sBirthday !== null) {
             $this->addParameter('birthday', date('Ymd', strtotime($sBirthday)));
+        }
+        if ($sGender !== null) {
+            $this->addParameter('gender', $sGender);
         }
         $this->addParameter('language', $this->shopHelper->getLocale());
         $this->addAddress($oAddress);

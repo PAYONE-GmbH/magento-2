@@ -93,14 +93,6 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/paydirekt-method'
             },
             {
-                type: 'payone_billsafe',
-                component: 'Payone_Core/js/view/payment/method-renderer/billsafe-method'
-            },
-            {
-                type: 'payone_klarna',
-                component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
-            },
-            {
                 type: 'payone_safe_invoice',
                 component: 'Payone_Core/js/view/payment/method-renderer/safe_invoice-method'
             },
@@ -123,6 +115,42 @@ define(
             {
                 type: 'payone_amazonpay',
                 component: 'Payone_Core/js/view/payment/method-renderer/amazonpay-method'
+            },
+            {
+                type: 'payone_klarna_base',
+                component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
+            },
+            {
+                type: 'payone_klarna_invoice',
+                component: 'Payone_Core/js/view/payment/method-renderer/klarna_invoice-method'
+            },
+            {
+                type: 'payone_klarna_debit',
+                component: 'Payone_Core/js/view/payment/method-renderer/klarna_debit-method'
+            },
+            {
+                type: 'payone_klarna_installment',
+                component: 'Payone_Core/js/view/payment/method-renderer/klarna_installment-method'
+            },
+            {
+                type: 'payone_ratepay_invoice',
+                component: 'Payone_Core/js/view/payment/method-renderer/ratepay_invoice-method'
+            },
+            {
+                type: 'payone_wechatpay',
+                component: 'Payone_Core/js/view/payment/method-renderer/wechatpay-method'
+            },
+            {
+                type: 'payone_trustly',
+                component: 'Payone_Core/js/view/payment/method-renderer/trustly-method'
+            },
+            {
+                type: 'payone_applepay',
+                component: 'Payone_Core/js/view/payment/method-renderer/applepay-method'
+            },
+            {
+                type: 'payone_bancontact',
+                component: 'Payone_Core/js/view/payment/method-renderer/bancontact-method'
             }
         );
         /** Add view logic here if needed */

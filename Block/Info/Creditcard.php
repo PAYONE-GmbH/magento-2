@@ -39,8 +39,10 @@ class Creditcard extends Base
     protected function getCreditcardType($sShortType)
     {
         $aTypes = CreditcardTypes::getCreditcardTypes();
-        if (array_key_exists($sShortType, $aTypes) !== false) {
-            return $aTypes[$sShortType]['name'];
+        foreach ($aTypes as $aTypeEntry) {
+            if ($aTypeEntry['cardtype'] === $sShortType) {
+                return $aTypeEntry['name'];
+            }
         }
         return '';
     }

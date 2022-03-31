@@ -97,6 +97,16 @@ class Shop extends \Payone\Core\Helper\Base
     }
 
     /**
+     * Returns the stores base url
+     *
+     * @return string
+     */
+    public function getStoreBaseUrl()
+    {
+        return $this->storeManager->getStore()->getBaseUrl();
+    }
+
+    /**
      * Return locale config of current store
      *
      * @return string

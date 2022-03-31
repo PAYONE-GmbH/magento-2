@@ -53,14 +53,14 @@ class ConfirmOrderReferenceTest extends BaseTestCase
      */
     private $shopHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
         $this->apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $this->shopHelper->method('getConfigParam')->willReturn('12345');
-        
+
         $url = $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
         $url->method('getUrl')->willReturn('https://www.payone.com/');
 
@@ -75,12 +75,13 @@ class ConfirmOrderReferenceTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save'])
+            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save', 'getGrandTotal'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willReturn($quote);
+        $quote->method('getGrandTotal')->willReturn(100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -90,7 +91,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($payment, $quote, 100,'123', '123');
+        $result = $this->classToTest->sendRequest($payment, $quote, '123', '123');
         $this->assertEquals($response, $result);
     }
 
@@ -100,12 +101,13 @@ class ConfirmOrderReferenceTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save'])
+            ->setMethods(['getQuoteCurrencyCode', 'getReservedOrderId', 'reserveOrderId', 'save', 'getGrandTotal'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getReservedOrderId')->willReturn(false);
         $quote->method('reserveOrderId')->willReturn($quote);
         $quote->method('save')->willThrowException($exception);
+        $quote->method('getGrandTotal')->willReturn(100);
 
         $payment = $this->getMockBuilder(AmazonPay::class)->disableOriginalConstructor()->getMock();
         $payment->method('getOperationMode')->willReturn('test');
@@ -115,7 +117,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
 
-        $result = $this->classToTest->sendRequest($payment, $quote, 100,'123', '123');
+        $result = $this->classToTest->sendRequest($payment, $quote,'123', '123');
         $this->assertEquals($response, $result);
     }
 }

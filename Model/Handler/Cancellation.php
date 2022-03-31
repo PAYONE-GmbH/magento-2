@@ -31,6 +31,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Framework\Exception\LocalizedException;
 use \Magento\Quote\Api\CartRepositoryInterface as QuoteRepo;
+use Payone\Core\Model\ResourceModel\TransactionStatus;
 
 class Cancellation
 {
@@ -56,17 +57,60 @@ class Cancellation
     protected $quoteRepository;
 
     /**
+     * TransactionStatus resource model
+     *
+     * @var TransactionStatus
+     */
+    protected $transactionStatus;
+
+    /**
      * Constructor
      *
-     * @param Session      $checkoutSession
-     * @param OrderFactory $orderFactory
-     * @param QuoteRepo    $quoteRepository
+     * @param Session           $checkoutSession
+     * @param OrderFactory      $orderFactory
+     * @param QuoteRepo         $quoteRepository
+     * @param TransactionStatus $transactionStatus
      */
-    public function __construct(Session $checkoutSession, OrderFactory $orderFactory, QuoteRepo $quoteRepository)
+    public function __construct(Session $checkoutSession, OrderFactory $orderFactory, QuoteRepo $quoteRepository, TransactionStatus $transactionStatus)
     {
         $this->checkoutSession = $checkoutSession;
         $this->orderFactory = $orderFactory;
         $this->quoteRepository = $quoteRepository;
+        $this->transactionStatus = $transactionStatus;
+    }
+
+    /**
+     * Determines if order should be canceled
+     *
+     * @param  Order $order
+     * @return bool
+     */
+    protected function canCancelOrder(Order $order)
+    {
+        if ($this->hasReceivedAppointedStatus($order) === true) {
+            return false;
+        }
+
+        if ($order->hasInvoices() === true) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if an appointed status was sent for this order
+     *
+     * @param  Order $order
+     * @return bool
+     */
+    protected function hasReceivedAppointedStatus(Order $order)
+    {
+        $AppointedId = $this->transactionStatus->getAppointedIdByTxid($order->getPayoneTxid());
+        if (!empty($AppointedId)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -77,20 +121,24 @@ class Cancellation
         if ($this->checkoutSession->getPayoneCustomerIsRedirected()) {
             try {
                 $orderId = $this->checkoutSession->getLastOrderId();
+                /** @var Order $order */
                 $order = $orderId ? $this->orderFactory->create()->load($orderId) : false;
                 if ($order) {
-                    $order->cancel();
-                    $order->addStatusHistoryComment(__('The Payone transaction has been canceled.'), Order::STATE_CANCELED);
-                    $order->save();
+                    if ($this->canCancelOrder($order)) {
+                        $order->cancel();
+                        $order
+                            ->addStatusToHistory(Order::STATE_CANCELED, __('The Payone transaction has been canceled.'), false);
+                        $order->save();
 
-                    $oCurrentQuote = $this->checkoutSession->getQuote();
+                        $oCurrentQuote = $this->checkoutSession->getQuote();
 
-                    $quoteId = $this->checkoutSession->getLastQuoteId();
-                    $oOldQuote = $this->quoteRepository->get($quoteId);
-                    if ($oOldQuote && $oOldQuote->getId()) {
-                        $oCurrentQuote->merge($oOldQuote);
-                        $oCurrentQuote->collectTotals();
-                        $oCurrentQuote->save();
+                        $quoteId = $this->checkoutSession->getLastQuoteId();
+                        $oOldQuote = $this->quoteRepository->get($quoteId);
+                        if ($oOldQuote && $oOldQuote->getId()) {
+                            $oCurrentQuote->merge($oOldQuote);
+                            $oCurrentQuote->collectTotals();
+                            $oCurrentQuote->save();
+                        }
                     }
 
                     $this->checkoutSession

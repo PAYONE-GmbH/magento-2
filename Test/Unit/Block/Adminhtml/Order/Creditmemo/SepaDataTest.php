@@ -53,7 +53,7 @@ class SepaDataTest extends BaseTestCase
      */
     private $methodInstance;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 

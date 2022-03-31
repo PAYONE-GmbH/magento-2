@@ -41,7 +41,7 @@ class GetfileTest extends BaseTestCase
      */
     private $classToTest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 

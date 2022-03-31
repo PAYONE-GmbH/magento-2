@@ -39,7 +39,7 @@ class CreditcardTypesTest extends BaseTestCase
      */
     private $classToTest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
         $this->classToTest = $objectManager->getObject(ClassToTest::class);
@@ -48,12 +48,12 @@ class CreditcardTypesTest extends BaseTestCase
     public function testToOptionArray()
     {
         $result = $this->classToTest->toOptionArray();
-        $this->assertCount(8, $result);
+        $this->assertCount(7, $result);
     }
 
     public function testGetCreditcardTypes()
     {
         $result = CreditcardTypes::getCreditcardTypes();
-        $this->assertArrayHasKey('V', $result);
+        $this->assertArrayHasKey('visa', $result);
     }
 }

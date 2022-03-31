@@ -36,6 +36,8 @@ use Payone\Core\Helper\Shop;
 use Magento\Customer\Setup\CustomerSetupFactory;
 use Payone\Core\Helper\Payment;
 use Magento\Store\Model\ScopeInterface;
+use Payone\Core\Model\PayoneConfig;
+use Payone\Core\Model\Source\CreditcardTypes;
 
 /**
  * Class UpgradeData
@@ -238,15 +240,6 @@ class UpgradeData implements UpgradeDataInterface
             $this->convertSerializedDataToJson($setup, $serializedRows);
         }
 
-        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_installment_duration')) {
-            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
-            $salesInstaller->addAttribute(
-                'order',
-                'payone_installment_duration',
-                ['type' => 'integer', 'length' => null]
-            );
-        }
-
         if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_express_type')) {
             $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
             $salesInstaller->addAttribute(
@@ -275,7 +268,20 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_ratepay_shop_id')) {
+            $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+            $salesInstaller->addAttribute(
+                'order',
+                'payone_ratepay_shop_id',
+                ['type' => 'varchar', 'length' => 32, 'default' => '']
+            );
+        }
+
         $this->deactivateNewPaymentMethods($setup);
+
+        if (version_compare($context->getVersion(), '2.8.0', '<=')) { // pre update version is less than or equal to 2.8.0
+            $this->convertCreditcardTypesConfig($setup);
+        }
 
         $setup->endSetup();
     }
@@ -317,6 +323,44 @@ class UpgradeData implements UpgradeDataInterface
     }
 
     /**
+     * Updates configured creditcard types from old data handling to new data handling
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @return void
+     */
+    protected function convertCreditcardTypesConfig(ModuleDataSetupInterface $setup)
+    {
+        $select = $setup->getConnection()
+            ->select()
+            ->from($setup->getTable('core_config_data'), ['config_id', 'value'])
+            ->where('path = "payone_payment/payone_creditcard/types"');
+        $result = $setup->getConnection()->fetchAssoc($select);
+
+        $cardTypes = CreditcardTypes::getCreditcardTypes();
+        foreach ($result as $row) {
+            $newCardTypes = [];
+            $activatedCardtypes = explode(',', $row['value']);
+            foreach ($activatedCardtypes as $activeCardType) {
+                if ($activeCardType == "C") {
+                    $newCardTypes[] = "discover";
+                } elseif ($activeCardType == "D") {
+                    $newCardTypes[] = "dinersclub";
+                } else {
+                    foreach ($cardTypes as $cardTypeId => $cardType) {
+                        if ($cardType['cardtype'] == $activeCardType) {
+                            $newCardTypes[] = $cardTypeId;
+                        }
+                    }
+                }
+            }
+
+            $data = ['value' => implode(",", $newCardTypes)];
+            $where = ['config_id = ?' => $row['config_id']];
+            $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
+        }
+    }
+
+    /**
      * Adds a config entry to the database to set the payment method to inactive
      *
      * @param  string $methodCode
@@ -324,6 +368,9 @@ class UpgradeData implements UpgradeDataInterface
      */
     protected function addPaymentInactiveConfig($methodCode)
     {
+        if ($methodCode == PayoneConfig::METHOD_KLARNA_BASE) { // Klarna base has to stay active
+            return;
+        }
         $this->configWriter->save('payment/'.$methodCode.'/active', 0);
     }
 

@@ -39,6 +39,7 @@ define(
                 iban: '',
                 bic: '',
                 tradeRegistryNumber: '',
+                companyUid: '',
                 agreement: false,
                 mandate: false
             },
@@ -51,6 +52,7 @@ define(
                         'iban',
                         'bic',
                         'tradeRegistryNumber',
+                        'companyUid',
                         'agreement',
                         'mandate'
                     ]);
@@ -66,10 +68,6 @@ define(
                 }
                 if (this.requestBirthday()) {
                     parentReturn.additional_data.dateofbirth = this.birthyear() + this.birthmonth() + this.birthday();
-                }
-                if (this.isB2bMode()) {
-                    parentReturn.additional_data.trade_registry_number = this.tradeRegistryNumber();
-                    parentReturn.additional_data.b2bmode = true;
                 }
                 parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
                 parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
@@ -100,24 +98,17 @@ define(
                 $('#' + this.getCode() + '_overlay').hide();
             },
             getPrivacyDeclaration: function () {
-                return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.invoice;
-            },
-            isB2bMode: function () {
-                if (window.checkoutConfig.payment.payone.payolution.b2bMode.invoice == true &&
-                    quote.billingAddress() != null &&
-                    typeof quote.billingAddress().company != 'undefined' &&
-                    quote.billingAddress().company != ''
-                ) {
-                    return true;
-                }
-                return false;
+                return window.checkoutConfig.payment.payone.payolution.privacyDeclaration.debit;
             },
             requestBirthday: function () {
-                return !this.isB2bMode();
+                if (quote.billingAddress() == null) {
+                    return false;
+                }
+                return true;
             },
             validate: function () {
                 if (this.agreement() == false) {
-                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Paysafe Pay Later™!')});
+                    this.messageContainer.addErrorMessage({'message': $t('Please confirm the transmission of the necessary data to Unzer!')});
                     return false;
                 }
                 if (this.mandate() == false) {
