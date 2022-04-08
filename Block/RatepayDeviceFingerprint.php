@@ -27,6 +27,7 @@
 namespace Payone\Core\Block;
 
 use Magento\Framework\View\Element\Template;
+use Payone\Core\Model\PayoneConfig;
 
 class RatepayDeviceFingerprint extends Template
 {
@@ -36,16 +37,27 @@ class RatepayDeviceFingerprint extends Template
     protected $ratepayHelper;
 
     /**
+     * @var \Payone\Core\Helper\Payment
+     */
+    protected $paymentHelper;
+
+    /**
      * Constructor
      *
      * @param Template\Context              $context
      * @param \Payone\Core\Helper\Ratepay   $ratepayHelper
+     * @param \Payone\Core\Helper\Payment   $paymentHelper
      * @param array                         $data
      */
-    public function __construct(Template\Context $context, \Payone\Core\Helper\Ratepay $ratepayHelper, array $data = [])
-    {
+    public function __construct(
+        Template\Context $context,
+        \Payone\Core\Helper\Ratepay $ratepayHelper,
+        \Payone\Core\Helper\Payment $paymentHelper,
+        array $data = []
+    ) {
         parent::__construct($context, $data);
         $this->ratepayHelper = $ratepayHelper;
+        $this->paymentHelper = $paymentHelper;
     }
 
     /**
@@ -66,5 +78,34 @@ class RatepayDeviceFingerprint extends Template
     public function getDevicefingerprintToken()
     {
         return $this->ratepayHelper->getRatepayDeviceFingerprintToken();
+    }
+
+    /**
+     * Determine if at least one of the three Ratepay methods is activated
+     *
+     * @return false
+     */
+    protected function isRatepayMethodActive()
+    {
+        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INVOICE) === false ||
+            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_DEBIT) === false ||
+            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INSTALLMENT) === false
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Render block HTML
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        if ($this->isRatepayMethodActive() === false) {
+            return '';
+        }
+        return parent::_toHtml();
     }
 }

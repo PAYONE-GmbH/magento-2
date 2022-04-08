@@ -27,6 +27,7 @@
 namespace Payone\Core\Service\V1;
 
 use Payone\Core\Api\InstallmentPlanInterface;
+use Payone\Core\Helper\Api;
 use Payone\Core\Service\V1\Data\InstallmentPlanResponse;
 use Payone\Core\Api\Data\InstallmentPlanResponseInterfaceFactory;
 use Magento\Checkout\Model\Session;
@@ -34,6 +35,8 @@ use Payone\Core\Model\Api\Request\Genericpayment\Calculation;
 use Payone\Core\Model\Api\Request\Genericpayment\PreCheck;
 use Payone\Core\Model\Methods\Payolution\Installment;
 use Payone\Core\Block\Payolution\InstallmentPlan as Block;
+use Payone\Core\Helper\Ratepay;
+use Payone\Core\Model\Methods\Ratepay\Installment as RatepayInstallment;
 
 /**
  * Web API model for the PAYONE addresscheck
@@ -66,7 +69,7 @@ class InstallmentPlan implements InstallmentPlanInterface
      *
      * @var Installment
      */
-    protected $payment;
+    protected $payolution;
 
     /**
      * InstallmentRate Block object
@@ -83,29 +86,53 @@ class InstallmentPlan implements InstallmentPlanInterface
     protected $precheck;
 
     /**
+     * @var Ratepay
+     */
+    protected $ratepayHelper;
+
+    /**
+     * @var RatepayInstallment
+     */
+    protected $ratepayInstallment;
+
+    /**
+     * @var Api
+     */
+    protected $apiHelper;
+
+    /**
      * Constructor.
      *
      * @param InstallmentPlanResponseInterfaceFactory $responseFactory
      * @param Session                                 $checkoutSession
      * @param PreCheck                                $precheck
      * @param Calculation                             $calculation
-     * @param Installment                             $payment
+     * @param Installment                             $payolution
      * @param Block                                   $block
+     * @param Ratepay                                 $ratepayHelper
+     * @param RatepayInstallment                      $ratepayInstallment
+     * @param Api                                     $apiHelper
      */
     public function __construct(
         InstallmentPlanResponseInterfaceFactory $responseFactory,
         Session $checkoutSession,
         PreCheck $precheck,
         Calculation $calculation,
-        Installment $payment,
-        Block $block
+        Installment $payolution,
+        Block $block,
+        Ratepay $ratepayHelper,
+        RatepayInstallment $ratepayInstallment,
+        Api $apiHelper
     ) {
         $this->responseFactory = $responseFactory;
         $this->checkoutSession = $checkoutSession;
         $this->precheck = $precheck;
         $this->calculation = $calculation;
-        $this->payment = $payment;
+        $this->payolution = $payolution;
         $this->block = $block;
+        $this->ratepayInstallment = $ratepayInstallment;
+        $this->ratepayHelper = $ratepayHelper;
+        $this->apiHelper = $apiHelper;
     }
 
     /**
@@ -163,10 +190,10 @@ class InstallmentPlan implements InstallmentPlanInterface
         $oResponse->setData('success', false); // set success to false as default, set to true later if true
 
         $oQuote = $this->checkoutSession->getQuote();
-        $aResponsePreCheck = $this->precheck->sendRequest($this->payment, $oQuote, false, $birthday, $email);
+        $aResponsePreCheck = $this->precheck->sendRequest($this->payolution, $oQuote, false, $birthday, $email);
         $aResponseCalculation = false;
         if (isset($aResponsePreCheck['status']) && $aResponsePreCheck['status'] == 'OK') {
-            $aResponseCalculation = $this->calculation->sendRequest($this->payment, $oQuote);
+            $aResponseCalculation = $this->calculation->sendRequest($this->payolution, $oQuote);
             $aInstallmentData = $this->parseResponse($aResponseCalculation);
             if (isset($aResponseCalculation['status']) && $aResponseCalculation['status'] == 'OK' && $aInstallmentData !== false) {
                 $oResponse->setData('success', true); // set success to false as default, set to true later if true
@@ -174,12 +201,48 @@ class InstallmentPlan implements InstallmentPlanInterface
                 $this->checkoutSession->setInstallmentWorkorderId($aResponseCalculation['workorderid']);
 
                 $this->block->setInstallmentData($aInstallmentData);
-                $this->block->setCode($this->payment->getCode());
+                $this->block->setCode($this->payolution->getCode());
 
                 $oResponse->setData('installmentPlanHtml', $this->block->toHtml());
             }
         }
         $oResponse = $this->checkForErrors($oResponse, $aResponsePreCheck, $aResponseCalculation);
+        return $oResponse;
+    }
+
+    /**
+     * PAYONE addresscheck
+     * The full class-paths must be given here otherwise the Magento 2 WebApi
+     * cant handle this with its fake type system!
+     *
+     * @param  string $cartId
+     * @param  string $calcType
+     * @param  int $calcValue
+     * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
+     */
+    public function getInstallmentPlanRatepay($cartId, $calcType, $calcValue)
+    {
+        $oResponse = $this->responseFactory->create();
+        $oResponse->setData('success', false); // set success to false as default, set to true later if true
+
+        $oQuote = $this->checkoutSession->getQuote();
+
+        $sRatepayShopId = $this->ratepayHelper->getRatepayShopId($this->ratepayInstallment->getCode(), $oQuote->getBillingAddress()->getCountryId(), $this->apiHelper->getCurrencyFromQuote($oQuote), $this->apiHelper->getQuoteAmount($oQuote));
+
+        $aResponseCalculation = $this->calculation->sendRequestRatepay($this->ratepayInstallment, $oQuote, $sRatepayShopId, $calcType, $calcValue);
+        if ($aResponseCalculation['status'] == "OK") {
+            unset($aResponseCalculation['status']);
+            unset($aResponseCalculation['workorderid']);
+            $aInstallmentPlan = [];
+            foreach ($aResponseCalculation as $sKey => $sValue) {
+                $sKey = str_replace("add_paydata", "", $sKey);
+                $sKey = str_replace(["[", "]"], "", $sKey);
+                $sKey = str_replace("-", "_", $sKey);
+                $aInstallmentPlan[$sKey] = $sValue;
+            }
+            $oResponse->setData('installmentPlan', json_encode($aInstallmentPlan));
+            $oResponse->setData('success', true);
+        }
         return $oResponse;
     }
 

@@ -31,11 +31,13 @@ define(
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Payone_Core/payment/ratepay_invoice',
+                template: 'Payone_Core/payment/ratepay_debit',
                 birthday: '',
                 birthmonth: '',
                 birthyear: '',
-                telephone: ''
+                telephone: '',
+                iban: '',
+                bic: ''
             },
             initObservable: function () {
                 this._super()
@@ -43,9 +45,35 @@ define(
                         'birthday',
                         'birthmonth',
                         'birthyear',
-                        'telephone'
+                        'telephone',
+                        'iban',
+                        'bic'
                     ]);
                 return this;
+            },
+            getData: function () {
+                var parentReturn = this._super();
+
+                parentReturn.additional_data.iban = this.iban();
+                if (this.requestBic()) {
+                    parentReturn.additional_data.bic = this.bic();
+                }
+
+                return parentReturn;
+            },
+            validate: function () {
+                var parentReturn = this._super();
+
+                if (this.iban() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
+                    return false;
+                }
+                if (this.requestBic() && this.bic() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid BIC.')});
+                    return false;
+                }
+
+                return parentReturn;
             }
         });
     }
