@@ -48,13 +48,6 @@ class Export extends \Payone\Core\Model\Export\Xml
     protected $configExportHelper;
 
     /**
-     * ChecksumCheck model
-     *
-     * @var \Payone\Core\Model\ChecksumCheck
-     */
-    protected $checksumCheck;
-
-    /**
      * Store manage object
      *
      * @var \Magento\Store\Model\StoreManagerInterface
@@ -79,7 +72,6 @@ class Export extends \Payone\Core\Model\Export\Xml
      * Constructor
      *
      * @param \Payone\Core\Helper\ConfigExport           $configExportHelper
-     * @param \Payone\Core\Model\ChecksumCheck           $checksumCheck
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Payment                $paymentHelper
      * @param \Payone\Core\Helper\Shop                   $shopHelper
@@ -87,7 +79,6 @@ class Export extends \Payone\Core\Model\Export\Xml
      */
     public function __construct(
         \Payone\Core\Helper\ConfigExport $configExportHelper,
-        \Payone\Core\Model\ChecksumCheck $checksumCheck,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Payment $paymentHelper,
         \Payone\Core\Helper\Shop $shopHelper,
@@ -95,7 +86,6 @@ class Export extends \Payone\Core\Model\Export\Xml
     ) {
         parent::__construct($shopHelper);
         $this->configExportHelper = $configExportHelper;
-        $this->checksumCheck = $checksumCheck;
         $this->storeManager = $storeManager;
         $this->paymentHelper = $paymentHelper;
         $this->addresscheck = $addresscheck;
@@ -305,44 +295,6 @@ class Export extends \Payone\Core\Model\Export\Xml
     }
 
     /**
-     * Write checksum status to the xml
-     *
-     * @return void
-     */
-    protected function addChecksums()
-    {
-        $aErrors = $this->checksumCheck->getChecksumErrors();
-        if ($aErrors === false) {
-            $this->writeNode("status", "Correct", 2);
-        } elseif (is_array($aErrors) && !empty($aErrors)) {
-            $this->writeNode("status", "Error", 2);
-            $this->writeToXml('<errors>', 2);
-            foreach ($aErrors as $sError) {
-                $this->writeNode("error", base64_encode($sError), 3);
-            }
-            $this->writeToXml('</errors>', 2);
-        }
-    }
-
-    /**
-     * Add status info to xml
-     *
-     * @return void
-     */
-    protected function addStatus()
-    {
-        $this->writeToXml('<checksums>', 1);
-        if (ini_get('allow_url_fopen') == 0) {
-            $this->writeNode("status", "Cant verify checksums, allow_url_fopen is not activated on customer-server", 2);
-        } elseif (!function_exists('curl_init')) {
-            $this->writeNode("status", "Cant verify checksums, curl is not activated on customer-server", 2);
-        } else {
-            $this->addChecksums();
-        }
-        $this->writeToXml('</checksums>', 1);
-    }
-
-    /**
      * Get all stores and write the config xml entries for each shop to the xml
      *
      * @return void
@@ -365,7 +317,6 @@ class Export extends \Payone\Core\Model\Export\Xml
         $this->writeToXml('<?xml version="1.0" encoding="UTF-8"?>');
         $this->writeToXml('<config>');
         $this->addShopConfigs();
-        $this->addStatus();
         $this->writeToXml('</config>');
         return $this->getXmlContent();
     }
