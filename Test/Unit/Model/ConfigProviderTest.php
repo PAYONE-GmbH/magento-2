@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Model;
 
 use Magento\Quote\Model\Quote;
+use Payone\Core\Helper\Shop;
 use Payone\Core\Model\ConfigProvider as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Helper\Data;
@@ -122,7 +123,10 @@ class ConfigProviderTest extends BaseTestCase
         
         $this->customerSession = $this->getMockBuilder(CustomerSession::class)->disableOriginalConstructor()->getMock();
         $this->customerSession->method('getCustomer')->willReturn($customer);
-        
+
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'dataHelper' => $this->dataHelper,
             'countryHelper' => $countryHelper,
@@ -135,6 +139,7 @@ class ConfigProviderTest extends BaseTestCase
             'checkoutSession' => $this->checkoutSession,
             'savedPaymentData' => $savedPaymentData,
             'customerSession' => $this->customerSession,
+            'shopHelper' => $shopHelper
         ]);
     }
 

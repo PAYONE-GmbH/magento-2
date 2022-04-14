@@ -113,6 +113,7 @@ class PreCheckTest extends BaseTestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('getQuoteAmount')->willReturn(100);
 
         $result = $this->classToTest->sendRequest($payment, $quote, false, 'birthday');
         $this->assertEquals($response, $result);

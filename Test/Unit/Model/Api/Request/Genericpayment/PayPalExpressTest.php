@@ -84,6 +84,7 @@ class PayPalExpressTest extends BaseTestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('getQuoteAmount')->willReturn(100);
 
         $result = $this->classToTest->sendRequest($quote, $payment, 100);
         $this->assertEquals($response, $result);
@@ -108,6 +109,7 @@ class PayPalExpressTest extends BaseTestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('getQuoteAmount')->willReturn(123);
 
         $result = $this->classToTest->sendRequest($quote, $payment);
         $this->assertEquals($response, $result);

@@ -216,9 +216,9 @@ class ChecksumCheck
             return false;
         }
 
-        $aErrors = json_decode(stripslashes($sResult));
+        $aErrors = json_decode(stripslashes($sResult) ?? '', true);
         if ($aErrors === null) {// fallback for when stripslashes is not needed
-            $aErrors = json_decode($sResult);
+            $aErrors = json_decode($sResult ?? '', true);
         }
         if (is_array($aErrors)) {
             return $aErrors;

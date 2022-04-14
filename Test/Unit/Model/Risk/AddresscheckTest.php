@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Risk;
 
+use Payone\Core\Helper\Shop;
 use Payone\Core\Model\Risk\Addresscheck as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Model\Api\Request\Addresscheck;
@@ -90,9 +91,12 @@ class AddresscheckTest extends BaseTestCase
         $this->quote->method('isVirtual')->willReturn(false);
         $this->quote->method('getSubtotal')->willReturn(100);
 
-        #$this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
-        #$this->toolkitHelper->method('handleSubstituteReplacement')->willReturn('Invalid message');
-        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
+
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, [
+            'shopHelper' => $shopHelper
+        ]);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -272,10 +276,9 @@ class AddresscheckTest extends BaseTestCase
 
     public function testGetScorePersonstatusNoMapping()
     {
-        $status = 'x';
         $this->databaseHelper->expects($this->any())
             ->method('getConfigParam')
-            ->willReturnMap([['mapping', 'personstatus', 'payone_protect', null, $this->toolkitHelper->serialize($status)]]);
+            ->willReturnMap([['mapping', 'personstatus', 'payone_protect', null, $this->toolkitHelper->serialize([])]]);
 
         $this->addresscheck->method('sendRequest')->willReturn(['personstatus' => 'ABC']);
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
