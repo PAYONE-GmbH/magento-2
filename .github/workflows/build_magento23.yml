@@ -16,11 +16,11 @@ jobs:
 
     services:
       mysql:
-        image: mariadb:10.3
+        image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
-          - '3306:3306'
+          - 3306:3306
 
     steps:
     - uses: actions/checkout@v2
@@ -35,6 +35,12 @@ jobs:
       
     - name: PHP Syntax Checker
       run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
+
+    - name: Start MySQL
+      run: sudo /etc/init.d/mysql start
+
+    - name: Check Mysql server
+      run: systemctl status mysql
       
     - name: Setup Magento 2 and run tests
       run: |
