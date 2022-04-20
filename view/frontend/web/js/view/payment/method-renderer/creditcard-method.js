@@ -68,7 +68,7 @@ define(
                 if (this.isSaveDataEnabled()) {
                     parentReturn.additional_data.saveData = this.saveData();
                     parentReturn.additional_data.selectedData = this.getSelectedSavedCardPan();
-                    if (parentReturn.additional_data.selectedData !== 'new') {
+                    if (parentReturn.additional_data.selectedData !== 'new' && this.useSaveDataMode()) {
                         parentReturn.additional_data.cardholder = this.getSelectedSavedCardholder();
                     }
                 }
