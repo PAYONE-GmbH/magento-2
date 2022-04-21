@@ -69,7 +69,11 @@ define(
                     parentReturn.additional_data.saveData = this.saveData();
                     parentReturn.additional_data.selectedData = this.getSelectedSavedCardPan();
                     if (parentReturn.additional_data.selectedData !== 'new' && this.useSaveDataMode()) {
+                        var savedData = this.getSelectedSavedData();
                         parentReturn.additional_data.cardholder = this.getSelectedSavedCardholder();
+                        parentReturn.additional_data.truncatedcardpan = savedData.masked;
+                        parentReturn.additional_data.cardtype = savedData.cardtype;
+                        parentReturn.additional_data.cardexpiredate = savedData.cardexpiredate;
                     }
                 }
                 return parentReturn;
