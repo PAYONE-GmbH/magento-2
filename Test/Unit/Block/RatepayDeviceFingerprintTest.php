@@ -32,6 +32,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Payment;
+use Payone\Core\Helper\Payment as PaymentHelper;
 use Payone\Core\Helper\Ratepay;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -49,18 +50,20 @@ class RatepayDeviceFingerprintTest extends BaseTestCase
     private $objectManager;
 
     /**
-     * @var Ratepay|\PHPUnit_Framework_MockObject_MockObject
+     * @var Payment|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $ratepayHelper;
+    private $paymentHelper;
 
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
         $this->ratepayHelper = $this->getMockBuilder(Ratepay::class)->disableOriginalConstructor()->getMock();
+        $this->paymentHelper = $this->getMockBuilder(PaymentHelper::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'ratepayHelper' => $this->ratepayHelper
+            'ratepayHelper' => $this->ratepayHelper,
+            'paymentHelper' => $this->paymentHelper,
         ]);
     }
 
@@ -80,5 +83,19 @@ class RatepayDeviceFingerprintTest extends BaseTestCase
 
         $result = $this->classToTest->getDevicefingerprintToken();
         $this->assertEquals($expected, $result);
+    }
+
+    public function testToHtml()
+    {
+        $result = $this->classToTest->toHtml();
+        $this->assertTrue(true);
+    }
+
+    public function testToHtmlEmpty()
+    {
+        $this->paymentHelper->method('isPaymentMethodActive')->willReturn(false);
+
+        $result = $this->classToTest->toHtml();
+        $this->assertEmpty($result);
     }
 }

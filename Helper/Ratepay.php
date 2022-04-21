@@ -235,4 +235,19 @@ class Ratepay extends \Payone\Core\Helper\Base
 
         return $sShopId;
     }
+
+    /**
+     * Get matching Ratepay shop config for current transaction
+     *
+     * @param string $sShopId
+     * @return array|false
+     */
+    public function getRatepayShopConfigById($sShopId)
+    {
+        $aProfileConfigs = $this->profileResource->getProfileConfigsByIds([$sShopId]);
+        if (!empty($aProfileConfigs)) {
+            return array_shift($aProfileConfigs);
+        }
+        return false;
+    }
 }

@@ -92,6 +92,8 @@ class RatepayBase extends PayoneMethod
     protected $aAssignKeys = [
         'telephone',
         'dateofbirth',
+        'iban',
+        'bic'
     ];
 
     /**

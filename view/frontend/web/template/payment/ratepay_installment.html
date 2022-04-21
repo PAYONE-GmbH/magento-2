@@ -1,0 +1,296 @@
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2020 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
+    </div>
+
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
+            <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="panel panel-default">
+                            <div class="panel-heading text-center" id="firstInput">
+                                <h3><!-- ko i18n: 'Runtime'--><!-- /ko --></h3>
+                                <!-- ko i18n: 'Amount of monthly installments'--><!-- /ko -->
+                            </div>
+                            <div class="panel-body">
+                                <!-- ko if: useMonthDropdown() -->
+                                    <select class="rp-term-select" data-bind="options: getAllowedMonths(), optionsCaption: $t('-- Please select runtime --'), event: {change: updateInstallmentPlanByTimeDropdown}"></select>
+                                <!--/ko-->
+                                <!-- ko ifnot: useMonthDropdown() -->
+                                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                        <!-- ko foreach: getAllowedMonths() -->
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" data-bind="attr: {value: $data, id: 'buttonMonth-' + $data}, text: $data, click: function() { $parent.updateInstallmentPlanByTime($data) }" class="btn btn-default" role="group"></button>
+                                        </div>
+                                        <!--/ko-->
+                                    </div>
+                                <!--/ko-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="panel panel-default">
+                            <div class="panel-heading text-center" id="secondInput">
+                                <h3><!-- ko i18n: 'Installment amount'--><!-- /ko --></h3>
+                                <!-- ko i18n: 'Amount of the monthly installment'--><!-- /ko -->
+                            </div>
+                            <div class="panel-body">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon">&euro;</span>
+                                    <input type="text" data-bind="attr: {id: getCode() + '-rate'}" class="form-control input-rate" aria-label="Amount" />
+                                    <span class="input-group-btn">
+                                        <button type="button" data-bind="attr: {id: getCode() + '_Input-button'}, event: {click: updateInstallmentPlanByAmount}" class="btn btn-default" role="group">
+                                            <!-- ko i18n: 'Calculate'--><!-- /ko -->
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="payoneClear"></div>
+                <div data-bind="attr: {id: getCode() + '_ResultContainer'}" class="ratepayInstallmentPlan" style="display: none;">
+                    <div class="table-striped">
+                        <div class="text-center text-uppercase"><!-- ko i18n: 'Personal calculation'--><!-- /ko --></div>
+                    </div>
+                    <div class="ratepayInstallmentPlanRow">
+                        <div class="small text-right">
+                            <a class="rp-link installmentToggle" data-bind="event: {click: toggleInstallmentPlanDetails}" style="display: block;"><!-- ko i18n: 'Show details'--><!-- /ko --></a>
+                            <a class="rp-link installmentToggle" data-bind="event: {click: toggleInstallmentPlanDetails}" style="display: none;"><!-- ko i18n: 'Hide details'--><!-- /ko --></a>
+                        </div>
+                    </div>
+                    <div class="installmentToggle" style="display: none;">
+                        <div class="ratepayInstallmentPlanRow">
+                            <div class="text-left"><!-- ko i18n: 'Basket amount'--><!-- /ko --></div>
+                            <div class="text-right" id="rp_installment_amount"></div>
+                        </div>
+                        <div class="ratepayInstallmentPlanRow">
+                            <div class="text-left"><!-- ko i18n: 'Servicecharge'--><!-- /ko --></div>
+                            <div class="text-right" id="rp_installment_service_charge"></div>
+                        </div>
+                        <div class="ratepayInstallmentPlanRow">
+                            <div class="text-left"><!-- ko i18n: 'Annual percentage rate'--><!-- /ko --></div>
+                            <div class="text-right" id="rp_installment_annual_percentage_rate"></div>
+                        </div>
+                        <div class="ratepayInstallmentPlanRow">
+                            <div class="text-left"><!-- ko i18n: 'Interest rate'--><!-- /ko --></div>
+                            <div class="text-right" id="rp_installment_interest_rate"></div>
+                        </div>
+                        <div class="ratepayInstallmentPlanRow">
+                            <div class="text-left"><!-- ko i18n: 'Interest amount'--><!-- /ko --></div>
+                            <div class="text-right" id="rp_installment_interest_amount"></div>
+                        </div>
+                        <div class="ratepayInstallmentPlanRow">&nbsp;</div>
+                        <div class="ratepayInstallmentPlanRow">
+                            <div class="text-left"><span id="rp_installment_number_of_rates"></span>  <!-- ko i18n: 'monthly installments à'--><!-- /ko --></div>
+                            <div class="text-right" id="rp_installment_rate_details"></div>
+                        </div>
+                        <div class="ratepayInstallmentPlanRow">
+                            <div class="text-left"><!-- ko i18n: 'incl. one final installment à'--><!-- /ko --></div>
+                            <div class="text-right" id="rp_installment_last_rate"></div>
+                        </div>
+                    </div>
+                    <div class="installmentToggle" style="display: block;">
+                        <div class="ratepayInstallmentPlanRowNoDetails">
+                            <div class="text-left"><span id="rp_installment_number_of_rates_full"></span>  <!-- ko i18n: 'monthly installments à'--><!-- /ko --></div>
+                            <div class="text-right" id="rp_installment_rate"></div>
+                        </div>
+                    </div>
+                    <div class="ratepayInstallmentPlanRow">
+                        <div class="text-left"><!-- ko i18n: 'Total amount'--><!-- /ko --></div>
+                        <div class="text-right" id="rp_installment_total_amount"></div>
+                    </div>
+                </div>
+                <!-- ko if: requestTelephone() -->
+                <div class="field number required">
+                    <label data-bind="attr: {for: getCode() + '_telephone'}" class="label">
+                        <span><!-- ko i18n: 'Telephone'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[telephone]" class="input-text" value=""
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_telephone',
+                                    title: $t('Telephone'),
+                                    'data-container': getCode() + '-telephone'},
+                              value: telephone,
+                              valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <!--/ko-->
+                <!-- ko if: requestBirthday() -->
+                <div class="field number required">
+                    <label data-bind="attr: {for: getCode() + '_birthday'}" class="label">
+                        <span><!-- ko i18n: 'Birthday'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[birthday]" class="input-text" value=""
+                               style="width:auto;margin-right:10px;"
+                               size="3" maxlength="2"
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_birthday',
+                                    title: $t('Day of birth'),
+                                    'data-container': getCode() + '-birthday'},
+                              value: birthday,
+                              valueUpdate: 'keyup' "/>
+                        <input type="text" name="payment[birthmonth]" class="input-text" value=""
+                               style="width:auto;margin-right:10px;"
+                               size="3" maxlength="2"
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_birthmonth',
+                                    title: $t('Month of birth'),
+                                    'data-container': getCode() + '-birthmonth'},
+                              value: birthmonth,
+                              valueUpdate: 'keyup' "/>
+                        <input type="text" name="payment[birthyear]" class="input-text" value=""
+                               style="width:auto;margin-right:10px;"
+                               size="8" maxlength="4"
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_birthyear',
+                                    title: $t('Year of birth'),
+                                    'data-container': getCode() + '-birthyear'},
+                              value: birthyear,
+                              valueUpdate: 'keyup' "/> <!-- ko i18n: '(DD.MM.YYYY)'--><!-- /ko -->
+                    </div>
+                </div>
+                <!--/ko-->
+                <div class="field number required paytypeToggle">
+                    <label data-bind="attr: {for: getCode() + '_iban'}" class="label">
+                        <span><!-- ko i18n: 'IBAN'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[iban]" class="input-text" value=""
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_iban',
+                                    title: $t('IBAN'),
+                                    'data-container': getCode() + '-iban'},
+                              value: iban,
+                              valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <!-- ko if: requestBic() -->
+                <div class="field number required paytypeToggle">
+                    <label data-bind="attr: {for: getCode() + '_bic'}" class="label">
+                        <span><!-- ko i18n: 'BIC'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[bic]" class="input-text" value=""
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_bic',
+                                    title: $t('BIC'),
+                                    'data-container': getCode() + '-bic'},
+                              value: bic,
+                              valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <!--/ko-->
+                <hr>
+                <a class="paytypeToggle" data-bind="click: togglePaytype"><!-- ko i18n: 'I want to transfer the installments myself and not pay by direct debit'--><!-- /ko --></a>
+                <a class="paytypeToggle" data-bind="click: togglePaytype" style="display: none;"><!-- ko i18n: 'I want to settle the installments by direct debit'--><!-- /ko --></a>
+            </fieldset>
+        </form>
+        <p data-bind="html: getInstructions()"></p>
+        <div class="ratepay-legal-text">
+            <!-- ko i18n: 'ratepay_legal_text_snippet_1'--><!-- /ko -->
+            <!-- ko i18n: 'Place Order'--><!-- /ko -->
+            <!-- ko i18n: 'ratepay_legal_text_snippet_2'--><!-- /ko -->
+            <a target='_blank' href='https://www.ratepay.com/legal-payment-terms'><!-- ko i18n: 'ratepay_legal_text_snippet_3'--><!-- /ko --></a>
+            <!-- ko i18n: 'ratepay_legal_text_snippet_4'--><!-- /ko -->
+            <a target='_blank' href='https://www.ratepay.com/legal-payment-dataprivacy'><!-- ko i18n: 'ratepay_legal_text_snippet_5'--><!-- /ko --></a>
+            <!-- ko i18n: 'ratepay_legal_text_snippet_6'--><!-- /ko -->
+        </div>
+        <div class="checkout-agreements-block">
+            <!-- ko foreach: $parent.getRegion('before-place-order') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div data-role="checkout-payone-boni-agreement">
+            <div class="checkout-payone-boni-agreement">
+                <!-- ko if: (isAgreementVisible()) -->
+                <!-- ko if: (canShowPaymentHintText()) -->
+                <div>
+                    <strong><span data-bind="html: getPaymentHintText()"></span></strong>
+                </div>
+                <!-- /ko -->
+                <!-- ko if: (canShowAgreementMessage()) -->
+                <div>
+                    <input type="checkbox"
+                           data-bind="attr: {
+                                                        'id': 'payone_boni_agreement_' + getCode(),
+                                                        'name': 'payone_boni_agreement',
+                                                        'value': '1'}" />
+                    <label data-bind="attr: {'for': 'payone_boni_agreement_' + getCode()}">
+                        <span data-bind="html: getAgreementMessage()"></span>
+                    </label>
+                </div>
+                <!-- /ko -->
+                <!-- /ko -->
+            </div>
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        type="submit"
+                        data-bind="
+                        click: placeOrder,
+                        attr: {title: $t('Place Order')},
+                        enable: (getCode() == isChecked()),
+                        css: {disabled: !isPlaceOrderActionAllowedRatePayInstallment()},
+                        visible: isPlaceOrderActionAllowedRatePayInstallment()
+                        "
+                        disabled>
+                    <span data-bind="i18n: 'Place Order'"></span>
+                </button>
+            </div>
+        </div>
+        <div class="payone_place_order_not_allowed" data-bind="visible: !isPlaceOrderActionAllowedRatePay()"><br>
+            <span><!-- ko i18n: 'Ratepay payment with differing billing- and shipping-address is not supported'--><!-- /ko --></span><div/>
+        </div>
+        <div class="payone_place_order_not_allowed" data-bind="visible: !installmentPlanSet()"><br>
+            <span><!-- ko i18n: 'Please select an installment plan to continue'--><!-- /ko --></span><div/>
+        </div>
+    </div>
+</div>

@@ -225,6 +225,16 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
+                <field id="payone_ratepay_debit" translate="label" sortOrder="313" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ratepay Directdebit</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
+                <field id="payone_ratepay_installment" translate="label" sortOrder="316" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ratepay Installment</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
                 <field id="payone_wechatpay" translate="label" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>WeChatPay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -293,6 +303,8 @@
             <include path="Payone_Core::system/payone_klarna_debit.xml"/>
             <include path="Payone_Core::system/payone_klarna_installment.xml"/>
             <include path="Payone_Core::system/payone_ratepay_invoice.xml"/>
+            <include path="Payone_Core::system/payone_ratepay_debit.xml"/>
+            <include path="Payone_Core::system/payone_ratepay_installment.xml"/>
             <include path="Payone_Core::system/payone_wechatpay.xml"/>
             <include path="Payone_Core::system/payone_trustly.xml"/>
             <include path="Payone_Core::system/payone_applepay.xml"/>
