@@ -24,32 +24,22 @@
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Source;
-
-use Magento\Framework\Option\ArrayInterface;
-use Payone\Core\Model\PayoneConfig;
+namespace Payone\Core\Block\Adminhtml\Config\Form\Field;
 
 /**
- * Source class for existing Amazon modes
+ * Admin-block for readonly fields
  */
-class AmazonMode implements ArrayInterface
+class ReadonlyElement extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
-     * Return existing Amazon modes
+     * Unset some non-related element parameters
      *
-     * @return array
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @return string
      */
-    public function toOptionArray()
+    public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        return [
-            [
-                'value' => 'synchronousFirst',
-                'label' => __('Asynchronous On Failure'),
-            ],
-            [
-                'value' => 'synchronous',
-                'label' => __('Always Synchronous')
-            ]
-        ];
+        $element->setReadonly(true);
+        return parent::render($element);
     }
 }

@@ -356,7 +356,7 @@ class UpgradeData implements UpgradeDataInterface
         $cardTypes = CreditcardTypes::getCreditcardTypes();
         foreach ($result as $row) {
             $newCardTypes = [];
-            $activatedCardtypes = explode(',', $row['value']);
+            $activatedCardtypes = explode(',', $row['value'] ?? '');
             foreach ($activatedCardtypes as $activeCardType) {
                 if ($activeCardType == "C") {
                     $newCardTypes[] = "discover";

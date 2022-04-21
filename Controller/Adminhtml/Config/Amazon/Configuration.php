@@ -96,10 +96,12 @@ class Configuration extends Action
         $aResult = $this->getConfiguration->sendRequest($this->payment);
         if ($this->_isAllowed() && isset($aResult['status'])) {
             if ($aResult['status'] == 'OK') {
+                $aData = [];
                 $aData['success'] = true;
                 $aData['client_id'] = $aResult['add_paydata[client_id]'];
                 $aData['seller_id'] = $aResult['add_paydata[seller_id]'];
             } elseif ($aResult['status'] == 'ERROR') {
+                $aData = [];
                 $aData['success'] = false;
                 $aData['errormessage'] = $aResult['errormessage'];
             }

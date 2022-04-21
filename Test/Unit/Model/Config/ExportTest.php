@@ -29,7 +29,6 @@ namespace Payone\Core\Test\Unit\Model\Config;
 use Payone\Core\Model\Config\Export as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\ConfigExport;
-use Payone\Core\Model\ChecksumCheck;
 use Magento\Store\Model\StoreManagerInterface;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Model\PayoneConfig;
@@ -52,11 +51,6 @@ class ExportTest extends BaseTestCase
      */
     private $objectManager;
 
-    /**
-     * @var ChecksumCheck|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $checksumCheck;
-
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -74,8 +68,6 @@ class ExportTest extends BaseTestCase
         $configExportHelper->method('getForwardings')->willReturn([
             ['status' => 'appointed', 'url' => 'http://testdomain.org', 'timeout' => '45']
         ]);
-
-        $this->checksumCheck = $this->getMockBuilder(ChecksumCheck::class)->disableOriginalConstructor()->getMock();
 
         $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
         $store->method('getName')->willReturn('Testshop');
@@ -98,7 +90,6 @@ class ExportTest extends BaseTestCase
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'shopHelper' => $shopHelper,
             'configExportHelper' => $configExportHelper,
-            'checksumCheck' => $this->checksumCheck,
             'storeManager' => $storeManager,
             'paymentHelper' => $paymentHelper,
             'addresscheck' => $addresscheck
@@ -107,16 +98,12 @@ class ExportTest extends BaseTestCase
 
     public function testHandleForwardings()
     {
-        $this->checksumCheck->method('getChecksumErrors')->willReturn(false);
-
         $result = $this->classToTest->generateConfigExportXml();
         $this->assertNotEmpty($result);
     }
 
     public function testHandleForwardingsChecksumError()
     {
-        $this->checksumCheck->method('getChecksumErrors')->willReturn(['Something is wrong']);
-
         $result = $this->classToTest->generateConfigExportXml();
         $this->assertNotEmpty($result);
     }

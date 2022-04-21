@@ -33,6 +33,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Payone\Core\Helper\Shop;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -73,7 +74,12 @@ class PaymentTest extends BaseTestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
-        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
+
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, [
+            'shopHelper' => $shopHelper
+        ]);
 
         $this->payment = $this->objectManager->getObject(Payment::class, [
             'context' => $context,
@@ -191,11 +197,9 @@ class PaymentTest extends BaseTestCase
 
     public function testGetKlarnaStoreIdsEmpty()
     {
-        $storeIds = '';
-
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize($storeIds)]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize([])]]);
 
         $expected = [];
         $result = $this->payment->getKlarnaStoreIds();

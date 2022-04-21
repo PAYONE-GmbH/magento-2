@@ -43,11 +43,11 @@
         </field>
         <field id="client_id" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Client-ID</label>
-            <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\Readonly</frontend_model>
+            <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\ReadonlyElement</frontend_model>
         </field>
         <field id="seller_id" translate="label" type="text" sortOrder="17" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Seller-ID</label>
-            <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\Readonly</frontend_model>
+            <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\ReadonlyElement</frontend_model>
         </field>
         <field id="get_configuration" translate="button_label" sortOrder="19" showInDefault="1" showInWebsite="1" showInStore="1">
             <button_label>Get configuration</button_label>

@@ -19,23 +19,20 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2018 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Setup;
+namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
-use Payone\Core\Setup\UpgradeSchema as ClassToTest;
+use Payone\Core\Block\Adminhtml\Config\Form\Field\ReadonlyElement as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Setup\SchemaSetupInterface;
-use Magento\Framework\Setup\ModuleContextInterface;
-use Magento\Framework\DB\Adapter\AdapterInterface;
-use Magento\Framework\DB\Ddl\Table;
+use Magento\Framework\Data\Form\Element\AbstractElement;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class UpgradeSchemaTest extends BaseTestCase
+class ReadonlyElementTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -51,26 +48,14 @@ class UpgradeSchemaTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, []);
     }
 
-    public function testUpgrade()
+    public function testRender()
     {
-        $table = $this->getMockBuilder(Table::class)->disableOriginalConstructor()->getMock();
+        $element = $this->getMockBuilder(AbstractElement::class)->disableOriginalConstructor()->getMock();
 
-        $connection = $this->getMockBuilder(AdapterInterface::class)->disableOriginalConstructor()->getMock();
-        $connection->method('isTableExists')->willReturn(false);
-        $connection->method('newTable')->willReturn($table);
-
-        $setup = $this->getMockBuilder(SchemaSetupInterface::class)->disableOriginalConstructor()->getMock();
-        $setup->method('getConnection')->willReturn($connection);
-        $setup->method('getTable')->willReturn('table');
-        $setup->method('getIdxName')->willReturn('name');
-
-        $context = $this->getMockBuilder(ModuleContextInterface::class)->disableOriginalConstructor()->getMock();
-        $context->method('getVersion')->willReturn("2.4.4");
-
-        $result = $this->classToTest->upgrade($setup, $context);
-        $this->assertNull($result);
+        $result = $this->classToTest->render($element);
+        $this->assertNotEmpty($result);
     }
 }

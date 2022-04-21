@@ -201,7 +201,7 @@ class Consumerscore extends \Payone\Core\Helper\Base
         }
 
         $aMethods = [];
-        if (!empty($sScore)) {
+        if (!empty($sScore) && !empty($sMethods)) {
             $aMethods = explode(',', $sMethods); // config comes as a concatinated string
         }
         return $aMethods;
@@ -273,7 +273,9 @@ class Consumerscore extends \Payone\Core\Helper\Base
     public function getConsumerscoreEnabledMethods()
     {
         $sEnabledMethods = $this->getConfigParam('enabled_for_payment_methods', 'creditrating', 'payone_protect');
-        $aEnabledMethods = explode(',', $sEnabledMethods);
-        return $aEnabledMethods;
+        if (!empty($sEnabledMethods)) {
+            return explode(',', $sEnabledMethods);
+        }
+        return [];
     }
 }
