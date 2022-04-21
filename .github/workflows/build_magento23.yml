@@ -38,9 +38,6 @@ jobs:
 
     - name: Delay for mysql startup
       run: sleep 20
-
-    - name: Check mysql status
-      run: systemctl status mysql
       
     - name: Setup Magento 2 and run tests
       run: |
