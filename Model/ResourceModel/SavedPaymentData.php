@@ -201,9 +201,10 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      *
      * @param  int         $iCustomerId
      * @param  string|bool $sPaymentMethod
+     * @param  bool        $blFilterInactiveTypes
      * @return array
      */
-    public function getSavedPaymentData($iCustomerId, $sPaymentMethod = false)
+    public function getSavedPaymentData($iCustomerId, $sPaymentMethod = false, $blFilterInactiveTypes = true)
     {
         if (!$iCustomerId) {
             return [];
@@ -234,7 +235,7 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
         $aResult = $this->getConnection()->fetchAll($oSelect, $aParams);
         foreach ($aResult as $aRow) {
             $aRow = $this->formatData($aRow);
-            if (!empty($aRow['payment_data']) && ($sPaymentMethod != PayoneConfig::METHOD_CREDITCARD || in_array($aRow['payment_data']['cardtype'], $aCreditcardTypes))) {
+            if (!empty($aRow['payment_data']) && ($sPaymentMethod != PayoneConfig::METHOD_CREDITCARD || $blFilterInactiveTypes === false || in_array($aRow['payment_data']['cardtype'], $aCreditcardTypes))) {
                 $aReturn[] = $aRow;
             }
         }
