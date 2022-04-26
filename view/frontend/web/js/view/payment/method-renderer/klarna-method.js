@@ -44,10 +44,17 @@ define(
                 template: 'Payone_Core/payment/klarna'
             },
             authToken: false,
+            canBeAuthorized: false,
             methodCategories: {
                 payone_klarna_invoice: 'pay_later',
                 payone_klarna_debit: 'direct_debit',
                 payone_klarna_installment: 'pay_over_time',
+            },
+
+            initialize: function () {
+                this._super();
+                this.isPlaceOrderActionAllowed(false);
+                return this;
             },
 
             /** Returns payment method instructions */
@@ -163,6 +170,11 @@ define(
             },
 
             validate: function () {
+                if (this.canBeAuthorized === false) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please choose your desired Klarna payment method:')});
+                    return false;
+                }
+
                 var self = this;
 
                 var billingAddress = quote.billingAddress();
