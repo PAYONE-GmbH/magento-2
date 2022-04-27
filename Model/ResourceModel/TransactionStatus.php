@@ -57,22 +57,30 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
     protected $toolkitHelper;
 
     /**
+     * @var \Magento\Framework\Serialize\Serializer\Serialize
+     */
+    protected $serialize;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
      * @param \Payone\Core\Helper\Toolkit                       $toolkitHelper
+     * @param \Magento\Framework\Serialize\Serializer\Serialize $serialize
      * @param string                                            $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Magento\Framework\Serialize\Serializer\Serialize $serialize,
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
         $this->storeManager = $storeManager;
         $this->toolkitHelper = $toolkitHelper;
+        $this->serialize = $serialize;
     }
 
     /**
@@ -139,7 +147,7 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
     {
         $this->setRequest($aRequest);
 
-        $sRawStatus = serialize($this->getRequest());
+        $sRawStatus = $this->serialize->serialize($this->getRequest());
         if (!$this->toolkitHelper->isUTF8($sRawStatus)) {
             $sRawStatus = utf8_encode($sRawStatus); // needed for serializing the array
         }

@@ -124,7 +124,7 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
                 $sAddress .= $sParamValue;
             }
         }
-        $sHash = md5($sAddress); // generate hash from address for identification
+        $sHash = hash("md5",$sAddress); // generate hash from address for identification
 
         return $sHash;
     }

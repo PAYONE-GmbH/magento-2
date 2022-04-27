@@ -144,30 +144,4 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
         }
         return false;
     }
-
-    /**
-     * Handle the serialization of strings depending on the Magento version
-     *
-     * @param  mixed $mValue
-     * @return string
-     */
-    public function serialize($mValue)
-    {
-        if (version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) { // Magento 2.2.0 and above
-            return json_encode($mValue);
-        }
-        return serialize($mValue);
-    }
-
-    /**
-     * @param  string $sValue
-     * @return mixed
-     */
-    public function unserialize($sValue)
-    {
-        if ($this->isJson($sValue)) {
-            return json_decode($sValue, true);
-        }
-        return unserialize($sValue);
-    }
 }

@@ -31,6 +31,7 @@ use Payone\Core\Model\Entities\ApiLog as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\Serialize\Serializer\Serialize;
 
 class ApiLogTest extends BaseTestCase
 {
@@ -53,15 +54,20 @@ class ApiLogTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
+        $oSerialize = $this->objectManager->getObject(Serialize::class);
+
         $data = [
-            'raw_request' => serialize(['request' => 'authorization']),
-            'raw_response' => serialize(['status' => 'APPROVED']),
+            'raw_request' => $oSerialize->serialize(['request' => 'authorization']),
+            'raw_response' => $oSerialize->serialize(['status' => 'APPROVED']),
         ];
         $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
 
+        $serialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'data' => $data,
-            'toolkitHelper' => $this->toolkitHelper
+            'toolkitHelper' => $this->toolkitHelper,
+            'serialize' => $serialize
         ]);
     }
 
@@ -74,8 +80,10 @@ class ApiLogTest extends BaseTestCase
 
     public function testGetRawStatusArrayException()
     {
+        $oSerialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
+
         $aStatus = ['test1' => html_entity_decode("&nbsp;")];
-        $this->classToTest->setData('raw_request', utf8_encode(serialize($aStatus)));
+        $this->classToTest->setData('raw_request', utf8_encode($oSerialize->serialize($aStatus)));
         $this->toolkitHelper->method('isUTF8')->willReturn(true);
 
         $result = $this->classToTest->getRawRequestArray();

@@ -32,6 +32,29 @@ namespace Payone\Core\Helper;
 class Config extends \Payone\Core\Helper\Base
 {
     /**
+     * @var Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\App\Helper\Context             $context
+     * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
+     * @param \Payone\Core\Helper\Shop                          $shopHelper
+     * @param \Payone\Core\Helper\Toolkit                       $toolkitHelper
+     */
+    public function __construct(
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
+    ) {
+        parent::__construct($context, $storeManager, $shopHelper);
+        $this->toolkitHelper = $toolkitHelper;
+    }
+
+    /**
      * Return unserialized array of all forwarding urls
      *
      * @param  string $sStoreCode
@@ -41,7 +64,7 @@ class Config extends \Payone\Core\Helper\Base
     {
         $sForwarding = $this->getConfigParam('config', 'forwarding', 'payone_misc', $sStoreCode);
         if ($sForwarding) {
-            $aForwarding = $this->unserialize($sForwarding);
+            $aForwarding = $this->toolkitHelper->unserialize($sForwarding);
             if (is_array($aForwarding) && !empty($aForwarding)) {
                 return $aForwarding;
             }

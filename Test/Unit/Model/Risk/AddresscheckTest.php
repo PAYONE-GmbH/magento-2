@@ -92,7 +92,8 @@ class AddresscheckTest extends BaseTestCase
 
         #$this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         #$this->toolkitHelper->method('handleSubstituteReplacement')->willReturn('Invalid message');
-        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+        $serialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, ['serialize' => $serialize]);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()

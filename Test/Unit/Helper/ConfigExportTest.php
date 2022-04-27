@@ -89,7 +89,8 @@ class ConfigExportTest extends BaseTestCase
 
         $paymentHelper = $this->objectManager->getObject(Payment::class);
 
-        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+        $oSerialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, ['serialize' => $oSerialize]);
 
         $this->configExport = $this->objectManager->getObject(ConfigExport::class, [
             'context' => $context,
@@ -199,6 +200,6 @@ class ConfigExportTest extends BaseTestCase
 
         $result = $this->configExport->getMappings(null);
         $expected = ['cc' => [['from' => 'appointed', 'to' => 'processing']]];
-        $this->assertEquals($result, $expected);
+        $this->assertEquals($expected, $result);
     }
 }

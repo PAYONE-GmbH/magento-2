@@ -39,6 +39,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Payment;
+use Magento\Framework\Serialize\Serializer\Serialize;
 
 class UpgradeDataTest extends BaseTestCase
 {
@@ -88,7 +89,9 @@ class UpgradeDataTest extends BaseTestCase
 
     public function testInstall()
     {
-        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
+        $oSerialize = $this->objectManager->getObject(Serialize::class);
+
+        $fetchResult = [['value' => $oSerialize->serialize(['a' => 'b']), 'config_id' => 12]];
 
         $connection = $this->getMockBuilder(Mysql::class)
             ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
@@ -114,7 +117,9 @@ class UpgradeDataTest extends BaseTestCase
 
     public function testInstallOldPayment()
     {
-        $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
+        $oSerialize = $this->objectManager->getObject(Serialize::class);
+
+        $fetchResult = [['value' => $oSerialize->serialize(['a' => 'b']), 'config_id' => 12]];
 
         $connection = $this->getMockBuilder(Mysql::class)
             ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])

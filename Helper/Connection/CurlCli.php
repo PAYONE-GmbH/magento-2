@@ -32,6 +32,22 @@ namespace Payone\Core\Helper\Connection;
 class CurlCli
 {
     /**
+     * @var \Magento\Framework\Shell
+     */
+    protected $shell;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\Shell $shell
+     */
+    public function __construct(
+        \Magento\Framework\Shell $shell
+    ) {
+        $this->shell = $shell;
+    }
+
+    /**
      * Determine if this connection type can be used on the given server
      *
      * @return bool
@@ -58,19 +74,17 @@ class CurlCli
 
         $sCurlPath = file_exists("/usr/local/bin/curl") ? "/usr/local/bin/curl" : "/usr/bin/curl";
 
-        $aResponse = [];
-
         $sPostUrl = $aParsedRequestUrl['scheme']."://".$aParsedRequestUrl['host'].$aParsedRequestUrl['path'];
         $sPostData = $aParsedRequestUrl['query'];
 
-        $sCommand = $sCurlPath." -m 45 -k -d \"".$sPostData."\" ".$sPostUrl;
+        $sCommand = $sCurlPath." -m 45 -s -k -d \"".$sPostData."\" ".$sPostUrl;
 
-        $iSysOut = -1;
-        exec($sCommand, $aResponse, $iSysOut);
-        if ($iSysOut != 0) {
-            $aResponse[] = "connection-type: 2 - errormessage=curl error(".$iSysOut.")";
+        try {
+            $sResponse = $this->shell->execute($sCommand);
+            $aResponse = explode(PHP_EOL, $sResponse);
+        } catch(\Exception $exc) {
+            $aResponse = ["connection-type: 2 - errormessage=curl error(".$exc->getMessage().")"];
         }
-
         return $aResponse;
     }
 }

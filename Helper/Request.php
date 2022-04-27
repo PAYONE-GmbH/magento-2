@@ -102,7 +102,7 @@ class Request extends \Payone\Core\Helper\Base
      */
     public function getHostedIframeRequestCCHash()
     {
-        $sHash = md5(
+        $sHash = hash("md5",
             $this->getConfigParam('aid').
             $this->environmentHelper->getEncoding().
             $this->getConfigParam('mid').
@@ -123,7 +123,7 @@ class Request extends \Payone\Core\Helper\Base
      */
     public function getBankaccountCheckRequestHash()
     {
-        $sHash = md5(
+        $sHash = hash("md5",
             $this->getConfigParam('aid').
             $this->getConfigParam('bankaccountcheck_type', PayoneConfig::METHOD_DEBIT, 'payone_payment').
             $this->environmentHelper->getEncoding().

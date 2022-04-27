@@ -38,28 +38,26 @@ use Magento\Framework\Exception\LocalizedException;
 class Toolkit extends \Payone\Core\Helper\Base
 {
     /**
-     * PAYONE payment helper
-     *
-     * @var \Payone\Core\Helper\Payment
+     * @var \Magento\Framework\Serialize\Serializer\Serialize
      */
-    protected $paymentHelper;
+    protected $serialize;
 
     /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Helper\Context      $context
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Payone\Core\Helper\Payment                $paymentHelper
-     * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Magento\Framework\App\Helper\Context             $context
+     * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
+     * @param \Payone\Core\Helper\Shop                          $shopHelper
+     * @param \Magento\Framework\Serialize\Serializer\Serialize $serialize
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Payone\Core\Helper\Payment $paymentHelper,
-        \Payone\Core\Helper\Shop $shopHelper
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\Serialize\Serializer\Serialize $serialize
     ) {
         parent::__construct($context, $storeManager, $shopHelper);
-        $this->paymentHelper = $paymentHelper;
+        $this->serialize = $serialize;
     }
 
     /**
@@ -71,7 +69,7 @@ class Toolkit extends \Payone\Core\Helper\Base
     protected function getAllPayoneSecurityKeysByStoreCode($sStoreCode)
     {
         $aKeys = [];
-        foreach ($this->paymentHelper->getAvailablePaymentTypes() as $sPaymentCode) {
+        foreach (Payment::$aAvailablePayments as $sPaymentCode) {
             $iUseGlobal = $this->getConfigParam('use_global', $sPaymentCode, 'payone_payment', $sStoreCode);
             if ($iUseGlobal == '0') {
                 $aKeys[] = $this->getConfigParam('key', $sPaymentCode, 'payone_payment', $sStoreCode);
@@ -106,7 +104,7 @@ class Toolkit extends \Payone\Core\Helper\Base
     {
         $aKeyValues = $this->getAllPayoneSecurityKeys();
         foreach ($aKeyValues as $sConfigKey) {
-            if (md5($sConfigKey) == $sKey) {
+            if (hash("md5",$sConfigKey) == $sKey) {
                 return true;
             }
         }
@@ -211,6 +209,32 @@ class Toolkit extends \Payone\Core\Helper\Base
     public function isUTF8($sString)
     {
         return $sString === mb_convert_encoding(mb_convert_encoding($sString, "UTF-32", "UTF-8"), "UTF-8", "UTF-32");
+    }
+
+    /**
+     * Handle the serialization of strings depending on the Magento version
+     *
+     * @param  mixed $mValue
+     * @return string
+     */
+    public function serialize($mValue)
+    {
+        if (version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '>=')) { // Magento 2.2.0 and above
+            return json_encode($mValue);
+        }
+        return $this->serialize->serialize($mValue);
+    }
+
+    /**
+     * @param  string $sValue
+     * @return mixed
+     */
+    public function unserialize($sValue)
+    {
+        if ($this->isJson($sValue)) {
+            return json_decode($sValue, true);
+        }
+        return $this->serialize->unserialize($sValue);
     }
 
     /**

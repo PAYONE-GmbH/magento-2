@@ -80,7 +80,8 @@ class HostedIframeTest extends BaseTestCase
         $paymentHelper->method('getAvailableCreditcardTypes')->willReturn([['id' => 'V']]);
 
         $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, [
-            'shopHelper' => $this->objectManager->getObject(Shop::class)
+            'shopHelper' => $this->objectManager->getObject(Shop::class),
+            'serialize' => $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class)
         ]);
 
         $this->hostedIframe = $this->objectManager->getObject(HostedIframe::class, [

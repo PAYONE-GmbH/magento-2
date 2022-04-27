@@ -31,6 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\Serialize\Serializer\Serialize;
 
 class TransactionStatusTest extends BaseTestCase
 {
@@ -53,12 +54,17 @@ class TransactionStatusTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $data = ['raw_status' => serialize(['status' => 'status', 'array' => ['key' => 'value'], 'number' => 15])];
+        $oSerialize = $this->objectManager->getObject(Serialize::class);
+
+        $data = ['raw_status' => $oSerialize->serialize(['status' => 'status', 'array' => ['key' => 'value'], 'number' => 15])];
         $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
+
+        $serialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'data' => $data,
-            'toolkitHelper' => $this->toolkitHelper
+            'toolkitHelper' => $this->toolkitHelper,
+            'serialize' => $serialize,
         ]);
     }
 
@@ -73,8 +79,10 @@ class TransactionStatusTest extends BaseTestCase
 
     public function testGetRawStatusArrayException()
     {
+        $oSerialize = $this->objectManager->getObject(\Magento\Framework\Serialize\Serializer\Serialize::class);
+
         $aStatus = ['test1' => html_entity_decode("&nbsp;")];
-        $this->classToTest->setData('raw_status', utf8_encode(serialize($aStatus)));
+        $this->classToTest->setData('raw_status', utf8_encode($oSerialize->serialize($aStatus)));
         $this->toolkitHelper->method('isUTF8')->willReturn(true);
 
         $result = $this->classToTest->getRawStatusArray();
