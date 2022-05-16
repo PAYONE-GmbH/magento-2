@@ -26,13 +26,13 @@
 
 namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
 
-use Payone\Core\Block\Adminhtml\Config\Form\Field\Readonly as ClassToTest;
+use Payone\Core\Block\Adminhtml\Config\Form\Field\ReadonlyElement as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class ReadonlyTest extends BaseTestCase
+class ReadonlyElementTest extends BaseTestCase
 {
     /**
      * @var ClassToTest

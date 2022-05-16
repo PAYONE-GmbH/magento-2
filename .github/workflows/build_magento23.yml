@@ -39,6 +39,9 @@ jobs:
     - name: Delay for mysql startup
       run: sleep 20
       
+    - name: Delay for mysql startup
+      run: sleep 20
+
     - name: Setup Magento 2 and run tests
       run: |
         mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'

@@ -56,9 +56,10 @@ class KlarnaStoreIdTest extends BaseTestCase
 
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setForm', 'getForm', 'setName', 'setHtmlId', 'setValues', 'getElementHtml'])
+            ->setMethods(['setForm', 'getForm', 'setName', 'getName', 'setHtmlId', 'setValues', 'getElementHtml'])
             ->getMock();
         $element->method('getForm')->willReturn($form);
+        $element->method('getName')->willReturn("test");
         $element->method('getElementHtml')->willReturn('html');
 
         $elementFactory = $this->getMockBuilder(Factory::class)->disableOriginalConstructor()->getMock();
@@ -74,8 +75,11 @@ class KlarnaStoreIdTest extends BaseTestCase
             'klarnaCountries' => $klarnaCountries
         ]);
 
+        $escaper = $this->getMockBuilder(\Magento\Framework\Escaper::class)->disableOriginalConstructor()->getMock();
+        $escaper->method('escapeHtml')->willReturn('test');
+
         $form = $this->objectManager->getObject(AbstractForm::class);
-        $element = $this->objectManager->getObject(Multiselect::class);
+        $element = $this->objectManager->getObject(Multiselect::class, ['escaper' => $escaper]);
         $element->setValue([['te<s>t' => 't<e>st', 'data&1' => 'da&ta1']]);
         $element->setForm($form);
         $this->classToTest->setElement($element);

@@ -85,7 +85,7 @@ abstract class AddressRequest extends Base
 
         $aStreet = $oAddress->getStreet();
         $sStreet = is_array($aStreet) ? implode(' ', $aStreet) : $aStreet; // street may be an array
-        $this->addParameter($sPre.'street', trim($sStreet));
+        $this->addParameter($sPre.'street', trim($sStreet ?? ''));
         $this->addParameter($sPre.'zip', $oAddress->getPostcode());
         $this->addParameter($sPre.'city', $oAddress->getCity());
         $this->addParameter($sPre.'country', $oAddress->getCountryId());

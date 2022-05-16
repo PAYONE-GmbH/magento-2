@@ -90,7 +90,7 @@ class Environment extends \Payone\Core\Helper\Base
     {
         $sRemoteIp = $this->getRemoteIp(true);
         $sValidIps = $this->getConfigParam('valid_ips', 'processing', 'payone_misc');
-        $aWhitelist = explode("\n", $sValidIps);
+        $aWhitelist = explode("\n", $sValidIps ?? '');
         $aWhitelist = array_filter(array_map('trim', $aWhitelist));
         if (array_search($sRemoteIp, $aWhitelist) !== false) {
             return true;

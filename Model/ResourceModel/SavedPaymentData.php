@@ -119,9 +119,9 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     protected function decryptPaymentData($sEncryptedPaymentData)
     {
         $sDecryptedData = openssl_decrypt($sEncryptedPaymentData, $this->encryptionMethod, $this->getEncryptionKey());
-        $aPaymentData = json_decode($sDecryptedData, true);
-        if (empty($aPaymentData)) {
-            $aPaymentData = false;
+        $aPaymentData = false;
+        if (!empty($sDecryptedData)) {
+            $aPaymentData = json_decode($sDecryptedData, true);
         }
         return $aPaymentData;
     }
