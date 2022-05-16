@@ -26,17 +26,19 @@
 
 namespace Payone\Core\Model\ResourceModel;
 
+use Payone\Core\Model\PayoneConfig;
+
 /**
  * SavedPaymentData resource model
  */
 class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
-     * Shop helper object
+     * Payment helper object
      *
-     * @var \Payone\Core\Helper\Shop
+     * @var \Payone\Core\Helper\Payment
      */
-    protected $shopHelper;
+    protected $paymentHelper;
 
     /**
      * Encryption method used
@@ -49,16 +51,16 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      * Class constructor
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
-     * @param \Payone\Core\Helper\Shop $shopHelper
+     * @param \Payone\Core\Helper\Payment $paymentHelper
      * @param string $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
-        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Helper\Payment $paymentHelper,
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
-        $this->shopHelper = $shopHelper;
+        $this->paymentHelper = $paymentHelper;
     }
 
     /**
@@ -94,7 +96,7 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      */
     protected function getEncryptionKey()
     {
-        return $this->shopHelper->getConfigParam('mid');
+        return $this->paymentHelper->getConfigParam('mid');
     }
 
     /**
@@ -199,9 +201,10 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      *
      * @param  int         $iCustomerId
      * @param  string|bool $sPaymentMethod
+     * @param  bool        $blFilterInactiveTypes
      * @return array
      */
-    public function getSavedPaymentData($iCustomerId, $sPaymentMethod = false)
+    public function getSavedPaymentData($iCustomerId, $sPaymentMethod = false, $blFilterInactiveTypes = true)
     {
         if (!$iCustomerId) {
             return [];
@@ -221,10 +224,18 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
 
         $aReturn = [];
 
+        $aCreditcardTypes = [];
+        if ($sPaymentMethod == PayoneConfig::METHOD_CREDITCARD) {
+            $aCreditcardArray = $this->paymentHelper->getAvailableCreditcardTypes();
+            foreach ($aCreditcardArray as $aTypeArray) {
+                $aCreditcardTypes[] = $aTypeArray['id'];
+            }
+        }
+
         $aResult = $this->getConnection()->fetchAll($oSelect, $aParams);
         foreach ($aResult as $aRow) {
             $aRow = $this->formatData($aRow);
-            if (!empty($aRow['payment_data'])) {
+            if (!empty($aRow['payment_data']) && ($sPaymentMethod != PayoneConfig::METHOD_CREDITCARD || $blFilterInactiveTypes === false || in_array($aRow['payment_data']['cardtype'], $aCreditcardTypes))) {
                 $aReturn[] = $aRow;
             }
         }
