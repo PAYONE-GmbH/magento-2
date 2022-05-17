@@ -32,8 +32,8 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Payment;
-use Payone\Core\Helper\Payment as PaymentHelper;
 use Payone\Core\Helper\Ratepay;
+use Payone\Core\Helper\Payment as PaymentHelper;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -50,7 +50,7 @@ class RatepayDeviceFingerprintTest extends BaseTestCase
     private $objectManager;
 
     /**
-     * @var Payment|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     private $paymentHelper;
 

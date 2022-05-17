@@ -111,6 +111,7 @@ class CalculationTest extends BaseTestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('getQuoteAmount')->willReturn(100);
 
         $result = $this->classToTest->sendRequestRatepay($payment, $quote, "test", "calculation-by-rate", 5);
         $this->assertEquals($response, $result);
