@@ -241,6 +241,13 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 'receivable', ['type' => Table::TYPE_DECIMAL, 'length' => '20,4', 'default' => '0']
             );
         }
+
+        if (version_compare($context->getVersion(), '3.4.2', '<')) {
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable(RatepayProfileConfig::TABLE_RATEPAY_PROFILE_CONFIG),
+                'month_allowed', ['type' => Table::TYPE_TEXT, 'length' => '255', 'default' => null]
+            );
+        }
     }
 
     /**

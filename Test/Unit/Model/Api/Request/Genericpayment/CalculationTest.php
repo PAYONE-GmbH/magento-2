@@ -88,8 +88,34 @@ class CalculationTest extends BaseTestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('getQuoteAmount')->willReturn(100);
 
         $result = $this->classToTest->sendRequest($payment, $quote, 100);
+        $this->assertEquals($response, $result);
+    }
+
+    public function testSendRequestRatepay()
+    {
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getQuoteCurrencyCode'])
+            ->getMock();
+        $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
+
+        $payment = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getOperationMode')->willReturn('test');
+        $payment->method('getClearingtype')->willReturn('fnc');
+        $payment->method('getSubType')->willReturn('PYD');
+
+        $this->shopHelper->method('getConfigParam')->willReturn('12345');
+
+        $response = ['status' => 'APPROVED'];
+        $this->apiHelper->method('sendApiRequest')->willReturn($response);
+
+        $result = $this->classToTest->sendRequestRatepay($payment, $quote, "test", "calculation-by-rate", 5);
+        $this->assertEquals($response, $result);
+
+        $result = $this->classToTest->sendRequestRatepay($payment, $quote, "test", "calculation-by-time", 5);
         $this->assertEquals($response, $result);
     }
 }

@@ -29,7 +29,7 @@ namespace Payone\Core\Block\Adminhtml\Config\Form\Field;
 /**
  * Admin-block for readonly fields
  */
-class Readonly extends \Magento\Config\Block\System\Config\Form\Field
+class ReadonlyElement extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
      * Unset some non-related element parameters

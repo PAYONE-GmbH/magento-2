@@ -87,8 +87,11 @@ class StatusMappingTest extends BaseTestCase
             'transactionStatus' => $transactionStatus
         ]);
 
+        $escaper = $this->getMockBuilder(\Magento\Framework\Escaper::class)->disableOriginalConstructor()->getMock();
+        $escaper->method('escapeHtml')->willReturn('test');
+
         $form = $this->objectManager->getObject(AbstractForm::class);
-        $this->element = $this->objectManager->getObject(Multiselect::class);
+        $this->element = $this->objectManager->getObject(Multiselect::class, ['escaper' => $escaper]);;
         $this->element->setForm($form);
         $this->classToTest->setElement($this->element);
         $this->classToTest->setForm($form);

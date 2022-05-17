@@ -31,6 +31,7 @@
         <css src="Payone_Core::css/klarna.css"/>
         <css src="Payone_Core::css/payone.css"/>
         <css src="Payone_Core::css/applepay.css"/>
+        <css src="Payone_Core::css/ratepay.css"/>
     </head>
     <body>
         <referenceBlock name="checkout.root">
@@ -127,6 +128,12 @@
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
                                                                         <item name="payone_ratepay_invoice" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        </item>
+                                                                        <item name="payone_ratepay_debit" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        </item>
+                                                                        <item name="payone_ratepay_installment" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
                                                                         <item name="payone_wechatpay" xsi:type="array">

@@ -62,4 +62,39 @@ class Calculation extends Base
 
         return $this->send($oPayment);
     }
+
+    /**
+     * Send request to PAYONE Server-API with request-type "genericpayment" and action "calculation"
+     *
+     * @param  PayoneMethod $oPayment payment object
+     * @param  Quote        $oQuote   order object
+     * @return array
+     */
+    public function sendRequestRatepay(PayoneMethod $oPayment, Quote $oQuote, $sRatepayShopId, $sCalcType, $sCalcValue)
+    {
+        $this->addParameter('request', 'genericpayment');
+        $this->addParameter('add_paydata[action]', 'calculation');
+
+        $this->addParameter('mode', $oPayment->getOperationMode());
+        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // ID of PayOne Sub-Account
+        $this->addParameter('api_version', '3.10');
+
+        $this->addParameter('clearingtype', $oPayment->getClearingtype());
+        $this->addParameter('financingtype', $oPayment->getSubType());
+
+        $this->addParameter('amount', number_format($this->apiHelper->getQuoteAmount($oQuote), 2, '.', '') * 100); // add price to request
+        $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote)); // add currency to request
+
+        $this->addParameter('add_paydata[shop_id]', $sRatepayShopId);
+        $this->addParameter('add_paydata[customer_allow_credit_inquiry]', 'yes');
+
+        $this->addParameter('add_paydata[calculation_type]', $sCalcType);
+        if ($sCalcType == "calculation-by-rate") {
+            $this->addParameter('add_paydata[rate]', $sCalcValue);
+        } elseif ($sCalcType == "calculation-by-time") {
+            $this->addParameter('add_paydata[month]', $sCalcValue);
+        }
+
+        return $this->send($oPayment);
+    }
 }

@@ -81,13 +81,29 @@ class RatepayDeviceFingerprint extends Template
     }
 
     /**
+     * Determine if at least one of the three Ratepay methods is activated
+     *
+     * @return false
+     */
+    protected function isRatepayMethodActive()
+    {
+        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INVOICE) === false ||
+            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_DEBIT) === false ||
+            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INSTALLMENT) === false
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Render block HTML
      *
      * @return string
      */
     protected function _toHtml()
     {
-        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INVOICE) === false) {
+        if ($this->isRatepayMethodActive() === false) {
             return '';
         }
         return parent::_toHtml();

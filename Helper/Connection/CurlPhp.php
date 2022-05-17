@@ -69,7 +69,7 @@ class CurlPhp
         $sResult = curl_exec($oCurl);
         if (curl_error($oCurl)) {
             $aResponse[] = "connection-type: 1 - errormessage=".curl_errno($oCurl).": ".curl_error($oCurl);
-        } else {
+        } elseif (!empty($sResult)) {
             $aResponse = explode("\n", $sResult);
         }
         curl_close($oCurl);
