@@ -215,10 +215,10 @@ class Api extends Base
         foreach ($aParameters as $sKey => $mValue) {
             if (is_array($mValue)) { // might be array
                 foreach ($mValue as $i => $sSubValue) {
-                    $sRequestUrl .= "&".$sKey."[".$i."]=".urlencode($sSubValue);
+                    $sRequestUrl .= "&".$sKey."[".$i."]=".urlencode($sSubValue ?? '');
                 }
             } else {
-                $sRequestUrl .= "&".$sKey."=".urlencode($mValue);
+                $sRequestUrl .= "&".$sKey."=".urlencode($mValue ?? '');
             }
         }
         $sRequestUrl = $sApiUrl."?".substr($sRequestUrl, 1);
