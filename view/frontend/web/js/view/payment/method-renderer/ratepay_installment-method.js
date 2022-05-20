@@ -26,11 +26,12 @@ define(
         'Payone_Core/js/view/payment/method-renderer/ratepay_base',
         'Magento_Checkout/js/model/quote',
         'Payone_Core/js/action/installmentplanratepay',
+        'Payone_Core/js/action/updateallowedmonths',
         'Magento_Catalog/js/price-utils',
         'jquery',
         'mage/translate'
     ],
-    function (Component, quote, installmentplan, utils, $, $t) {
+    function (Component, quote, installmentplan, updateAllowedMonths, utils, $, $t) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -48,7 +49,8 @@ define(
                 installmentTotalAmount: null,
                 interestRate: null,
                 useDirectDebit: true,
-
+                allowedMonths: window.checkoutConfig.payment.payone.ratepayAllowedMonths,
+                allowedMonthsReloaded: false
             },
             initObservable: function () {
                 this._super()
@@ -65,7 +67,9 @@ define(
                         'installmentLastAmount',
                         'installmentTotalAmount',
                         'interestRate',
-                        'useDirectDebit'
+                        'useDirectDebit',
+                        'allowedMonths',
+                        'allowedMonthsReloaded'
                     ]);
                 return this;
             },
@@ -150,7 +154,11 @@ define(
                 this.useDirectDebit(!this.useDirectDebit());
             },
             getAllowedMonths: function () {
-                return window.checkoutConfig.payment.payone.ratepayAllowedMonths;
+                if ((window.checkoutConfig.payment.payone.ratepayAllowedMonths === undefined || window.checkoutConfig.payment.payone.ratepayAllowedMonths.length == 0) && this.allowedMonthsReloaded() === false) {
+                    updateAllowedMonths(this);
+                    this.allowedMonthsReloaded(true);
+                }
+                return this.allowedMonths();
             },
             useMonthDropdown: function () {
                 if (this.getAllowedMonths().length > 9) {
