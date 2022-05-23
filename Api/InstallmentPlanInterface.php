@@ -51,4 +51,13 @@ interface InstallmentPlanInterface
      * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
      */
     public function getInstallmentPlanRatepay($cartId, $calcType, $calcValue);
+
+    /**
+     * Collects allowed runtimes afterwards
+     * Needed for guest checkout since the billing country is not known when checkout is loaded
+     *
+     * @param  string $cartId
+     * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
+     */
+    public function getAllowedMonths($cartId);
 }

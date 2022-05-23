@@ -247,6 +247,28 @@ class InstallmentPlan implements InstallmentPlanInterface
     }
 
     /**
+     * Collects allowed runtimes afterwards
+     * Needed for guest checkout since the billing country is not known when checkout is loaded
+     *
+     * @param  string $cartId
+     * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
+     */
+    public function getAllowedMonths($cartId)
+    {
+        $oResponse = $this->responseFactory->create();
+        $oResponse->setData('success', false); // set success to false as default, set to true later if true
+
+        $oQuote = $this->checkoutSession->getQuote();
+
+        $aAllowedMonths = $this->ratepayInstallment->getAllowedMonths($oQuote);
+
+        $oResponse->setData('allowedMonths', json_encode($aAllowedMonths));
+        $oResponse->setData('success', true);
+
+        return $oResponse;
+    }
+
+    /**
      * @param array $aResponse
      * @return array
      */
