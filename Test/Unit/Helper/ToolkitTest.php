@@ -151,18 +151,18 @@ class ToolkitTest extends BaseTestCase
     {
         $text = 'Lets pass this {{what}}';
 
-        $result = $this->toolkit->handleSubstituteReplacement($text, ['{{what}}' => 'test']);
+        $result = $this->toolkit->handleSubstituteReplacement($text, ['{what}' => 'test']);
         $expected = 'Lets pass this test';
         $this->assertEquals($expected, $result);
 
-        $result = $this->toolkit->handleSubstituteReplacement($text, ['{{what}}' => 'test'], 4);
+        $result = $this->toolkit->handleSubstituteReplacement($text, ['{what}' => 'test'], 4);
         $expected = 'Lets';
         $this->assertEquals($expected, $result);
     }
 
     public function testHandleSubstituteReplacementEmpty()
     {
-        $result = $this->toolkit->handleSubstituteReplacement('', ['{{replace_with}}' => 'something_different']);
+        $result = $this->toolkit->handleSubstituteReplacement('', ['{replace_with}' => 'something_different']);
         $expected = '';
         $this->assertEquals($expected, $result);
     }
