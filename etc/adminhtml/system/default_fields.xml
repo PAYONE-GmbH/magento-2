@@ -39,6 +39,7 @@
     </field>
     <field id="mid" translate="label" type="text" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Merchant-ID</label>
+        <comment>If you don't have test credentials, please click <a href="https://www.payone.com/DE-de/kampagne/ecom-testaccount" target="_blank" rel="noopener noreferrer" title="Testaccount">here</a></comment>
         <depends>
             <field id="use_global">0</field>
         </depends>

@@ -37,6 +37,7 @@
                 <label>Global</label>
                 <field id="mid" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Merchant-ID</label>
+                    <comment><![CDATA[If you don't have test credentials, please click <a href="https://www.payone.com/DE-de/kampagne/ecom-testaccount" target="_blank" rel="noopener noreferrer" title="Testaccount">here</a>]]></comment>
                 </field>
                 <field id="portalid" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Portal-ID</label>
