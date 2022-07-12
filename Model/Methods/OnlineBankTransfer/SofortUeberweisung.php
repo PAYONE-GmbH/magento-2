@@ -57,33 +57,6 @@ class SofortUeberweisung extends OnlineBankTransferBase
      */
     public function getSubTypeSpecificParameters(Order $oOrder)
     {
-        $oInfoInstance = $this->getInfoInstance();
-
-        $aParams = ['bankcountry' => $oOrder->getBillingAddress()->getCountryId()];
-        if ($oInfoInstance->getAdditionalInformation('iban')) {
-            $aParams['iban'] = $oInfoInstance->getAdditionalInformation('iban');
-        }
-        if ($oInfoInstance->getAdditionalInformation('bic')) {
-            $aParams['bic'] = $oInfoInstance->getAdditionalInformation('bic');
-        }
-
-        return $aParams;
-    }
-
-    /**
-     * Add the checkout-form-data to the checkout session
-     *
-     * @param  DataObject $data
-     * @return $this
-     */
-    public function assignData(DataObject $data)
-    {
-        parent::assignData($data);
-
-        $oInfoInstance = $this->getInfoInstance();
-        $oInfoInstance->setAdditionalInformation('iban', $this->toolkitHelper->getAdditionalDataEntry($data, 'iban'));
-        $oInfoInstance->setAdditionalInformation('bic', $this->toolkitHelper->getAdditionalDataEntry($data, 'bic'));
-
-        return $this;
+        return ['bankcountry' => $oOrder->getBillingAddress()->getCountryId()];
     }
 }
