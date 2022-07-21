@@ -69,9 +69,10 @@ class ApplePay implements ApplePayInterface
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
      *
+     * @param  string $cartId
      * @return \Payone\Core\Service\V1\Data\ApplePayResponse
      */
-    public function getApplePaySession()
+    public function getApplePaySession($cartId)
     {
         $oResponse = $this->responseFactory->create();
         $blSuccess = false;

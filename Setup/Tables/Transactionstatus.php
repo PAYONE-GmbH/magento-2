@@ -138,6 +138,8 @@ class Transactionstatus
             'clearing_bankname' => ['type' => Table::TYPE_TEXT, 'length' => 255, 'option' => []],
             'clearing_bankbic' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
             'clearing_bankiban' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
+            'clearing_bankcountry' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
+            'clearing_bankcity' => ['type' => Table::TYPE_TEXT, 'length' => 64, 'option' => []],
             'clearing_legalnote' => ['type' => Table::TYPE_TEXT, 'length' => 255, 'option' => []],
             'clearing_duedate' => ['type' => Table::TYPE_TEXT, 'length' => 32, 'option' => []],
             'clearing_reference' => ['type' => Table::TYPE_TEXT, 'length' => 255, 'option' => []],

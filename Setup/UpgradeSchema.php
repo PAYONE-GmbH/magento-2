@@ -131,6 +131,34 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS), 'clearing_bankcity')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'clearing_bankcity',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 64,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Clearing bank country',
+                    'after' => 'clearing_bankiban',
+                ]
+            );
+        }
+        if (!$setup->getConnection()->tableColumnExists($setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS), 'clearing_bankcountry')) {
+            $setup->getConnection()->addColumn(
+                $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
+                'clearing_bankcountry',
+                [
+                    'type' => Table::TYPE_TEXT,
+                    'length' => 32,
+                    'nullable' => false,
+                    'default' => '',
+                    'comment' => 'Clearing bank country',
+                    'after' => 'clearing_bankiban',
+                ]
+            );
+        }
     }
 
     /**
@@ -211,6 +239,13 @@ class UpgradeSchema extends BaseSchema implements UpgradeSchemaInterface
             $setup->getConnection()->modifyColumn(
                 $setup->getTable(Transactionstatus::TABLE_PROTOCOL_TRANSACTIONSTATUS),
                 'receivable', ['type' => Table::TYPE_DECIMAL, 'length' => '20,4', 'default' => '0']
+            );
+        }
+
+        if (version_compare($context->getVersion(), '3.4.2', '<')) {
+            $setup->getConnection()->modifyColumn(
+                $setup->getTable(RatepayProfileConfig::TABLE_RATEPAY_PROFILE_CONFIG),
+                'month_allowed', ['type' => Table::TYPE_TEXT, 'length' => '255', 'default' => null]
             );
         }
     }

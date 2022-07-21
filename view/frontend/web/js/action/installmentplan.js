@@ -38,6 +38,7 @@ define([
         var serviceUrl;
 
         var request = {
+            cartId: quote.getQuoteId(),
             birthday: birthday
         };
         if (!customer.isLoggedIn()) {

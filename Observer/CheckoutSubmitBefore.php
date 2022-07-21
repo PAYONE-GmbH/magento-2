@@ -69,23 +69,33 @@ class CheckoutSubmitBefore implements ObserverInterface
     protected $checkoutSession;
 
     /**
+     * Payone customer helper
+     *
+     * @var \Payone\Core\Helper\Customer
+     */
+    protected $customerHelper;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Consumerscore $consumerscore
      * @param \Payone\Core\Helper\Consumerscore            $consumerscoreHelper
      * @param \Payone\Core\Model\Risk\Addresscheck         $addresscheck
      * @param \Magento\Checkout\Model\Session              $checkoutSession
+     * @param \Payone\Core\Helper\Customer                 $customerHelper
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Consumerscore $consumerscore,
         \Payone\Core\Helper\Consumerscore $consumerscoreHelper,
         \Payone\Core\Model\Risk\Addresscheck $addresscheck,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Payone\Core\Helper\Customer $customerHelper
     ) {
         $this->consumerscore = $consumerscore;
         $this->consumerscoreHelper = $consumerscoreHelper;
         $this->addresscheck = $addresscheck;
         $this->checkoutSession = $checkoutSession;
+        $this->customerHelper = $customerHelper;
     }
 
     /**
@@ -206,7 +216,7 @@ class CheckoutSubmitBefore implements ObserverInterface
      */
     public function getScoreByCreditrating(AddressInterface $oBilling)
     {
-        $aResponse = $this->consumerscore->sendRequest($oBilling);
+        $aResponse = $this->consumerscore->sendRequest($oBilling, $this->customerHelper->getCustomerGender(), $this->customerHelper->getCustomerBirthday());
         if ($aResponse === true) { // creditrating not executed because of a previous check
             $this->consumerscoreHelper->copyOldStatusToNewAddress($oBilling);
         }

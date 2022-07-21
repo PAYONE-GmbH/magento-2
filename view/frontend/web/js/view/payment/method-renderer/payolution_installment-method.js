@@ -109,6 +109,10 @@ define(
                 return true;
             },
             validate: function () {
+                if (this.requestBirthday() == true && !this.isDateValid(this.birthyear(), this.birthmonth(), this.birthday())) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid date.')});
+                    return false;
+                }
                 if (this.requestBirthday() == true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
                     this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
                     return false;
@@ -137,7 +141,10 @@ define(
                     window.switchInstallmentPlan = window.switchInstallmentPlan || function (sKey, sCode, iInstallments) {
                         window.payolution_installment.switchInstallmentPlan(sKey, sCode, iInstallments);
                     };
-                    if (this.requestBirthday() == true && this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
+                    if (this.requestBirthday() == true &&
+                        this.isDateValid(this.birthyear(), this.birthmonth(), this.birthday()) &&
+                        this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())
+                    ) {
                         installmentplan(this, this.birthyear() + this.birthmonth() + this.birthday());
                     }
                 }

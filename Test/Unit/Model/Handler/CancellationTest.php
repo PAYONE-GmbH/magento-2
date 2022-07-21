@@ -36,6 +36,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Framework\Exception\LocalizedException;
+use Payone\Core\Model\ResourceModel\TransactionStatus;
 
 class CancellationTest extends BaseTestCase
 {
@@ -53,6 +54,11 @@ class CancellationTest extends BaseTestCase
      * @var Order|\PHPUnit_Framework_MockObject_MockObject
      */
     private $order;
+
+    /**
+     * @var TransactionStatus|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $transactionStatus;
 
     protected function setUp(): void
     {
@@ -102,21 +108,45 @@ class CancellationTest extends BaseTestCase
         $quoteRepository = $this->getMockBuilder(QuoteRepository::class)->disableOriginalConstructor()->getMock();
         $quoteRepository->method('get')->willReturn($oldQuote);
 
+        $this->transactionStatus = $this->getMockBuilder(TransactionStatus::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'checkoutSession' => $checkoutSession,
             'orderFactory' => $orderFactory,
-            'quoteRepository' => $quoteRepository
+            'quoteRepository' => $quoteRepository,
+            'transactionStatus' => $this->transactionStatus
         ]);
     }
 
     public function testHandle()
     {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn(null);
+
+        $result = $this->classToTest->handle();
+        $this->assertNull($result);
+    }
+
+    public function testHandleHasInvoice()
+    {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn(null);
+        $this->order->method('hasInvoices')->willReturn(true);
+
+        $result = $this->classToTest->handle();
+        $this->assertNull($result);
+    }
+
+    public function testHandleHasAppointed()
+    {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn('12345');
+
         $result = $this->classToTest->handle();
         $this->assertNull($result);
     }
 
     public function testExecuteException()
     {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn(null);
+
         $exception = new \Exception();
         $this->order->method('cancel')->willThrowException($exception);
 
@@ -126,6 +156,8 @@ class CancellationTest extends BaseTestCase
 
     public function testExecuteLocalizedException()
     {
+        $this->transactionStatus->method('getAppointedIdByTxid')->willReturn(null);
+
         $exception = new LocalizedException(__('An error occured'));
         $this->order->method('cancel')->willThrowException($exception);
 

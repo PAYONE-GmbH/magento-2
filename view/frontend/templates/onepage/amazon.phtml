@@ -39,10 +39,34 @@
     <?php endif; ?>
 
     var triggerInvalidPayments = <?php echo ($this->triggerInvalidPayment() === true ? 'true' : 'false'); ?>;
+    var widgetInitialized = false;
 
     window.onAmazonLoginReady = function() {
         amazon.Login.setClientId('<?php echo $this->getClientId(); ?>');
     };
+
+    var actionElementsRemoved = 0;
+    var actionElementsRetries = 0;
+    window.removeActionInput = function() {
+        let actionElements = document.getElementsByName('action');
+        let lengthPre = actionElements.length;
+        if (actionElements.length > 0) {
+            for (let i = 0; i < lengthPre; i++) {
+                if (actionElements[0] !== undefined) {
+                    actionElements[0].remove();
+                    actionElementsRemoved++;
+                }
+            }
+        }
+
+        if (actionElementsRemoved < 2 && actionElementsRetries < 50) {
+            actionElementsRetries++;
+            setTimeout(function(){
+                window.requestAnimationFrame(removeActionInput);
+            }, 100);
+        }
+    };
+
     window.onAmazonPaymentsReady = function() {
         if (triggerInvalidPayments === true) {
             payoneInitInvalidPaymentWidgets('Read');
@@ -55,6 +79,9 @@
         console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
     };
     window.payoneInitFreshWidgets = function () {
+        if (widgetInitialized === true) {
+            return;
+        }
         new OffAmazonPayments.Widgets.AddressBook({
             sellerId: '<?php echo $this->getSellerId(); ?>',
             scope: 'payments:billing_address payments:shipping_address payments:widget profile',
@@ -79,8 +106,13 @@
         });
         walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
         walletWidget.bind("walletWidgetDiv");
+        removeActionInput();
+        widgetInitialized = true;
     };
     window.payoneInitInvalidPaymentWidgets = function (addressDisplayMode) {
+        if (widgetInitialized === true) {
+            return;
+        }
         document.getElementById('checkoutStepInitContent').className += " locked";
         document.getElementById('addressBookWidgetDiv').innerHTML = "";
         document.getElementById('walletWidgetDiv').innerHTML = "";
@@ -110,6 +142,8 @@
         });
         walletWidget.setPresentmentCurrency("<?php echo $this->getCurrency(); ?>");
         walletWidget.bind('walletWidgetDiv').renderRequested = initiatedByPopup;
+        removeActionInput();
+        widgetInitialized = true;
         payoneShowInitStep();
     };
     window.onAmazonWidgetsInitialized = function (orderReference) {
@@ -248,6 +282,7 @@
                             if (oResponse.errorcode == '985') {
                                 addressDisplayMode = 'Edit';
                             }
+                            widgetInitialized = false;
                             payoneInitInvalidPaymentWidgets(addressDisplayMode);
                             payoneUpdateContent(responseRaw);
                             payoneShowInitStep();
@@ -260,6 +295,7 @@
                 },
                 error: function (responseRaw) {
                     if (oResponse.errorcode == '985') {
+                        widgetInitialized = false;
                         payoneInitInvalidPaymentWidgets('Edit');
                     } else {
                     amazon.Login.logout();
@@ -298,6 +334,7 @@
                                 if (oResponse.errorMessage === 'PaymentMethodNotAllowed') {
                                     addressDisplayMode = 'Edit';
                                 }
+                                widgetInitialized = false;
                                 payoneInitInvalidPaymentWidgets(addressDisplayMode);
                             }
                         }

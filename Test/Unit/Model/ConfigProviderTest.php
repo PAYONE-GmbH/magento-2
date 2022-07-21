@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Model;
 
 use Magento\Quote\Model\Quote;
+use Payone\Core\Helper\Shop;
 use Payone\Core\Model\ConfigProvider as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Payment\Helper\Data;
@@ -64,6 +65,11 @@ class ConfigProviderTest extends BaseTestCase
     private $dataHelper;
 
     /**
+     * @var Payment|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $paymentHelper;
+
+    /**
      * @var Session|\PHPUnit_Framework_MockObject_MockObject
      */
     private $checkoutSession;
@@ -81,14 +87,13 @@ class ConfigProviderTest extends BaseTestCase
         $countryHelper = $this->getMockBuilder(Country::class)->disableOriginalConstructor()->getMock();
         $countryHelper->method('getEnabledCountries')->willReturn([['id' => 'DE', 'title' => 'Deutschland']]);
         $customerHelper = $this->getMockBuilder(Customer::class)->disableOriginalConstructor()->getMock();
-        $customerHelper->method('customerHasGivenGender')->willReturn(true);
         $customerHelper->method('getCustomerBirthday')->willReturn(false);
-        $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
-        $paymentHelper->method('getAvailableCreditcardTypes')->willReturn(['V', 'M']);
-        $paymentHelper->method('isMandateManagementActive')->willReturn(true);
-        $paymentHelper->method('isCheckCvcActive')->willReturn(true);
-        $paymentHelper->method('getBankaccountCheckBlockedMessage')->willReturn('Computer says no');
-        $paymentHelper->method('getAvailablePaymentTypes')->willReturn([PayoneConfig::METHOD_CREDITCARD]);
+        $this->paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $this->paymentHelper->method('getAvailableCreditcardTypes')->willReturn(['V', 'M']);
+        $this->paymentHelper->method('isMandateManagementActive')->willReturn(true);
+        $this->paymentHelper->method('isCheckCvcActive')->willReturn(true);
+        $this->paymentHelper->method('getBankaccountCheckBlockedMessage')->willReturn('Computer says no');
+        $this->paymentHelper->method('getAvailablePaymentTypes')->willReturn([PayoneConfig::METHOD_CREDITCARD]);
         $hostedIframeHelper = $this->getMockBuilder(HostedIframe::class)->disableOriginalConstructor()->getMock();
         $hostedIframeHelper->method('getHostedFieldConfig')->willReturn(['fields' => ['cvc' => ['width' => '20px']]]);
         $requestHelper = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
@@ -123,12 +128,15 @@ class ConfigProviderTest extends BaseTestCase
         
         $this->customerSession = $this->getMockBuilder(CustomerSession::class)->disableOriginalConstructor()->getMock();
         $this->customerSession->method('getCustomer')->willReturn($customer);
-        
+
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'dataHelper' => $this->dataHelper,
             'countryHelper' => $countryHelper,
             'customerHelper' => $customerHelper,
-            'paymentHelper' => $paymentHelper,
+            'paymentHelper' => $this->paymentHelper,
             'hostedIframeHelper' => $hostedIframeHelper,
             'requestHelper' => $requestHelper,
             'escaper' => $escaper,
@@ -136,6 +144,7 @@ class ConfigProviderTest extends BaseTestCase
             'checkoutSession' => $this->checkoutSession,
             'savedPaymentData' => $savedPaymentData,
             'customerSession' => $this->customerSession,
+            'shopHelper' => $shopHelper
         ]);
     }
 
@@ -161,6 +170,7 @@ class ConfigProviderTest extends BaseTestCase
 
         $this->checkoutSession->method('getPayoneCanceledPaymentMethod')->willReturn('payone_creditcard');
         $this->customerSession->method('isLoggedIn')->willReturn(true);
+        $this->paymentHelper->method('isPaymentMethodActive')->willReturn(true);
 
         $result = $this->classToTest->getConfig();
         $this->assertNotEmpty($result);

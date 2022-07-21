@@ -23,7 +23,7 @@
  */
 define(
     [
-        'Payone_Core/js/view/payment/method-renderer/base',
+        'Payone_Core/js/view/payment/method-renderer/ratepay_base',
         'Magento_Checkout/js/model/quote',
         'mage/translate'
     ],
@@ -46,65 +46,6 @@ define(
                         'telephone'
                     ]);
                 return this;
-            },
-            isPlaceOrderActionAllowedRatePay: function () {
-                return (quote.billingAddress() != null && quote.billingAddress().getCacheKey() == quote.shippingAddress().getCacheKey());
-            },
-            getData: function () {
-                var parentReturn = this._super();
-                if (parentReturn.additional_data === null) {
-                    parentReturn.additional_data = {};
-                }
-                if (this.requestBirthday()) {
-                    parentReturn.additional_data.dateofbirth = this.birthyear() + this.birthmonth() + this.birthday();
-                }
-                if (this.requestTelephone()) {
-                    parentReturn.additional_data.telephone = this.telephone();
-                }
-                return parentReturn;
-            },
-
-            /** Returns payment method instructions */
-            getInstructions: function () {
-                return window.checkoutConfig.payment.instructions[this.item.method];
-            },
-            requestBirthday: function () {
-                return true;
-            },
-            requestTelephone: function () {
-                if (quote.billingAddress() == null || (typeof quote.billingAddress().telephone != 'undefined' && quote.billingAddress().telephone != '')) {
-                    return false;
-                }
-                return true;
-            },
-            isPostcodeValid: function () {
-                var countryCode = quote.billingAddress().countryId;
-                var postcode = quote.billingAddress().postcode.replace(" ", "");
-                if (countryCode.toLowerCase() == "de" && postcode.length != 5) {
-                    return false;
-                } else if (countryCode.toLowerCase() == "at" && postcode.length != 4) {
-                    return false;
-                } else if (countryCode.toLowerCase() == "ch" && postcode.length != 4) {
-                    return false;
-                } else if (countryCode.toLowerCase() == "nl" && postcode.length != 6) {
-                    return false;
-                }
-                return true;
-            },
-            validate: function () {
-                if (this.requestBirthday() === true && !this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())) {
-                    this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
-                    return false;
-                }
-                if (this.requestTelephone() === true && this.telephone() == '') {
-                    this.messageContainer.addErrorMessage({'message': $t('Please enter your telephone number!')});
-                    return false;
-                }
-                if (this.isPostcodeValid() === false) {
-                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid postcode!')});
-                    return false;
-                }
-                return true;
             }
         });
     }

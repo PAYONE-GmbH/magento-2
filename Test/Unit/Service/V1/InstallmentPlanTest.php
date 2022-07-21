@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Service\V1\Data;
 
+use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Service\V1\InstallmentPlan as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Service\V1\Data\InstallmentPlanResponse;
@@ -37,6 +38,7 @@ use Payone\Core\Model\Api\Request\Genericpayment\Calculation;
 use Payone\Core\Block\Payolution\InstallmentPlan;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Helper\Ratepay;
 
 class InstallmentPlanTest extends BaseTestCase
 {
@@ -60,6 +62,11 @@ class InstallmentPlanTest extends BaseTestCase
      */
     private $calculation;
 
+    /**
+     * @var Ratepay
+     */
+    private $ratepayHelper;
+
     protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
@@ -72,11 +79,15 @@ class InstallmentPlanTest extends BaseTestCase
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getCountryId')->willReturn('DE');
+
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseGrandTotal'])
+            ->setMethods(['getBaseGrandTotal', 'getBillingAddress'])
             ->getMock();
         $quote->method('getBaseGrandTotal')->willReturn(100);
+        $quote->method('getBillingAddress')->willReturn($address);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -93,12 +104,15 @@ class InstallmentPlanTest extends BaseTestCase
             ->getMock();
         $block->method('toHtml')->willReturn('InstallmentPlanHtml');
 
+        $this->ratepayHelper = $this->getMockBuilder(Ratepay::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'responseFactory' => $responseFactory,
             'checkoutSession' => $checkoutSession,
             'precheck' => $this->precheck,
             'calculation' => $this->calculation,
-            'block' => $block
+            'block' => $block,
+            'ratepayHelper' => $this->ratepayHelper
         ]);
     }
 
@@ -128,7 +142,7 @@ class InstallmentPlanTest extends BaseTestCase
         ];
         $this->calculation->method('sendRequest')->willReturn($calculation);
 
-        $result = $this->classToTest->getInstallmentPlan('19900909');
+        $result = $this->classToTest->getInstallmentPlan(4711, '19900909');
         $this->assertTrue($result->getSuccess());
     }
 
@@ -137,7 +151,7 @@ class InstallmentPlanTest extends BaseTestCase
         $precheck = ['status' => 'ERROR', 'errorcode' => '123', 'customermessage' => 'error'];
         $this->precheck->method('sendRequest')->willReturn($precheck);
 
-        $result = $this->classToTest->getInstallmentPlan('19900909');
+        $result = $this->classToTest->getInstallmentPlan(4711, '19900909');
         $this->assertFalse($result->getSuccess());
     }
 
@@ -149,7 +163,7 @@ class InstallmentPlanTest extends BaseTestCase
         $calculation = ['status' => 'ERROR', 'errorcode' => '123', 'customermessage' => 'error'];
         $this->calculation->method('sendRequest')->willReturn($calculation);
 
-        $result = $this->classToTest->getInstallmentPlan('19900909');
+        $result = $this->classToTest->getInstallmentPlan(4711, '19900909');
         $this->assertFalse($result->getSuccess());
     }
 
@@ -157,7 +171,22 @@ class InstallmentPlanTest extends BaseTestCase
     {
         $this->precheck->method('sendRequest')->willReturn(false);
 
-        $result = $this->classToTest->getInstallmentPlan('19900909');
+        $result = $this->classToTest->getInstallmentPlan(4711, '19900909');
         $this->assertFalse($result->getSuccess());
+    }
+
+    public function testGetInstallmentPlanRatepay()
+    {
+        $this->ratepayHelper->method('getRatepayShopId')->willReturn('test');
+
+        $calculation = [
+            'status' => 'OK',
+            'workorderid' => 'WORKORDERID',
+            'add_paydata[unit-test]' => '4711',
+        ];
+        $this->calculation->method('sendRequestRatepay')->willReturn($calculation);
+
+        $result = $this->classToTest->getInstallmentPlanRatepay(4711, 'calculation-by-rate', 5);
+        $this->assertTrue($result->getSuccess());
     }
 }

@@ -201,7 +201,7 @@ class Invoice
 
     protected function addGiftCardItem($oOrder)
     {
-        $giftCards = json_decode($oOrder->getData('gift_cards'), true);
+        $giftCards = json_decode($oOrder->getData('gift_cards') ?? '', true);
 
         if(empty($giftCards) || !is_array($giftCards)) {
             return;

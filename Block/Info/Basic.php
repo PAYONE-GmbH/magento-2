@@ -50,11 +50,11 @@ class Basic extends Base
             if ($oOrder && $oOrder->getPayoneClearingBankcode()) {
                 $data[(string)__('Please transfer the order amount to this bank account')] = '';
                 $data[(string)__('Accountholder')] = $oOrder->getPayoneClearingBankaccountholder();
-                $data[(string)__('Accountnumber')] = $oOrder->getPayoneClearingBankaccount();
-                $data[(string)__('Bank code')] = $oOrder->getPayoneClearingBankcode();
                 $data[(string)__('IBAN')] = $oOrder->getPayoneClearingBankiban();
                 $data[(string)__('BIC')] = $oOrder->getPayoneClearingBankbic();
                 $data[(string)__('Bank')] = $oOrder->getPayoneClearingBankname();
+                $data[(string)__('Bank country')] = $oOrder->getPayoneClearingBankcountry();
+                $data[(string)__('Bank city')] = $oOrder->getPayoneClearingBankcity();
             }
             $data[(string)__('Payment reference')] = $oOrder->getPayoneTxid();
         }

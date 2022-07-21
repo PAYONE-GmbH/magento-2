@@ -14,48 +14,58 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 7
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2018 Payone GmbH
+ * @copyright 2003 - 2021 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
+namespace Payone\Core\Model\Methods\OnlineBankTransfer;
 
-use Payone\Core\Block\Adminhtml\Config\Form\Field\Readonly as ClassToTest;
-use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Data\Form\Element\AbstractElement;
-use Payone\Core\Test\Unit\BaseTestCase;
-use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Model\PayoneConfig;
+use Magento\Sales\Model\Order;
 
-class ReadonlyTest extends BaseTestCase
+/**
+ * Model for Bancontact payment method
+ */
+class Bancontact extends OnlineBankTransferBase
 {
     /**
-     * @var ClassToTest
+     * Payment method code
+     *
+     * @var string
      */
-    private $classToTest;
+    protected $_code = PayoneConfig::METHOD_BANCONTACT;
 
     /**
-     * @var ObjectManager|PayoneObjectManager
+     * Info instructions block path
+     *
+     * @var string
      */
-    private $objectManager;
+    protected $_infoBlockType = 'Payone\Core\Block\Info\ClearingReference';
 
-    protected function setUp(): void
+    /**
+     * Payment method sub type
+     *
+     * @var string
+     */
+    protected $sSubType = self::METHOD_OBT_SUBTYPE_BANCONTACT;
+
+    /**
+     * Return parameters specific to this payment sub type
+     *
+     * @param  Order $oOrder
+     * @return array
+     */
+    public function getSubTypeSpecificParameters(Order $oOrder)
     {
-        $this->objectManager = $this->getObjectManager();
-
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, []);
-    }
-
-    public function testRender()
-    {
-        $element = $this->getMockBuilder(AbstractElement::class)->disableOriginalConstructor()->getMock();
-
-        $result = $this->classToTest->render($element);
-        $this->assertNotEmpty($result);
+        return [
+            'bankcountry' => 'BE',
+            'api_version' => '3.10',
+        ];
     }
 }

@@ -69,13 +69,12 @@ class Environment extends \Payone\Core\Helper\Base
     /**
      * Get the IP of the requesting client
      *
-     * @param  bool $blUseHttpXForwarded
      * @return string
      */
-    public function getRemoteIp($blUseHttpXForwarded = false)
+    public function getRemoteIp()
     {
         $blProxyMode = (bool)$this->getConfigParam('proxy_mode', 'processing', 'payone_misc');
-        if ($blUseHttpXForwarded === true && $blProxyMode === true) {
+        if ($blProxyMode === true) {
             $this->remoteAddress->useHttpXForwarded();
         }
         return $this->remoteAddress->getRemoteAddress();
@@ -88,9 +87,9 @@ class Environment extends \Payone\Core\Helper\Base
      */
     public function isRemoteIpValid()
     {
-        $sRemoteIp = $this->getRemoteIp(true);
+        $sRemoteIp = $this->getRemoteIp();
         $sValidIps = $this->getConfigParam('valid_ips', 'processing', 'payone_misc');
-        $aWhitelist = explode("\n", $sValidIps);
+        $aWhitelist = explode("\n", $sValidIps ?? '');
         $aWhitelist = array_filter(array_map('trim', $aWhitelist));
         if (array_search($sRemoteIp, $aWhitelist) !== false) {
             return true;

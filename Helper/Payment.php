@@ -70,6 +70,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_RATEPAY_INVOICE,
         PayoneConfig::METHOD_TRUSTLY,
         PayoneConfig::METHOD_APPLEPAY,
+        PayoneConfig::METHOD_BANCONTACT,
     ];
 
     /**
@@ -107,32 +108,8 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_RATEPAY_INVOICE => 'fnc',
         PayoneConfig::METHOD_TRUSTLY => 'sb',
         PayoneConfig::METHOD_APPLEPAY => 'wlt',
+        PayoneConfig::METHOD_BANCONTACT => 'sb',
     ];
-
-    /**
-     * Resource model for saved payment data
-     *
-     * @var \Payone\Core\Model\ResourceModel\SavedPaymentData
-     */
-    protected $savedPaymentData;
-
-    /**
-     * Constructor
-     *
-     * @param \Magento\Framework\App\Helper\Context             $context
-     * @param \Magento\Store\Model\StoreManagerInterface        $storeManager
-     * @param \Payone\Core\Helper\Shop                          $shopHelper
-     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
-     */
-    public function __construct(
-        \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData
-    ) {
-        parent::__construct($context, $storeManager, $shopHelper);
-        $this->savedPaymentData = $savedPaymentData;
-    }
 
     /**
      * Return available payment types

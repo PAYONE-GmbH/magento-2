@@ -137,6 +137,14 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/ratepay_invoice-method'
             },
             {
+                type: 'payone_ratepay_debit',
+                component: 'Payone_Core/js/view/payment/method-renderer/ratepay_debit-method'
+            },
+            {
+                type: 'payone_ratepay_installment',
+                component: 'Payone_Core/js/view/payment/method-renderer/ratepay_installment-method'
+            },
+            {
                 type: 'payone_wechatpay',
                 component: 'Payone_Core/js/view/payment/method-renderer/wechatpay-method'
             },
@@ -147,6 +155,10 @@ define(
             {
                 type: 'payone_applepay',
                 component: 'Payone_Core/js/view/payment/method-renderer/applepay-method'
+            },
+            {
+                type: 'payone_bancontact',
+                component: 'Payone_Core/js/view/payment/method-renderer/bancontact-method'
             }
         );
         /** Add view logic here if needed */

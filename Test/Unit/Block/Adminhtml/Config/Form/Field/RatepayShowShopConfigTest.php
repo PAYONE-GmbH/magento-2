@@ -85,8 +85,11 @@ class RatepayShowShopConfigTest extends BaseTestCase
             'ratepayProfileResource' => $this->ratepayProfileResource
         ]);
 
+        $escaper = $this->getMockBuilder(\Magento\Framework\Escaper::class)->disableOriginalConstructor()->getMock();
+        $escaper->method('escapeHtml')->willReturn('test');
+
         $form = $this->objectManager->getObject(AbstractForm::class);
-        $element = $this->objectManager->getObject(Multiselect::class);
+        $element = $this->objectManager->getObject(Multiselect::class, ['escaper' => $escaper]);
         $element->setValue([['te<s>t' => 't<e>st', 'data&1' => 'da&ta1']]);
         $element->setForm($form);
         $this->classToTest->setElement($element);

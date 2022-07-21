@@ -62,4 +62,24 @@ class InstallmentPlanResponse extends \Magento\Framework\Api\AbstractExtensibleO
     {
         return $this->_get('installmentPlanHtml');
     }
+
+    /**
+     * Return installment plan json array string
+     *
+     * @return string
+     */
+    public function getInstallmentPlan()
+    {
+        return $this->_get('installmentPlan');
+    }
+
+    /**
+     * Return allowed runtime months json array string
+     *
+     * @return string
+     */
+    public function getAllowedMonths()
+    {
+        return $this->_get('allowedMonths');
+    }
 }

@@ -126,7 +126,7 @@ class StatusMapping extends \Magento\Config\Block\System\Config\Form\Field\Field
         $element = $this->getElement();
         $aValue = $element->getValue(); // get values
         if (is_array($aValue) === false) { // no array given? -> value from config.xml
-            $aValue = json_decode($aValue, true); // convert string to array
+            $aValue = json_decode($aValue ?? '', true); // convert string to array
         }
         if ($aValue && is_array($aValue)) {
             foreach ($aValue as $rowId => $row) {

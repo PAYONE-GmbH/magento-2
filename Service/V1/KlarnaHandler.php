@@ -89,12 +89,13 @@ class KlarnaHandler implements KlarnaHandlerInterface
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
      *
+     * @param  string $cartId
      * @param  string $paymentCode
      * @param  double $shippingCosts
      * @param  string $customerEmail
      * @return \Payone\Core\Service\V1\Data\KlarnaHandlerResponse
      */
-    public function startKlarnaSession($paymentCode, $shippingCosts, $customerEmail)
+    public function startKlarnaSession($cartId, $paymentCode, $shippingCosts, $customerEmail)
     {
         $oResponse = $this->responseFactory->create();
         $blSuccess = false;

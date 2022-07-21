@@ -33,9 +33,31 @@ interface InstallmentPlanInterface
      * The full class-paths must be given here otherwise the Magento 2 WebApi
      * cant handle this with its fake type system!
      *
+     * @param  string $cartId
      * @param  string $birthday
      * @param  string $email
      * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
      */
-    public function getInstallmentPlan($birthday, $email = false);
+    public function getInstallmentPlan($cartId, $birthday, $email = false);
+
+    /**
+     * PAYONE addresscheck
+     * The full class-paths must be given here otherwise the Magento 2 WebApi
+     * cant handle this with its fake type system!
+     *
+     * @param  string $cartId
+     * @param  string $calcType
+     * @param  int $calcValue
+     * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
+     */
+    public function getInstallmentPlanRatepay($cartId, $calcType, $calcValue);
+
+    /**
+     * Collects allowed runtimes afterwards
+     * Needed for guest checkout since the billing country is not known when checkout is loaded
+     *
+     * @param  string $cartId
+     * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
+     */
+    public function getAllowedMonths($cartId);
 }

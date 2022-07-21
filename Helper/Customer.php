@@ -71,31 +71,59 @@ class Customer extends \Payone\Core\Helper\Base
     }
 
     /**
-     * Determine if the customer entered his gender
+     * Get customer gender
      *
-     * @return bool
+     * @return string|null
      */
-    public function customerHasGivenGender()
+    public function getCustomerGender()
     {
-        $oCustomer = $this->checkoutSession->getQuote()->getCustomer();
-        if ($oCustomer && $oCustomer->getGender()) {
-            return true;
+        $sGender = null;
+        if (!empty($this->checkoutSession->getPayoneGuestGender())) {
+            $sGender = $this->checkoutSession->getPayoneGuestGender();
+        } else {
+            $oCustomer = $this->checkoutSession->getQuote()->getCustomer();
+            if ($oCustomer && $oCustomer->getGender()) {
+                $sGender = $oCustomer->getGender();
+            }
         }
-        return false;
+
+        if (!empty($sGender)) {
+            switch ($sGender) {
+                case 1:
+                    $sGender = "m";
+                    break;
+                case 2:
+                    $sGender = "f";
+                    break;
+                case 3:
+                    $sGender = "d";
+                    break;
+            }
+        }
+        return $sGender;
     }
 
     /**
-     * Determine if the customer entered his birthday
+     * Get customer birthday
      *
-     * @return string|bool
+     * @return string|null
      */
     public function getCustomerBirthday()
     {
-        $oCustomer = $this->checkoutSession->getQuote()->getCustomer();
-        if ($oCustomer && $oCustomer->getDob()) {
-            return $oCustomer->getDob();
+        $sBirthday = null;
+        if (!empty($this->checkoutSession->getPayoneGuestDateofbirth())) {
+            $sBirthday = $this->checkoutSession->getPayoneGuestDateofbirth();
+        } else {
+            $oCustomer = $this->checkoutSession->getQuote()->getCustomer();
+            if ($oCustomer && $oCustomer->getDob()) {
+                $sBirthday = $oCustomer->getDob();
+            }
         }
-        return false;
+
+        if (!empty($sBirthday)) {
+            $sBirthday = date('Ymd', strtotime($sBirthday));
+        }
+        return $sBirthday;
     }
 
     /**
