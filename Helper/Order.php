@@ -210,7 +210,7 @@ class Order extends \Payone\Core\Helper\Base
 
         foreach ($oShippingRates as $oCarrierRates) {
             foreach ($oCarrierRates as $oRate) {
-                $aRates[$oRate->getPrice()] = $oRate->getCode();
+                $aRates[(string)$oRate->getPrice()] = $oRate->getCode();
             }
         }
 
