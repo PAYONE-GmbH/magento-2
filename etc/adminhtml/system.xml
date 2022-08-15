@@ -96,11 +96,11 @@
                 </field>
                 <field id="invoice_appendix" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dynamic invoice message</label>
-                    <comment>Maximum 255 digits. Placeholders: {{order_increment_id}}, {{customer_id}}</comment>
+                    <comment>Maximum 255 digits. Placeholders: {order_increment_id}, {customer_id}</comment>
                 </field>
                 <field id="invoice_appendix_refund" translate="label,comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dynamic refund message</label>
-                    <comment>Maximum 255 digits. Placeholders: {{order_increment_id}}, {{order_id}}, {{customer_id}}</comment>
+                    <comment>Maximum 255 digits. Placeholders: {order_increment_id}, {order_id}, {customer_id}</comment>
                 </field>
             </group>
             <group id="statusmapping" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -358,7 +358,7 @@
                 </field>
                 <field id="message_response_invalid" translate="label,comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Message to display for invalid data</label>
-                    <comment>Placeholder: {{payone_customermessage}} (Message from Payone-Addresscheck</comment>
+                    <comment>Placeholder: {payone_customermessage} (Message from Payone-Addresscheck)</comment>
                 </field>
                 <field id="handle_response_error" translate="label,comment" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Response ERROR Handling</label>

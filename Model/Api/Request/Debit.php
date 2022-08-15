@@ -163,13 +163,13 @@ class Debit extends Base
 
         $this->addParameter('transactiontype', 'GT');
 
+        if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $aPositions)) {
+            $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
+        }
+
         $sRefundAppendix = $this->getRefundAppendix($oOrder, $oPayment);
         if (!empty($sRefundAppendix)) {
             $this->addParameter('invoiceappendix', $sRefundAppendix);
-        }
-
-        if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $aPositions)) {
-            $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
         $sIban = false;
@@ -219,12 +219,12 @@ class Debit extends Base
         }
 
         $aSubstitutionArray = [
-            '{{order_increment_id}}' => $oOrder->getIncrementId(),
-            '{{order_id}}' => $oOrder->getId(),
-            '{{customer_id}}' => $oOrder->getCustomerId(),
-            '{{creditmemo_increment_id}}' => $sCreditMemoIncrId,
-            '{{invoice_increment_id}}' => $sInvoiceIncrementId,
-            '{{invoice_id}}' => $sInvoiceId,
+            '{order_increment_id}' => $oOrder->getIncrementId(),
+            '{order_id}' => $oOrder->getId(),
+            '{customer_id}' => $oOrder->getCustomerId(),
+            '{creditmemo_increment_id}' => $sCreditMemoIncrId,
+            '{invoice_increment_id}' => $sInvoiceIncrementId,
+            '{invoice_id}' => $sInvoiceId,
         ];
         $sRefundAppendix = $this->toolkitHelper->handleSubstituteReplacement($sText, $aSubstitutionArray, 255);
         return $sRefundAppendix;

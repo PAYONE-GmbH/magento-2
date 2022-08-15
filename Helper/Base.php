@@ -168,6 +168,6 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
         if ($this->isJson($sValue)) {
             return json_decode($sValue, true);
         }
-        return unserialize($sValue);
+        return unserialize($sValue ?? '');
     }
 }
