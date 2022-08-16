@@ -30,37 +30,47 @@
             'Magento_Customer/js/customer-data',
             'Magento_Checkout/js/checkout-data'
         ], function (customerData, checkoutData) {
-            customerData.invalidate(['cart', 'checkout-data']);
+            function redirectCancellation(customerData, checkoutData) {
+                customerData.invalidate(['cart', 'checkout-data']);
 
-            <?php $oShippingAddress = $block->getShippingAddress(); ?>
-            <?php if ($block->isGuest() && $oShippingAddress && $oShippingAddress->getFirstname() && $oShippingAddress->getLastname()): ?>
-                var shippingAddressData = {
-                    'company': '<?php echo $block->escapeJs($oShippingAddress->getCompany()); ?>',
-                    'telephone' : '<?php echo $block->escapeJs($oShippingAddress->getTelephone()); ?>',
-                    'firstname' : '<?php echo $block->escapeJs($oShippingAddress->getFirstname()); ?>',
-                    'lastname' : '<?php echo $block->escapeJs($oShippingAddress->getLastname()); ?>',
-                    'street' : {
-                        0 : '<?php echo $block->escapeJs($oShippingAddress->getStreet()[0]); ?>',
-                        1 : '<?php echo isset($oShippingAddress->getStreet()[1]) ? $block->escapeJs($oShippingAddress->getStreet()[1]) : ''; ?>'
-                    },
-                    'city' : '<?php echo $block->escapeJs($oShippingAddress->getCity()); ?>',
-                    'country_id' : '<?php echo $block->escapeJs($oShippingAddress->getCountryId()); ?>',
-                    'postcode' : '<?php echo $block->escapeJs($oShippingAddress->getPostcode()); ?>'
-                };
-                <?php if ($oShippingAddress->getRegionCode() && $oShippingAddress->getRegionId()): ?>
-                    shippingAddressData.region = '<?php echo $block->escapeJs($oShippingAddress->getRegionCode()); ?>';
-                    shippingAddressData.region_id = '<?php echo $block->escapeJs($oShippingAddress->getRegionId()); ?>';
-                <?php endif; ?>
-                checkoutData.setShippingAddressFromData(shippingAddressData);
-                checkoutData.setSelectedShippingRate('<?php echo $oShippingAddress->getShippingMethod(); ?>');
-                checkoutData.setInputFieldEmailValue('<?php echo $oShippingAddress->getEmail(); ?>');
-                checkoutData.setValidatedEmailValue('<?php echo $oShippingAddress->getEmail(); ?>');
+                <?php $oShippingAddress = $block->getShippingAddress(); ?>
+                <?php if ($block->isGuest() && $oShippingAddress && $oShippingAddress->getFirstname() && $oShippingAddress->getLastname()): ?>
+                    var shippingAddressData = {
+                        'company': '<?php echo $block->escapeJs($oShippingAddress->getCompany()); ?>',
+                        'telephone' : '<?php echo $block->escapeJs($oShippingAddress->getTelephone()); ?>',
+                        'firstname' : '<?php echo $block->escapeJs($oShippingAddress->getFirstname()); ?>',
+                        'lastname' : '<?php echo $block->escapeJs($oShippingAddress->getLastname()); ?>',
+                        'street' : {
+                            0 : '<?php echo $block->escapeJs($oShippingAddress->getStreet()[0]); ?>',
+                            1 : '<?php echo isset($oShippingAddress->getStreet()[1]) ? $block->escapeJs($oShippingAddress->getStreet()[1]) : ''; ?>'
+                        },
+                        'city' : '<?php echo $block->escapeJs($oShippingAddress->getCity()); ?>',
+                        'country_id' : '<?php echo $block->escapeJs($oShippingAddress->getCountryId()); ?>',
+                        'postcode' : '<?php echo $block->escapeJs($oShippingAddress->getPostcode()); ?>'
+                    };
+                    <?php if ($oShippingAddress->getRegionCode() && $oShippingAddress->getRegionId()): ?>
+                        shippingAddressData.region = '<?php echo $block->escapeJs($oShippingAddress->getRegionCode()); ?>';
+                        shippingAddressData.region_id = '<?php echo $block->escapeJs($oShippingAddress->getRegionId()); ?>';
+                    <?php endif; ?>
+                    checkoutData.setShippingAddressFromData(shippingAddressData);
+                    checkoutData.setSelectedShippingRate('<?php echo $oShippingAddress->getShippingMethod(); ?>');
+                    checkoutData.setInputFieldEmailValue('<?php echo $oShippingAddress->getEmail(); ?>');
+                    checkoutData.setValidatedEmailValue('<?php echo $oShippingAddress->getEmail(); ?>');
 
-                <?php $oQuotePayment = $this->getQuotePayment(); ?>
-                <?php if ($oQuotePayment): ?>
-                    checkoutData.setSelectedPaymentMethod('<?php echo $oQuotePayment->getMethod(); ?>');
+                    <?php $oQuotePayment = $this->getQuotePayment(); ?>
+                    <?php if ($oQuotePayment): ?>
+                        checkoutData.setSelectedPaymentMethod('<?php echo $oQuotePayment->getMethod(); ?>');
+                    <?php endif; ?>
                 <?php endif; ?>
-            <?php endif; ?>
+            }
+
+            if (typeof customerData.getInitCustomerData === "function") { // finish customerData initialization first if possible
+                customerData.getInitCustomerData().done(function () {
+                    redirectCancellation(customerData, checkoutData);
+                });
+            } else { // old functionality as fallback
+                redirectCancellation(customerData, checkoutData);
+            }
         });
     <?php endif; ?>
 </script>
