@@ -31,32 +31,7 @@ define(
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Payone_Core/payment/obt_sofortueberweisung',
-                iban: '',
-                bic: ''
-            },
-            
-            initObservable: function () {
-                this._super()
-                    .observe([
-                        'iban',
-                        'bic'
-                    ]);
-                return this;
-            },
-
-            validate: function () {
-                if (this.requestIbanBic() == 1) {
-                    if (this.iban() == '') {
-                        this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
-                        return false;
-                    }
-                    if (this.bic() == '') {
-                        this.messageContainer.addErrorMessage({'message': $t('Please enter a valid BIC.')});
-                        return false;
-                    }
-                }
-                return true;
+                template: 'Payone_Core/payment/obt_sofortueberweisung'
             },
 
             /** Returns payment method instructions */
@@ -77,24 +52,6 @@ define(
                     }
                 }
                 return sCleanedNumber;
-            },
-            getData: function () {
-                if (this.requestIbanBic() == 1) {
-                    document.getElementById(this.getCode() + '_iban').value = this.getCleanedNumber(this.iban());
-                    document.getElementById(this.getCode() + '_bic').value = this.getCleanedNumber(this.bic());
-
-                    var parentReturn = this._super();
-                    if (parentReturn.additional_data === null) {
-                        parentReturn.additional_data = {};
-                    }
-                    parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
-                    parentReturn.additional_data.bic = this.getCleanedNumber(this.bic());
-                    return parentReturn;
-                }
-                return this._super();
-            },
-            requestIbanBic: function () {
-                return window.checkoutConfig.payment.payone.requestIbanBicSofortUeberweisung;
             }
         });
     }
