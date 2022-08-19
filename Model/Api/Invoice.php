@@ -293,7 +293,7 @@ class Invoice
                 $dTransmitDiscount = $aPositions['discount'];
             }
             $dDiscount = $this->toolkitHelper->formatNumber($dTransmitDiscount); // format discount
-            if ($aPositions === false && $this->amastyHelper->hasAmastyGiftcards($oOrder->getQuoteId()) === false) {
+            if ($aPositions === false && $this->amastyHelper->hasAmastyGiftcards($oOrder->getQuoteId(), $oOrder) === false) {
                 // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
                 // the calculated positions don't match, so we compensate for rounding-problems here
                 $dTotal = $oOrder->getBaseGrandTotal();
@@ -323,7 +323,7 @@ class Invoice
      */
     protected function addAmastyGiftcards($oOrder, $aPositions, $blDebit)
     {
-        $aGiftCards = $this->amastyHelper->getAmastyGiftCards($oOrder->getQuoteId());
+        $aGiftCards = $this->amastyHelper->getAmastyGiftCards($oOrder->getQuoteId(), $oOrder);
         for ($i = 0; $i < count($aGiftCards); $i++) {
             $aGiftCard = $aGiftCards[$i];
             $blIsLastGiftcard = false;
