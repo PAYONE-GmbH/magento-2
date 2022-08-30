@@ -351,7 +351,7 @@ class Invoice
 
                 if ($dDiscount != 0) {
                     $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc', $this->getStoreCode()); // get configured voucher SKU
-                    $sDesc = (string)__('Amasty Coupon').' - '.$aGiftCard['code']; // add counpon code to description
+                    $sDesc = (string)__('Amasty Coupon');
                     $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
                 }
             }
