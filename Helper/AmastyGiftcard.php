@@ -49,15 +49,25 @@ class AmastyGiftcard extends \Payone\Core\Helper\Base
      * @param  string $sQuoteId
      * @return array
      */
-    public function getAmastyGiftCards($sQuoteId)
+    public function getAmastyGiftCards($sQuoteId, $oOrder)
     {
         if ($this->aAmastyGiftcard === null) {
             $this->aAmastyGiftcard = [];
-            if (class_exists('\Amasty\GiftCard\Model\ResourceModel\Quote\Collection')) {
+            if (class_exists('\Amasty\GiftCard\Model\ResourceModel\Quote\Collection')) { // old Amasty module version
                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 
                 $giftCardsCollection = $objectManager->create('Amasty\GiftCard\Model\ResourceModel\Quote\CollectionFactory');
                 $this->aAmastyGiftcard = $giftCardsCollection->create()->getGiftCardsWithAccount($sQuoteId)->getData();
+            }
+
+            if ($oOrder && $oOrder->getExtensionAttributes() && is_callable([$oOrder->getExtensionAttributes(), 'getAmGiftcardOrder']) && $oOrder->getExtensionAttributes()->getAmGiftcardOrder()) { // new Amasty module version
+                $giftCards = $oOrder->getExtensionAttributes()->getAmGiftcardOrder()->getGiftCards();
+                foreach ($giftCards as $giftCard) {
+                    // copy fields to fit old format
+                    $giftCard['gift_amount'] = $giftCard['amount'];
+                    $giftCard['base_gift_amount'] = $giftCard['b_amount'];
+                    $this->aAmastyGiftcard[] = $giftCard;
+                }
             }
         }
         return $this->aAmastyGiftcard;
