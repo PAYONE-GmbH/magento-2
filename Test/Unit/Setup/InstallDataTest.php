@@ -69,7 +69,7 @@ class InstallDataTest extends BaseTestCase
         $fetchResult = [['scope' => 'website', 'scope_id' => 2]];
 
         $connection = $this->getMockBuilder(Mysql::class)
-            ->setMethods(['select', 'from', 'where', 'fetchAssoc', 'insert'])
+            ->setMethods(['select', 'from', 'where', 'order', 'fetchAssoc', 'insert'])
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('select')->willReturn($connection);
