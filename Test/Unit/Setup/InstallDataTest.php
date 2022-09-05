@@ -34,6 +34,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\DB\Adapter\Pdo\Mysql;
 
 class InstallDataTest extends BaseTestCase
 {
@@ -65,7 +66,23 @@ class InstallDataTest extends BaseTestCase
 
     public function testInstall()
     {
+        $fetchResult = [['scope' => 'website', 'scope_id' => 2]];
+
+        $connection = $this->getMockBuilder(Mysql::class)
+            ->setMethods(['select', 'from', 'where', 'fetchAssoc', 'insert'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->method('select')->willReturn($connection);
+        $connection->method('from')->willReturn($connection);
+        $connection->method('where')->willReturn($connection);
+        $connection->method('order')->willReturn($connection);
+        $connection->method('insert')->willReturn(1);
+        $connection->method('fetchAssoc')->willReturn($fetchResult);
+
         $setup = $this->getMockBuilder(ModuleDataSetupInterface::class)->disableOriginalConstructor()->getMock();
+        $setup->method('getTable')->willReturn('table');
+        $setup->method('getConnection')->willReturn($connection);
+
         $context = $this->getMockBuilder(ModuleContextInterface::class)->disableOriginalConstructor()->getMock();
 
         $result = $this->classToTest->install($setup, $context);
