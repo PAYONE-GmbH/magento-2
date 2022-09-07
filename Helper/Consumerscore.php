@@ -56,6 +56,7 @@ class Consumerscore extends \Payone\Core\Helper\Base
      * @param \Magento\Framework\App\Helper\Context                 $context
      * @param \Magento\Store\Model\StoreManagerInterface            $storeManager
      * @param \Payone\Core\Helper\Shop                              $shopHelper
+     * @param \Magento\Framework\App\State                          $state
      * @param \Magento\Framework\App\Config\Storage\WriterInterface $configWriter
      * @param \Payone\Core\Helper\Database                          $databaseHelper
      */
@@ -63,10 +64,11 @@ class Consumerscore extends \Payone\Core\Helper\Base
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\App\State $state,
         \Magento\Framework\App\Config\Storage\WriterInterface $configWriter,
         \Payone\Core\Helper\Database $databaseHelper
     ) {
-        parent::__construct($context, $storeManager, $shopHelper);
+        parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->configWriter = $configWriter;
         $this->databaseHelper = $databaseHelper;
     }

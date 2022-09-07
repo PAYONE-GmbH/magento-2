@@ -26,6 +26,8 @@
 
 namespace Payone\Core\Helper;
 
+use Magento\Sales\Model\Order;
+
 /**
  * Helper class for Amasty giftcards
  */
@@ -47,6 +49,7 @@ class AmastyGiftcard extends \Payone\Core\Helper\Base
      * If there is a better way to solve this optional injection/soft dependancy feel free to tell us.
      *
      * @param  string $sQuoteId
+     * @param  Order $oOrder
      * @return array
      */
     public function getAmastyGiftCards($sQuoteId, $oOrder)
@@ -77,11 +80,12 @@ class AmastyGiftcard extends \Payone\Core\Helper\Base
      * Determine if order has used amasty giftcards
      *
      * @param  string $sQuoteId
+     * @param  Order $oOrder
      * @return bool
      */
-    public function hasAmastyGiftcards($sQuoteId)
+    public function hasAmastyGiftcards($sQuoteId, $oOrder)
     {
-        $aGiftCards = $this->getAmastyGiftCards($sQuoteId);
+        $aGiftCards = $this->getAmastyGiftCards($sQuoteId, $oOrder);
         if (!empty($aGiftCards)) {
             return true;
         }

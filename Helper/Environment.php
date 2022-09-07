@@ -44,15 +44,17 @@ class Environment extends \Payone\Core\Helper\Base
      * @param \Magento\Framework\App\Helper\Context        $context
      * @param \Magento\Store\Model\StoreManagerInterface   $storeManager
      * @param \Payone\Core\Helper\Shop                     $shopHelper
+     * @param \Magento\Framework\App\State                 $state
      * @param \Payone\Core\Model\Environment\RemoteAddress $remoteAddress
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\App\State $state,
         \Payone\Core\Model\Environment\RemoteAddress $remoteAddress
     ) {
-        parent::__construct($context, $storeManager, $shopHelper);
+        parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->remoteAddress = $remoteAddress;
     }
 

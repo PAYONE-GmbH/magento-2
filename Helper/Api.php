@@ -122,6 +122,7 @@ class Api extends Base
      * @param \Magento\Framework\App\Helper\Context      $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Magento\Framework\App\State               $state
      * @param \Payone\Core\Helper\Connection\CurlPhp     $connCurlPhp
      * @param \Payone\Core\Helper\Connection\CurlCli     $connCurlCli
      * @param \Payone\Core\Helper\Connection\Fsockopen   $connFsockopen
@@ -131,12 +132,13 @@ class Api extends Base
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\App\State $state,
         \Payone\Core\Helper\Connection\CurlPhp $connCurlPhp,
         \Payone\Core\Helper\Connection\CurlCli $connCurlCli,
         \Payone\Core\Helper\Connection\Fsockopen $connFsockopen,
         \Magento\Checkout\Model\Session $checkoutSession
     ) {
-        parent::__construct($context, $storeManager, $shopHelper);
+        parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->connCurlPhp = $connCurlPhp;
         $this->connCurlCli = $connCurlCli;
         $this->connFsockopen = $connFsockopen;
