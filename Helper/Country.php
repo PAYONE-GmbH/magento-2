@@ -64,15 +64,17 @@ class Country extends \Payone\Core\Helper\Base
      * @param \Magento\Framework\App\Helper\Context      $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Magento\Framework\App\State               $state
      * @param \Magento\Directory\Model\Country           $country
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\App\State $state,
         \Magento\Directory\Model\Country $country
     ) {
-        parent::__construct($context, $storeManager, $shopHelper);
+        parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->country = $country;
     }
 

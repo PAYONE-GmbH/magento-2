@@ -48,20 +48,28 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
     protected $shopHelper;
 
     /**
+     * @var \Magento\Framework\App\State
+     */
+    protected $state;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context      $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Magento\Framework\App\State               $state
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Payone\Core\Helper\Shop $shopHelper
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\App\State $state
     ) {
         parent::__construct($context);
         $this->storeManager = $storeManager;
         $this->shopHelper = $shopHelper;
+        $this->state = $state;
     }
 
     /**
@@ -76,13 +84,9 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getConfigParam($sKey, $sGroup = 'global', $sSection = 'payone_general', $sStoreCode = null)
     {
-        if (!$sStoreCode) {
-            $sStoreCode = $this->storeManager->getStore()->getCode();
-        }
         $sPath = $sSection."/".$sGroup."/".$sKey;
         return $this->getConfigParamByPath($sPath, $sStoreCode);
     }
-
 
     /**
      * Helper method to get parameter from the config by path
@@ -93,10 +97,35 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getConfigParamByPath($sPath, $sStoreCode = null)
     {
+        $sScopeCode = ScopeInterface::SCOPE_STORES;
         if (!$sStoreCode) {
-            $sStoreCode = $this->storeManager->getStore()->getCode();
+            list($sStoreCode, $sScopeCode) = $this->fetchCurrentStoreCode();
         }
-        return $this->scopeConfig->getValue($sPath, ScopeInterface::SCOPE_STORES, $sStoreCode);
+        return $this->scopeConfig->getValue($sPath, $sScopeCode, $sStoreCode);
+    }
+
+    /**
+     * Trying to fetch the current storeCode
+     * Fetching the correct storeCode in the Magento2 backend is very inaccurate
+     *
+     * @return array
+     */
+    protected function fetchCurrentStoreCode()
+    {
+        $sScopeCode = \Magento\Store\Model\ScopeInterface::SCOPE_STORES;
+        $sStoreCode = $this->storeManager->getStore()->getCode();
+        if ($this->state->getAreaCode() == \Magento\Framework\App\Area::AREA_ADMINHTML) {
+            $sStoreCode = 0; // 0 = default config, which should be used when neither website nor store parameter are present, storeManager returns default STORE though, which would be wrong
+            if (!empty($this->getRequestParameter('website'))) {
+                $sStoreCode = $this->getRequestParameter('website');
+                $sScopeCode = \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITES;
+            }
+            if (!empty($this->getRequestParameter('store'))) {
+                $sStoreCode = $this->getRequestParameter('store');
+            }
+        }
+
+        return [$sStoreCode, $sScopeCode];
     }
 
     /**
