@@ -17,26 +17,29 @@
                 <value id="paypal_amazon" type="host">static-eu.payments-amazon.com</value>
                 <value id="payone_klarna_js" type="host">x.klarnacdn.net</value>
                 <value id="payone_klarna_js2" type="host">cdn.klarna.com</value>
-                <value id="payone_jsctool_script" type="host">www.jsctool.com</value>
+                <value id="payone_jsctool_script" type="host">jsctool.com</value>
+                <value id="payone_payla_script" type="host">d.payla.io</value>
             </values>
         </policy>
         <policy id="style-src">
             <values>
                 <value id="payone_ratepay_css" type="host">d.ratepay.com</value>
+                <value id="payone_payla_css" type="host">d.payla.io</value>
+                <value id="payone_payla_css2" type="host">dr.payla.io</value>
             </values>
         </policy>
         <policy id="frame-src">
             <values>
                 <value id="payone_payone_frame" type="host">secure.pay1.de</value>
                 <value id="payone_amazon_payments" type="host">payments.amazon.de</value>
-                <value id="payone_jsctool_frame" type="host">www.jsctool.com</value>
+                <value id="payone_jsctool_frame" type="host">jsctool.com</value>
             </values>
         </policy>
         <policy id="connect-src">
             <values>
                 <value id="payone_amazon_payments" type="host">payments.amazon.de</value>
                 <value id="payone_ratepay_connect" type="host">d.ratepay.com</value>
-                <value id="payone_jsctool_connect" type="host">www.jsctool.com</value>
+                <value id="payone_jsctool_connect" type="host">jsctool.com</value>
             </values>
         </policy>
     </policies>

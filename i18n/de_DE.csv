@@ -994,6 +994,7 @@
 "Firstname","Vorname"
 "Lastname","Nachname"
 "Cardholder","Karteninhaber"
+"Bank account holder","Kontoinhaberin"
 "What is this?","Was ist das?"
 "Please enter complete data.","Bitte geben Sie die Kreditkartendaten vollstaendig ein."
 "Expiry date invalid. Please verify your card data.","Ablauf-Datum ungueltig. Bitte pruefen Sie ihre Kartendaten."
@@ -1160,5 +1161,7 @@
 "I want to transfer the installments myself and not pay by direct debit","Ich möchte die Ratenzahlung selbst vornehmen und nicht per Lastschrift begleichen"
 "I want to settle the installments by direct debit","Ich möchte die Ratenzahlung per Lastschrift begleichen"
 
+"PAYONE Credit Card", "PAYONE Kreditkarte"
+"Safe installment is not available for your current basket. Please choose another payment method.","Gesicherter Ratenkauf wird für Ihren aktuellen Warenkorb nicht unterstützt. Bitte wählen Sie eine andere Zahlart."
 "Ratepay payment with differing billing- and shipping-address is not supported","Die Zahlung mit Ratepay bei abweichender Rechnungs- und Lieferadressen wird nicht unterstützt"
 "Place Order","Jetzt kaufen"

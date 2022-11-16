@@ -33,8 +33,10 @@ use Payone\Core\Api\Data\InstallmentPlanResponseInterfaceFactory;
 use Magento\Checkout\Model\Session;
 use Payone\Core\Model\Api\Request\Genericpayment\Calculation;
 use Payone\Core\Model\Api\Request\Genericpayment\PreCheck;
+use Payone\Core\Model\Api\Request\Genericpayment\InstallmentOptions;
 use Payone\Core\Model\Methods\Payolution\Installment;
 use Payone\Core\Block\Payolution\InstallmentPlan as Block;
+use Payone\Core\Block\BNPL\InstallmentPlan as BNPLBlock;
 use Payone\Core\Helper\Ratepay;
 use Payone\Core\Model\Methods\Ratepay\Installment as RatepayInstallment;
 
@@ -101,6 +103,18 @@ class InstallmentPlan implements InstallmentPlanInterface
     protected $apiHelper;
 
     /**
+     * InstallmentOptions Genericpayment request object
+     *
+     * @var InstallmentOptions
+     */
+    protected $installmentOptions;
+
+    /**
+     * @var BNPLBlock
+     */
+    protected $bnplBlock;
+
+    /**
      * Constructor.
      *
      * @param InstallmentPlanResponseInterfaceFactory $responseFactory
@@ -112,6 +126,8 @@ class InstallmentPlan implements InstallmentPlanInterface
      * @param Ratepay                                 $ratepayHelper
      * @param RatepayInstallment                      $ratepayInstallment
      * @param Api                                     $apiHelper
+     * @param InstallmentOptions                      $installmentOptions
+     * @param BNPLBlock                               $bnplBlock
      */
     public function __construct(
         InstallmentPlanResponseInterfaceFactory $responseFactory,
@@ -122,7 +138,9 @@ class InstallmentPlan implements InstallmentPlanInterface
         Block $block,
         Ratepay $ratepayHelper,
         RatepayInstallment $ratepayInstallment,
-        Api $apiHelper
+        Api $apiHelper,
+        InstallmentOptions $installmentOptions,
+        BNPLBlock $bnplBlock
     ) {
         $this->responseFactory = $responseFactory;
         $this->checkoutSession = $checkoutSession;
@@ -133,6 +151,8 @@ class InstallmentPlan implements InstallmentPlanInterface
         $this->ratepayInstallment = $ratepayInstallment;
         $this->ratepayHelper = $ratepayHelper;
         $this->apiHelper = $apiHelper;
+        $this->installmentOptions = $installmentOptions;
+        $this->bnplBlock = $bnplBlock;
     }
 
     /**
@@ -241,6 +261,79 @@ class InstallmentPlan implements InstallmentPlanInterface
                 $aInstallmentPlan[$sKey] = $sValue;
             }
             $oResponse->setData('installmentPlan', json_encode($aInstallmentPlan));
+            $oResponse->setData('success', true);
+        }
+        return $oResponse;
+    }
+
+    /**
+     * Extract number from given string
+     *
+     * @param  string $sString
+     * @return string|false
+     */
+    protected function getNumberFromString($sString)
+    {
+        preg_match('/^[^0-9]*_([0-9])$/m', $sString, $matches);
+
+        if (count($matches) == 2) {
+            return $matches[1];
+        }
+        return false;
+    }
+
+    protected function formatInstallmentOptions($aResponse)
+    {
+        unset($aResponse['status']);
+        unset($aResponse['workorderid']);
+
+        $aInstallmentOptions = ['runtimes' => []];
+
+        foreach ($aResponse as $sKey => $sValue) {
+            $sKey = str_replace("add_paydata", "", $sKey);
+            $sKey = str_replace(["[", "]"], "", $sKey);
+            $sKey = str_replace("-", "_", $sKey);
+
+            $iIndex = $this->getNumberFromString($sKey);
+            if ($iIndex !== false) {
+                $sKey = str_replace("_".$iIndex, "", $sKey);
+                if (!isset($aInstallmentOptions['runtimes'][$iIndex])) {
+                    $aInstallmentOptions['runtimes'][$iIndex] = [];
+                }
+                $aInstallmentOptions['runtimes'][$iIndex][$sKey] = $sValue;
+            } else {
+                $aInstallmentOptions[$sKey] = $sValue;
+            }
+        }
+        return $aInstallmentOptions;
+    }
+
+    /**
+     * PAYONE BNPL installment plan getter
+     * The full class-paths must be given here otherwise the Magento 2 WebApi
+     * cant handle this with its fake type system!
+     *
+     * @param  string $cartId
+     * @param  string $paymentCode
+     * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
+     */
+    public function getInstallmentPlanBNPL($cartId, $paymentCode)
+    {
+        $oResponse = $this->responseFactory->create();
+        $oResponse->setData('success', false); // set success to false as default, set to true later if true
+
+        $oQuote = $this->checkoutSession->getQuote();
+
+        $aResponseCalculation = $this->installmentOptions->sendRequest($oQuote, $paymentCode);
+
+        if ($aResponseCalculation['status'] == "OK") {
+            $this->checkoutSession->setInstallmentWorkorderId($aResponseCalculation['workorderid']);
+            $aInstallmentPlan = $this->formatInstallmentOptions($aResponseCalculation);
+
+            $this->bnplBlock->setInstallmentData($aInstallmentPlan);
+            $this->bnplBlock->setCode($paymentCode);
+
+            $oResponse->setData('installmentPlanHtml', $this->bnplBlock->toHtml());
             $oResponse->setData('success', true);
         }
         return $oResponse;

@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Model;
 
+use Payone\Core\Model\Methods\BNPL\BNPLBase;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Eps;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Ideal;
@@ -133,6 +134,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $ratepayInstallment;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Payment\Model\CcConfig                      $ccConfig
@@ -150,6 +158,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @param \Payone\Core\Helper\Shop                             $shopHelper
      * @param \Payone\Core\Model\ResourceModel\SavedPaymentData    $savedPaymentData
      * @param \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment
+     * @param \Payone\Core\Helper\Toolkit                          $toolkitHelper
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -166,7 +175,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Magento\Customer\Model\Session $customerSession,
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
-        \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment
+        \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -183,6 +193,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->shopHelper = $shopHelper;
         $this->savedPaymentData = $savedPaymentData;
         $this->ratepayInstallment = $ratepayInstallment;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -268,6 +279,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
             'storeName' => $this->shopHelper->getStoreName(),
             'ratepayAllowedMonths' => $this->getRatepayAllowedMonths(),
+            'bnpl' => $this->getBNPLConfig(),
         ];
     }
 
@@ -324,5 +336,56 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             return $this->ratepayInstallment->getAllowedMonths();
         }
         return [];
+    }
+
+    /**
+     * Reads payone UUID from session
+     * Generates it if not yet set in session
+     *
+     * @return string
+     * @throws \Exception
+     */
+    protected function getUUID()
+    {
+        $sUUID = $this->checkoutSession->getPayoneUUID();
+        if (empty($sUUID)) {
+            $sUUID = $this->toolkitHelper->generateUUIDv4();
+            $this->checkoutSession->setPayoneUUID($sUUID);
+        }
+        return $sUUID;
+    }
+
+    /**
+     * Check if at least 1 BNPL method is active
+     *
+     * @return bool
+     */
+    protected function isBNPLActive()
+    {
+        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_BNPL_INVOICE) === true ||
+            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_BNPL_DEBIT) === true ||
+            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_BNPL_INSTALLMENT) === true
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns config options for BNPL payment methods
+     *
+     * @return array|false
+     */
+    protected function getBNPLConfig()
+    {
+        if ($this->isBNPLActive()) {
+            return [
+                'environment' => "t", // TODO
+                'payla_partner_id' => BNPLBase::BNPL_PARTNER_ID,
+                'mid' => $this->shopHelper->getConfigParam("mid"),
+                'uuid' => $this->getUUID(),
+            ];
+        }
+        return false;
     }
 }

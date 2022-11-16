@@ -95,10 +95,15 @@ abstract class PayoneConfig
     const METHOD_TRUSTLY = 'payone_trustly';
     const METHOD_APPLEPAY = 'payone_applepay';
     const METHOD_BANCONTACT = 'payone_bancontact';
+    const METHOD_BNPL_BASE = 'payone_bnpl_base';
+    const METHOD_BNPL_INVOICE = 'payone_bnpl_invoice';
+    const METHOD_BNPL_INSTALLMENT = 'payone_bnpl_installment';
+    const METHOD_BNPL_DEBIT = 'payone_bnpl_debit';
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
     const METHOD_GROUP_PAYOLUTION = 'payone_payolution';
     const METHOD_GROUP_KLARNA = 'payone_klarna';
     const METHOD_GROUP_RATEPAY = 'payone_ratepay';
+    const METHOD_GROUP_BNPL = 'payone_bnpl';
 }

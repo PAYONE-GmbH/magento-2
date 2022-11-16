@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 8
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2022 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+$aInstallmentResponse = $this->getInstallmentData();
+$aInstallmentData = $aInstallmentResponse['runtimes'];
+
+?>
+<?php if (empty($aInstallmentData)): ?>
+    <div class="payone_place_order_not_allowed">
+        <span><?php echo __('Safe installment is not available for your current basket. Please choose another payment method.'); ?></span>
+    </div>
+<?php else: ?>
+    <label class="label" style="display:block;">
+        <span><?php echo __('Please select your desired number of installments'); ?></span>
+    </label><br>
+    <div>
+        <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>
+            <a href="#" onclick="switchBNPLInstallmentPlan('<?php echo $sKey; ?>', '<?php echo $this->getCode(); ?>', '<?php echo $aInstallment['installment_option_id']; ?>');return false;">
+                <?php echo $this->getSelectLinkText($aInstallment) ?>
+            </a><br>
+        <?php endforeach; ?>
+
+        <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>
+            <div id="bnpl_installment_overview_<?php echo $sKey; ?>" class="bnpl_installment_overview" style="display:none;">
+                <br>
+                <strong><?php echo __('Overview'); ?></strong><br>
+                <table>
+                    <tr>
+                        <td><?php echo __('No. of installments:'); ?></td>
+                        <td class="value"><?php echo $aInstallment['number_of_payments']; ?></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo __('Financingamount:'); ?></td>
+                        <td class="value"><?php echo $this->formatPrice($aInstallmentResponse['amount_value']).' '.$aInstallment['monthly_amount_currency']; ?></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo __('Total:'); ?></td>
+                        <td class="value"><?php echo $this->formatPrice($aInstallment['total_amount_value']).' '.$aInstallment['monthly_amount_currency']; ?></td>
+                    </tr>
+                    <tr>
+                        <td><?php echo __('Interest rate:'); ?></td>
+                        <td class="value"><?php echo $aInstallment['nominal_interest_rate'] / 100; ?>%</td>
+                    </tr>
+                    <tr>
+                        <td><?php echo __('Effective interest rate:'); ?></td>
+                        <td class="value"><?php echo $aInstallment['effective_interest_rate'] / 100; ?>%</td>
+                    </tr>
+                    <tr class="final">
+                        <td><?php echo __('Monthly installment:'); ?></td>
+                        <td class="value"><?php echo $this->formatPrice($aInstallment['monthly_amount_value']).' '.$aInstallment['monthly_amount_currency']; ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><a href="<?php echo $aInstallment['link_credit_information_href']; ?>" target="_blank"><?php echo __('Download Installment-Contract-Draft'); ?></a></td>
+                    </tr>
+                </table>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>

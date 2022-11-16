@@ -127,5 +127,14 @@
         <method name="payone_bancontact">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="payone_bnpl_invoice">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_bnpl_debit">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="payone_bnpl_installment">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
     </methods>
 </payment>
