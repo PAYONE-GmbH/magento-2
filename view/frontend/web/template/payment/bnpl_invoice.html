@@ -102,6 +102,14 @@
             </fieldset>
         </form>
         <p data-bind="html: getInstructions()"></p>
+        <div class="bnpl-legal-text">
+            <!-- ko i18n: 'bnpl_legal_text_snippet_1'--><!-- /ko -->
+            <a target='_blank' data-bind="attr: {href: $t('bnpl_payment_terms_url')}"><!-- ko i18n: 'bnpl_legal_text_snippet_2'--><!-- /ko --></a>
+            <!-- ko i18n: 'bnpl_legal_text_snippet_3'--><!-- /ko --><br>
+            <!-- ko i18n: 'bnpl_legal_text_snippet_4'--><!-- /ko -->
+            <a target='_blank' data-bind="attr: {href: $t('bnpl_data_protection_url')}"><!-- ko i18n: 'bnpl_legal_text_snippet_5'--><!-- /ko --></a>
+            <!-- ko i18n: 'bnpl_legal_text_snippet_6'--><!-- /ko --><br><br>
+        </div>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
             <!-- ko template: getTemplate() --><!-- /ko -->
@@ -145,8 +153,11 @@
                 </button>
             </div>
         </div>
-        <div class="payone_place_order_not_allowed" data-bind="visible: !isPlaceOrderActionAllowedBNPL()"><br>
-            <span><!-- ko i18n: 'Payment with differing billing- and shipping-address is not supported'--><!-- /ko --></span><div/>
+        <div class="payone_place_order_not_allowed" data-bind="visible: isAddressDifferent()"><br>
+            <span><!-- ko i18n: 'Payment with differing billing- and shipping-address is not supported'--><!-- /ko --></span>
+        </div>
+        <div class="payone_place_order_not_allowed" data-bind="visible: !isAddressDifferent() && isB2BOrder()"><br>
+            <span><!-- ko i18n: 'B2B orders are not supported for this payment method'--><!-- /ko --></span>
         </div>
     </div>
 </div>

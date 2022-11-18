@@ -104,8 +104,9 @@ class BNPLBase extends PayoneMethod
     {
         $sUuid = $this->checkoutSession->getPayoneUUID();
         $sMid = $this->shopHelper->getConfigParam('mid');
-        if (!empty($this->getCustomConfigParam('mid'))) {
-            $sMid = $this->getCustomConfigParam('mid');
+        $sCustomMid = $this->getCustomConfigParam('mid');
+        if ($this->hasCustomConfig() && !empty($sCustomMid)) {
+            $sMid = $sCustomMid;
         }
         return self::BNPL_PARTNER_ID.'_'.$sMid.'_'.$sUuid;
     }

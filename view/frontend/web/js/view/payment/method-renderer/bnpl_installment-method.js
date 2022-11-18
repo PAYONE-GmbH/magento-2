@@ -58,7 +58,7 @@ define(
                 return this;
             },
             isPlaceOrderActionAllowedBNPLInstallment: function () {
-                return (this.optionid() != '' && quote.billingAddress() != null && quote.billingAddress().getCacheKey() == quote.shippingAddress().getCacheKey());
+                return (this.optionid() != '' && this.isPlaceOrderActionAllowedBNPL());
             },
             handleInstallment: function () {
                 if (this.validate() && additionalValidators.validate()) {

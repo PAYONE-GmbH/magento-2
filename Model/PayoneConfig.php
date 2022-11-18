@@ -95,7 +95,6 @@ abstract class PayoneConfig
     const METHOD_TRUSTLY = 'payone_trustly';
     const METHOD_APPLEPAY = 'payone_applepay';
     const METHOD_BANCONTACT = 'payone_bancontact';
-    const METHOD_BNPL_BASE = 'payone_bnpl_base';
     const METHOD_BNPL_INVOICE = 'payone_bnpl_invoice';
     const METHOD_BNPL_INSTALLMENT = 'payone_bnpl_installment';
     const METHOD_BNPL_DEBIT = 'payone_bnpl_debit';

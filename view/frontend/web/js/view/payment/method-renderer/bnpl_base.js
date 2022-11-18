@@ -85,8 +85,22 @@ define(
                 }
                 return true;
             },
+            isAddressDifferent: function () {
+                if (window.checkoutConfig.payment.payone.bnpl.differentAddressAllowed[this.getCode()] === true) {
+                    return false;
+                }
+                return (quote.billingAddress() === null || quote.billingAddress().getCacheKey() !== quote.shippingAddress().getCacheKey());
+            },
+            isB2BOrder: function () {
+                if (quote.billingAddress() !== null && typeof quote.billingAddress().company !== undefined && typeof quote.billingAddress().company !== null) {
+                    if (quote.billingAddress().company) {
+                        return true;
+                    }
+                }
+                return false;
+            },
             isPlaceOrderActionAllowedBNPL: function () {
-                return (quote.billingAddress() != null && quote.billingAddress().getCacheKey() == quote.shippingAddress().getCacheKey());
+                return (this.isAddressDifferent() === false && this.isB2BOrder() === false);
             },
             loadJavascriptSnippet: function () {
                 if (window.checkoutConfig.payment.payone.bnpl === undefined || window.checkoutConfig.payment.payone.bnpl === false || window.payoneBNPLSnippetLoaded !== undefined || window.payoneBNPLSnippetLoaded === true) {
@@ -94,18 +108,20 @@ define(
                 }
 
                 var config = window.checkoutConfig.payment.payone.bnpl;
-                var snippetToken = config.payla_partner_id + "_" + config.mid + "_" + config.uuid;
+                var environment = config.environment[this.getCode()];
+                var mid = config.mid[this.getCode()];
+                var snippetToken = config.payla_partner_id + "_" + mid + "_" + config.uuid;
 
-                $.getScript("https://d.payla.io/dcs/" + config.payla_partner_id + "/" + config.mid + "/dcs.js")
+                $.getScript("https://d.payla.io/dcs/" + config.payla_partner_id + "/" + mid + "/dcs.js")
                 .done(function(script, textStatus) {
-                    var paylaDcsT = paylaDcs.init(config.environment, snippetToken);
+                    var paylaDcsT = paylaDcs.init(environment, snippetToken);
 
                     $("head").append("<link>");
                     var css = $("head").children(":last");
                     css.attr({
                         rel:  "stylesheet",
                         type: "text/css",
-                        href: "https://d.payla.io/dcs/dcs.css?st=" + snippetToken + "&pi=" + config.payla_partner_id + "&psi=" + config.mid + "&e=" + config.environment
+                        href: "https://d.payla.io/dcs/dcs.css?st=" + snippetToken + "&pi=" + config.payla_partner_id + "&psi=" + mid + "&e=" + environment
                     });
                 })
                 .fail(function(jqxhr, settings, exception) {

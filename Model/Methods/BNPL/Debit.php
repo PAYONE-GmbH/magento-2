@@ -63,21 +63,4 @@ class Debit extends BNPLBase
 
         return $aParams;
     }
-
-    /**
-     * Add the checkout-form-data to the checkout session
-     *
-     * @param  DataObject $data
-     * @return $this
-
-    public function assignData(DataObject $data)
-    {
-        parent::assignData($data);
-
-        $oInfoInstance = $this->getInfoInstance();
-        $oInfoInstance->setAdditionalInformation('bankaccountholder', $this->toolkitHelper->getAdditionalDataEntry($data, 'bankaccountholder'));
-        $oInfoInstance->setAdditionalInformation('iban', $this->toolkitHelper->getAdditionalDataEntry($data, 'iban'));
-
-        return $this;
-    }      */
 }

@@ -327,17 +327,19 @@
                 <min_order_total>10</min_order_total>
                 <max_order_total>1500</max_order_total>
                 <allowspecific>0</allowspecific>
+                <different_address_allowed>0</different_address_allowed>
                 <group>payone</group>
             </payone_bnpl_invoice>
-            <payone_bnpl_debit translate="title" module="Payone_Core">
+            <!--BNPL_DEBIT_DEACTIVATED payone_bnpl_debit translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\BNPL\Debit</model>
                 <order_status>pending</order_status>
                 <title>PAYONE Secured Direct Debit</title>
                 <allowspecific>0</allowspecific>
+                <different_address_allowed>0</different_address_allowed>
                 <group>payone</group>
-            </payone_bnpl_debit>
+            </payone_bnpl_debit-->
             <payone_bnpl_installment translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
@@ -347,6 +349,7 @@
                 <min_order_total>200</min_order_total>
                 <max_order_total>3500</max_order_total>
                 <allowspecific>0</allowspecific>
+                <different_address_allowed>0</different_address_allowed>
                 <group>payone</group>
             </payone_bnpl_installment>
         </payment>
