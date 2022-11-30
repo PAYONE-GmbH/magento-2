@@ -108,7 +108,7 @@ class Toolkit extends \Payone\Core\Helper\Base
     {
         $aKeyValues = $this->getAllPayoneSecurityKeys();
         foreach ($aKeyValues as $sConfigKey) {
-            if (md5($sConfigKey) == $sKey) {
+            if (md5($sConfigKey ?? '') == $sKey) {
                 return true;
             }
         }

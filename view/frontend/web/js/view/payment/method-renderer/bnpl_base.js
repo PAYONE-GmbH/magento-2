@@ -49,7 +49,7 @@ define(
             initialize: function () {
                 let parentReturn = this._super();
                 if (this.isChecked() === this.getCode()) {
-                    this.loadJavascriptSnippet();
+                    this.selectPaymentMethod();
                 }
                 return parentReturn;
             },

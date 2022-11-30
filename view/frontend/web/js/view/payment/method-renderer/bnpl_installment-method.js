@@ -60,21 +60,22 @@ define(
             isPlaceOrderActionAllowedBNPLInstallment: function () {
                 return (this.optionid() != '' && this.isPlaceOrderActionAllowedBNPL());
             },
-            handleInstallment: function () {
-                if (this.validate() && additionalValidators.validate()) {
-                    window.bnpl_installment = this;
-                    window.switchBNPLInstallmentPlan = window.switchBNPLInstallmentPlan || function (sKey, sCode, iInstallments) {
-                        window.bnpl_installment.switchBNPLInstallmentPlan(sKey, sCode, iInstallments);
-                    };
-                    if (this.requestBirthday() == true &&
-                        this.isDateValid(this.birthyear(), this.birthmonth(), this.birthday()) &&
-                        this.isBirthdayValid(this.birthyear(), this.birthmonth(), this.birthday())
-                    ) {
-                        installmentplan(this, this.getCode());
-                    }
-                }
+            selectPaymentMethod: function () {
+                var returnValue = this._super();
+                this.handleInstallment();
+                return returnValue;
             },
-            switchBNPLInstallmentPlan: function (sKey, sCode, installmentOptionId) {
+            handleInstallment: function () {
+                window.bnpl_installment = this;
+                window.switchBNPLInstallmentPlan = window.switchBNPLInstallmentPlan || function (sKey, sCode, iInstallments, linkElement) {
+                    window.bnpl_installment.switchBNPLInstallmentPlan(sKey, sCode, iInstallments, linkElement);
+                };
+                installmentplan(this, this.getCode());
+            },
+            switchBNPLInstallmentPlan: function (sKey, sCode, installmentOptionId, linkElement) {
+                $('.bnplCondition').css('font-weight', 'normal');
+                $(linkElement).css('font-weight', 'bold');
+                $('#bnplCondition_' + sKey).prop("checked", true);
                 $('.bnpl_installmentplans').hide();
                 $('.bnpl_installment_overview').hide();
 
@@ -110,10 +111,6 @@ define(
                 $('#' + this.getCode() + '_installmentplan').show();
                 $('#' + this.getCode() + '_check').hide();
                 $('#' + this.getCode() + '_submit').show();
-                $('#' + this.getCode() + '_birthday_field').hide();
-                $('#' + this.getCode() + '_telephone').hide();
-                $('#' + this.getCode() + '_bankaccountholder_field').hide();
-                $('#' + this.getCode() + '_iban_field').hide();
             }
         });
     }
