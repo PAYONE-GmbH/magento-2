@@ -74,7 +74,7 @@ define(
             },
             switchBNPLInstallmentPlan: function (sKey, sCode, installmentOptionId, linkElement) {
                 $('.bnplCondition').css('font-weight', 'normal');
-                $(linkElement).css('font-weight', 'bold');
+                $(linkElement).children("A").css('font-weight', 'bold');
                 $('#bnplCondition_' + sKey).prop("checked", true);
                 $('.bnpl_installmentplans').hide();
                 $('.bnpl_installment_overview').hide();
