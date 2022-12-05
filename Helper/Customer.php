@@ -161,6 +161,9 @@ class Customer extends \Payone\Core\Helper\Base
     {
         $sRegionCode = $oAddress->getRegionCode();
         if (strlen($sRegionCode) != 2) {
+            $sRegionCode = str_ireplace($oAddress->getCountryId().'-', '', $sRegionCode); // MAG2-266
+        }
+        if (strlen($sRegionCode) != 2) {
             $oRegion = $this->regionFactory->create();
             $oRegion->loadByName($sRegionCode, $oAddress->getCountryId());
             if ($oRegion->getId()) {
