@@ -40,13 +40,15 @@ define([
                 payment_method_category: paymentMethodCategory
             }, function (result) {
                 if (result.show_form === true) {
+                    payment.canBeAuthorized = true;
+                    payment.isPlaceOrderActionAllowed(true);
                     $('#' + containerId).show();
                     $('#klarna_placeOrder').show();
                 } else if(result.show_form === false && result.error == undefined) {
                     payment.messageContainer.addErrorMessage({'message': $t('Klarna payment can not be offered for this order.')});
                     $('#' + paymentCode + '_check').prop( "disabled", true );
                 }
-            })
+            });
         };
         $.getScript('https://x.klarnacdn.net/kp/lib/v1/api.js');
     };

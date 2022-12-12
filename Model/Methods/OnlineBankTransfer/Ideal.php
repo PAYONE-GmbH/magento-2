@@ -68,12 +68,13 @@ class Ideal extends OnlineBankTransferBase
         'ASN_BANK' => 'ASN Bank',
         'SNS_BANK' => 'SNS Bank',
         'TRIODOS_BANK' => 'Triodos Bank',
-        'SNS_REGIO_BANK' => 'SNS Regio Bank',
+        'SNS_REGIO_BANK' => 'Regio Bank',
         'ING_BANK' => 'ING Bank',
-        'KNAB_BANK' => 'Knab Bank',
+        'KNAB_BANK' => 'Knab',
         'VAN_LANSCHOT_BANKIERS' => 'van Lanschot',
-        'MONEYOU' => 'Moneyou',
         'HANDELSBANKEN' => 'Handelsbanken',
+        'FRIESLAND_BANK' => 'Friesland Bank',
+        'REVOLUT' => 'Revolut',
     ];
 
     /**

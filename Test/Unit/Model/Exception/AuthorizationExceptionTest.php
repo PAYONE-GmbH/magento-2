@@ -54,6 +54,7 @@ class AuthorizationExceptionTest extends BaseTestCase
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'response' => $this->expected,
+            'phrase' => __("test")
         ]);
     }
 

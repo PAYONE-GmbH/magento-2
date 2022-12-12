@@ -103,16 +103,18 @@ class Authorization extends AddressRequest
      */
     public function sendRequest(PayoneMethod $oPayment, Order $oOrder, $dAmount)
     {
+        $this->setStoreCode($oOrder->getStore()->getCode());
+
         $this->initRequest(); // reinitialize
 
         $this->setOrderId($oOrder->getRealOrderId()); // save order id to object for later use
 
         $this->addParameter('request', $oPayment->getAuthorizationMode()); // add request type
         $this->addParameter('mode', $oPayment->getOperationMode()); // add mode ( live or test )
-        if ($this->shopHelper->getConfigParam('transmit_customerid') == '1') {
+        if ($this->shopHelper->getConfigParam('transmit_customerid', 'global', 'payone_general', $this->storeCode) == '1') {
             $this->addParameter('customerid', $oOrder->getCustomerId()); // add customer id
         }
-        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // add sub account id
+        $this->addParameter('aid', $this->shopHelper->getConfigParam('aid', 'global', 'payone_general', $this->storeCode)); // add sub account id
         $this->setAuthorizationParameters($oPayment, $oOrder, $dAmount); // set authorization params
 
         $aResponse = $this->send($oPayment); // send request to PAYONE Server API
@@ -138,7 +140,7 @@ class Authorization extends AddressRequest
         $oShipping = $oOrder->getShippingAddress(); // get shipping address from order
         if ($oShipping) {// shipping address existing?
             $this->addAddress($oShipping, true); // add regular shipping address
-        } elseif ($oPayment->getCode() == PayoneConfig::METHOD_PAYDIREKT || ($oPayment->getCode() == PayoneConfig::METHOD_PAYPAL && $this->shopHelper->getConfigParam('bill_as_del_address', PayoneConfig::METHOD_PAYPAL, 'payone_payment'))) {
+        } elseif ($oPayment->getCode() == PayoneConfig::METHOD_PAYDIREKT || ($oPayment->getCode() == PayoneConfig::METHOD_PAYPAL && $this->shopHelper->getConfigParam('bill_as_del_address', PayoneConfig::METHOD_PAYPAL, 'payone_payment', $this->storeCode))) {
             $this->addAddress($oOrder->getBillingAddress(), true); // add billing address as shipping address
         }
     }
@@ -153,14 +155,14 @@ class Authorization extends AddressRequest
      */
     protected function setAuthorizationParameters(PayoneMethod $oPayment, Order $oOrder, $dAmount)
     {
-        $sRefNr = $this->shopHelper->getConfigParam('ref_prefix').$oOrder->getIncrementId(); // ref_prefix to prevent duplicate refnumbers in testing environments
+        $sRefNr = $this->shopHelper->getConfigParam('ref_prefix', 'global', 'payone_general', $this->storeCode).$oOrder->getIncrementId(); // ref_prefix to prevent duplicate refnumbers in testing environments
         $sRefNr = $oPayment->formatReferenceNumber($sRefNr); // some payment methods have refnr regulations
         $this->addParameter('reference', $sRefNr); // add ref-nr to request
 
         $this->addParameter('amount', number_format($dAmount, 2, '.', '') * 100); // add price to request
         $this->addParameter('currency', $this->apiHelper->getCurrencyFromOrder($oOrder)); // add currency to request
 
-        if ($this->shopHelper->getConfigParam('transmit_ip') == '1') {// is IP transmission needed?
+        if ($this->shopHelper->getConfigParam('transmit_ip', 'global', 'payone_general', $this->storeCode) == '1') {// is IP transmission needed?
             $sIp = $this->environmentHelper->getRemoteIp(); // get remote IP
             if ($sIp != '') {// is IP not empty
                 $this->addParameter('ip', $sIp); // add IP address to the request

@@ -51,14 +51,16 @@ class Toolkit extends \Payone\Core\Helper\Base
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Payment                $paymentHelper
      * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Magento\Framework\App\State               $state
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Payment $paymentHelper,
-        \Payone\Core\Helper\Shop $shopHelper
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\App\State $state
     ) {
-        parent::__construct($context, $storeManager, $shopHelper);
+        parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->paymentHelper = $paymentHelper;
     }
 
@@ -117,13 +119,14 @@ class Toolkit extends \Payone\Core\Helper\Base
      * Replace substitutes in a given text with the given replacements
      *
      * @param  string   $sText
-     * @param  string   $aSubstitutionArray
+     * @param  array    $aSubstitutionArray
      * @param  int|bool $iMaxLength
      * @return string
      */
     public function handleSubstituteReplacement($sText, $aSubstitutionArray, $iMaxLength = false)
     {
         if (!empty($sText)) {
+            $sText = str_replace(['{{', '}}'], ['{', '}'], $sText); // backwards compatibility for changes in MAG2-248
             $sText = str_replace(array_keys($aSubstitutionArray), array_values($aSubstitutionArray), $sText);
             if ($iMaxLength !== false && strlen($sText) > $iMaxLength) {
                 $sText = substr($sText, 0, $iMaxLength); // shorten text if too long
@@ -143,8 +146,8 @@ class Toolkit extends \Payone\Core\Helper\Base
     {
         $sText = $this->getConfigParam('invoice_appendix', 'invoicing'); // get invoice appendix from config
         $aSubstitutionArray = [
-            '{{order_increment_id}}' => $oOrder->getIncrementId(),
-            '{{customer_id}}' => $oOrder->getCustomerId(),
+            '{order_increment_id}' => $oOrder->getIncrementId(),
+            '{customer_id}' => $oOrder->getCustomerId(),
         ];
         $sInvoiceAppendix = $this->handleSubstituteReplacement($sText, $aSubstitutionArray, 255);
         return $sInvoiceAppendix;
@@ -161,7 +164,7 @@ class Toolkit extends \Payone\Core\Helper\Base
     {
         $sText = $this->getConfigParam('narrative_text', $oPayment->getCode(), 'payone_payment'); // get narrative text for payment from config
         $aSubstitutionArray = [
-            '{{order_increment_id}}' => $oOrder->getIncrementId(),
+            '{order_increment_id}' => $oOrder->getIncrementId(),
         ];
         $sNarrativeText = $this->handleSubstituteReplacement($sText, $aSubstitutionArray, $oPayment->getNarrativeTextMaxLength());
         return $sNarrativeText;

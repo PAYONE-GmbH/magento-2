@@ -90,6 +90,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('getQuoteAmount')->willReturn(100);
 
         $result = $this->classToTest->sendRequest($payment, $quote, '123', '123');
         $this->assertEquals($response, $result);
@@ -116,6 +117,7 @@ class ConfirmOrderReferenceTest extends BaseTestCase
 
         $response = ['status' => 'APPROVED'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
+        $this->apiHelper->method('getQuoteAmount')->willReturn(100);
 
         $result = $this->classToTest->sendRequest($payment, $quote,'123', '123');
         $this->assertEquals($response, $result);

@@ -26,7 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\ResourceModel;
 
-use Payone\Core\Helper\Shop;
+use Payone\Core\Helper\Payment;
 use Payone\Core\Model\ResourceModel\SavedPaymentData as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\Model\ResourceModel\Db\Context;
@@ -73,12 +73,16 @@ class SavedPaymentDataTest extends BaseTestCase
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $context->method('getResources')->willReturn($resource);
 
-        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
-        $shopHelper->method('getConfigParam')->willReturn('12345');
+        $paymentHelper = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $paymentHelper->method('getConfigParam')->willReturn('12345');
+        $paymentHelper->method('getAvailableCreditcardTypes')->willReturn([
+            ['id' => 'V'],
+            ['id' => 'M'],
+        ]);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
-            'shopHelper' => $shopHelper
+            'paymentHelper' => $paymentHelper
         ]);
     }
 
@@ -94,7 +98,7 @@ class SavedPaymentDataTest extends BaseTestCase
 
     public function testAddSavedPaymentDataHasData()
     {
-        $data = ['a' => 'b', '1' => '2'];
+        $data = ['a' => 'b', '1' => '2', 'cardtype' => 'V'];
         $fetchReturn = [
             [
                 'id' => 5,
@@ -111,7 +115,7 @@ class SavedPaymentDataTest extends BaseTestCase
 
     public function testDeletePaymentData()
     {
-        $data = ['a' => 'b', '1' => '2', 'firstname' => 'A', 'lastname' => 'B'];
+        $data = ['a' => 'b', '1' => '2', 'firstname' => 'A', 'lastname' => 'B', 'cardtype' => 'V'];
         $fetchReturn = [
             [
                 'id' => 5,

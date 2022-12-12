@@ -68,6 +68,7 @@ class UpgradeSchemaTest extends BaseTestCase
         $setup->method('getIdxName')->willReturn('name');
 
         $context = $this->getMockBuilder(ModuleContextInterface::class)->disableOriginalConstructor()->getMock();
+        $context->method('getVersion')->willReturn("2.4.4");
 
         $result = $this->classToTest->upgrade($setup, $context);
         $this->assertNull($result);

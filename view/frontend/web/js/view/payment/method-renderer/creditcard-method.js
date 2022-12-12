@@ -68,8 +68,12 @@ define(
                 if (this.isSaveDataEnabled()) {
                     parentReturn.additional_data.saveData = this.saveData();
                     parentReturn.additional_data.selectedData = this.getSelectedSavedCardPan();
-                    if (parentReturn.additional_data.selectedData !== 'new') {
+                    if (parentReturn.additional_data.selectedData !== 'new' && this.useSaveDataMode()) {
+                        var savedData = this.getSelectedSavedData();
                         parentReturn.additional_data.cardholder = this.getSelectedSavedCardholder();
+                        parentReturn.additional_data.truncatedcardpan = savedData.masked;
+                        parentReturn.additional_data.cardtype = savedData.cardtype;
+                        parentReturn.additional_data.cardexpiredate = savedData.cardexpiredate;
                     }
                 }
                 return parentReturn;
@@ -174,7 +178,7 @@ define(
                 return false;
             },
             isCardholderDataValid: function (sCardholder) {
-                if (sCardholder.search(/[^a-zA-ZÄäÖöÜüß\- ]+/) === -1) {
+                if (sCardholder.search(/[^a-zA-ZÄäÖöÜüß\-\. ]+/) === -1) {
                     return true;
                 }
                 return false;

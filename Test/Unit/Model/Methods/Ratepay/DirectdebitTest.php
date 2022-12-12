@@ -19,20 +19,21 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2018 Payone GmbH
+ * @copyright 2003 - 2022 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Block\Adminhtml\Config\Form\Field;
+namespace Payone\Core\Test\Unit\Model\Methods\Ratepay;
 
-use Payone\Core\Block\Adminhtml\Config\Form\Field\Readonly as ClassToTest;
+use Magento\Payment\Model\Info;
+use Payone\Core\Model\Methods\Ratepay\Directdebit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Magento\Framework\Data\Form\Element\AbstractElement;
+use Magento\Sales\Model\Order;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class ReadonlyTest extends BaseTestCase
+class DirectdebitTest extends BaseTestCase
 {
     /**
      * @var ClassToTest
@@ -48,14 +49,18 @@ class ReadonlyTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, []);
+        $info = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->getMock();
+        $info->method('getAdditionalInformation')->willReturn('1');
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $this->classToTest->setInfoInstance($info);
     }
 
-    public function testRender()
+    public function testGetSubTypeSpecificParameters()
     {
-        $element = $this->getMockBuilder(AbstractElement::class)->disableOriginalConstructor()->getMock();
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
-        $result = $this->classToTest->render($element);
-        $this->assertNotEmpty($result);
+        $result = $this->classToTest->getSubTypeSpecificParameters($order);
+        $this->assertCount(3, $result);
     }
 }

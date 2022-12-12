@@ -92,6 +92,8 @@ class RatepayBase extends PayoneMethod
     protected $aAssignKeys = [
         'telephone',
         'dateofbirth',
+        'iban',
+        'bic'
     ];
 
     /**
@@ -218,6 +220,9 @@ class RatepayBase extends PayoneMethod
     protected function getShopIdByQuote(\Magento\Quote\Api\Data\CartInterface $quote)
     {
         $sCountryCode = $quote->getShippingAddress()->getCountryId();
+        if (empty($sCountryCode)) {
+            $sCountryCode = $quote->getBillingAddress()->getCountryId();
+        }
         $sCurrency = $this->apiHelper->getCurrencyFromQuote($quote);
         $dGrandTotal = $this->apiHelper->getQuoteAmount($quote);
 

@@ -26,6 +26,8 @@
 
 namespace Payone\Core\Helper;
 
+use Magento\Sales\Model\Order;
+
 /**
  * Helper class for Amasty giftcards
  */
@@ -47,17 +49,28 @@ class AmastyGiftcard extends \Payone\Core\Helper\Base
      * If there is a better way to solve this optional injection/soft dependancy feel free to tell us.
      *
      * @param  string $sQuoteId
+     * @param  Order $oOrder
      * @return array
      */
-    public function getAmastyGiftCards($sQuoteId)
+    public function getAmastyGiftCards($sQuoteId, $oOrder)
     {
         if ($this->aAmastyGiftcard === null) {
             $this->aAmastyGiftcard = [];
-            if (class_exists('\Amasty\GiftCard\Model\ResourceModel\Quote\Collection')) {
+            if (class_exists('\Amasty\GiftCard\Model\ResourceModel\Quote\Collection')) { // old Amasty module version
                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 
                 $giftCardsCollection = $objectManager->create('Amasty\GiftCard\Model\ResourceModel\Quote\CollectionFactory');
                 $this->aAmastyGiftcard = $giftCardsCollection->create()->getGiftCardsWithAccount($sQuoteId)->getData();
+            }
+
+            if ($oOrder && $oOrder->getExtensionAttributes() && is_callable([$oOrder->getExtensionAttributes(), 'getAmGiftcardOrder']) && $oOrder->getExtensionAttributes()->getAmGiftcardOrder()) { // new Amasty module version
+                $giftCards = $oOrder->getExtensionAttributes()->getAmGiftcardOrder()->getGiftCards();
+                foreach ($giftCards as $giftCard) {
+                    // copy fields to fit old format
+                    $giftCard['gift_amount'] = $giftCard['amount'];
+                    $giftCard['base_gift_amount'] = $giftCard['b_amount'];
+                    $this->aAmastyGiftcard[] = $giftCard;
+                }
             }
         }
         return $this->aAmastyGiftcard;
@@ -67,11 +80,12 @@ class AmastyGiftcard extends \Payone\Core\Helper\Base
      * Determine if order has used amasty giftcards
      *
      * @param  string $sQuoteId
+     * @param  Order $oOrder
      * @return bool
      */
-    public function hasAmastyGiftcards($sQuoteId)
+    public function hasAmastyGiftcards($sQuoteId, $oOrder)
     {
-        $aGiftCards = $this->getAmastyGiftCards($sQuoteId);
+        $aGiftCards = $this->getAmastyGiftCards($sQuoteId, $oOrder);
         if (!empty($aGiftCards)) {
             return true;
         }

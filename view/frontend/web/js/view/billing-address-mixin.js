@@ -25,8 +25,11 @@
 /*global alert*/
 define([
     'jquery',
-    'Payone_Core/js/action/addresscheck'
-], function ($, addresscheck) {
+    'Payone_Core/js/action/addresscheck',
+    'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/action/set-billing-address',
+    'Magento_Ui/js/model/messageList'
+], function ($, addresscheck, quote, setBillingAddressAction, globalMessageList) {
     'use strict';
 
     var mixin = {
@@ -45,13 +48,20 @@ define([
             if (!addressChecked) {
                 var address = this.source.get(this.dataScopePrefix);
                 if (!this.isAddressFormVisible()) {
-                    address = this.selectedAddress()
+                    address = this.selectedAddress();
                 }
                 addresscheck(address, true, this, 'saveNewAddress');
             } else {
                 this.source.set('payone_address_checked', false);
                 return this._super();
             }
+        },
+        updateAddresses: function () {
+            if (quote.paymentMethod().method.indexOf('payone') === -1) { // execute parent function for non payone methods
+                return this._super();
+            }
+
+            setBillingAddressAction(globalMessageList); // always update for payone payment methods
         },
         payoneUpdateAddress: function (addressData) {
             this.source.set(this.dataScopePrefix + '.firstname', addressData.firstname);
@@ -77,7 +87,7 @@ define([
             }
             var country = address.countryId;
             if (!address.countryId) {
-                country = address.country_id
+                country = address.country_id;
             }
             return address.firstname + address.lastname + street.join("") + address.postcode + address.city + country;
         },
@@ -85,7 +95,7 @@ define([
             this.source.set('payone_address_checked', true);
             this.updateAddress();
         }
-    }
+    };
 
     return function (billing_address) {
         return billing_address.extend(mixin);

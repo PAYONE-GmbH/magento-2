@@ -46,6 +46,7 @@ class InstallmentPlanResponseTest extends BaseTestCase
             'success' => 'success',
             'errormessage' => 'errormessage',
             'installmentPlanHtml' => 'installmentPlanHtml',
+            'installmentPlan' => 'installmentPlan',
         ];
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
@@ -71,6 +72,13 @@ class InstallmentPlanResponseTest extends BaseTestCase
     {
         $result = $this->classToTest->getInstallmentPlanHtml();
         $expected = 'installmentPlanHtml';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetInstallmentPlan()
+    {
+        $result = $this->classToTest->getInstallmentPlan();
+        $expected = 'installmentPlan';
         $this->assertEquals($expected, $result);
     }
 }

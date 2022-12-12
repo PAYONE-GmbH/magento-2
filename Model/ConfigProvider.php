@@ -128,6 +128,11 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $simpleProtect;
 
     /**
+     * @var \Payone\Core\Model\Methods\Ratepay\Installment\Proxy
+     */
+    protected $ratepayInstallment;
+
+    /**
      * Constructor
      *
      * @param \Magento\Payment\Model\CcConfig                      $ccConfig
@@ -143,7 +148,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @param \Magento\Customer\Model\Session                      $customerSession
      * @param \Payone\Core\Helper\Shop                             $shopHelper
      * @param \Payone\Core\Model\ResourceModel\SavedPaymentData    $savedPaymentData
-     * @param \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
+     * @param \Payone\Core\Model\SimpleProtect\SimpleProtect       $simpleProtect
+     * @param \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -160,6 +166,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
         \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
+        \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -175,6 +182,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->shopHelper = $shopHelper;
         $this->savedPaymentData = $savedPaymentData;
         $this->simpleProtect = $simpleProtect;
+        $this->ratepayInstallment = $ratepayInstallment;
     }
 
     /**
@@ -232,7 +240,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'ccMinValidity' => $this->requestHelper->getConfigParam('min_validity_period', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'requestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
             'trustlyRequestBic' => (bool)$this->requestHelper->getConfigParam('request_bic', PayoneConfig::METHOD_TRUSTLY, 'payone_payment'),
-            'requestIbanBicSofortUeberweisung' => (bool)$this->requestHelper->getConfigParam('show_iban', PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG, 'payone_payment'),
             'validateBankCode' => (bool)$this->requestHelper->getConfigParam('check_bankaccount', PayoneConfig::METHOD_DEBIT, 'payone_payment'),
             'disableSafeInvoice' => (bool)$this->requestHelper->getConfigParam('disable_after_refusal', PayoneConfig::METHOD_SAFE_INVOICE, 'payone_payment'),
             'bankaccountcheckRequest' => $this->requestHelper->getBankaccountCheckRequest(),
@@ -249,11 +256,12 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'isError' => $this->checkoutSession->getPayoneIsError(),
             'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>='),
             'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
-            'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId()),
+            'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId(), PayoneConfig::METHOD_CREDITCARD),
             'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
             'currency' => $this->requestHelper->getConfigParam('currency'),
             'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
             'storeName' => $this->shopHelper->getStoreName(),
+            'ratepayAllowedMonths' => $this->getRatepayAllowedMonths(),
         ];
     }
 
@@ -302,5 +310,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             return (bool)$this->requestHelper->getConfigParam('oneklick_active', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment');
         }
         return false;
+    }
+
+    protected function getRatepayAllowedMonths()
+    {
+        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INSTALLMENT) === true) {
+            return $this->ratepayInstallment->getAllowedMonths();
+        }
+        return [];
     }
 }

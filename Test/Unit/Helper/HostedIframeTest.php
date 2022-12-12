@@ -79,8 +79,11 @@ class HostedIframeTest extends BaseTestCase
         $paymentHelper->method('isCheckCvcActive')->willReturn(true);
         $paymentHelper->method('getAvailableCreditcardTypes')->willReturn([['id' => 'V']]);
 
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
+
         $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, [
-            'shopHelper' => $this->objectManager->getObject(Shop::class)
+            'shopHelper' => $shopHelper
         ]);
 
         $this->hostedIframe = $this->objectManager->getObject(HostedIframe::class, [
@@ -97,7 +100,7 @@ class HostedIframeTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize('string')]
+                    ['payone_general/creditcard/cc_template', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize([])]
                 ]
             );
         $result = $this->hostedIframe->getHostedFieldConfig();
@@ -161,13 +164,13 @@ class HostedIframeTest extends BaseTestCase
                     'maxlength' => '4',
                     'style' => '',
                     'length' => [
-                        'visa' => 3,
-                        'mastercard' => 3,
-                        'americanexpress' => 4,
-                        'dinersclub' => 3,
-                        'jcb' => 3,
-                        'maestroint' => 3,
-                        'cartebleue' => 3,
+                        'V' => 3,
+                        'M' => 3,
+                        'A' => 4,
+                        'D' => 3,
+                        'J' => 3,
+                        'O' => 3,
+                        'B' => 3,
                     ],
                 ],
                 'cardexpiremonth' => [

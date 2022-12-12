@@ -33,6 +33,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Payone\Core\Helper\Shop;
 use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -72,7 +73,12 @@ class ConfigTest extends BaseTestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
-        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
+
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, [
+            'shopHelper' => $shopHelper
+        ]);
 
         $this->config = $this->objectManager->getObject(Config::class, [
             'context' => $context,
@@ -101,7 +107,7 @@ class ConfigTest extends BaseTestCase
             ->method('getValue')
             ->willReturnMap(
                 [
-                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize('string')]
+                    ['payone_misc/forwarding/config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize([])]
                 ]
             );
         $result = $this->config->getForwardingUrls();

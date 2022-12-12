@@ -201,7 +201,7 @@ class Invoice
 
     protected function addGiftCardItem($oOrder)
     {
-        $giftCards = json_decode($oOrder->getData('gift_cards'), true);
+        $giftCards = json_decode($oOrder->getData('gift_cards') ?? '', true);
 
         if(empty($giftCards) || !is_array($giftCards)) {
             return;
@@ -293,7 +293,7 @@ class Invoice
                 $dTransmitDiscount = $aPositions['discount'];
             }
             $dDiscount = $this->toolkitHelper->formatNumber($dTransmitDiscount); // format discount
-            if ($aPositions === false && $this->amastyHelper->hasAmastyGiftcards($oOrder->getQuoteId()) === false) {
+            if ($aPositions === false && $this->amastyHelper->hasAmastyGiftcards($oOrder->getQuoteId(), $oOrder) === false) {
                 // The calculations broken down to single items of Magento2 are unprecise and the Payone API will send an error if
                 // the calculated positions don't match, so we compensate for rounding-problems here
                 $dTotal = $oOrder->getBaseGrandTotal();
@@ -323,7 +323,7 @@ class Invoice
      */
     protected function addAmastyGiftcards($oOrder, $aPositions, $blDebit)
     {
-        $aGiftCards = $this->amastyHelper->getAmastyGiftCards($oOrder->getQuoteId());
+        $aGiftCards = $this->amastyHelper->getAmastyGiftCards($oOrder->getQuoteId(), $oOrder);
         for ($i = 0; $i < count($aGiftCards); $i++) {
             $aGiftCard = $aGiftCards[$i];
             $blIsLastGiftcard = false;
@@ -351,7 +351,7 @@ class Invoice
 
                 if ($dDiscount != 0) {
                     $sDiscountSku = $this->toolkitHelper->getConfigParam('sku', 'voucher', 'payone_misc', $this->getStoreCode()); // get configured voucher SKU
-                    $sDesc = (string)__('Amasty Coupon').' - '.$aGiftCard['code']; // add counpon code to description
+                    $sDesc = (string)__('Amasty Coupon');
                     $this->addInvoicePosition($sDiscountSku, $dDiscount, 'voucher', 1, $sDesc, $this->dTax); // add invoice params to request
                 }
             }

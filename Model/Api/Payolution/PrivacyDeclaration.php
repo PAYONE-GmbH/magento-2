@@ -197,7 +197,7 @@ class PrivacyDeclaration
      */
     protected function getFallbackText($sCompany)
     {
-        return str_replace('**company**', $sCompany, $this->sFallback);
+        return str_replace('**company**', $sCompany ?? '', $this->sFallback);
     }
 
     /**
