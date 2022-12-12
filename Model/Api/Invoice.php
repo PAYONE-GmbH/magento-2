@@ -93,6 +93,13 @@ class Invoice
     protected $sStoreCode;
 
     /**
+     * Determines if price has to be negated
+     *
+     * @var bool
+     */
+    protected $blNegatePrice = false;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
@@ -101,6 +108,14 @@ class Invoice
     {
         $this->toolkitHelper = $toolkitHelper;
         $this->amastyHelper = $amastyHelper;
+    }
+
+    /**
+     * @param bool $blNegatePrice
+     */
+    public function setNegatePrice($blNegatePrice)
+    {
+        $this->blNegatePrice = $blNegatePrice;
     }
 
     /**
@@ -116,8 +131,12 @@ class Invoice
      */
     protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat)
     {
+        $iMultiplier = 1;
+        if ($this->blNegatePrice === true) {
+            $iMultiplier = -1;
+        }
         $this->oRequest->addParameter('id['.$this->iIndex.']', $this->formatSku($sId)); // add invoice item id
-        $this->oRequest->addParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100); // expected in smallest unit of currency
+        $this->oRequest->addParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100 * $iMultiplier); // expected in smallest unit of currency
         $this->oRequest->addParameter('it['.$this->iIndex.']', $sItemType); // add invoice item type
         $this->oRequest->addParameter('no['.$this->iIndex.']', $iAmount); // add invoice item amount
         $this->oRequest->addParameter('de['.$this->iIndex.']', $sDesc); // add invoice item description
