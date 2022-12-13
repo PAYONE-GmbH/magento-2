@@ -53,9 +53,17 @@ class LinkTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
+        $urlBuilder = $this->getMockBuilder(\Magento\Framework\Url::class)->disableOriginalConstructor()->getMock();
+        $urlBuilder->method('getUrl')->willReturn("test");
+
+        $context = $this->objectManager->getObject(\Magento\Framework\View\Element\Template\Context::class, [
+            'urlBuilder' => $urlBuilder,
+        ]);
+
         $this->baseHelper = $this->getMockBuilder(Base::class)->disableOriginalConstructor()->getMock();
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'baseHelper' => $this->baseHelper
+            'baseHelper' => $this->baseHelper,
+            'context' => $context
         ]);
     }
 

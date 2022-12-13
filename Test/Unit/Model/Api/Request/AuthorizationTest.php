@@ -42,6 +42,7 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Payone\Core\Helper\Environment;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Store\Api\Data\StoreInterface;
 
 class AuthorizationTest extends BaseTestCase
 {
@@ -78,11 +79,11 @@ class AuthorizationTest extends BaseTestCase
         $this->shopHelper->expects($this->any())
             ->method('getConfigParam')
             ->willReturnMap([
-                ['aid', 'global', 'payone_general', null, '12345'],
-                ['transmit_ip', 'global', 'payone_general', null, '1'],
-                ['transmit_customerid', 'global', 'payone_general', null, '1'],
-                ['bill_as_del_address', PayoneConfig::METHOD_PAYPAL, 'payone_payment', null, true],
-                ['ref_prefix', 'global', 'payone_general', null, 'test_']
+                ['aid', 'global', 'payone_general', 'test', '12345'],
+                ['transmit_ip', 'global', 'payone_general', 'test', '1'],
+                ['transmit_customerid', 'global', 'payone_general', 'test', '1'],
+                ['bill_as_del_address', PayoneConfig::METHOD_PAYPAL, 'payone_payment', 'test', true],
+                ['ref_prefix', 'global', 'payone_general', 'test', 'test_']
             ]);
 
         $customer = $this->getMockBuilder(CustomerInterface::class)->disableOriginalConstructor()->getMock();
@@ -160,9 +161,12 @@ class AuthorizationTest extends BaseTestCase
 
         $expectedOrderId = '54321';
 
+        $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress'])
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn($expectedOrderId);
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
@@ -170,6 +174,7 @@ class AuthorizationTest extends BaseTestCase
         $order->method('getCustomerEmail')->willReturn('test@test.com');
         $order->method('getBillingAddress')->willReturn($address);
         $order->method('getShippingAddress')->willReturn($address);
+        $order->method('getStore')->willReturn($store);
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);
@@ -186,9 +191,12 @@ class AuthorizationTest extends BaseTestCase
         $payment = $this->getPaymentMock();
         $address = $this->getAddressMock();
 
+        $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress'])
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
@@ -196,6 +204,7 @@ class AuthorizationTest extends BaseTestCase
         $order->method('getCustomerEmail')->willReturn('test@test.com');
         $order->method('getBillingAddress')->willReturn($address);
         $order->method('getShippingAddress')->willReturn(false);
+        $order->method('getStore')->willReturn($store);
 
         $response = ['status' => 'VALID'];
         $this->apiHelper->method('sendApiRequest')->willReturn($response);

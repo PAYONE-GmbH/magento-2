@@ -40,6 +40,8 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
      */
     protected $aMethodIdentifierMap = [
         PayoneConfig::METHOD_RATEPAY_INVOICE => 'invoice',
+        PayoneConfig::METHOD_RATEPAY_DEBIT => 'elv',
+        PayoneConfig::METHOD_RATEPAY_INSTALLMENT => 'installment',
     ];
 
     /**

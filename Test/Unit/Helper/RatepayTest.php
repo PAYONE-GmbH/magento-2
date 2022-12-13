@@ -164,4 +164,23 @@ class RatepayTest extends BaseTestCase
         $result = $this->classToTest->getRatepayShopId('payone_ratepay_invoice', 'DE', 'EUR', 50);
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetRatepayShopConfigById()
+    {
+        $aConfig = ['foo' => 'bar'];
+        $this->profileResource->method('getProfileConfigsByIds')->willReturn([$aConfig]);
+
+        $result = $this->classToTest->getRatepayShopConfigById("test");
+
+        $this->assertEquals($aConfig, $result);
+    }
+
+    public function testGetRatepayShopConfigByIdFalse()
+    {
+        $this->profileResource->method('getProfileConfigsByIds')->willReturn([]);
+
+        $result = $this->classToTest->getRatepayShopConfigById("test");
+
+        $this->assertFalse($result);
+    }
 }

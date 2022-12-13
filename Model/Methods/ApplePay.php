@@ -159,7 +159,7 @@ class ApplePay extends PayoneMethod
         $oInfoInstance = $this->getInfoInstance();
 
         $sJsonToken = $oInfoInstance->getAdditionalInformation('token');
-        $aToken = json_decode($sJsonToken, true);
+        $aToken = json_decode($sJsonToken ?? '', true);
         if (empty($aToken) || !is_array($aToken)) {
             throw new \Exception("Apple Pay token is missing!");
         }

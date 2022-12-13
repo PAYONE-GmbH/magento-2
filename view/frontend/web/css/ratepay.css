@@ -1,0 +1,137 @@
+.row {
+    margin: 5px 0;
+}
+.col-md-5 {
+    width: 49%;
+    margin: 0 3px;
+    float: left;
+}
+.panel {
+    display: block;
+    background: #fff;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    box-sizing: border-box;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+.panel-heading {
+    border-color: #ddd;
+    border-bottom: 1px solid #ddd;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    color: #333;
+    background-color: #f5f5f5;
+}
+.panel-default {
+    border-color: #ddd;
+}
+.panel-body {
+    padding: 15px;
+    box-sizing: border-box;
+    min-height: 68px;
+}
+.text-center {
+    padding: 10px 0px;
+    text-align: center;
+}
+.btn {
+    -moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.btn-default {
+    background-color: #fff;
+    border-color: #ccc;
+    color: #333;
+}
+.btn-group {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+.btn-group-justified {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+}
+.btn-group-justified>.btn-group .btn {
+    width: 100%;
+    text-align: center;
+}
+.btn-group-justified>.btn, .btn-group-justified>.btn-group {
+    float: none;
+    display: table-cell;
+    width: 1%;
+    vertical-align: middle;
+    position: relative;
+}
+
+.ratepayInstallmentPlan {
+    margin-bottom: 1em;
+    padding: 5px;
+    background-color: #eee;
+    width: 98%;
+}
+.ratepayInstallmentPlanRow, .ratepayInstallmentPlanRowNoDetails {
+    border-bottom: 1px solid #ddd;
+    margin: 0px 3px;
+    padding: 13px 6px;
+}
+.ratepayInstallmentPlanRow:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.table-striped {
+    width: 100%;
+}
+.text-uppercase {
+    text-transform: uppercase;
+}
+.rp-menue, .rp-installment-plan-details, .rp-installment-plan-no-details {
+    border-bottom: 1px solid #ddd;
+    margin: 0px 3px;
+    padding: 13px 6px;
+}
+.rp-installment-plan-details:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+.text-left {
+    float: left;
+}
+.text-right {
+    text-align: right;
+}
+.small {
+    font-size: 85%;
+}
+.input-rate {
+    width: 67%!important;
+}
+
+@media (max-width: 1272px) {
+    .input-rate {
+        width: 90%!important;
+    }
+
+    .btn-default {
+        margin-top: 10px;
+        margin-left: 12px;
+        width: 90%;
+        display: block;
+    }
+}

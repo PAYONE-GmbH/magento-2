@@ -55,12 +55,7 @@ class SofortUeberweisungTest extends BaseTestCase
         $info = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
         $info->method('getAdditionalInformation')->willReturn('info');
 
-        $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
-        $toolkitHelper->method('getAdditionalDataEntry')->willReturn('info');
-
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'toolkitHelper' => $toolkitHelper
-        ]);
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
         $this->classToTest->setInfoInstance($info);
     }
 
@@ -72,7 +67,7 @@ class SofortUeberweisungTest extends BaseTestCase
         $order->method('getBillingAddress')->willReturn($address);
 
         $result = $this->classToTest->getSubTypeSpecificParameters($order);
-        $expected = ['bankcountry' => 'DE', 'iban' => 'info', 'bic' => 'info'];
+        $expected = ['bankcountry' => 'DE'];
         $this->assertEquals($expected, $result);
     }
 

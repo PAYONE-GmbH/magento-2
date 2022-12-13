@@ -37,6 +37,7 @@
                 <label>Global</label>
                 <field id="mid" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Merchant-ID</label>
+                    <comment><![CDATA[Don't have a PAYONE Account yet? Click <a href="https://www.payone.com/DE-de/kampagne/ecom-testaccount" target="_blank" rel="noopener noreferrer" title="Testaccount">here</a> to apply for test credentials.]]></comment>
                 </field>
                 <field id="portalid" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Portal-ID</label>
@@ -76,6 +77,12 @@
                     <label>Transmit IP address</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="proxy_mode" translate="label" type="select" sortOrder="85" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Proxy-Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If your shop is behind a Proxy. Enable this option to transmit the HTTP_X_FORWARDED_FOR</comment>
+                    <config_path>payone_misc/processing/proxy_mode</config_path>
+                </field>
                 <field id="transmit_customerid" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Transmit customer-id</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -90,11 +97,11 @@
                 </field>
                 <field id="invoice_appendix" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dynamic invoice message</label>
-                    <comment>Maximum 255 digits. Placeholders: {{order_increment_id}}, {{customer_id}}</comment>
+                    <comment>Maximum 255 digits. Placeholders: {order_increment_id}, {customer_id}</comment>
                 </field>
                 <field id="invoice_appendix_refund" translate="label,comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dynamic refund message</label>
-                    <comment>Maximum 255 digits. Placeholders: {{order_increment_id}}, {{order_id}}, {{customer_id}}</comment>
+                    <comment>Maximum 255 digits. Placeholders: {order_increment_id}, {order_id}, {customer_id}</comment>
                 </field>
             </group>
             <group id="statusmapping" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -225,6 +232,16 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
+                <field id="payone_ratepay_debit" translate="label" sortOrder="313" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ratepay Directdebit</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
+                <field id="payone_ratepay_installment" translate="label" sortOrder="316" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ratepay Installment</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
                 <field id="payone_wechatpay" translate="label" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>WeChatPay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -293,6 +310,8 @@
             <include path="Payone_Core::system/payone_klarna_debit.xml"/>
             <include path="Payone_Core::system/payone_klarna_installment.xml"/>
             <include path="Payone_Core::system/payone_ratepay_invoice.xml"/>
+            <include path="Payone_Core::system/payone_ratepay_debit.xml"/>
+            <include path="Payone_Core::system/payone_ratepay_installment.xml"/>
             <include path="Payone_Core::system/payone_wechatpay.xml"/>
             <include path="Payone_Core::system/payone_trustly.xml"/>
             <include path="Payone_Core::system/payone_applepay.xml"/>
@@ -307,11 +326,6 @@
                 <field id="valid_ips" translate="label,comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Valid PAYONE IPs</label>
                     <comment>Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use *</comment>
-                </field>
-                <field id="proxy_mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Proxy-Mode</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>If your shop is behind a Proxy. Enable this option to transmit the HTTP_X_FORWARDED_FOR</comment>
                 </field>
             </group>
             <group id="forwarding" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">

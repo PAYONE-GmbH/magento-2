@@ -48,4 +48,18 @@ interface InstallmentPlanResponseInterface
      * @return string
      */
     public function getInstallmentPlanHtml();
+
+    /**
+     * Return installment plan json array string
+     *
+     * @return string
+     */
+    public function getInstallmentPlan();
+
+    /**
+     * Return allowed runtime months json array string
+     *
+     * @return string
+     */
+    public function getAllowedMonths();
 }

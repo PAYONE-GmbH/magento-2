@@ -37,6 +37,7 @@ use Magento\Framework\App\Request\Http;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Shop;
+use Magento\Framework\App\State;
 
 class BaseTest extends BaseTestCase
 {
@@ -55,6 +56,11 @@ class BaseTest extends BaseTestCase
      */
     private $scopeConfig;
 
+    /**
+     * @var State
+     */
+    private $state;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -68,6 +74,8 @@ class BaseTest extends BaseTestCase
         $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn(null);
 
+        $this->state = $this->getMockBuilder(State::class)->disableOriginalConstructor()->getMock();
+        
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
         $storeManager->method('getStores')->willReturn(['de' => $store, 'en' => $store, 'fr' => $store, 'nl' => $store]);
@@ -78,7 +86,8 @@ class BaseTest extends BaseTestCase
         $this->base = $this->objectManager->getObject(Base::class, [
             'context' => $context,
             'storeManager' => $storeManager,
-            'shopHelper' => $shopHelper
+            'shopHelper' => $shopHelper,
+            'state' => $this->state
         ]);
     }
 
@@ -86,6 +95,7 @@ class BaseTest extends BaseTestCase
     {
         $expected = 'authorization';
 
+        $this->state->method('getAreaCode')->willReturn(\Magento\Framework\App\Area::AREA_FRONTEND);
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
             ->willReturnMap(
@@ -97,10 +107,27 @@ class BaseTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetConfigParamBackend()
+    {
+        $expected = 'authorization_backend';
+
+        $this->state->method('getAreaCode')->willReturn(\Magento\Framework\App\Area::AREA_ADMINHTML);
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_general/global/request_type', ScopeInterface::SCOPE_WEBSITES, 'value', $expected]
+                ]
+            );
+        $result = $this->base->getConfigParam('request_type');
+        $this->assertEquals($expected, $result);
+    }
+
     public function testGetConfigParamByPath()
     {
         $expected = 'authorization';
 
+        $this->state->method('getAreaCode')->willReturn(\Magento\Framework\App\Area::AREA_FRONTEND);
         $this->scopeConfig->method('getValue')->willReturn($expected);
         $result = $this->base->getConfigParamByPath('payone_payment/payone_ratepay_invoice/request_type');
         $this->assertEquals($expected, $result);
@@ -108,6 +135,7 @@ class BaseTest extends BaseTestCase
 
     public function testGetConfigParamAllStores()
     {
+        $this->state->method('getAreaCode')->willReturn(\Magento\Framework\App\Area::AREA_FRONTEND);
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
             ->willReturnMap(

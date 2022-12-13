@@ -82,7 +82,7 @@ class Management extends \Magento\Framework\View\Element\Template
     public function getSavedPaymentData()
     {
         $iCustomerId = $this->customerSession->getCustomerId();
-        return $this->savedPaymentData->getSavedPaymentData($iCustomerId, PayoneConfig::METHOD_CREDITCARD);
+        return $this->savedPaymentData->getSavedPaymentData($iCustomerId, PayoneConfig::METHOD_CREDITCARD, false);
     }
 
     /**

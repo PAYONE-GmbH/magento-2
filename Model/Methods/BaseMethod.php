@@ -273,7 +273,7 @@ abstract class BaseMethod extends AbstractMethod
      */
     public function getInstructions()
     {
-        return trim($this->getConfigData('instructions')); // return description text
+        return trim($this->getConfigData('instructions') ?? ''); // return description text
     }
 
     /**
@@ -345,11 +345,15 @@ abstract class BaseMethod extends AbstractMethod
      */
     public function canUseForCountry($country)
     {
+        $aAvailableCountries = [];
         $iAllowSpecific = $this->shopHelper->getConfigParam('allowspecific');
-        $aAvailableCountries = explode(',', $this->shopHelper->getConfigParam('specificcountry'));
+        $sSpecificCountry = $this->shopHelper->getConfigParam('specificcountry');
         if ($this->hasCustomConfig()) {// check for non-global configuration
             $iAllowSpecific = $this->getCustomConfigParam('allowspecific'); // only specific countries allowed?
-            $aAvailableCountries = explode(',', $this->getCustomConfigParam('specificcountry')); // get allowed countries
+            $sSpecificCountry = $this->getCustomConfigParam('specificcountry');
+        }
+        if (!empty($sSpecificCountry)) {
+            $aAvailableCountries = explode(',', $sSpecificCountry);
         }
         if ($iAllowSpecific == 1 && !in_array($country, $aAvailableCountries)) {// only specific but not included
             return false; // cant use for given country

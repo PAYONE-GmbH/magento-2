@@ -335,7 +335,7 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     {
         $couponCode = '';
         if ($this->getRequest()->getParam('remove') != 1) {
-            $couponCode = trim($this->getRequest()->getParam('couponCode'));
+            $couponCode = trim($this->getRequest()->getParam('couponCode') ?? '');
         }
 
         $cartQuote = $this->checkoutSession->getQuote();

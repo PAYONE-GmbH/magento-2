@@ -150,7 +150,7 @@ abstract class Base
         $this->aParameters = [];
         $this->addParameter('mid', $this->shopHelper->getConfigParam('mid', 'global', 'payone_general', $this->storeCode)); // PayOne Merchant ID
         $this->addParameter('portalid', $this->shopHelper->getConfigParam('portalid', 'global', 'payone_general', $this->storeCode)); // PayOne Portal ID
-        $this->addParameter('key', md5($this->shopHelper->getConfigParam('key', 'global', 'payone_general', $this->storeCode))); // PayOne Portal Key
+        $this->addParameter('key', md5($this->shopHelper->getConfigParam('key', 'global', 'payone_general', $this->storeCode) ?? '')); // PayOne Portal Key
         $this->addParameter('encoding', $this->environmentHelper->getEncoding()); // Encoding
         $this->addParameter('integrator_name', 'Magento2'); // Shop-system
         $this->addParameter('integrator_version', $this->shopHelper->getMagentoVersion()); // Shop version

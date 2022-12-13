@@ -37,6 +37,7 @@ use Payone\Core\Helper\Database;
 use Payone\Core\Helper\Config;
 use Payone\Core\Helper\Payment;
 use Payone\Core\Helper\Toolkit;
+use Payone\Core\Helper\Shop;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -89,7 +90,12 @@ class ConfigExportTest extends BaseTestCase
 
         $paymentHelper = $this->objectManager->getObject(Payment::class);
 
-        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class);
+        $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
+
+        $this->toolkitHelper = $this->objectManager->getObject(Toolkit::class, [
+            'shopHelper' => $shopHelper
+        ]);
 
         $this->configExport = $this->objectManager->getObject(ConfigExport::class, [
             'context' => $context,
