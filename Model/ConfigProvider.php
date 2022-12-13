@@ -165,7 +165,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Magento\Customer\Model\Session $customerSession,
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
-        \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect
+        \Payone\Core\Model\SimpleProtect\SimpleProtect $simpleProtect,
         \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment
     ) {
         parent::__construct($ccConfig, $dataHelper);

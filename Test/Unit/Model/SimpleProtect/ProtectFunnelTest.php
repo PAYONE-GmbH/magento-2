@@ -56,7 +56,7 @@ class ProtectFunnelTest extends BaseTestCase
      */
     private $consumerscore;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
