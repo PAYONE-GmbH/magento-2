@@ -323,7 +323,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\BNPL\Invoice</model>
                 <order_status>pending</order_status>
-                <title>PAYONE Secured Invoice</title>
+                <title>PAYONE Invoice</title>
                 <min_order_total>10</min_order_total>
                 <max_order_total>1500</max_order_total>
                 <allowspecific>0</allowspecific>
@@ -335,7 +335,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\BNPL\Debit</model>
                 <order_status>pending</order_status>
-                <title>PAYONE Secured Direct Debit</title>
+                <title>PAYONE Direct Debit in 14 days</title>
                 <allowspecific>0</allowspecific>
                 <different_address_allowed>0</different_address_allowed>
                 <group>payone</group>
@@ -345,7 +345,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\BNPL\Installment</model>
                 <order_status>pending</order_status>
-                <title>PAYONE Secured Installment</title>
+                <title>PAYONE Installment</title>
                 <min_order_total>200</min_order_total>
                 <max_order_total>3500</max_order_total>
                 <allowspecific>0</allowspecific>
