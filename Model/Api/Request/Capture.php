@@ -97,6 +97,12 @@ class Capture extends Base
                 $blFull = false;
             }
         }
+        if ($blFull !== true && $oInvoice->getBaseDiscountAmount() != 0) {
+            $aPositions['discount'] = $oInvoice->getBaseDiscountAmount();
+            if ($this->shopHelper->getConfigParam('currency', 'global', 'payone_general', $this->storeCode) == 'display') {
+                $aPositions['discount'] = $oInvoice->getDiscountAmount();
+            }
+        }
         if ($blFull === true) {
             $aPositions = false;
         }
