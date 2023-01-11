@@ -53,6 +53,17 @@ interface InstallmentPlanInterface
     public function getInstallmentPlanRatepay($cartId, $calcType, $calcValue);
 
     /**
+     * PAYONE BNPL installment plan getter
+     * The full class-paths must be given here otherwise the Magento 2 WebApi
+     * cant handle this with its fake type system!
+     *
+     * @param  string $cartId
+     * @param  string $paymentCode
+     * @return \Payone\Core\Service\V1\Data\InstallmentPlanResponse
+     */
+    public function getInstallmentPlanBNPL($cartId, $paymentCode);
+
+    /**
      * Collects allowed runtimes afterwards
      * Needed for guest checkout since the billing country is not known when checkout is loaded
      *

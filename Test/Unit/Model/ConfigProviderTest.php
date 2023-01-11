@@ -116,7 +116,7 @@ class ConfigProviderTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneCanceledPaymentMethod', 'unsPayoneCanceledPaymentMethod', 'getPayoneIsError', 'getQuote'])
+            ->setMethods(['getPayoneCanceledPaymentMethod', 'unsPayoneCanceledPaymentMethod', 'getPayoneIsError', 'getQuote', 'getPayoneUUID', 'setPayoneUUID'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 

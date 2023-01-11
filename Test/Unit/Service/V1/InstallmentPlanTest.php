@@ -27,6 +27,7 @@
 namespace Payone\Core\Test\Unit\Service\V1\Data;
 
 use Magento\Quote\Model\Quote\Address;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Service\V1\InstallmentPlan as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Service\V1\Data\InstallmentPlanResponse;
@@ -35,10 +36,12 @@ use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Api\Request\Genericpayment\PreCheck;
 use Payone\Core\Model\Api\Request\Genericpayment\Calculation;
+use Payone\Core\Model\Api\Request\Genericpayment\InstallmentOptions;
 use Payone\Core\Block\Payolution\InstallmentPlan;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\Ratepay;
+use Payone\Core\Model\Methods\Ratepay\Installment;
 
 class InstallmentPlanTest extends BaseTestCase
 {
@@ -63,16 +66,25 @@ class InstallmentPlanTest extends BaseTestCase
     private $calculation;
 
     /**
+     * @var InstallmentOptions|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $installmentOptions;
+
+    /**
      * @var Ratepay
      */
     private $ratepayHelper;
+
+    /**
+     * @var Installment|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $ratepayInstallment;
 
     protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
 
         $this->response = $objectManager->getObject(InstallmentPlanResponse::class);
-        #$responseFactory = $objectManager->getObject(InstallmentPlanResponseFactory::class);
         $responseFactory = $this->getMockBuilder(InstallmentPlanResponseInterfaceFactory::class)
             ->disableOriginalConstructor()
             ->setMethods(['create'])
@@ -97,6 +109,8 @@ class InstallmentPlanTest extends BaseTestCase
 
         $this->precheck = $this->getMockBuilder(PreCheck::class)->disableOriginalConstructor()->getMock();
         $this->calculation = $this->getMockBuilder(Calculation::class)->disableOriginalConstructor()->getMock();
+        $this->installmentOptions = $this->getMockBuilder(InstallmentOptions::class)->disableOriginalConstructor()->getMock();
+        $this->ratepayInstallment = $this->getMockBuilder(Installment::class)->disableOriginalConstructor()->getMock();
 
         $block = $this->getMockBuilder(InstallmentPlan::class)
             ->disableOriginalConstructor()
@@ -111,8 +125,10 @@ class InstallmentPlanTest extends BaseTestCase
             'checkoutSession' => $checkoutSession,
             'precheck' => $this->precheck,
             'calculation' => $this->calculation,
+            'installmentOptions' => $this->installmentOptions,
             'block' => $block,
-            'ratepayHelper' => $this->ratepayHelper
+            'ratepayHelper' => $this->ratepayHelper,
+            'ratepayInstallment' => $this->ratepayInstallment,
         ]);
     }
 
@@ -187,6 +203,29 @@ class InstallmentPlanTest extends BaseTestCase
         $this->calculation->method('sendRequestRatepay')->willReturn($calculation);
 
         $result = $this->classToTest->getInstallmentPlanRatepay(4711, 'calculation-by-rate', 5);
+        $this->assertTrue($result->getSuccess());
+    }
+
+    public function testGetInstallmentPlanBNPL()
+    {
+        $response = [
+            'status' => 'OK',
+            'workorderid' => 'WORKORDERID',
+            'add_paydata[unit-test_1]' => '4711',
+            'add_paydata[unit-test_2]' => '4711',
+            'add_paydata[amount]' => '4711',
+        ];
+        $this->installmentOptions->method('sendRequest')->willReturn($response);
+
+        $result = $this->classToTest->getInstallmentPlanBNPL(4711, PayoneConfig::METHOD_BNPL_INSTALLMENT);
+        $this->assertTrue($result->getSuccess());
+    }
+
+    public function testGetAllowedMonths()
+    {
+        $this->ratepayInstallment->method('getAllowedMonths')->willReturn([3, 6, 12]);
+
+        $result = $this->classToTest->getAllowedMonths(123);
         $this->assertTrue($result->getSuccess());
     }
 }

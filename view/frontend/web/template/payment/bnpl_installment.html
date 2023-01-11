@@ -13,12 +13,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2020 Payone GmbH
+ * @copyright 2003 - 2022 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -44,7 +44,7 @@
         <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
                 <!-- ko if: requestTelephone() -->
-                <div class="field number required">
+                <div class="field number required" data-bind="attr: {id: getCode() + '_telephone'}">
                     <label data-bind="attr: {for: getCode() + '_telephone'}" class="label">
                         <span><!-- ko i18n: 'Telephone'--><!-- /ko --></span>
                     </label>
@@ -61,7 +61,7 @@
                 </div>
                 <!--/ko-->
                 <!-- ko if: requestBirthday() -->
-                <div class="field number required">
+                <div class="field number required" data-bind="attr: {id: getCode() + '_birthday_field'}">
                     <label data-bind="attr: {for: getCode() + '_birthday'}" class="label">
                         <span><!-- ko i18n: 'Birthday'--><!-- /ko --></span>
                     </label>
@@ -99,49 +99,45 @@
                     </div>
                 </div>
                 <!--/ko-->
-                <div class="field number required">
+
+                <div class="field number required" data-bind="attr: {id: getCode() + '_bankaccountholder_field'}">
+                    <label data-bind="attr: {for: getCode() + '_bankaccountholder'}" class="label">
+                        <span><!-- ko i18n: 'Bank account holder'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[bankaccountholder]" class="input-text" value=""
+                               data-bind="attr: {
+                                        autocomplete: off,
+                                        id: getCode() + '_bankaccountholder',
+                                        title: $t('bankaccountholder'),
+                                        'data-container': getCode() + '-bankaccountholder'},
+                                  value: bankaccountholder,
+                                  valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <div class="field number required" data-bind="attr: {id: getCode() + '_iban_field'}">
                     <label data-bind="attr: {for: getCode() + '_iban'}" class="label">
                         <span><!-- ko i18n: 'IBAN'--><!-- /ko --></span>
                     </label>
                     <div class="control">
                         <input type="text" name="payment[iban]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_iban',
-                                    title: $t('IBAN'),
-                                    'data-container': getCode() + '-iban'},
-                              value: iban,
-                              valueUpdate: 'keyup' "/>
+                               data-bind="attr: {autocomplete: off, id: getCode() + '_iban', title: $t('IBAN'), 'data-container': getCode() + '-iban'},
+                                          value: iban,
+                                          valueUpdate: 'keyup' "/>
                     </div>
                 </div>
-                <!-- ko if: requestBic() -->
-                <div class="field number required">
-                    <label data-bind="attr: {for: getCode() + '_bic'}" class="label">
-                        <span><!-- ko i18n: 'BIC'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[bic]" class="input-text" value=""
-                               data-bind="attr: {
-                                    autocomplete: off,
-                                    id: getCode() + '_bic',
-                                    title: $t('BIC'),
-                                    'data-container': getCode() + '-bic'},
-                              value: bic,
-                              valueUpdate: 'keyup' "/>
-                    </div>
-                </div>
-                <!--/ko-->
+
+                <div class="field" data-bind="attr: {id: getCode() + '_installmentplan'}" style="display:none;"></div>
             </fieldset>
         </form>
         <p data-bind="html: getInstructions()"></p>
-        <div class="ratepay-legal-text">
-            <!-- ko i18n: 'ratepay_legal_text_snippet_1'--><!-- /ko -->
-            <!-- ko i18n: 'Place Order'--><!-- /ko -->
-            <!-- ko i18n: 'ratepay_legal_text_snippet_2'--><!-- /ko -->
-            <a target='_blank' href='https://www.ratepay.com/legal-payment-terms'><!-- ko i18n: 'ratepay_legal_text_snippet_3'--><!-- /ko --></a>
-            <!-- ko i18n: 'ratepay_legal_text_snippet_4'--><!-- /ko -->
-            <a target='_blank' href='https://www.ratepay.com/legal-payment-dataprivacy'><!-- ko i18n: 'ratepay_legal_text_snippet_5'--><!-- /ko --></a>
-            <!-- ko i18n: 'ratepay_legal_text_snippet_6'--><!-- /ko -->
+        <div class="bnpl-legal-text">
+            <!-- ko i18n: 'bnpl_legal_text_snippet_1'--><!-- /ko -->
+            <a target='_blank' data-bind="attr: {href: $t('bnpl_payment_terms_url')}"><!-- ko i18n: 'bnpl_legal_text_snippet_2'--><!-- /ko --></a>
+            <!-- ko i18n: 'bnpl_legal_text_snippet_3'--><!-- /ko --><br>
+            <!-- ko i18n: 'bnpl_legal_text_snippet_4'--><!-- /ko -->
+            <a target='_blank' data-bind="attr: {href: $t('bnpl_data_protection_url')}"><!-- ko i18n: 'bnpl_legal_text_snippet_5'--><!-- /ko --></a>
+            <!-- ko i18n: 'bnpl_legal_text_snippet_6'--><!-- /ko --><br><br>
         </div>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
@@ -173,21 +169,32 @@
         </div>
         <div class="actions-toolbar">
             <div class="primary">
-                <button class="action primary checkout"
+                <button class="action primary checkout" type="button"
+                        data-bind="
+                        click: handleInstallment,
+                        attr: {id: getCode() + '_check', title: $t('Check installment availability')},
+                        enable: (getCode() == isChecked()),
+                        css: {disabled: !isPlaceOrderActionAllowedBNPL()}"
+                        disabled>
+                    <span data-bind="i18n: 'Check installment availability'"></span>
+                </button>
+                <button class="action primary checkout" style="display:none;"
                         type="submit"
                         data-bind="
                         click: placeOrder,
-                        attr: {title: $t('Place Order')},
+                        attr: {id: getCode() + '_submit', title: $t('Place Order')},
                         enable: (getCode() == isChecked()),
-                        css: {disabled: !isPlaceOrderActionAllowedRatePay()}
-                        "
+                        css: {disabled: !isPlaceOrderActionAllowedBNPLInstallment()}"
                         disabled>
                     <span data-bind="i18n: 'Place Order'"></span>
                 </button>
             </div>
         </div>
-        <div class="payone_place_order_not_allowed" data-bind="visible: !isPlaceOrderActionAllowedRatePay()"><br>
-            <span><!-- ko i18n: 'Ratepay payment with differing billing- and shipping-address is not supported'--><!-- /ko --></span>
+        <div class="payone_place_order_not_allowed" data-bind="visible: isAddressDifferent()"><br>
+            <span><!-- ko i18n: 'Payment with differing billing- and shipping-address is not supported'--><!-- /ko --></span>
+        </div>
+        <div class="payone_place_order_not_allowed" data-bind="visible: !isAddressDifferent() && isB2BOrder()"><br>
+            <span><!-- ko i18n: 'B2B orders are not supported for this payment method'--><!-- /ko --></span>
         </div>
     </div>
 </div>
