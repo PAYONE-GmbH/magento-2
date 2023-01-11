@@ -137,9 +137,9 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
             'payone_advance_payment' => 'PAYONE Vorkasse',
             'payone_invoice' => 'PAYONE Rechnung',
             'payone_safe_invoice' => 'PAYONE Gesicherter Rechnungskauf',
-            'payone_bnpl_invoice' => 'PAYONE Rechnungskauf',
-            'payone_bnpl_debit' => 'PAYONE Lastschrift in 14 Tagen',
-            'payone_bnpl_installment' => 'PAYONE Ratenkauf',
+            'payone_bnpl_invoice' => 'PAYONE Gesicherter Rechnungskauf',
+            'payone_bnpl_debit' => 'PAYONE Gesicherte Lastschrift',
+            'payone_bnpl_installment' => 'PAYONE Gesicherter Ratenkauf',
         ];
 
         foreach ($translations as $paymentId => $translation) {
