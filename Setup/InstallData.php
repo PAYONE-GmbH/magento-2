@@ -93,6 +93,65 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
             'payone_mandate_id',
             ['type' => 'varchar', 'length' => 64, 'default' => '']
         );
+
+        $this->preconfigureGermanPaymentTitles($setup);
+
         $setup->endSetup();
+    }
+
+    /**
+     * Add German payment title for stores with German locale
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @return void
+     */
+    protected function preconfigureGermanPaymentTitles(ModuleDataSetupInterface $setup)
+    {
+        $select = $setup->getConnection()
+            ->select()
+            ->from($setup->getTable('core_config_data'), ['scope', 'scope_id'])
+            ->where('path = "general/locale/code"')
+            ->where('value LIKE "de_%"')
+            ->order(['scope_id', 'scope']);
+        $result = $setup->getConnection()->fetchAssoc($select);
+
+        foreach ($result as $item) {
+            $this->addGermanPaymentTitles($setup, $item['scope'], $item['scope_id']);
+        }
+    }
+
+    /**
+     * Inserts new config rows with German payment titles in core_config_data table
+     *
+     * @param  ModuleDataSetupInterface $setup
+     * @param  string $scope
+     * @param  string $scopeId
+     * @return void
+     */
+    protected function addGermanPaymentTitles(ModuleDataSetupInterface $setup, $scope, $scopeId)
+    {
+        $translations = [
+            'payone_cash_on_delivery' => 'PAYONE Nachnahme',
+            'payone_creditcard' => 'PAYONE Kreditkarte',
+            'payone_debit' => 'PAYONE Lastschrift',
+            'payone_advance_payment' => 'PAYONE Vorkasse',
+            'payone_invoice' => 'PAYONE Rechnung',
+            'payone_safe_invoice' => 'PAYONE Gesicherter Rechnungskauf',
+            'payone_bnpl_invoice' => 'PAYONE Rechnungskauf',
+            'payone_bnpl_debit' => 'PAYONE Lastschrift in 14 Tagen',
+            'payone_bnpl_installment' => 'PAYONE Ratenkauf',
+        ];
+
+        foreach ($translations as $paymentId => $translation) {
+            $setup->getConnection()->insert(
+                $setup->getTable('core_config_data'),
+                [
+                    'scope' => $scope,
+                    'scope_id' => $scopeId,
+                    'path' => 'payment/'.$paymentId.'/title',
+                    'value' => $translation,
+                ]
+            );
+        }
     }
 }
