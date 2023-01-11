@@ -123,7 +123,7 @@ class InvoiceTest extends BaseTestCase
         
         $items = [$this->getItemMock()];
         
-        $expected = 75;
+        $expected = 110;
 
         $order = $this->getMockBuilder(Order::class)
             ->setMethods([
@@ -140,7 +140,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseShippingInclTax')->willReturn(-5);
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getCouponCode')->willReturn('test');
-        $order->method('getBaseGrandTotal')->willReturn($expected);
+        $order->method('getBaseGrandTotal')->willReturn(115);
         $order->method('getStore')->willReturn($this->store);
         $order->method('getGiftCards')->willReturn('[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
 
@@ -158,7 +158,7 @@ class InvoiceTest extends BaseTestCase
 
         $items = [$this->getItemMock()];
 
-        $expected = 91;
+        $expected = 106;
 
         $order = $this->getMockBuilder(Order::class)
             ->setMethods([
@@ -179,8 +179,8 @@ class InvoiceTest extends BaseTestCase
         $order->method('getBaseDiscountAmount')->willReturn(-5);
         $order->method('getDiscountAmount')->willReturn(-7);
         $order->method('getCouponCode')->willReturn('test');
-        $order->method('getBaseGrandTotal')->willReturn($expected);
-        $order->method('getGrandTotal')->willReturn($expected);
+        $order->method('getBaseGrandTotal')->willReturn(113);
+        $order->method('getGrandTotal')->willReturn(113);
         $order->method('getStore')->willReturn($this->store);
         $order->method('getGiftCards')->willReturn('[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
 
