@@ -215,12 +215,12 @@ class MethodList
     protected function removeBannedPaymentMethods($aPaymentMethods, Quote $oQuote)
     {
         $aBannedMethos = $this->getBannedPaymentMethods($oQuote);
-        for($i = 0; $i < count($aPaymentMethods); $i++) {
-            $sCode = $aPaymentMethods[$i]->getCode();
+        foreach ($aPaymentMethods as $key => $aPaymentMethod) {
+            $sCode = $aPaymentMethod->getCode();
             if (array_key_exists($sCode, $aBannedMethos) !== false) {
                 $iBannedUntil = strtotime($aBannedMethos[$sCode]);
                 if ($iBannedUntil > time()) {
-                    unset($aPaymentMethods[$i]);
+                    unset($aPaymentMethods[$key]);
                 }
             }
         }
@@ -237,10 +237,9 @@ class MethodList
     {
         $aWhitelist = $this->checkoutSession->getPayonePaymentWhitelist();
         if (!empty($aWhitelist)) {
-            $iCount = count($aPaymentMethods);
-            for($i = 0; $i < $iCount; $i++) {
-                if (array_search($aPaymentMethods[$i]->getCode(), $aWhitelist) === false) {
-                    unset($aPaymentMethods[$i]);
+            foreach ($aPaymentMethods as $key => $aPaymentMethod) {
+                if (!in_array($aPaymentMethod->getCode(), $aWhitelist)) {
+                    unset($aPaymentMethods[$key]);
                 }
             }
         }
@@ -255,9 +254,9 @@ class MethodList
      */
     public function removeAmazonPay($aPaymentMethods)
     {
-        for($i = 0; $i < count($aPaymentMethods); $i++) {
-            if (isset($aPaymentMethods[$i]) && $aPaymentMethods[$i]->getCode() == PayoneConfig::METHOD_AMAZONPAY) {
-                unset($aPaymentMethods[$i]);
+        foreach ($aPaymentMethods as $key => $aPaymentMethod) {
+            if ($aPaymentMethod->getCode() == PayoneConfig::METHOD_AMAZONPAY) {
+                unset($aPaymentMethods[$key]);
             }
         }
         return $aPaymentMethods;
@@ -278,18 +277,15 @@ class MethodList
             PayoneConfig::METHOD_KLARNA_DEBIT,
             PayoneConfig::METHOD_KLARNA_INSTALLMENT
         ];
-        for($i = 0; $i < count($aPaymentMethods); $i++) {
-            if (isset($aPaymentMethods[$i])) {
-                if ($aPaymentMethods[$i]->getCode() == PayoneConfig::METHOD_KLARNA_BASE) {
-                    $iKeyKlarna = $i;
-                }
-                if (in_array($aPaymentMethods[$i]->getCode(), $aKlarnaSubtypes) === true) {
-                    $blHasKlarnaSubtypes = true;
-                    break;
-                }
+        foreach ($aPaymentMethods as $key => $aPaymentMethod) {
+            if ($aPaymentMethod->getCode() == PayoneConfig::METHOD_KLARNA_BASE) {
+                $iKeyKlarna = $key;
+            }
+            if (in_array($aPaymentMethod->getCode(), $aKlarnaSubtypes) === true) {
+                $blHasKlarnaSubtypes = true;
+                break;
             }
         }
-
         if ($iKeyKlarna !== false && $blHasKlarnaSubtypes === false) {
             unset($aPaymentMethods[$iKeyKlarna]);
         }
