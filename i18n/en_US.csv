@@ -40,6 +40,15 @@
 "PUZ","Person has moved, address not corrected (PUZ)"
 "UKN","Unknown return values are mapped to UKN (UKN)"
 
+"bnpl_legal_text_snippet_1","By placing this order, I agree to the"
+"bnpl_legal_text_snippet_2","supplementary payment terms"
+"bnpl_legal_text_snippet_3","and the risk assessment for the selected payment method."
+"bnpl_legal_text_snippet_4","I am aware of the"
+"bnpl_legal_text_snippet_5","additional data protection notice"
+"bnpl_legal_text_snippet_6","."
+"bnpl_payment_terms_url","https://legal.paylater.payone.com/en/terms-of-payment.html"
+"bnpl_data_protection_url","https://legal.paylater.payone.com/en/data-protection-payments.html"
+
 "ratepay_legal_text_snippet_1","With clicking on"
 "ratepay_legal_text_snippet_2","you agree to the"
 "ratepay_legal_text_snippet_3","Ratepay Terms of Payment"

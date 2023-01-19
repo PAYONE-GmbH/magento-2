@@ -159,6 +159,18 @@ define(
             {
                 type: 'payone_bancontact',
                 component: 'Payone_Core/js/view/payment/method-renderer/bancontact-method'
+            },
+            {
+                type: 'payone_bnpl_invoice',
+                component: 'Payone_Core/js/view/payment/method-renderer/bnpl_invoice-method'
+            },
+            /*BNPL_DEBIT_DEACTIVATED{
+                type: 'payone_bnpl_debit',
+                component: 'Payone_Core/js/view/payment/method-renderer/bnpl_debit-method'
+            },*/
+            {
+                type: 'payone_bnpl_installment',
+                component: 'Payone_Core/js/view/payment/method-renderer/bnpl_installment-method'
             }
         );
         /** Add view logic here if needed */

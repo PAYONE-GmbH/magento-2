@@ -71,6 +71,9 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_TRUSTLY,
         PayoneConfig::METHOD_APPLEPAY,
         PayoneConfig::METHOD_BANCONTACT,
+        PayoneConfig::METHOD_BNPL_INVOICE,
+        PayoneConfig::METHOD_BNPL_INSTALLMENT,
+        //BNPL_DEBIT_DEACTIVATED PayoneConfig::METHOD_BNPL_DEBIT,
     ];
 
     /**
@@ -310,5 +313,23 @@ class Payment extends \Payone\Core\Helper\Base
             PayoneConfig::METHOD_KLARNA_DEBIT => $this->getConfigParam('title', PayoneConfig::METHOD_KLARNA_DEBIT, 'payment'),
             PayoneConfig::METHOD_KLARNA_INSTALLMENT => $this->getConfigParam('title', PayoneConfig::METHOD_KLARNA_INSTALLMENT, 'payment'),
         ];
+    }
+
+    /**
+     * Check for non global custom configuration
+     *
+     * @param string      $sParam
+     * @param string      $sMethodCode
+     * @param string|null $sStoreCode
+     * @return string
+     */
+    public function getCustomConfigParam($sParam, $sMethodCode, $sStoreCode = null)
+    {
+        $blUseGlobal = (bool)$this->getConfigParam('use_global', $sMethodCode, 'payone_payment', $sStoreCode);
+        $sCustomValue = $this->getConfigParam($sParam, $sMethodCode, 'payone_payment', $sStoreCode);
+        if ($blUseGlobal === false && !empty($sCustomValue)) {
+            return $sCustomValue;
+        }
+        return $this->getConfigParam($sParam, 'global', 'payone_general', $sStoreCode);;
     }
 }

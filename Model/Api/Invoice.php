@@ -93,6 +93,13 @@ class Invoice
     protected $sStoreCode;
 
     /**
+     * Determines if price has to be negated
+     *
+     * @var bool
+     */
+    protected $blNegatePrice = false;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
@@ -101,6 +108,14 @@ class Invoice
     {
         $this->toolkitHelper = $toolkitHelper;
         $this->amastyHelper = $amastyHelper;
+    }
+
+    /**
+     * @param bool $blNegatePrice
+     */
+    public function setNegatePrice($blNegatePrice)
+    {
+        $this->blNegatePrice = $blNegatePrice;
     }
 
     /**
@@ -116,8 +131,12 @@ class Invoice
      */
     protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat)
     {
+        $iMultiplier = 1;
+        if ($this->blNegatePrice === true) {
+            $iMultiplier = -1;
+        }
         $this->oRequest->addParameter('id['.$this->iIndex.']', $this->formatSku($sId)); // add invoice item id
-        $this->oRequest->addParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100); // expected in smallest unit of currency
+        $this->oRequest->addParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100 * $iMultiplier); // expected in smallest unit of currency
         $this->oRequest->addParameter('it['.$this->iIndex.']', $sItemType); // add invoice item type
         $this->oRequest->addParameter('no['.$this->iIndex.']', $iAmount); // add invoice item amount
         $this->oRequest->addParameter('de['.$this->iIndex.']', $sDesc); // add invoice item description
@@ -163,9 +182,10 @@ class Invoice
         if ($aPositions === false || $blFirstCapture === true || $blDebit === true) {
             $this->addShippingItem($oOrder, $aPositions, $blDebit, $dShippingCosts); // add shipping invoice params to request
             $this->addGiftCardItem($oOrder);  // add gift card invoice params to request
-            $this->addDiscountItem($oOrder, $aPositions, $blDebit); // add discount invoice params to request
             $this->addAmastyGiftcards($oOrder, $aPositions, $blDebit); // add amasty giftcard invoice params to request
         }
+        $this->addDiscountItem($oOrder, $aPositions, $blDebit); // add discount invoice params to request
+
         return $this->dAmount;
     }
 

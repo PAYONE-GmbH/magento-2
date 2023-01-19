@@ -549,6 +549,18 @@
 "TEMPLATE","/home/thomas/Entwicklung/payone/magento-extension/app/code/community/Payone/Core/Block/Adminhtml/System/Config/Form/Field/Info.php"
 "Click here to obtain more information on this section","Klicken Sie hier um weitere Informationen zu diesem Bereich zu erhalten"
 
+"Allow differing shipping address","Abweichende Lieferadresse erlaubt"
+"Enable this if differing billing address and shipping address are allowed. This is disabled by default because this has to be enabled by Payone for your merchant account.","Aktivierbar um abweichende Rechnungs- und Lieferadresse zu erlauben. Dies ist standardmäßig deaktiviert, da dies erst von Payone in ihrem Merchant Account aktiviert werden muss."
+"B2B orders are not supported for this payment method","B2B Bestellungen sind nicht verfügbar für diese Zahlart"
+
+"bnpl_legal_text_snippet_1","Mit dieser Bestellung erkläre ich mich mit den"
+"bnpl_legal_text_snippet_2","zusätzlichen Zahlungsbedingungen"
+"bnpl_legal_text_snippet_3","und der Risikobewertung für die gewählte Zahlungsart einverstanden."
+"bnpl_legal_text_snippet_4","Ich habe den"
+"bnpl_legal_text_snippet_5","zusätzlichen Datenschutzhinweis"
+"bnpl_legal_text_snippet_6","zur Kenntnis genommen."
+"bnpl_payment_terms_url","https://legal.paylater.payone.com/de/terms-of-payment.html"
+"bnpl_data_protection_url","https://legal.paylater.payone.com/de/data-protection-payments.html"
 
 "TEMPLATE","/app/design/adminhtml/default/default/template/payone/core/system/config/tooltip/general/global.phtml"
 "Enter the data from the PAYONE Merchant Interface shown below in this form to ensure communication with the PAYONE Platform.","Um die Kommunikation mit der PAYONE Plattform sicherzustellen müssen in diesem Bereich die u.g. Daten aus dem PAYONE Merchant Interface eingetragen werden."
@@ -994,6 +1006,7 @@
 "Firstname","Vorname"
 "Lastname","Nachname"
 "Cardholder","Karteninhaber"
+"Bank account holder","Kontoinhaberin"
 "What is this?","Was ist das?"
 "Please enter complete data.","Bitte geben Sie die Kreditkartendaten vollstaendig ein."
 "Expiry date invalid. Please verify your card data.","Ablauf-Datum ungueltig. Bitte pruefen Sie ihre Kartendaten."
@@ -1160,5 +1173,7 @@
 "I want to transfer the installments myself and not pay by direct debit","Ich möchte die Ratenzahlung selbst vornehmen und nicht per Lastschrift begleichen"
 "I want to settle the installments by direct debit","Ich möchte die Ratenzahlung per Lastschrift begleichen"
 
+"PAYONE Credit Card", "PAYONE Kreditkarte"
+"Safe installment is not available for your current basket. Please choose another payment method.","Gesicherter Ratenkauf wird für Ihren aktuellen Warenkorb nicht unterstützt. Bitte wählen Sie eine andere Zahlart."
 "Ratepay payment with differing billing- and shipping-address is not supported","Die Zahlung mit Ratepay bei abweichender Rechnungs- und Lieferadressen wird nicht unterstützt"
 "Place Order","Jetzt kaufen"

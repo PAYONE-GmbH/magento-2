@@ -264,4 +264,10 @@ class ToolkitTest extends BaseTestCase
         $result = $this->toolkit->maskIban('DE85123456782599100003');
         $this->assertEquals($expected, $result);
     }
+
+    public function testGenerateUUIDv4()
+    {
+        $result = $this->toolkit->generateUUIDv4();
+        $this->assertEquals(36, strlen($result));
+    }
 }

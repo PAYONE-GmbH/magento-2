@@ -29,6 +29,7 @@ namespace Payone\Core\Model\Api\Request;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Creditmemo;
+use Payone\Core\Model\Methods\BNPL\BNPLBase;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Payment\Model\InfoInterface;
 
@@ -164,6 +165,9 @@ class Debit extends Base
         $this->addParameter('transactiontype', 'GT');
 
         if ($this->apiHelper->isInvoiceDataNeeded($oPayment, $aPositions)) {
+            if ($oPayment instanceof BNPLBase) { // only for BNPL methods it is needed that amounts are transfered with negative amount
+                $this->invoiceGenerator->setNegatePrice(true);
+            }
             $this->invoiceGenerator->addProductInfo($this, $oOrder, $aPositions, true); // add invoice parameters
         }
 
