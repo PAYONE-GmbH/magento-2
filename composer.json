@@ -2,7 +2,7 @@
     "name": "payone-gmbh/magento-2",
     "description": "PAYONE payment gateway for all German online and offline payment methods including PayPal, all major Credit Cards and Maestro.",
     "type": "magento2-module",
-    "version": "3.6.0",
+    "version": "3.7.0",
     "license": [
       "OSL-3.0",
       "AFL-3.0"

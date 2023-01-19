@@ -25,7 +25,7 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
-    <module name="Payone_Core" setup_version="3.6.0">
+    <module name="Payone_Core" setup_version="3.7.0">
         <sequence>
             <module name="Magento_Quote" />
             <module name="Magento_Sales" />
