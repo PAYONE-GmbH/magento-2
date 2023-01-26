@@ -1175,5 +1175,5 @@
 
 "PAYONE Credit Card", "PAYONE Kreditkarte"
 "Safe installment is not available for your current basket. Please choose another payment method.","Gesicherter Ratenkauf wird für Ihren aktuellen Warenkorb nicht unterstützt. Bitte wählen Sie eine andere Zahlart."
-"Ratepay payment with differing billing- and shipping-address is not supported","Die Zahlung mit Ratepay bei abweichender Rechnungs- und Lieferadressen wird nicht unterstützt"
+"Payment with differing billing- and shipping-address is not supported for this payment type","Die Zahlung bei abweichender Rechnungs- und Lieferadressen wird für diese Zahlart nicht unterstützt"
 "Place Order","Jetzt kaufen"

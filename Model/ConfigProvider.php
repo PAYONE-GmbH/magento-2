@@ -141,6 +141,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     protected $toolkitHelper;
 
     /**
+     * PAYONE ratepay helper
+     *
+     * @var \Payone\Core\Helper\Ratepay
+     */
+    protected $ratepayHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Payment\Model\CcConfig                      $ccConfig
@@ -159,6 +166,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
      * @param \Payone\Core\Model\ResourceModel\SavedPaymentData    $savedPaymentData
      * @param \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment
      * @param \Payone\Core\Helper\Toolkit                          $toolkitHelper
+     * @param \Payone\Core\Helper\Ratepay                          $ratepayHelper
      */
     public function __construct(
         \Magento\Payment\Model\CcConfig $ccConfig,
@@ -176,7 +184,8 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
         \Payone\Core\Model\Methods\Ratepay\Installment\Proxy $ratepayInstallment,
-        \Payone\Core\Helper\Toolkit $toolkitHelper
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Payone\Core\Helper\Ratepay $ratepayHelper
     ) {
         parent::__construct($ccConfig, $dataHelper);
         $this->dataHelper = $dataHelper;
@@ -194,6 +203,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->savedPaymentData = $savedPaymentData;
         $this->ratepayInstallment = $ratepayInstallment;
         $this->toolkitHelper = $toolkitHelper;
+        $this->ratepayHelper = $ratepayHelper;
     }
 
     /**
@@ -278,7 +288,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'currency' => $this->requestHelper->getConfigParam('currency'),
             'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
             'storeName' => $this->shopHelper->getStoreName(),
-            'ratepayAllowedMonths' => $this->getRatepayAllowedMonths(),
+            'ratepay' => $this->getRatepayConfig(),
             'bnpl' => $this->getBNPLConfig(),
         ];
     }
@@ -330,12 +340,47 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         return false;
     }
 
-    protected function getRatepayAllowedMonths()
+    /**
+     * Return Ratepay configuration for given method code
+     *
+     * @param  string $sRatepayMethodCode
+     * @return array|bool[]
+     */
+    protected function getRatepaySingleConfig($sRatepayMethodCode)
     {
-        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INSTALLMENT) === true) {
-            return $this->ratepayInstallment->getAllowedMonths();
+        $aShopConfig = $this->ratepayHelper->getShopConfigByQuote($sRatepayMethodCode);
+        if (empty($aShopConfig)) {
+            $aShopConfig = $this->ratepayHelper->getShopConfigByQuote($sRatepayMethodCode, null, true);
+            if (empty($aShopConfig)) {
+                return [];
+            }
         }
-        return [];
+
+        return [
+            'b2bAllowed' => (bool)$this->ratepayHelper->getShopConfigProperty($aShopConfig, $sRatepayMethodCode, 'b2b'),
+            'differentAddressAllowed' => (bool)$this->ratepayHelper->getShopConfigProperty($aShopConfig, $sRatepayMethodCode, 'delivery_address'),
+        ];
+    }
+
+    /**
+     * Return ratepay config for all ratepay payment methods
+     *
+     * @return array
+     */
+    protected function getRatepayConfig()
+    {
+        $aReturn = [];
+
+        foreach (PayoneConfig::METHODS_RATEPAY as $sRatepayMethod) {
+            if ($this->paymentHelper->isPaymentMethodActive($sRatepayMethod) === true) {
+                $aReturn[$sRatepayMethod] = $this->getRatepaySingleConfig($sRatepayMethod);
+            }
+        }
+
+        if (isset($aReturn[PayoneConfig::METHOD_RATEPAY_INSTALLMENT])) {
+            $aReturn[PayoneConfig::METHOD_RATEPAY_INSTALLMENT]['allowedMonths'] = $this->ratepayInstallment->getAllowedMonths();
+        }
+        return $aReturn;
     }
 
     /**

@@ -105,4 +105,10 @@ abstract class PayoneConfig
     const METHOD_GROUP_KLARNA = 'payone_klarna';
     const METHOD_GROUP_RATEPAY = 'payone_ratepay';
     const METHOD_GROUP_BNPL = 'payone_bnpl';
+
+    const METHODS_RATEPAY = [
+        self::METHOD_RATEPAY_INVOICE,
+        self::METHOD_RATEPAY_DEBIT,
+        self::METHOD_RATEPAY_INSTALLMENT,
+    ];
 }

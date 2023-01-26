@@ -106,8 +106,7 @@ class InstallmentTest extends BaseTestCase
             'interestrate_default' => '9',
         ];
 
-        $this->ratepayHelper->method('getRatepayShopId')->willReturn("test");
-        $this->ratepayHelper->method('getRatepayShopConfigById')->willReturn($config);
+        $this->ratepayHelper->method('getShopConfigByQuote')->willReturn($config);
 
         $result = $this->classToTest->getAllowedMonths();
         $this->assertCount(3, $result);
@@ -121,8 +120,7 @@ class InstallmentTest extends BaseTestCase
             'interestrate_default' => '0',
         ];
 
-        $this->ratepayHelper->method('getRatepayShopId')->willReturn("test");
-        $this->ratepayHelper->method('getRatepayShopConfigById')->willReturn($config);
+        $this->ratepayHelper->method('getShopConfigByQuote')->willReturn($config);
 
         $result = $this->classToTest->getAllowedMonths();
         $this->assertCount(3, $result);

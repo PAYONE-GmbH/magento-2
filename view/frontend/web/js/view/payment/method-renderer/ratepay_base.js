@@ -32,7 +32,31 @@ define(
         'use strict';
         return Component.extend({
             isPlaceOrderActionAllowedRatePay: function () {
-                return (quote.billingAddress() != null && quote.billingAddress().getCacheKey() == quote.shippingAddress().getCacheKey());
+                return this.isDifferentAddressNotAllowed() === false && this.isB2BNotAllowed() === false;
+            },
+            isDifferentAddressNotAllowed: function () {
+                if (window.checkoutConfig.payment.payone.ratepay[this.getCode()].differentAddressAllowed !== undefined && window.checkoutConfig.payment.payone.ratepay[this.getCode()].differentAddressAllowed === true) {
+                    return false;
+                }
+                return (quote.billingAddress() === null || quote.billingAddress().getCacheKey() !== quote.shippingAddress().getCacheKey());
+            },
+            isB2BNotAllowed: function () {
+                if (window.checkoutConfig.payment.payone.ratepay[this.getCode()].b2bAllowed !== undefined && window.checkoutConfig.payment.payone.ratepay[this.getCode()].b2bAllowed === true) {
+                    return false;
+                }
+                return (quote.billingAddress() !== null && typeof quote.billingAddress().company !== undefined && quote.billingAddress().company !== null && quote.billingAddress().company != "");
+            },
+            isB2bMode: function () {
+                if (quote.billingAddress() != null &&
+                    typeof quote.billingAddress().company !== undefined &&
+                    quote.billingAddress().company !==  null &&
+                    quote.billingAddress().company != "" &&
+                    window.checkoutConfig.payment.payone.ratepay[this.getCode()].b2bAllowed !== undefined &&
+                    window.checkoutConfig.payment.payone.ratepay[this.getCode()].b2bAllowed === true
+                ) {
+                    return true;
+                }
+                return false;
             },
             getData: function () {
                 var parentReturn = this._super();
@@ -45,6 +69,9 @@ define(
                 if (this.requestTelephone()) {
                     parentReturn.additional_data.telephone = this.telephone();
                 }
+                if (this.isB2bMode()) {
+                    parentReturn.additional_data.company_uid = this.companyUid();
+                }
                 return parentReturn;
             },
 
@@ -53,6 +80,9 @@ define(
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
             requestBirthday: function () {
+                if (quote.billingAddress() == null || this.isB2bMode() === true) {
+                    return false;
+                }
                 if (customer.customerData.dob == undefined || customer.customerData.dob === null) {
                     return true;
                 }

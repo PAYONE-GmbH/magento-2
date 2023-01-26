@@ -144,12 +144,7 @@ class Installment extends RatepayBase
             $quote = $this->checkoutSession->getQuote();
         }
 
-        $sShopId = $this->getShopIdByQuote($quote);
-        if (empty($sShopId)) {
-            return [];
-        }
-
-        $aConfig = $this->ratepayHelper->getRatepayShopConfigById($sShopId);
+        $aConfig = $this->ratepayHelper->getShopConfigByQuote($this->getCode(), $quote);
         if (!$aConfig) {
             return [];
         }

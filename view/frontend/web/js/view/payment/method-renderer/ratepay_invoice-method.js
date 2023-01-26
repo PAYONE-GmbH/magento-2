@@ -35,7 +35,8 @@ define(
                 birthday: '',
                 birthmonth: '',
                 birthyear: '',
-                telephone: ''
+                telephone: '',
+                companyUid: '',
             },
             initObservable: function () {
                 this._super()
@@ -43,7 +44,8 @@ define(
                         'birthday',
                         'birthmonth',
                         'birthyear',
-                        'telephone'
+                        'telephone',
+                        'companyUid'
                     ]);
                 return this;
             }

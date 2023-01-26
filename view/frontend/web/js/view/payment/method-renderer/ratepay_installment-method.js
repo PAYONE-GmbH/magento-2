@@ -49,8 +49,9 @@ define(
                 installmentTotalAmount: null,
                 interestRate: null,
                 useDirectDebit: true,
-                allowedMonths: window.checkoutConfig.payment.payone.ratepayAllowedMonths,
-                allowedMonthsReloaded: false
+                allowedMonths: [],
+                allowedMonthsReloaded: false,
+                companyUid: ''
             },
             initObservable: function () {
                 this._super()
@@ -69,9 +70,15 @@ define(
                         'interestRate',
                         'useDirectDebit',
                         'allowedMonths',
-                        'allowedMonthsReloaded'
+                        'allowedMonthsReloaded',
+                        'companyUid'
                     ]);
                 return this;
+            },
+            initialize: function () {
+                let parentReturn = this._super();
+                this.allowedMonths(window.checkoutConfig.payment.payone.ratepay[this.getCode()].allowedMonths);
+                return parentReturn;
             },
             getData: function () {
                 var parentReturn = this._super();
@@ -154,7 +161,7 @@ define(
                 this.useDirectDebit(!this.useDirectDebit());
             },
             getAllowedMonths: function () {
-                if ((window.checkoutConfig.payment.payone.ratepayAllowedMonths === undefined || window.checkoutConfig.payment.payone.ratepayAllowedMonths.length == 0) && this.allowedMonthsReloaded() === false) {
+                if ((window.checkoutConfig.payment.payone.ratepay[this.getCode()].allowedMonths === undefined || window.checkoutConfig.payment.payone.ratepay[this.getCode()].allowedMonths.length == 0) && this.allowedMonthsReloaded() === false) {
                     updateAllowedMonths(this);
                     this.allowedMonthsReloaded(true);
                 }

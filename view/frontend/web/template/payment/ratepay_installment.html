@@ -139,6 +139,23 @@
                         <div class="text-right" id="rp_installment_total_amount"></div>
                     </div>
                 </div>
+                <!-- ko if: isB2bMode() -->
+                <div class="field number">
+                    <label data-bind="attr: {for: getCode() + '_companyUid'}" class="label">
+                        <span><!-- ko i18n: 'VAT No.'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[companyUid]" class="input-text" value=""
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_companyUid',
+                                    title: $t('VAT No.'),
+                                    'data-container': getCode() + '-companyUid'},
+                              value: companyUid,
+                              valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <!--/ko-->
                 <!-- ko if: requestTelephone() -->
                 <div class="field number required">
                     <label data-bind="attr: {for: getCode() + '_telephone'}" class="label">
@@ -286,8 +303,11 @@
                 </button>
             </div>
         </div>
-        <div class="payone_place_order_not_allowed" data-bind="visible: !isPlaceOrderActionAllowedRatePay()"><br>
-            <span><!-- ko i18n: 'Ratepay payment with differing billing- and shipping-address is not supported'--><!-- /ko --></span>
+        <div class="payone_place_order_not_allowed" data-bind="visible: isDifferentAddressNotAllowed()"><br>
+            <span><!-- ko i18n: 'Payment with differing billing- and shipping-address is not supported for this payment type'--><!-- /ko --></span>
+        </div>
+        <div class="payone_place_order_not_allowed" data-bind="visible: !isDifferentAddressNotAllowed() && isB2BNotAllowed()"><br>
+            <span><!-- ko i18n: 'B2B orders are not supported for this payment method'--><!-- /ko --></span>
         </div>
         <div class="payone_place_order_not_allowed" data-bind="visible: !installmentPlanSet()"><br>
             <span><!-- ko i18n: 'Please select an installment plan to continue'--><!-- /ko --></span>
