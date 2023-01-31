@@ -73,6 +73,13 @@ class Ratepay extends \Payone\Core\Helper\Base
     protected $apiHelper;
 
     /**
+     * Payone Payment helper
+     *
+     * @var \Payone\Core\Helper\Payment
+     */
+    protected $paymentHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context                 $context
@@ -83,6 +90,7 @@ class Ratepay extends \Payone\Core\Helper\Base
      * @param \Payone\Core\Model\ResourceModel\RatepayProfileConfig $profileResource
      * @param \Magento\Checkout\Model\Session                       $checkoutSession
      * @param \Payone\Core\Helper\Api                               $apiHelper
+     * @param \Payone\Core\Helper\Payment                           $paymentHelper
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -92,13 +100,15 @@ class Ratepay extends \Payone\Core\Helper\Base
         \Payone\Core\Model\Api\Request\Genericpayment\Profile $profile,
         \Payone\Core\Model\ResourceModel\RatepayProfileConfig $profileResource,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Helper\Api $apiHelper
+        \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Helper\Payment $paymentHelper
     ) {
         parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->profile = $profile;
         $this->profileResource = $profileResource;
         $this->checkoutSession = $checkoutSession;
         $this->apiHelper = $apiHelper;
+        $this->paymentHelper = $paymentHelper;
     }
 
     /**
@@ -339,5 +349,44 @@ class Ratepay extends \Payone\Core\Helper\Base
             return array_shift($aProfileConfigs);
         }
         return false;
+    }
+
+    /**
+     * Return Ratepay config for config provider
+     *
+     * @return array
+     */
+    public function getRatepayConfig()
+    {
+        $aReturn = [];
+
+        foreach (PayoneConfig::METHODS_RATEPAY as $sRatepayMethod) {
+            if ($this->paymentHelper->isPaymentMethodActive($sRatepayMethod) === true) {
+                $aReturn[$sRatepayMethod] = $this->getRatepaySingleConfig($sRatepayMethod);
+            }
+        }
+        return $aReturn;
+    }
+
+    /**
+     * Return Ratepay configuration for given method code
+     *
+     * @param  string $sRatepayMethodCode
+     * @return array|bool[]
+     */
+    protected function getRatepaySingleConfig($sRatepayMethodCode)
+    {
+        $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode);
+        if (empty($aShopConfig)) {
+            $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode, null, true);
+            if (empty($aShopConfig)) {
+                return [];
+            }
+        }
+
+        return [
+            'b2bAllowed' => (bool)$this->getShopConfigProperty($aShopConfig, $sRatepayMethodCode, 'b2b'),
+            'differentAddressAllowed' => (bool)$this->getShopConfigProperty($aShopConfig, $sRatepayMethodCode, 'delivery_address'),
+        ];
     }
 }

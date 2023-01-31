@@ -289,6 +289,7 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
             'storeName' => $this->shopHelper->getStoreName(),
             'ratepay' => $this->getRatepayConfig(),
+            'ratepayRefreshed' => false,
             'bnpl' => $this->getBNPLConfig(),
         ];
     }
@@ -341,41 +342,13 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     }
 
     /**
-     * Return Ratepay configuration for given method code
-     *
-     * @param  string $sRatepayMethodCode
-     * @return array|bool[]
-     */
-    protected function getRatepaySingleConfig($sRatepayMethodCode)
-    {
-        $aShopConfig = $this->ratepayHelper->getShopConfigByQuote($sRatepayMethodCode);
-        if (empty($aShopConfig)) {
-            $aShopConfig = $this->ratepayHelper->getShopConfigByQuote($sRatepayMethodCode, null, true);
-            if (empty($aShopConfig)) {
-                return [];
-            }
-        }
-
-        return [
-            'b2bAllowed' => (bool)$this->ratepayHelper->getShopConfigProperty($aShopConfig, $sRatepayMethodCode, 'b2b'),
-            'differentAddressAllowed' => (bool)$this->ratepayHelper->getShopConfigProperty($aShopConfig, $sRatepayMethodCode, 'delivery_address'),
-        ];
-    }
-
-    /**
      * Return ratepay config for all ratepay payment methods
      *
      * @return array
      */
     protected function getRatepayConfig()
     {
-        $aReturn = [];
-
-        foreach (PayoneConfig::METHODS_RATEPAY as $sRatepayMethod) {
-            if ($this->paymentHelper->isPaymentMethodActive($sRatepayMethod) === true) {
-                $aReturn[$sRatepayMethod] = $this->getRatepaySingleConfig($sRatepayMethod);
-            }
-        }
+        $aReturn = $this->ratepayHelper->getRatepayConfig();
 
         if (isset($aReturn[PayoneConfig::METHOD_RATEPAY_INSTALLMENT])) {
             $aReturn[PayoneConfig::METHOD_RATEPAY_INSTALLMENT]['allowedMonths'] = $this->ratepayInstallment->getAllowedMonths();
