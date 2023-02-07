@@ -37,7 +37,8 @@ define(
                 birthyear: '',
                 telephone: '',
                 iban: '',
-                bic: ''
+                bic: '',
+                companyUid: ''
             },
             initObservable: function () {
                 this._super()
@@ -47,7 +48,8 @@ define(
                         'birthyear',
                         'telephone',
                         'iban',
-                        'bic'
+                        'bic',
+                        'companyUid'
                     ]);
                 return this;
             },

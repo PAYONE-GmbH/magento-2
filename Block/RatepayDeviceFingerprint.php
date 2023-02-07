@@ -87,9 +87,9 @@ class RatepayDeviceFingerprint extends Template
      */
     protected function isRatepayMethodActive()
     {
-        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INVOICE) === false ||
-            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_DEBIT) === false ||
-            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INSTALLMENT) === false
+        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INVOICE) === true ||
+            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_DEBIT) === true ||
+            $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_RATEPAY_INSTALLMENT) === true
         ) {
             return true;
         }

@@ -25,14 +25,14 @@
  */
 
 /**
- * @see \Payone\Core\Block\Adminhtml\Config\Form\Field\AmazonConfiguration
+ * @see \Payone\Core\Block\Adminhtml\Config\Form\Field\RefreshRatepayProfiles
  */
 ?>
 <script>
     require(['prototype'], function(){
 
 //<![CDATA[
-        function updateProfileConfigs() {
+        function <?php echo $block->getJavascriptFunctionName(); ?>() {
             new Ajax.Request('<?php echo $block->getAjaxUrl() ?>', {
                 onSuccess: function(response) {
                     try {
@@ -53,14 +53,14 @@
             });
         }
 
-        window.updateProfileConfigs = updateProfileConfigs;
+        window.<?php echo $block->getJavascriptFunctionName(); ?> = <?php echo $block->getJavascriptFunctionName(); ?>;
 //]]>
 
     });
 </script>
 <div class="actions actions-validate-vat">
     <div id="validation_result" class="message-validation hidden"></div>
-    <button onclick="javascript:updateProfileConfigs(); return false;" class="action-validate-vat" type="button">
+    <button onclick="javascript:<?php echo $block->getJavascriptFunctionName(); ?>(); return false;" class="action-validate-vat" type="button">
         <span><?php echo $block->escapeHtml(__('Refresh Ratepay Shop-IDs')) ?></span>
     </button>
 </div>

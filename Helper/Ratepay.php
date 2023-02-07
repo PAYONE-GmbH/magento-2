@@ -26,11 +26,24 @@
 
 namespace Payone\Core\Helper;
 
+use Payone\Core\Model\PayoneConfig;
+
 /**
  * Helper class for ratepay payment
  */
 class Ratepay extends \Payone\Core\Helper\Base
 {
+    /**
+     * Map for methodCode to short payment method identifier for database columns
+     *
+     * @var array
+     */
+    protected $aMethodIdentifierMap = [
+        PayoneConfig::METHOD_RATEPAY_INVOICE => 'invoice',
+        PayoneConfig::METHOD_RATEPAY_DEBIT => 'elv',
+        PayoneConfig::METHOD_RATEPAY_INSTALLMENT => 'installment',
+    ];
+
     /**
      * Object of profile request
      *
@@ -60,6 +73,13 @@ class Ratepay extends \Payone\Core\Helper\Base
     protected $apiHelper;
 
     /**
+     * Payone Payment helper
+     *
+     * @var \Payone\Core\Helper\Payment
+     */
+    protected $paymentHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context                 $context
@@ -70,6 +90,7 @@ class Ratepay extends \Payone\Core\Helper\Base
      * @param \Payone\Core\Model\ResourceModel\RatepayProfileConfig $profileResource
      * @param \Magento\Checkout\Model\Session                       $checkoutSession
      * @param \Payone\Core\Helper\Api                               $apiHelper
+     * @param \Payone\Core\Helper\Payment                           $paymentHelper
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -79,13 +100,15 @@ class Ratepay extends \Payone\Core\Helper\Base
         \Payone\Core\Model\Api\Request\Genericpayment\Profile $profile,
         \Payone\Core\Model\ResourceModel\RatepayProfileConfig $profileResource,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Helper\Api $apiHelper
+        \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Helper\Payment $paymentHelper
     ) {
         parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->profile = $profile;
         $this->profileResource = $profileResource;
         $this->checkoutSession = $checkoutSession;
         $this->apiHelper = $apiHelper;
+        $this->paymentHelper = $paymentHelper;
     }
 
     /**
@@ -222,20 +245,95 @@ class Ratepay extends \Payone\Core\Helper\Base
     }
 
     /**
+     * Returns ratepay method identifier
+     *
+     * @param  string $sMethodCode
+     * @return string|false
+     */
+    protected function getRatepayMethodIdentifierByMethodCode($sMethodCode)
+    {
+        if (isset($this->aMethodIdentifierMap[$sMethodCode])) {
+            return $this->aMethodIdentifierMap[$sMethodCode];
+        }
+        return false;
+    }
+
+    /**
      * Get matching Ratepay shop id for current transaction
      *
      * @param  string $sMethodCode
      * @param  string $sCountryCode
      * @param  string $sCurrency
      * @param  double $dGrandTotal
-     * @return string
+     * @param  bool $blGetConfigWithoutTotals
+     * @return string|false
      */
-    public function getRatepayShopId($sMethodCode, $sCountryCode, $sCurrency, $dGrandTotal)
+    public function getRatepayShopId($sMethodCode, $sCountryCode, $sCurrency, $dGrandTotal, $blGetConfigWithoutTotals = false)
     {
-        $aShopIds = $this->getRatepayShopConfigIdsByPaymentMethod($sMethodCode);
-        $sShopId = $this->profileResource->getMatchingShopId($sMethodCode, $aShopIds, $sCountryCode, $sCurrency, $dGrandTotal);
+        $sRatepayMethodIdentifier = $this->getRatepayMethodIdentifierByMethodCode($sMethodCode);
 
-        return $sShopId;
+        $aShopIds = $this->getRatepayShopConfigIdsByPaymentMethod($sMethodCode);
+        return $this->profileResource->getMatchingShopId($sRatepayMethodIdentifier, $aShopIds, $sCountryCode, $sCurrency, $dGrandTotal, $blGetConfigWithoutTotals);
+    }
+
+    /**
+     * Returns matching Ratepay shop id by given quote
+     *
+     * @param  string $sMethodCode
+     * @param  \Magento\Quote\Api\Data\CartInterface $quote
+     * @param  bool $blGetConfigWithoutTotals
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getShopIdByQuote($sMethodCode, \Magento\Quote\Api\Data\CartInterface $quote, $blGetConfigWithoutTotals = false)
+    {
+        $sCountryCode = $quote->getShippingAddress()->getCountryId();
+        if (empty($sCountryCode)) {
+            $sCountryCode = $quote->getBillingAddress()->getCountryId();
+        }
+        $sCurrency = $this->apiHelper->getCurrencyFromQuote($quote);
+        $dGrandTotal = $this->apiHelper->getQuoteAmount($quote);
+
+        return $this->getRatepayShopId($sMethodCode, $sCountryCode, $sCurrency, $dGrandTotal, $blGetConfigWithoutTotals);
+    }
+
+    /**
+     * Returns matching Ratepay shop config by quote
+     *
+     * @param  string $sMethodCode
+     * @param  \Magento\Quote\Api\Data\CartInterface|null $quote
+     * @param  bool $blGetConfigWithoutTotals
+     * @return array
+     */
+    public function getShopConfigByQuote($sMethodCode, \Magento\Quote\Api\Data\CartInterface $quote = null, $blGetConfigWithoutTotals = false)
+    {
+        if ($quote === null) {
+            $quote = $this->checkoutSession->getQuote();
+        }
+
+        $sShopId = $this->getShopIdByQuote($sMethodCode, $quote, $blGetConfigWithoutTotals);
+        if (empty($sShopId)) {
+            return [];
+        }
+        return $this->getRatepayShopConfigById($sShopId);
+    }
+
+    /**
+     * Returns a certain property from the given shop config array
+     *
+     * @param  array $aShopConfig
+     * @param  string $sMethodCode
+     * @param  string $sProperty
+     * @return string|false
+     */
+    public function getShopConfigProperty($aShopConfig, $sMethodCode, $sProperty)
+    {
+        $sRatepayMethodIdentifier = $this->getRatepayMethodIdentifierByMethodCode($sMethodCode);
+
+        if (isset($aShopConfig[$sProperty.'_'.$sRatepayMethodIdentifier])) {
+            return $aShopConfig[$sProperty.'_'.$sRatepayMethodIdentifier];
+        }
+        return false;
     }
 
     /**
@@ -251,5 +349,44 @@ class Ratepay extends \Payone\Core\Helper\Base
             return array_shift($aProfileConfigs);
         }
         return false;
+    }
+
+    /**
+     * Return Ratepay config for config provider
+     *
+     * @return array
+     */
+    public function getRatepayConfig()
+    {
+        $aReturn = [];
+
+        foreach (PayoneConfig::METHODS_RATEPAY as $sRatepayMethod) {
+            if ($this->paymentHelper->isPaymentMethodActive($sRatepayMethod) === true) {
+                $aReturn[$sRatepayMethod] = $this->getRatepaySingleConfig($sRatepayMethod);
+            }
+        }
+        return $aReturn;
+    }
+
+    /**
+     * Return Ratepay configuration for given method code
+     *
+     * @param  string $sRatepayMethodCode
+     * @return array|bool[]
+     */
+    protected function getRatepaySingleConfig($sRatepayMethodCode)
+    {
+        $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode);
+        if (empty($aShopConfig)) {
+            $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode, null, true);
+            if (empty($aShopConfig)) {
+                return [];
+            }
+        }
+
+        return [
+            'b2bAllowed' => (bool)$this->getShopConfigProperty($aShopConfig, $sRatepayMethodCode, 'b2b'),
+            'differentAddressAllowed' => (bool)$this->getShopConfigProperty($aShopConfig, $sRatepayMethodCode, 'delivery_address'),
+        ];
     }
 }

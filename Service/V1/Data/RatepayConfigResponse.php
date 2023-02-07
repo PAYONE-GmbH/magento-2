@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -12,43 +14,42 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2020 Payone GmbH
+ * @copyright 2003 - 2023 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-define(
-    [
-        'Payone_Core/js/view/payment/method-renderer/ratepay_base',
-        'Magento_Checkout/js/model/quote',
-        'mage/translate'
-    ],
-    function (Component, quote, $t) {
-        'use strict';
-        return Component.extend({
-            defaults: {
-                template: 'Payone_Core/payment/ratepay_invoice',
-                birthday: '',
-                birthmonth: '',
-                birthyear: '',
-                telephone: '',
-                companyUid: '',
-            },
-            initObservable: function () {
-                this._super()
-                    .observe([
-                        'birthday',
-                        'birthmonth',
-                        'birthyear',
-                        'telephone',
-                        'companyUid'
-                    ]);
-                return this;
-            }
-        });
+
+namespace Payone\Core\Service\V1\Data;
+
+use Payone\Core\Api\Data\RatepayConfigResponseInterface;
+
+/**
+ * Object for addresscheck WebApi response
+ */
+class RatepayConfigResponse extends \Magento\Framework\Api\AbstractExtensibleObject implements RatepayConfigResponseInterface
+{
+    /**
+     * Returns if editing the address was a success
+     *
+     * @return bool
+     */
+    public function getSuccess()
+    {
+        return $this->_get('success');
     }
-);
+
+    /**
+     * Returns config json array
+     *
+     * @return string
+     */
+    public function getConfig()
+    {
+        return $this->_get('config');
+    }
+}

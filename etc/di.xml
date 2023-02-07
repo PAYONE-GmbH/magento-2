@@ -31,6 +31,8 @@
     <preference for="Payone\Core\Api\Data\InstallmentPlanResponseInterface" type="Payone\Core\Service\V1\Data\InstallmentPlanResponse" />
     <preference for="Payone\Core\Api\EditAddressInterface" type="Payone\Core\Service\V1\EditAddress" />
     <preference for="Payone\Core\Api\Data\EditAddressInterface" type="Payone\Core\Service\V1\Data\EditAddressResponse" />
+    <preference for="Payone\Core\Api\RatepayConfigInterface" type="Payone\Core\Service\V1\RatepayConfig" />
+    <preference for="Payone\Core\Api\Data\RatepayConfigInterface" type="Payone\Core\Service\V1\Data\RatepayConfigResponse" />
     <preference for="Payone\Core\Api\AmazonPayInterface" type="Payone\Core\Service\V1\AmazonPay" />
     <preference for="Payone\Core\Api\Data\AmazonPayResponseInterface" type="Payone\Core\Service\V1\Data\AmazonPayResponse" />
     <preference for="Payone\Core\Api\KlarnaHandlerInterface" type="Payone\Core\Service\V1\KlarnaHandler" />

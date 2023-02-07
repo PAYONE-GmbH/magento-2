@@ -93,7 +93,8 @@ class RatepayBase extends PayoneMethod
         'telephone',
         'dateofbirth',
         'iban',
-        'bic'
+        'bic',
+        'company_uid',
     ];
 
     /**
@@ -195,6 +196,11 @@ class RatepayBase extends PayoneMethod
             'add_paydata[shop_id]' => $this->getShopIdByOrder($oOrder),
         ];
 
+        $sCompanyUid = $this->getInfoInstance()->getAdditionalInformation('company_uid');
+        if (!empty($sCompanyUid)) {
+            $aBaseParams['add_paydata[vat_id]'] = $sCompanyUid;
+        }
+
         $sBirthday = $this->getInfoInstance()->getAdditionalInformation('dateofbirth');
         if ($sBirthday) {
             $aBaseParams['birthday'] = $sBirthday;
@@ -208,25 +214,6 @@ class RatepayBase extends PayoneMethod
         $aSubTypeParams = $this->getSubTypeSpecificParameters($oOrder);
         $aParams = array_merge($aBaseParams, $aSubTypeParams);
         return $aParams;
-    }
-
-    /**
-     * Returns matching Ratepay shop id by given quote
-     *
-     * @param  \Magento\Quote\Api\Data\CartInterface $quote
-     * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    protected function getShopIdByQuote(\Magento\Quote\Api\Data\CartInterface $quote)
-    {
-        $sCountryCode = $quote->getShippingAddress()->getCountryId();
-        if (empty($sCountryCode)) {
-            $sCountryCode = $quote->getBillingAddress()->getCountryId();
-        }
-        $sCurrency = $this->apiHelper->getCurrencyFromQuote($quote);
-        $dGrandTotal = $this->apiHelper->getQuoteAmount($quote);
-
-        return $this->ratepayHelper->getRatepayShopId($this->getCode(), $sCountryCode, $sCurrency, $dGrandTotal);
     }
 
     /**
@@ -262,7 +249,7 @@ class RatepayBase extends PayoneMethod
             $quote = $this->checkoutSession->getQuote();
         }
 
-        if ($this->getShopIdByQuote($quote) === false) {
+        if ($this->ratepayHelper->getShopIdByQuote($this->getCode(), $quote) === false) {
             return false;
         }
 
