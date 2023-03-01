@@ -106,6 +106,11 @@ class ApplePayTest extends BaseTestCase
         $testFile = "unit.test";
         $this->scopeConfig->method('getValue')->willReturn($testFile);
 
+        $uploadPath = $this->classToTest->getApplePayUploadPath();
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath);
+        }
+
         $path = $this->classToTest->getApplePayUploadPath().$testFile;
         file_put_contents($path, "test");
 
