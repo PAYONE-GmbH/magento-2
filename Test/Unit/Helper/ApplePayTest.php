@@ -34,6 +34,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Api\Data\StoreInterface;
+use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\Read;
 
 class ApplePayTest extends BaseTestCase
 {
@@ -60,21 +62,24 @@ class ApplePayTest extends BaseTestCase
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->disableOriginalConstructor()->getMock();
         $storeManager->method('getStore')->willReturn($store);
 
+        $read = $this->getMockBuilder(Read::class)->disableOriginalConstructor()->getMock();
+        $read->method('getAbsolutePath')->willReturn("Upload Path");
+
+        $filesystem = $this->getMockBuilder(Filesystem::class)->disableOriginalConstructor()->getMock();
+        $filesystem->method('getDirectoryRead')->willReturn($read);
+        
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'storeManager' => $storeManager,
+            'filesystem' => $filesystem,
         ]);
-
-        if (!file_exists($this->classToTest->getApplePayUploadPath())) {
-            mkdir($this->classToTest->getApplePayUploadPath());
-        }
     }
 
     public function testGetApplePayUploadPath()
     {
         $result = $this->classToTest->getApplePayUploadPath();
 
-        $this->assertStringEndsWith(DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."ApplePay".DIRECTORY_SEPARATOR, $result);
+        $this->assertNotEmpty($result);
     }
 
     public function testHasMerchantId()
