@@ -73,7 +73,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_BANCONTACT,
         PayoneConfig::METHOD_BNPL_INVOICE,
         PayoneConfig::METHOD_BNPL_INSTALLMENT,
-        //BNPL_DEBIT_DEACTIVATED PayoneConfig::METHOD_BNPL_DEBIT,
+        PayoneConfig::METHOD_BNPL_DEBIT,
     ];
 
     /**

@@ -50,7 +50,28 @@ define(
                         'iban'
                     ]);
                 return this;
-            }
+            },
+            getData: function () {
+                var parentReturn = this._super();
+                parentReturn.additional_data.bankaccountholder = this.bankaccountholder();
+                parentReturn.additional_data.iban = this.getCleanedNumber(this.iban());
+                return parentReturn;
+            },
+            validate: function () {
+                var parentReturn = this._super();
+                if (parentReturn === false) {
+                    return parentReturn;
+                }
+                if (this.bankaccountholder() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter your bank account holder information.')});
+                    return false;
+                }
+                if (this.iban() == '') {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid IBAN.')});
+                    return false;
+                }
+                return parentReturn;
+            },
         });
     }
 );
