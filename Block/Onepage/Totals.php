@@ -61,7 +61,6 @@ class Totals extends CoreTotals
     ) {
         $this->_salesConfig = $salesConfig;
         parent::__construct($context, $customerSession, $checkoutSession, $salesConfig, $layoutProcessors, $data);
-        $this->_isScopePrivate = true;
         $this->layoutProcessors = $layoutProcessors;
         $this->baseHelper = $baseHelper;
     }
