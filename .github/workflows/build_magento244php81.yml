@@ -29,7 +29,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, gd, bcmath, ctype, curl, dom, hash, iconv, intl, openssl, simplexml, soap, xsl, zip
-          tools: composer:v2
+          tools: composer:v2.1
       - name: Validate composer.json and composer.lock
         run: composer validate
 
