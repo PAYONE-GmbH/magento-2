@@ -83,7 +83,6 @@ class BNPLBase extends PayoneMethod
         'dateofbirth',
         'telephone',
         'iban',
-        'bankaccountholder',
         'installmentOption',
         'optionid',
     ];
@@ -253,5 +252,30 @@ class BNPLBase extends PayoneMethod
         }
 
         return $this;
+    }
+
+    /**
+     * Perform certain actions with the response
+     *
+     * @param  array $aResponse
+     * @param  Order $oOrder
+     * @param  float $amount
+     * @return array
+     */
+    protected function handleResponse($aResponse, Order $oOrder, $amount)
+    {
+        if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && isset($aResponse['errorcode']) && $aResponse['errorcode'] == '307') {
+            $aBans = $this->checkoutSession->getPayonePaymentBans();
+            if (empty($aBans)) {
+                $aBans = [];
+            }
+            
+            $sBannedUntil = date('Y-m-d H:i:s', (time() + (60 * 60 * 8)));
+            $aBans[PayoneConfig::METHOD_BNPL_DEBIT] = $sBannedUntil;
+            $aBans[PayoneConfig::METHOD_BNPL_INSTALLMENT] = $sBannedUntil;
+            $aBans[PayoneConfig::METHOD_BNPL_INVOICE] = $sBannedUntil;
+            $this->checkoutSession->setPayonePaymentBans($aBans);
+        }
+        return $aResponse;
     }
 }

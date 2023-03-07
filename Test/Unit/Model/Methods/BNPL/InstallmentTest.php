@@ -63,8 +63,13 @@ class InstallmentTest extends BaseTestCase
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
 
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getFirstname')->willReturn('Max');
+        $address->method('getLastname')->willReturn('Mustermann');
+
         $this->order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $this->order->method('getStore')->willReturn($store);
+        $this->order->method('getBillingAddress')->willReturn($address);
 
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn("value");

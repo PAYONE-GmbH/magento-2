@@ -34,11 +34,11 @@ $aInstallmentData = $aInstallmentResponse['runtimes'];
     </div>
 <?php else: ?>
     <label class="label" style="display:block;">
-        <span><?php echo __('Please select your desired number of installments'); ?></span>
+        <span><?php echo __('Select the number of installments'); ?></span>
     </label><br>
     <div>
         <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>
-            <div onclick="switchBNPLInstallmentPlan('<?php echo $sKey; ?>', '<?php echo $this->getCode(); ?>', '<?php echo $aInstallment['installment_option_id']; ?>', this);">
+            <div class="payoneBNPLselector" onclick="switchBNPLInstallmentPlan('<?php echo $sKey; ?>', '<?php echo $this->getCode(); ?>', '<?php echo $aInstallment['installment_option_id']; ?>', this);">
                 <input type="radio" name="bnplCondition" id="bnplCondition_<?php echo $sKey; ?>">
                 <a href="#" class="bnplCondition" onclick="return false;">
                     <?php echo $this->getSelectLinkText($aInstallment) ?>
@@ -76,7 +76,7 @@ $aInstallmentData = $aInstallmentResponse['runtimes'];
                         <td class="value"><?php echo $this->formatPrice($aInstallment['monthly_amount_value']).' '.$aInstallment['monthly_amount_currency']; ?></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><a href="<?php echo $aInstallment['link_credit_information_href']; ?>" target="_blank"><?php echo __('Download Installment-Contract-Draft'); ?></a></td>
+                        <td colspan="2"><a href="<?php echo $aInstallment['link_credit_information_href']; ?>" target="_blank"><?php echo __('Download installment information'); ?></a></td>
                     </tr>
                 </table>
             </div>
