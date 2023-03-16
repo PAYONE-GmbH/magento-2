@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Model\Api\Request;
 
+use Payone\Core\Model\Methods\BNPL\BNPLBase;
 use Payone\Core\Model\Methods\Klarna\KlarnaBase;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\PayoneMethod;
@@ -172,6 +173,9 @@ class Authorization extends AddressRequest
         $this->setPaymentParameters($oPayment, $oOrder); // add payment specific parameters
 
         if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
+            if ($oPayment instanceof BNPLBase) { // only for BNPL methods it is needed that a category url is sent for each product
+                $this->invoiceGenerator->setSendCategoryUrl(true);
+            }
             $this->invoiceGenerator->addProductInfo($this, $oOrder); // add invoice parameters
         }
     }

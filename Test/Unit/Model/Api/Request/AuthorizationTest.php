@@ -31,6 +31,7 @@ use Magento\Sales\Model\Order;
 use Payone\Core\Helper\Database;
 use Payone\Core\Model\Api\Request\Authorization as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Model\Methods\BNPL\Debit;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Helper\Api;
 use Payone\Core\Helper\Toolkit;
@@ -189,6 +190,47 @@ class AuthorizationTest extends BaseTestCase
     public function testSendRequestPaypal()
     {
         $payment = $this->getPaymentMock();
+        $address = $this->getAddressMock();
+
+        $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
+        $store->method('getCode')->willReturn('test');
+
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
+            ->getMock();
+        $order->method('getRealOrderId')->willReturn('54321');
+        $order->method('getOrderCurrencyCode')->willReturn('EUR');
+        $order->method('getCustomerId')->willReturn('12345');
+        $order->method('getCustomerEmail')->willReturn('test@test.com');
+        $order->method('getBillingAddress')->willReturn($address);
+        $order->method('getShippingAddress')->willReturn(false);
+        $order->method('getStore')->willReturn($store);
+
+        $response = ['status' => 'VALID'];
+        $this->apiHelper->method('sendApiRequest')->willReturn($response);
+
+        $result = $this->classToTest->sendRequest($payment, $order, 100);
+        $this->assertEquals($response, $result);
+    }
+
+    public function testSendRequestBNPL()
+    {
+        $payment = $this->getMockBuilder(Debit::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getAuthorizationMode')->willReturn('authorization');
+        $payment->method('getOperationMode')->willReturn('test');
+        $payment->method('hasCustomConfig')->willReturn(true);
+        $payment->method('formatReferenceNumber')->willReturn('12345');
+        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_BNPL_DEBIT);
+        $payment->method('getClearingtype')->willReturn('wlt');
+        $payment->method('getPaymentSpecificParameters')->willReturn([]);
+        $payment->method('needsRedirectUrls')->willReturn(true);
+        $payment->method('needsTransactionParam')->willReturn(true);
+        $payment->method('getSuccessUrl')->willReturn('http://testdomain.com');
+        $payment->method('getErrorUrl')->willReturn('http://testdomain.com');
+        $payment->method('getCancelUrl')->willReturn('http://testdomain.com');
+        $payment->method('getCustomConfigParam')->willReturn('true');
+
         $address = $this->getAddressMock();
 
         $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
