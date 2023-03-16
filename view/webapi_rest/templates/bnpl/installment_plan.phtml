@@ -52,8 +52,8 @@ $aInstallmentData = $aInstallmentResponse['runtimes'];
                 <strong><?php echo __('Overview'); ?></strong><br>
                 <table>
                     <tr>
-                        <td><?php echo __('No. of installments:'); ?></td>
-                        <td class="value"><?php echo $aInstallment['number_of_payments']; ?></td>
+                        <td width="40%"><?php echo __('No. of installments:'); ?></td>
+                        <td width="60%" class="value"><?php echo $aInstallment['number_of_payments']; ?></td>
                     </tr>
                     <tr>
                         <td><?php echo __('Financingamount:'); ?></td>
@@ -71,7 +71,7 @@ $aInstallmentData = $aInstallmentResponse['runtimes'];
                         <td><?php echo __('Effective interest rate:'); ?></td>
                         <td class="value"><?php echo $aInstallment['effective_interest_rate'] / 100; ?>%</td>
                     </tr>
-                    <tr class="final">
+                    <tr>
                         <td><?php echo __('Monthly installment:'); ?></td>
                         <td class="value"><?php echo $this->formatPrice($aInstallment['monthly_amount_value']).' '.$aInstallment['monthly_amount_currency']; ?></td>
                     </tr>

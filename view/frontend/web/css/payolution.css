@@ -63,7 +63,7 @@
     list-style: circle outside none;
 }
 
-.payolution_installment_overview TABLE TR TD.value, .bnpl_installment_overview TABLE TR TD.value {
+.payolution_installment_overview TABLE TR TD.value{
     text-align: right;
     padding-left: 60px;
 }
