@@ -8,4 +8,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: gitleaks-action
-      uses: gitleaks/gitleaks-action@v1.6.0
+      uses: FatchipRobert/gitleaks-action@v1.6.1
