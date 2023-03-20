@@ -86,7 +86,7 @@ class InstallmentPlanTest extends BaseTestCase
             'number_of_payments' => '12',
             'monthly_amount_value' => '500',
         ];
-        $expected = '5,00 EUR per month - 12 installments';
+        $expected = 'Payment in 12 installments of 5,00 EUR';
         $result = $this->classToTest->getSelectLinkText($aInstallment);
         $this->assertEquals($expected, $result);
     }

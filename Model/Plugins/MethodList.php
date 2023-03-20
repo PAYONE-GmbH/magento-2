@@ -196,11 +196,11 @@ class MethodList
         $aBans = [];
         if (!empty($oQuote->getCustomerId())) {
             $aBans = $this->paymentBan->getPaymentBans($oQuote->getCustomerId());
-        } else { // guest checkout
-            $aSessionBans = $this->checkoutSession->getPayonePaymentBans();
-            if (!empty($aSessionBans)) {
-                $aBans = $aSessionBans;
-            }
+        }
+
+        $aSessionBans = $this->checkoutSession->getPayonePaymentBans();
+        if (!empty($aSessionBans)) {
+            $aBans = array_merge($aBans, $aSessionBans);
         }
         return $aBans;
     }
@@ -214,11 +214,11 @@ class MethodList
      */
     protected function removeBannedPaymentMethods($aPaymentMethods, Quote $oQuote)
     {
-        $aBannedMethos = $this->getBannedPaymentMethods($oQuote);
+        $aBannedMethods = $this->getBannedPaymentMethods($oQuote);
         foreach ($aPaymentMethods as $key => $aPaymentMethod) {
             $sCode = $aPaymentMethod->getCode();
-            if (array_key_exists($sCode, $aBannedMethos) !== false) {
-                $iBannedUntil = strtotime($aBannedMethos[$sCode]);
+            if (array_key_exists($sCode, $aBannedMethods) !== false) {
+                $iBannedUntil = strtotime($aBannedMethods[$sCode]);
                 if ($iBannedUntil > time()) {
                     unset($aPaymentMethods[$key]);
                 }

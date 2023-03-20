@@ -41,7 +41,7 @@ define(
                 ], function(methodList, quote) {
                     targetModule.disablePaymentType = function (sPaymentType) {
                         $('INPUT#' + sPaymentType).parents('.payment-method').find('.action.checkout').prop( "disabled", true );
-                        $('INPUT#' + sPaymentType).parents('.payment-method').delay(5000).fadeOut(2000, function() {
+                        $('INPUT#' + sPaymentType).parents('.payment-method').delay(3000).fadeOut(2000, function() {
                             $('INPUT#' + sPaymentType).parents('.payment-method').remove();
                         });
                     };
@@ -59,6 +59,12 @@ define(
                         if (response.status != 401) {
                             if(response.responseJSON.message.indexOf('307 -') !== -1 && quote.paymentMethod().method.indexOf('payone_ratepay') !== -1) {
                                 targetModule.disablePaymentType(quote.paymentMethod().method);
+                            }
+                            if(response.responseJSON.message.indexOf('307 -') !== -1 && quote.paymentMethod().method.indexOf('payone_bnpl_') !== -1) {
+                                // Hide all BNPL methods
+                                targetModule.disablePaymentType('payone_bnpl_invoice');
+                                targetModule.disablePaymentType('payone_bnpl_installment');
+                                targetModule.disablePaymentType('payone_bnpl_debit');
                             }
                         }
                         return origReturn;

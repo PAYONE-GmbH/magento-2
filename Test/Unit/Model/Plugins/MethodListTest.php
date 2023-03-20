@@ -134,15 +134,18 @@ class MethodListTest extends BaseTestCase
 
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
+        $paymentBanned = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $paymentBanned->method('getCode')->willReturn(PayoneConfig::METHOD_DEBIT);
+
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_DEBIT);
-        $paymentMethods = [$payment];
+        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_CASH_ON_DELIVERY);
+        $paymentMethods = [$paymentBanned, $payment];
 
         $this->quote->method('getCustomerId')->willReturn('5');
         $this->paymentBan->method('getPaymentBans')->willReturn([]);
 
         $result = $this->classToTest->afterGetAvailableMethods($subject, $paymentMethods, $this->quote);
-        $this->assertInstanceOf(MethodInterface::class, $result[0]);
+        $this->assertInstanceOf(MethodInterface::class, array_shift($result));
     }
 
     public function testAfterGetAvailableMethods()
