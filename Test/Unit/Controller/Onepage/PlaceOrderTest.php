@@ -152,6 +152,9 @@ class PlaceOrderTest extends BaseTestCase
                 'unsPayoneUserAgent',
                 'setPayoneExpressType',
                 'setIsPayonePayPalExpress',
+                'getPayoneRedirectUrl',
+                'setPayonePayPalExpressRetry',
+                'setPayoneCustomerIsRedirected',
             ])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
@@ -161,6 +164,7 @@ class PlaceOrderTest extends BaseTestCase
         $this->checkoutSession->method('unsIsPayonePayPalExpress')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('unsPayoneUserAgent')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('setIsPayonePayPalExpress')->willReturn(true);
+        $this->checkoutSession->method('setPayonePayPalExpressRetry')->willReturn($this->checkoutSession);
 
         $this->agreementValidator = $this->getMockBuilder(AgreementsValidatorInterface::class)->disableOriginalConstructor()->getMock();
         $this->agreementValidator->method('isValid')->willReturn(false);
@@ -205,6 +209,15 @@ class PlaceOrderTest extends BaseTestCase
     public function testExecuteSubtotalMismatch()
     {
         $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(110);
+        $this->request->method('getBeforeForwardInfo')->willReturn(false);
+        $result = $this->classToTest->execute();
+        $this->assertNull($result);
+    }
+
+    public function testExecutePayPal()
+    {
+        $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(100);
+        $this->checkoutSession->method('getPayoneRedirectUrl')->willReturn("http://someurl.test");
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
