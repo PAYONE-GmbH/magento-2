@@ -55,6 +55,11 @@ class ReturnedTest extends BaseTestCase
      */
     private $returnHandler;
 
+    /**
+     * @var Session
+     */
+    private $checkoutSession;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -71,31 +76,48 @@ class ReturnedTest extends BaseTestCase
         $context->method('getResultFactory')->willReturn($resultFactory);
         $context->method('getMessageManager')->willReturn($messageManager);
 
-        $checkoutSession = $this->getMockBuilder(Session::class)
+        $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneWorkorderId', 'setIsPayonePayPalExpress'])
+            ->setMethods([
+                'getPayoneWorkorderId',
+                'setIsPayonePayPalExpress',
+                'getPayonePayPalExpressRetry',
+                'unsPayonePayPalExpressRetry',
+            ])
             ->getMock();
-        $checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
 
         $this->returnHandler = $this->getMockBuilder(ReturnHandler::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
-            'checkoutSession' => $checkoutSession,
+            'checkoutSession' => $this->checkoutSession,
             'returnHandler' => $this->returnHandler
         ]);
     }
 
     public function testExecute()
     {
+        $this->checkoutSession->method('getPayonePayPalExpressRetry')->willReturn(false);
+
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Redirect::class, $result);
     }
 
     public function testExecuteException()
     {
+        $this->checkoutSession->method('getPayonePayPalExpressRetry')->willReturn(false);
+
         $exception = new \Exception;
         $this->returnHandler->expects($this->once())->method('handlePayPalReturn')->willThrowException($exception);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Redirect::class, $result);
+    }
+
+    public function testExecutePayPal()
+    {
+        $this->checkoutSession->method('getPayonePayPalExpressRetry')->willReturn(true);
 
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Redirect::class, $result);

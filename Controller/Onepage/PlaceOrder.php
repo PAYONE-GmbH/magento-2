@@ -88,6 +88,22 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
         try {
             $this->placeOrder();
 
+            $sPayoneRedirectUrl = $this->checkoutSession->getPayoneRedirectUrl();
+            if (!empty($sPayoneRedirectUrl)) {
+                $this->checkoutSession->setPayoneCustomerIsRedirected(true);
+                $this->checkoutSession->setPayonePayPalExpressRetry(true);
+                $this->_redirect($sPayoneRedirectUrl);
+                return;
+            }
+
+            $oQuote = $this->checkoutSession->getQuote();
+
+            // "last successful quote"
+            $sQuoteId = $oQuote->getId();
+            $this->checkoutSession->setLastQuoteId($sQuoteId)->setLastSuccessQuoteId($sQuoteId)->unsPayoneWorkorderId()->unsIsPayonePayPalExpress()->unsPayoneUserAgent()->unsPayoneDeviceFingerprint();
+
+            $oQuote->setIsActive(false)->save();
+
             $this->_redirect('checkout/onepage/success');
         } catch (\Exception $e) {
             $this->messageManager->addExceptionMessage(
@@ -129,12 +145,6 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
         }
 
         $this->cartManagement->placeOrder($oQuote->getId());
-
-        // "last successful quote"
-        $sQuoteId = $oQuote->getId();
-        $this->checkoutSession->setLastQuoteId($sQuoteId)->setLastSuccessQuoteId($sQuoteId)->unsPayoneWorkorderId()->unsIsPayonePayPalExpress()->unsPayoneUserAgent()->unsPayoneDeviceFingerprint();
-
-        $oQuote->setIsActive(false)->save();
     }
 
     /**

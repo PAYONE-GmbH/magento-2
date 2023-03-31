@@ -73,6 +73,14 @@ class Returned extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
+        if ($this->checkoutSession->getPayonePayPalExpressRetry() === true) { // Is double redirect PayPal Express scenario?
+            $this->checkoutSession->unsPayonePayPalExpressRetry();
+
+            /** @var Redirect $resultRedirect */
+            $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+            return $resultRedirect->setPath('checkout/onepage/success');
+        }
+
         $this->checkoutSession->setIsPayonePayPalExpress(true);
         $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
         if ($sWorkorderId) {
