@@ -46,4 +46,11 @@ class Invoice extends RatepayBase
      * @var string
      */
     protected $sSubType = self::METHOD_RATEPAY_SUBTYPE_INVOICE;
+
+    /**
+     * Info instructions block path
+     *
+     * @var string
+     */
+    protected $_formBlockType = 'Payone\Core\Block\Form\RatepayInvoice';
 }
