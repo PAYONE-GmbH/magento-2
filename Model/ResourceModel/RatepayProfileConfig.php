@@ -115,10 +115,10 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
     protected function getDataArray($aProfileResponse)
     {
         $aData = [
-            'profile_id'                            => $aProfileResponse['add_paydata[profile-id]'],
-            'merchant_name'                         => $aProfileResponse['add_paydata[merchant-name]'],
-            'merchant_status'                       => $aProfileResponse['add_paydata[merchant-status]'],
-            'shop_name'                             => $aProfileResponse['add_paydata[shop-name]'],
+            'profile_id'                            => isset($aProfileResponse['add_paydata[profile-id]']) ? $aProfileResponse['add_paydata[profile-id]'] : '',
+            'merchant_name'                         => isset($aProfileResponse['add_paydata[merchant-name]']) ? $aProfileResponse['add_paydata[merchant-name]'] : '',
+            'merchant_status'                       => isset($aProfileResponse['add_paydata[merchant-status]']) ? $aProfileResponse['add_paydata[merchant-status]'] : '',
+            'shop_name'                             => isset($aProfileResponse['add_paydata[shop-name]']) ? $aProfileResponse['add_paydata[shop-name]'] : '',
             'name'                                  => $aProfileResponse['add_paydata[name]'],
             'currency'                              => $aProfileResponse['add_paydata[currency]'],
             'type'                                  => $aProfileResponse['add_paydata[type]'],
