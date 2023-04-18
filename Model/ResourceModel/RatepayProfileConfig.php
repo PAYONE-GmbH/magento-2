@@ -117,7 +117,7 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
         $aData = [
             'profile_id'                            => isset($aProfileResponse['add_paydata[profile-id]']) ? $aProfileResponse['add_paydata[profile-id]'] : '',
             'merchant_name'                         => isset($aProfileResponse['add_paydata[merchant-name]']) ? $aProfileResponse['add_paydata[merchant-name]'] : '',
-            'merchant_status'                       => isset($aProfileResponse['add_paydata[merchant-status]']) ? $aProfileResponse['add_paydata[merchant-status]'] : '',
+            'merchant_status'                       => isset($aProfileResponse['add_paydata[merchant-status]']) ? $aProfileResponse['add_paydata[merchant-status]'] : 0,
             'shop_name'                             => isset($aProfileResponse['add_paydata[shop-name]']) ? $aProfileResponse['add_paydata[shop-name]'] : '',
             'name'                                  => $aProfileResponse['add_paydata[name]'],
             'currency'                              => $aProfileResponse['add_paydata[currency]'],
