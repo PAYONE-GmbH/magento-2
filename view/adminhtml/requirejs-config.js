@@ -24,12 +24,12 @@
 /*jshint browser:true jquery:true*/
 /*global alert*/
 
+/* deactivated for now since no mixins are needed at the moment, file stays for potential future use
+
 var config = {
     config: {
-        mixins: {
-            'Magento_Ui/js/grid/data-storage': {
-                'Payone_Core/js/grid/data-storage-mixin': true
-            }
-        }
+        mixins: {}
     }
 };
+
+*/
