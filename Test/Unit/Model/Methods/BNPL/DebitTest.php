@@ -62,7 +62,12 @@ class DebitTest extends BaseTestCase
 
     public function testGetSubTypeSpecificParameters()
     {
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getFirstname')->willReturn('Max');
+        $address->method('getLastname')->willReturn('Mustermann');
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getBillingAddress')->willReturn($address);
 
         $result = $this->classToTest->getSubTypeSpecificParameters($order);
         $this->assertCount(2, $result);

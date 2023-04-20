@@ -267,11 +267,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <!--BNPL_DEBIT_DEACTIVATED field id="payone_bnpl_debit" translate="label" sortOrder="380" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="payone_bnpl_debit" translate="label" sortOrder="380" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>BNPL Safe Debit</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field-->
+                </field>
                 <field id="payone_bnpl_installment" translate="label" sortOrder="390" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>BNPL Safe Installment</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -332,7 +332,7 @@
             <include path="Payone_Core::system/payone_applepay.xml"/>
             <include path="Payone_Core::system/payone_bancontact.xml"/>
             <include path="Payone_Core::system/payone_bnpl_invoice.xml"/>
-            <!--BNPL_DEBIT_DEACTIVATED include path="Payone_Core::system/payone_bnpl_debit.xml"/-->
+            <include path="Payone_Core::system/payone_bnpl_debit.xml"/>
             <include path="Payone_Core::system/payone_bnpl_installment.xml"/>
         </section>
         <section id="payone_protect" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">

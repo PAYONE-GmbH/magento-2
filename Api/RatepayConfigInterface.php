@@ -14,43 +14,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2020 Payone GmbH
+ * @copyright 2003 - 2023 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Methods\Ratepay;
+namespace Payone\Core\Api;
 
-use Payone\Core\Model\PayoneConfig;
-
-/**
- * Model for Ratepay invoice payment method
- */
-class Invoice extends RatepayBase
+interface RatepayConfigInterface
 {
     /**
-     * Payment method code
+     * PAYONE editAddress script
+     * The full class-paths must be given here otherwise the Magento 2 WebApi
+     * cant handle this with its fake type system!
      *
-     * @var string
+     * @param  string $cartId
+     * @return \Payone\Core\Service\V1\Data\RatepayConfigResponse
      */
-    protected $_code = PayoneConfig::METHOD_RATEPAY_INVOICE;
-
-    /**
-     * Payment method sub type
-     *
-     * @var string
-     */
-    protected $sSubType = self::METHOD_RATEPAY_SUBTYPE_INVOICE;
-
-    /**
-     * Info instructions block path
-     *
-     * @var string
-     */
-    protected $_formBlockType = 'Payone\Core\Block\Form\RatepayInvoice';
+    public function getConfig($cartId);
 }

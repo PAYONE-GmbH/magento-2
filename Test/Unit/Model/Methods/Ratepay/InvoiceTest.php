@@ -110,7 +110,8 @@ class InvoiceTest extends BaseTestCase
                 'unsPayoneCanceledPaymentMethod',
                 'unsPayoneIsError',
                 'unsShowAmazonPendingNotice',
-                'unsAmazonRetryAsync'
+                'unsAmazonRetryAsync',
+                'unsPayoneRatepayDeviceFingerprintToken',
             ])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
@@ -171,6 +172,7 @@ class InvoiceTest extends BaseTestCase
             'add_paydata[device_token]' => '12345',
             'add_paydata[merchant_consumer_id]' => '123',
             'add_paydata[shop_id]' => '54321',
+            'add_paydata[vat_id]' => '1',
             'birthday' => '1',
             'telephonenumber' => '1',
         ];
@@ -264,7 +266,7 @@ class InvoiceTest extends BaseTestCase
     {
         $this->scopeConfig->method('getValue')->willReturn(1);
 
-        $this->ratepayHelper->method('getRatepayShopId')->willReturn(false);
+        $this->ratepayHelper->method('getShopIdByQuote')->willReturn(false);
 
         $result = $this->classToTest->isAvailable();
         $this->assertFalse($result);

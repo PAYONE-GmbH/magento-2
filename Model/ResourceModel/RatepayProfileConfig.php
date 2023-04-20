@@ -34,17 +34,6 @@ use Payone\Core\Model\PayoneConfig;
 class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
-     * Map for methodCode to short payment method identifier for database columns
-     *
-     * @var array
-     */
-    protected $aMethodIdentifierMap = [
-        PayoneConfig::METHOD_RATEPAY_INVOICE => 'invoice',
-        PayoneConfig::METHOD_RATEPAY_DEBIT => 'elv',
-        PayoneConfig::METHOD_RATEPAY_INSTALLMENT => 'installment',
-    ];
-
-    /**
      * Initialize connection and table
      *
      * @return void
@@ -100,6 +89,24 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
     }
 
     /**
+     * Convert strange Ratepay yes/no values to int-style bool values for the database
+     *
+     * @param  string $sValue
+     * @return int
+     */
+    protected function convertYesNoToBool($sValue)
+    {
+        if (strtolower($sValue) == "yes") {
+            return 1;
+        }
+
+        if (strtolower($sValue) == "no") {
+            return 0;
+        }
+        return $sValue;
+    }
+
+    /**
      * Fills data array for insert and update queries
      *
      * @param  array $aProfileResponse
@@ -108,10 +115,10 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
     protected function getDataArray($aProfileResponse)
     {
         $aData = [
-            'profile_id'                            => $aProfileResponse['add_paydata[profile-id]'],
-            'merchant_name'                         => $aProfileResponse['add_paydata[merchant-name]'],
-            'merchant_status'                       => $aProfileResponse['add_paydata[merchant-status]'],
-            'shop_name'                             => $aProfileResponse['add_paydata[shop-name]'],
+            'profile_id'                            => isset($aProfileResponse['add_paydata[profile-id]']) ? $aProfileResponse['add_paydata[profile-id]'] : '',
+            'merchant_name'                         => isset($aProfileResponse['add_paydata[merchant-name]']) ? $aProfileResponse['add_paydata[merchant-name]'] : '',
+            'merchant_status'                       => isset($aProfileResponse['add_paydata[merchant-status]']) ? $aProfileResponse['add_paydata[merchant-status]'] : 0,
+            'shop_name'                             => isset($aProfileResponse['add_paydata[shop-name]']) ? $aProfileResponse['add_paydata[shop-name]'] : '',
             'name'                                  => $aProfileResponse['add_paydata[name]'],
             'currency'                              => $aProfileResponse['add_paydata[currency]'],
             'type'                                  => $aProfileResponse['add_paydata[type]'],
@@ -120,28 +127,28 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
             'activation_status_invoice'             => $aProfileResponse['add_paydata[activation-status-invoice]'],
             'activation_status_prepayment'          => $aProfileResponse['add_paydata[activation-status-prepayment]'],
             'amount_min_longrun'                    => $aProfileResponse['add_paydata[amount-min-longrun]'],
-            'b2b_pq_full'                           => $aProfileResponse['add_paydata[b2b-PQ-full]'],
-            'b2b_pq_light'                          => isset($aProfileResponse['add_paydata[b2b-PQ-light]']) ? $aProfileResponse['add_paydata[b2b-PQ-light]'] : '',
-            'b2b_elv'                               => $aProfileResponse['add_paydata[b2b-elv]'],
-            'b2b_installment'                       => $aProfileResponse['add_paydata[b2b-installment]'],
-            'b2b_invoice'                           => $aProfileResponse['add_paydata[b2b-invoice]'],
-            'b2b_prepayment'                        => $aProfileResponse['add_paydata[b2b-prepayment]'],
+            'b2b_pq_full'                           => $this->convertYesNoToBool($aProfileResponse['add_paydata[b2b-PQ-full]']),
+            'b2b_pq_light'                          => isset($aProfileResponse['add_paydata[b2b-PQ-light]']) ? $this->convertYesNoToBool($aProfileResponse['add_paydata[b2b-PQ-light]']) : 0,
+            'b2b_elv'                               => $this->convertYesNoToBool($aProfileResponse['add_paydata[b2b-elv]']),
+            'b2b_installment'                       => $this->convertYesNoToBool($aProfileResponse['add_paydata[b2b-installment]']),
+            'b2b_invoice'                           => $this->convertYesNoToBool($aProfileResponse['add_paydata[b2b-invoice]']),
+            'b2b_prepayment'                        => $this->convertYesNoToBool($aProfileResponse['add_paydata[b2b-prepayment]']),
             'country_code_billing'                  => $aProfileResponse['add_paydata[country-code-billing]'],
             'country_code_delivery'                 => $aProfileResponse['add_paydata[country-code-delivery]'],
-            'delivery_address_pq_full'              => $aProfileResponse['add_paydata[delivery-address-PQ-full]'],
-            'delivery_address_pq_light'             => isset($aProfileResponse['add_paydata[delivery-address-PQ-light]']) ? $aProfileResponse['add_paydata[delivery-address-PQ-light]'] : '',
-            'delivery_address_elv'                  => $aProfileResponse['add_paydata[delivery-address-elv]'],
-            'delivery_address_installment'          => $aProfileResponse['add_paydata[delivery-address-installment]'],
-            'delivery_address_invoice'              => $aProfileResponse['add_paydata[delivery-address-invoice]'],
-            'delivery_address_prepayment'           => $aProfileResponse['add_paydata[delivery-address-prepayment]'],
+            'delivery_address_pq_full'              => $this->convertYesNoToBool($aProfileResponse['add_paydata[delivery-address-PQ-full]']),
+            'delivery_address_pq_light'             => isset($aProfileResponse['add_paydata[delivery-address-PQ-light]']) ? $this->convertYesNoToBool($aProfileResponse['add_paydata[delivery-address-PQ-light]']) : 0,
+            'delivery_address_elv'                  => $this->convertYesNoToBool($aProfileResponse['add_paydata[delivery-address-elv]']),
+            'delivery_address_installment'          => $this->convertYesNoToBool($aProfileResponse['add_paydata[delivery-address-installment]']),
+            'delivery_address_invoice'              => $this->convertYesNoToBool($aProfileResponse['add_paydata[delivery-address-invoice]']),
+            'delivery_address_prepayment'           => $this->convertYesNoToBool($aProfileResponse['add_paydata[delivery-address-prepayment]']),
             'device_fingerprint_snippet_id'         => isset($aProfileResponse['add_paydata[device-fingerprint-snippet-id]']) ? $aProfileResponse['add_paydata[device-fingerprint-snippet-id]'] : NULL,
             'eligibility_device_fingerprint'        => isset($aProfileResponse['add_paydata[eligibility-device-fingerprint]']) ? $aProfileResponse['add_paydata[eligibility-device-fingerprint]'] : NULL,
-            'eligibility_ratepay_elv'               => isset($aProfileResponse['add_paydata[eligibility-ratepay-elv]']) ? $aProfileResponse['add_paydata[eligibility-ratepay-elv]'] : 'no',
-            'eligibility_ratepay_installment'       => isset($aProfileResponse['add_paydata[eligibility-ratepay-installment]']) ? $aProfileResponse['add_paydata[eligibility-ratepay-installment]'] : 'no',
-            'eligibility_ratepay_invoice'           => isset($aProfileResponse['add_paydata[eligibility-ratepay-invoice]']) ? $aProfileResponse['add_paydata[eligibility-ratepay-invoice]'] : 'no',
-            'eligibility_ratepay_pq_full'           => isset($aProfileResponse['add_paydata[eligibility-ratepay-pq-full]']) ? $aProfileResponse['add_paydata[eligibility-ratepay-pq-full]'] : 'no',
-            'eligibility_ratepay_pq_light'          => isset($aProfileResponse['add_paydata[eligibility-ratepay-pq-light]']) ? $aProfileResponse['add_paydata[eligibility-ratepay-pq-light]'] : 'no',
-            'eligibility_ratepay_prepayment'        => $aProfileResponse['add_paydata[eligibility-ratepay-prepayment]'],
+            'eligibility_ratepay_elv'               => isset($aProfileResponse['add_paydata[eligibility-ratepay-elv]']) ? $this->convertYesNoToBool($aProfileResponse['add_paydata[eligibility-ratepay-elv]']) : 0,
+            'eligibility_ratepay_installment'       => isset($aProfileResponse['add_paydata[eligibility-ratepay-installment]']) ? $this->convertYesNoToBool($aProfileResponse['add_paydata[eligibility-ratepay-installment]']) : 0,
+            'eligibility_ratepay_invoice'           => isset($aProfileResponse['add_paydata[eligibility-ratepay-invoice]']) ? $this->convertYesNoToBool($aProfileResponse['add_paydata[eligibility-ratepay-invoice]']) : 0,
+            'eligibility_ratepay_pq_full'           => isset($aProfileResponse['add_paydata[eligibility-ratepay-pq-full]']) ? $this->convertYesNoToBool($aProfileResponse['add_paydata[eligibility-ratepay-pq-full]']) : 0,
+            'eligibility_ratepay_pq_light'          => isset($aProfileResponse['add_paydata[eligibility-ratepay-pq-light]']) ? $this->convertYesNoToBool($aProfileResponse['add_paydata[eligibility-ratepay-pq-light]']) : 0,
+            'eligibility_ratepay_prepayment'        => $this->convertYesNoToBool($aProfileResponse['add_paydata[eligibility-ratepay-prepayment]']),
             'interest_rate_merchant_towards_bank'   => $aProfileResponse['add_paydata[interest-rate-merchant-towards-bank]'],
             'interestrate_default'                  => $aProfileResponse['add_paydata[interestrate-default]'],
             'interestrate_max'                      => $aProfileResponse['add_paydata[interestrate-max]'],
@@ -199,20 +206,6 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
     }
 
     /**
-     * Returns ratepay method identifier
-     *
-     * @param  string $sMethodCode
-     * @return string|false
-     */
-    protected function getRatepayMethodIdentifierByMethodCode($sMethodCode)
-    {
-        if (isset($this->aMethodIdentifierMap[$sMethodCode])) {
-            return $this->aMethodIdentifierMap[$sMethodCode];
-        }
-        return false;
-    }
-
-    /**
      * Get matching shop id for current quote parameters
      *
      * @param  string $sMethodCode
@@ -220,27 +213,32 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
      * @param  string $sCountryCode
      * @param  string $sCurrency
      * @param  double $dGrandTotal
-     * @return string|bool
+     * @param  bool $blGetConfigWithoutTotals
+     * @return string|false
      */
-    public function getMatchingShopId($sMethodCode, $aShopIds, $sCountryCode, $sCurrency, $dGrandTotal)
+    public function getMatchingShopId($sRatepayMethodIdentifier, $aShopIds, $sCountryCode, $sCurrency, $dGrandTotal, $blGetConfigWithoutTotals = false)
     {
-        $sRatepayMethodIdentifier = $this->getRatepayMethodIdentifierByMethodCode($sMethodCode);
-
         $oSelect = $this->getConnection()->select()
             ->from($this->getMainTable(), ['shop_id'])
             ->where("shop_id IN ('".implode("','", $aShopIds)."')")
-            ->where("tx_limit_".$sRatepayMethodIdentifier."_min <= :grandTotal")
-            ->where("tx_limit_".$sRatepayMethodIdentifier."_max >= :grandTotal")
             ->where("country_code_billing = :countryCode")
             ->where("currency = :currency")
             ->order('shop_id ASC')
             ->limit(1);
 
         $aParams = [
-            'grandTotal' => $dGrandTotal,
             'countryCode' => $sCountryCode,
             'currency' => $sCurrency,
         ];
+
+        // $blGetConfigWithoutTotals = true mode is used to get a configuration without the totals being concidered.
+        // This is needed in checkout when basket total is a little unter the min_limit but with shipping costs it's over the limit
+        // CheckoutConfig javascript array is generated before shipping costs are added, but available payment methods are determined after shipping costs were added
+        if ($blGetConfigWithoutTotals === false) {
+            $oSelect = $oSelect->where("tx_limit_".$sRatepayMethodIdentifier."_min <= :grandTotal")
+                ->where("tx_limit_".$sRatepayMethodIdentifier."_max >= :grandTotal");
+            $aParams['grandTotal'] = $dGrandTotal;
+        }
 
         $sShopId = $this->getConnection()->fetchOne($oSelect, $aParams);
         if (empty($sShopId)) {

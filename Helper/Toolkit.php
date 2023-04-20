@@ -213,7 +213,7 @@ class Toolkit extends \Payone\Core\Helper\Base
      */
     public function isUTF8($sString)
     {
-        return $sString === mb_convert_encoding(mb_convert_encoding($sString, "UTF-32", "UTF-8"), "UTF-8", "UTF-32");
+        return $sString === mb_convert_encoding(mb_convert_encoding($sString ?? '', "UTF-32", "UTF-8"), "UTF-8", "UTF-32");
     }
 
     /**

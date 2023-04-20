@@ -46,6 +46,19 @@ class RefreshRatepayProfiles extends \Magento\Config\Block\System\Config\Form\Fi
     }
 
     /**
+     * Generates unique javascript function name for each payment method
+     *
+     * @param  string $sPaymentMethod
+     * @return string
+     */
+    protected function getJSFunctionName($sPaymentMethod)
+    {
+        $sPaymentMethod = ucwords($sPaymentMethod, "_");
+        $sPaymentMethod = str_replace("_", "", $sPaymentMethod);
+        return "updateProfileConfigs".$sPaymentMethod;
+    }
+
+    /**
      * Unset some non-related element parameters
      *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
@@ -69,7 +82,8 @@ class RefreshRatepayProfiles extends \Magento\Config\Block\System\Config\Form\Fi
         $sPaymentMethod = str_replace('payone_payment/', '', $originalData['path']);
 
         $this->addData([
-            'ajax_url' => $this->_urlBuilder->getUrl('payone/config_ratepay/refresh', ['method' => $sPaymentMethod])
+            'ajax_url' => $this->_urlBuilder->getUrl('payone/config_ratepay/refresh', ['method' => $sPaymentMethod]),
+            'javascript_function_name' => $this->getJSFunctionName($sPaymentMethod),
         ]);
 
         return $this->_toHtml();

@@ -26,13 +26,58 @@ define(
         'Payone_Core/js/view/payment/method-renderer/base',
         'Magento_Checkout/js/model/quote',
         'Magento_Customer/js/model/customer',
+        'Payone_Core/js/action/ratepayconfig',
         'mage/translate'
     ],
-    function (Component, quote, customer, $t) {
+    function (Component, quote, customer, ratepayconfig, $t) {
         'use strict';
         return Component.extend({
+            initialize: function () {
+                let parentReturn = this._super();
+                if (!customer.isLoggedIn() && window.checkoutConfig.payment.payone.ratepayRefreshed === false) {
+                    ratepayconfig();
+                    window.checkoutConfig.payment.payone.ratepayRefreshed = true;
+                }
+                return parentReturn;
+            },
             isPlaceOrderActionAllowedRatePay: function () {
-                return (quote.billingAddress() != null && quote.billingAddress().getCacheKey() == quote.shippingAddress().getCacheKey());
+                return this.isDifferentAddressNotAllowed() === false && this.isB2BNotAllowed() === false;
+            },
+            isDifferentAddressNotAllowed: function () {
+                if (this.getConfigValue('differentAddressAllowed') === true) {
+                    return false;
+                }
+                return (quote.billingAddress() === null || quote.billingAddress().getCacheKey() !== quote.shippingAddress().getCacheKey());
+            },
+            isB2BNotAllowed: function () {
+                if (this.getConfigValue('b2bAllowed') === true) {
+                    return false;
+                }
+                return (quote.billingAddress() !== null && typeof quote.billingAddress().company !== undefined && quote.billingAddress().company !== null && quote.billingAddress().company != "");
+            },
+            getConfigValue: function (sConfigKey) {
+                if (!customer.isLoggedIn() && window.checkoutConfig.payment.payone.ratepayRefreshed === true && window.checkoutConfig.payment.payone.ratepayReloaded !== undefined) {
+                    let config = window.checkoutConfig.payment.payone.ratepayReloaded;
+                    if (config[this.getCode()] !== undefined && config[this.getCode()][sConfigKey] !== undefined) {
+                        return config[this.getCode()][sConfigKey];
+                    }
+                }
+                if (window.checkoutConfig.payment.payone.ratepay[this.getCode()][sConfigKey] !== undefined && window.checkoutConfig.payment.payone.ratepay[this.getCode()][sConfigKey] === true) {
+                    return window.checkoutConfig.payment.payone.ratepay[this.getCode()][sConfigKey];
+                }
+                return null;
+            },
+            isB2bMode: function () {
+                if (quote.billingAddress() != null &&
+                    typeof quote.billingAddress().company !== undefined &&
+                    quote.billingAddress().company !==  null &&
+                    quote.billingAddress().company != "" &&
+                    window.checkoutConfig.payment.payone.ratepay[this.getCode()].b2bAllowed !== undefined &&
+                    window.checkoutConfig.payment.payone.ratepay[this.getCode()].b2bAllowed === true
+                ) {
+                    return true;
+                }
+                return false;
             },
             getData: function () {
                 var parentReturn = this._super();
@@ -45,6 +90,9 @@ define(
                 if (this.requestTelephone()) {
                     parentReturn.additional_data.telephone = this.telephone();
                 }
+                if (this.isB2bMode()) {
+                    parentReturn.additional_data.company_uid = this.companyUid();
+                }
                 return parentReturn;
             },
 
@@ -53,6 +101,9 @@ define(
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
             requestBirthday: function () {
+                if (quote.billingAddress() == null || this.isB2bMode() === true) {
+                    return false;
+                }
                 if (customer.customerData.dob == undefined || customer.customerData.dob === null) {
                     return true;
                 }

@@ -33,6 +33,7 @@
                 <value id="payone_payone_frame" type="host">secure.pay1.de</value>
                 <value id="payone_amazon_payments" type="host">payments.amazon.de</value>
                 <value id="payone_jsctool_frame" type="host">jsctool.com</value>
+                <value id="payone_wwwjsctool_frame" type="host">www.jsctool.com</value>
             </values>
         </policy>
         <policy id="connect-src">
