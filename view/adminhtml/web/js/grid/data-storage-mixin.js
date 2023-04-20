@@ -23,13 +23,24 @@
  */
 /*jshint browser:true jquery:true*/
 /*global alert*/
+define([
+    'jquery'
+], function ($) {
+    'use strict';
 
-var config = {
-    config: {
-        mixins: {
-            'Magento_Ui/js/grid/data-storage': {
-                'Payone_Core/js/grid/data-storage-mixin': true
+    var mixin = {
+        initConfig: function () {
+            this._super();
+
+            if (this.name.indexOf("payone_protocol") !== -1) {
+                this.indexField = "id";
             }
+
+            return this;
         }
-    }
-};
+    };
+
+    return function (dataStorage) {
+        return dataStorage.extend(mixin);
+    };
+});
