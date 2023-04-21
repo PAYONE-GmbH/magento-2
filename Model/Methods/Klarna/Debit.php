@@ -49,4 +49,24 @@ class Debit extends KlarnaBase
      * @var string
      */
     protected $sSubType = self::METHOD_KLARNA_SUBTYPE_DEBIT;
+
+    /**
+     * Check whether payment method can be used
+     *
+     * @param \Magento\Quote\Api\Data\CartInterface|null $quote
+     * @return bool
+     */
+    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    {
+        $blParentReturn = parent::isAvailable($quote);
+        if ($blParentReturn === false) {
+            return false;
+        }
+
+        if ($this->isB2BOrder($quote) === true) {
+            return false;
+        }
+
+        return $blParentReturn;
+    }
 }
