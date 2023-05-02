@@ -122,7 +122,7 @@ class Ideal extends OnlineBankTransferBase
         foreach (self::$aBankGroups as $sKey => $sTitle) {
             $aReturn[] = [
                 'id' => $sKey,
-                'title' => utf8_encode($sTitle),
+                'title' => mb_convert_encoding($sTitle, 'UTF-8'),
             ];
         }
 

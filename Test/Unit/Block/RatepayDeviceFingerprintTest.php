@@ -50,6 +50,11 @@ class RatepayDeviceFingerprintTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var Ratepay|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $ratepayHelper;
+
+    /**
      * @var PaymentHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     private $paymentHelper;

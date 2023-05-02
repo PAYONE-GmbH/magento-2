@@ -183,7 +183,7 @@ class PrivacyDeclaration
         }
 
         if (!$this->isUtf8($sPage)) {
-            $sPage = utf8_encode($sPage);
+            $sPage = mb_convert_encoding($sPage, 'UTF-8');
         }
 
         return $sPage;
