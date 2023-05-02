@@ -40,11 +40,6 @@ jobs:
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
 
-      - name: Runs Elasticsearch
-        uses: elastic/elastic-github-actions/elasticsearch@master
-        with:
-          stack-version: 7.6.0
-
       - name: PHP Syntax Checker
         run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
 
@@ -59,8 +54,6 @@ jobs:
           --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo \
           --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin \
           --disable-modules=Magento_Elasticsearch7,Magento_Elasticsearch,Magento_OpenSearch \
-          --search-engine=elasticsearch7 --elasticsearch-host=localhost \
-          --elasticsearch-port=9200
           composer require --ignore-platform-reqs payone-gmbh/magento-2 dev-master
           rm -rf /tmp/build/vendor/payone-gmbh/magento-2/*
           cp -R $GITHUB_WORKSPACE/* /tmp/build/vendor/payone-gmbh/magento-2
