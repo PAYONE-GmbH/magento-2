@@ -42,6 +42,11 @@ class LabelTest extends BaseTestCase
     private $classToTest;
 
     /**
+     * @var Base|PayoneObjectManager
+     */
+    private $baseHelper;
+
+    /**
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
