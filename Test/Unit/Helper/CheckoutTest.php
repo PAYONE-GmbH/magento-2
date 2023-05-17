@@ -117,4 +117,32 @@ class CheckoutTest extends BaseTestCase
         $expected = Onepage::METHOD_REGISTER;
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetQuoteComparisonString()
+    {
+        $productId = "4711";
+        $sku = "Test12";
+        $qty = 5;
+
+        $expected = $productId.$sku.$qty."|";
+
+        $item = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getProductId',
+                'getSku',
+                'getQty',
+            ])
+            ->getMock();
+        $item->method("getProductId")->willReturn($productId);
+        $item->method("getSku")->willReturn("Test12");
+        $item->method("getQty")->willReturn(5);
+
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote->method('getAllItems')->willReturn([$item]);
+
+        $result = $this->checkout->getQuoteComparisonString($quote);
+
+        $this->assertEquals($expected, $result);
+    }
 }
