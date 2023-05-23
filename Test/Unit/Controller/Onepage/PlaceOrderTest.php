@@ -42,6 +42,7 @@ use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Payment;
+use Payone\Core\Helper\Checkout;
 
 class PlaceOrderTest extends BaseTestCase
 {
@@ -74,6 +75,11 @@ class PlaceOrderTest extends BaseTestCase
      * @var RequestInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $request;
+
+    /**
+     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $checkoutHelper;
 
     protected function setUp(): void
     {
@@ -145,7 +151,7 @@ class PlaceOrderTest extends BaseTestCase
                 'setLastSuccessQuoteId',
                 'unsPayoneWorkorderId',
                 'unsIsPayonePayPalExpress',
-                'getPayoneGenericpaymentSubtotal',
+                'getPayoneQuoteComparisonString',
                 'setPayoneDeviceFingerprint',
                 'unsPayoneDeviceFingerprint',
                 'setPayoneUserAgent',
@@ -171,17 +177,21 @@ class PlaceOrderTest extends BaseTestCase
 
         $this->cartManagement = $this->getMockBuilder(CartManagementInterface::class)->disableOriginalConstructor()->getMock();
 
+        $this->checkoutHelper = $this->getMockBuilder(Checkout::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $this->checkoutSession,
             'agreementValidator' => $this->agreementValidator,
-            'cartManagement' => $this->cartManagement
+            'cartManagement' => $this->cartManagement,
+            'checkoutHelper' => $this->checkoutHelper,
         ]);
     }
 
     public function testExecute()
     {
-        $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(100);
+        $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
+        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -196,7 +206,8 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecuteException()
     {
-        $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(100);
+        $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
+        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
 
         $exception = new \Exception();
         $this->cartManagement->method('placeOrder')->willThrowException($exception);
@@ -208,7 +219,8 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecuteSubtotalMismatch()
     {
-        $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(110);
+        $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
+        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteFalse");
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -216,7 +228,8 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecutePayPal()
     {
-        $this->checkoutSession->method('getPayoneGenericpaymentSubtotal')->willReturn(100);
+        $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
+        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
         $this->checkoutSession->method('getPayoneRedirectUrl')->willReturn("http://someurl.test");
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();

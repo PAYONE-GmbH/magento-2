@@ -78,6 +78,13 @@ class Express extends \Magento\Framework\App\Action\Action
     protected $paymentHelper;
 
     /**
+     * Payone checkout helper
+     *
+     * @var \Payone\Core\Helper\Checkout
+     */
+    protected $payoneCheckoutHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context                       $context
@@ -87,6 +94,7 @@ class Express extends \Magento\Framework\App\Action\Action
      * @param \Magento\Checkout\Helper\Data                               $checkoutHelper
      * @param \Magento\Customer\Model\Session                             $customerSession
      * @param \Payone\Core\Helper\Payment                                 $paymentHelper
+     * @param \Payone\Core\Helper\Checkout                                $payoneCheckoutHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -95,7 +103,8 @@ class Express extends \Magento\Framework\App\Action\Action
         \Payone\Core\Model\Methods\Paypal $paypalPayment,
         \Magento\Checkout\Helper\Data $checkoutHelper,
         \Magento\Customer\Model\Session $customerSession,
-        \Payone\Core\Helper\Payment $paymentHelper
+        \Payone\Core\Helper\Payment $paymentHelper,
+        \Payone\Core\Helper\Checkout $payoneCheckoutHelper
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
@@ -104,6 +113,7 @@ class Express extends \Magento\Framework\App\Action\Action
         $this->checkoutHelper = $checkoutHelper;
         $this->customerSession = $customerSession;
         $this->paymentHelper = $paymentHelper;
+        $this->payoneCheckoutHelper = $payoneCheckoutHelper;
     }
 
     /**
@@ -159,7 +169,7 @@ class Express extends \Magento\Framework\App\Action\Action
                 $oQuote->save();
 
                 $this->checkoutSession->setPayoneWorkorderId($aResponse['workorderid']);
-                $this->checkoutSession->setPayoneGenericpaymentSubtotal($oQuote->getSubtotal());
+                $this->checkoutSession->setPayoneQuoteComparisonString($this->payoneCheckoutHelper->getQuoteComparisonString($oQuote));
                 $this->_redirect($aResponse['redirecturl']);
             }
             return;

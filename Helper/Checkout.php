@@ -89,4 +89,19 @@ class Checkout extends \Payone\Core\Helper\Base
         }
         return $oQuote->getCheckoutMethod();
     }
+
+    /**
+     * Generate a string that represents the basket, used to compare it at different times during checkout
+     *
+     * @param  Quote $oQuote
+     * @return string
+     */
+    public function getQuoteComparisonString(Quote $oQuote)
+    {
+        $sComparisonString = "";
+        foreach ($oQuote->getAllItems() as $oItem) { // add invoice items for all order items
+            $sComparisonString .= $oItem->getProductId().$oItem->getSku().$oItem->getQty()."|";
+        }
+        return $sComparisonString;
+    }
 }

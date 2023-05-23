@@ -62,6 +62,13 @@ class Agreement extends \Magento\Framework\App\Action\Action
     protected $databaseHelper;
 
     /**
+     * Payone checkout helper
+     *
+     * @var \Payone\Core\Helper\Checkout
+     */
+    protected $checkoutHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context             $context
@@ -69,19 +76,22 @@ class Agreement extends \Magento\Framework\App\Action\Action
      * @param \Magento\Customer\Model\Session                   $customerSession
      * @param \Magento\Checkout\Model\Session                   $checkoutSession
      * @param \Payone\Core\Helper\Database                      $databaseHelper
+     * @param \Payone\Core\Helper\Checkout                      $checkoutHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Payone\Core\Model\Api\Request\PaydirektAgreement $paydirektAgreement,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Helper\Database $databaseHelper
+        \Payone\Core\Helper\Database $databaseHelper,
+        \Payone\Core\Helper\Checkout $checkoutHelper
     ) {
         parent::__construct($context);
         $this->paydirektAgreement = $paydirektAgreement;
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
         $this->databaseHelper = $databaseHelper;
+        $this->checkoutHelper = $checkoutHelper;
     }
 
     /**
@@ -115,7 +125,7 @@ class Agreement extends \Magento\Framework\App\Action\Action
 
         $oQuote->collectTotals()->save();
 
-        $this->checkoutSession->setPayoneGenericpaymentSubtotal($oQuote->getSubtotal());
+        $this->checkoutSession->setPayoneQuoteComparisonString($this->checkoutHelper->getQuoteComparisonString($oQuote));
     }
 
     /**
