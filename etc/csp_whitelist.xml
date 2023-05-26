@@ -34,6 +34,7 @@
                 <value id="payone_amazon_payments" type="host">payments.amazon.de</value>
                 <value id="payone_jsctool_frame" type="host">jsctool.com</value>
                 <value id="payone_wwwjsctool_frame" type="host">www.jsctool.com</value>
+                <value id="payone_klarna_frame" type="host">js.playground.klarna.com</value>
             </values>
         </policy>
         <policy id="connect-src">
@@ -41,6 +42,7 @@
                 <value id="payone_amazon_payments" type="host">payments.amazon.de</value>
                 <value id="payone_ratepay_connect" type="host">d.ratepay.com</value>
                 <value id="payone_jsctool_connect" type="host">jsctool.com</value>
+                <value id="payone_klarna_connect" type="host">eu.playground.klarnaevt.com</value>
             </values>
         </policy>
     </policies>

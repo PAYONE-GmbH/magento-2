@@ -210,13 +210,13 @@ define(
                     }
                 };
 
-                if (billingAddress.company !== undefined) {
+                if ($.type(billingAddress.company) === "string" && billingAddress.company.length > 0) {
                     data.billing_address.organization_name = billingAddress.company;
-                    data.customer = {organization_registration_id: ''};
+                    data.customer = {type: 'organization'}; // Trigger Billie B2B Widget
                 }
-                if (shippingAddress.company !== undefined) {
+
+                if ($.type(shippingAddress.company) === "string" && shippingAddress.company.length > 0) {
                     data.shipping_address.organization_name = shippingAddress.company;
-                    data.customer = {organization_registration_id: ''};
                 }
 
                 if (self.authToken === false) {
