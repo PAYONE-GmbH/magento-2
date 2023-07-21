@@ -128,7 +128,7 @@ class Forwarding
         $this->curl->setOption(CURLOPT_TIMEOUT_MS, 5500);
         $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
         $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
-	$this->curl->setOption(CURLOPT_FOLLOWLOCATION, true); // Follow 301 Redirects to the End Location 
+	$this->curl->setOption(CURLOPT_FOLLOWLOCATION, true);
         try {
             $this->curl->post($sUrl, $aPostArray);
         } catch (\Exception $exc) {
