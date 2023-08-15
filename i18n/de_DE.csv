@@ -549,8 +549,8 @@
 "TEMPLATE","/home/thomas/Entwicklung/payone/magento-extension/app/code/community/Payone/Core/Block/Adminhtml/System/Config/Form/Field/Info.php"
 "Click here to obtain more information on this section","Klicken Sie hier um weitere Informationen zu diesem Bereich zu erhalten"
 
-"Allow differing shipping address","Abweichende Lieferadresse erlaubt"
-"Enable this if differing billing address and shipping address are allowed. This is disabled by default because this has to be enabled by Payone for your merchant account.","Aktivierbar um abweichende Rechnungs- und Lieferadresse zu erlauben. Dies ist standardmäßig deaktiviert, da dies erst von Payone in ihrem Merchant Account aktiviert werden muss."
+"Allow differing shipping address","Abweichende Lieferadresse zulassen"
+"Attenion: has to be enabled in the PAYONE account.","Muss im PAYONE-Konto freigeschaltet sein!"
 "B2B orders are not supported for this payment method","B2B Bestellungen sind nicht verfügbar für diese Zahlart"
 
 "bnpl_legal_text_snippet_1","Mit Abschluss dieser Bestellung erkläre ich mich mit den"
