@@ -99,6 +99,23 @@
                     </div>
                 </div>
                 <!--/ko-->
+                <!-- ko if: isB2BOrder() -->
+                <div class="field">
+                    <label data-bind="attr: {for: getCode() + '_vatid'}" class="label">
+                        <span><!-- ko i18n: 'VAT-ID'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[vatid]" class="input-text" value=""
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_vatid',
+                                    title: $t('VAT-ID'),
+                                    'data-container': getCode() + '-vatid'},
+                              value: vatid,
+                              valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <!--/ko-->
             </fieldset>
         </form>
         <p data-bind="html: getInstructions()"></p>

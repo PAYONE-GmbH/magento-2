@@ -552,6 +552,7 @@
 "Allow differing shipping address","Abweichende Lieferadresse zulassen"
 "Attenion: has to be enabled in the PAYONE account.","Muss im PAYONE-Konto freigeschaltet sein!"
 "B2B orders are not supported for this payment method","B2B Bestellungen sind nicht verfügbar für diese Zahlart"
+"VAT-ID","USt-IdNr"
 
 "bnpl_legal_text_snippet_1","Mit Abschluss dieser Bestellung erkläre ich mich mit den"
 "bnpl_legal_text_snippet_2","ergänzenden Zahlungsbedingungen"
