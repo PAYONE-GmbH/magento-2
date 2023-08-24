@@ -35,7 +35,8 @@ define(
                 birthday: '',
                 birthmonth: '',
                 birthyear: '',
-                telephone: ''
+                telephone: '',
+                vatid: ''
             },
             initObservable: function () {
                 this._super()
@@ -43,10 +44,16 @@ define(
                         'birthday',
                         'birthmonth',
                         'birthyear',
-                        'telephone'
+                        'telephone',
+                        'vatid'
                     ]);
                 return this;
-            }
+            },
+            getData: function () {
+                var parentReturn = this._super();
+                parentReturn.additional_data.vatid = this.vatid();
+                return parentReturn;
+            },
         });
     }
 );

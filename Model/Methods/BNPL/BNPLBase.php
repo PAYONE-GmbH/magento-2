@@ -85,6 +85,7 @@ class BNPLBase extends PayoneMethod
         'iban',
         'installmentOption',
         'optionid',
+        'vatid',
     ];
 
     /**
@@ -216,16 +217,26 @@ class BNPLBase extends PayoneMethod
     {
         $oInfoInstance = $this->getInfoInstance();
 
+        $sBusinessrelation = 'b2c';
+        if (!empty($oOrder->getBillingAddress()->getCompany())) {
+            $sBusinessrelation = 'b2b';
+        }
+
         $aBaseParams = [
             'financingtype' => $this->getSubType(),
             'add_paydata[device_token]' => $this->getDeviceToken(),
-            'businessrelation' => 'b2c',
+            'businessrelation' => $sBusinessrelation,
             'birthday' => $oInfoInstance->getAdditionalInformation('dateofbirth')
         ];
 
         $sTelephone = $oInfoInstance->getAdditionalInformation('telephone');
         if (!empty($sTelephone)) {
             $aBaseParams['telephonenumber'] = $sTelephone;
+        }
+
+        $sVatId = $oInfoInstance->getAdditionalInformation('vatid');
+        if ($sBusinessrelation == 'b2b' && !empty($sVatId)) {
+            $aBaseParams['vatid'] = $sVatId;
         }
 
         $aSubTypeParams = $this->getSubTypeSpecificParameters($oOrder);
