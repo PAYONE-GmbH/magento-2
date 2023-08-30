@@ -122,7 +122,6 @@ class InvoiceTest extends BaseTestCase
         $authorization = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
 
         $category = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)->disableOriginalConstructor()->getMock();
-        $category->method('getId')->willReturn(4711);
         $category->method('getUrl')->willReturn("some random url");
 
         $categoryCollection = $this->getMockBuilder(\Magento\Framework\Data\Collection::class)->disableOriginalConstructor()->getMock();

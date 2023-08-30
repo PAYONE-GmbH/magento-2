@@ -142,11 +142,10 @@ class Invoice
      * @param  int    $iAmount      item amount
      * @param  string $sDesc        item description
      * @param  double $dVat         item tax rate
-     * @param  string $sCategoryId  category id
      * @param  string $sCategoryUrl category url
      * @return void
      */
-    protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat, $sCategoryId = false, $sCategoryUrl = false)
+    protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat, $sCategoryUrl = false)
     {
         $iMultiplier = 1;
         if ($this->blNegatePrice === true) {
@@ -158,8 +157,8 @@ class Invoice
         $this->oRequest->addParameter('no['.$this->iIndex.']', $iAmount); // add invoice item amount
         $this->oRequest->addParameter('de['.$this->iIndex.']', $sDesc); // add invoice item description
         $this->oRequest->addParameter('va['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dVat * 100, 0)); // expected * 100 to also handle vats with decimals
-        if ($sCategoryId !== false && $sCategoryUrl !== false) {
-            $this->oRequest->addParameter('add_paydata[category_path_'.$sCategoryId.']', $sCategoryUrl); // add category url of a product, needed for BNPL payment methods
+        if ($sCategoryUrl !== false) {
+            $this->oRequest->addParameter('add_paydata[category_path_'.$sId.']', $sCategoryUrl); // add category url of a product, needed for BNPL payment methods
         }
         $this->dAmount += $dPrice * $iAmount; // needed for return of the main method
         $this->iIndex++; // increase index for next item
@@ -233,17 +232,15 @@ class Invoice
                 $dPrice = $oItem->getPriceInclTax();
             }
 
-            $sCategoryId = false;
             $sCategoryUrl = false;
             if ($this->blSendCategoryUrl === true) {
                 $oCategory = $this->getProductCategory($oItem);
-                if (!empty($oCategory) && !empty($oCategory->getId()) && !empty($oCategory->getUrl())) {
-                    $sCategoryId = $oCategory->getId();
+                if (!empty($oCategory) && !empty($oCategory->getUrl())) {
                     $sCategoryUrl = $oCategory->getUrl();
                 }
             }
 
-            $this->addInvoicePosition($oItem->getSku(), $dPrice, 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent(), $sCategoryId, $sCategoryUrl); // add invoice params to request
+            $this->addInvoicePosition($oItem->getSku(), $dPrice, 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent(), $sCategoryUrl); // add invoice params to request
             if ($this->dTax === false) { // is dTax not set yet?
                 $this->dTax = $oItem->getTaxPercent(); // set the tax for following entities which dont have the vat attached to it
             }
