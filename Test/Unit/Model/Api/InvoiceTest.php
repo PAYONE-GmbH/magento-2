@@ -97,7 +97,7 @@ class InvoiceTest extends BaseTestCase
     {
         $item = $this->getMockBuilder($type)
             ->disableOriginalConstructor()
-            ->setMethods(['isDummy', 'getProductId', 'getQtyOrdered', 'getSku', 'getPriceInclTax', 'getBasePriceInclTax', 'getName', 'getTaxPercent', 'getOrigData', 'getParentItemId', 'getQty'])
+            ->setMethods(['isDummy', 'getProductId', 'getQtyOrdered', 'getSku', 'getPriceInclTax', 'getBasePriceInclTax', 'getName', 'getTaxPercent', 'getOrigData', 'getParentItemId', 'getQty', 'getProduct'])
             ->getMock();
         $item->method('isDummy')->willReturn(false);
         $item->method('getProductId')->willReturn('12345');
@@ -120,8 +120,20 @@ class InvoiceTest extends BaseTestCase
         $this->amastyHelper->method('getAmastyGiftCards')->willReturn([['base_gift_amount' => 5, 'gift_amount' => 5, 'code' => 'TEST']]);
 
         $authorization = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
+
+        $category = $this->getMockBuilder(\Magento\Catalog\Model\Category::class)->disableOriginalConstructor()->getMock();
+        $category->method('getUrl')->willReturn("some random url");
+
+        $categoryCollection = $this->getMockBuilder(\Magento\Framework\Data\Collection::class)->disableOriginalConstructor()->getMock();
+        $categoryCollection->method('count')->willReturn(1);
+        $categoryCollection->method('getFirstItem')->willReturn($category);        
         
-        $items = [$this->getItemMock()];
+        $product = $this->getMockBuilder(\Magento\Catalog\Model\Product::class)->disableOriginalConstructor()->getMock();
+        $product->method('getCategoryCollection')->willReturn($categoryCollection);
+        
+        $item = $this->getItemMock();
+        $item->method('getProduct')->willReturn($product);
+        $items = [$item];
         
         $expected = 110;
 
@@ -144,6 +156,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getStore')->willReturn($this->store);
         $order->method('getGiftCards')->willReturn('[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
 
+        $this->classToTest->setSendCategoryUrl(true);
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
     }
@@ -156,7 +169,9 @@ class InvoiceTest extends BaseTestCase
 
         $authorization = $this->getMockBuilder(Authorization::class)->disableOriginalConstructor()->getMock();
 
-        $items = [$this->getItemMock()];
+        $item = $this->getItemMock();
+        $item->method('getProduct')->willReturn(null);
+        $items = [$item];
 
         $expected = 106;
 
@@ -184,6 +199,7 @@ class InvoiceTest extends BaseTestCase
         $order->method('getStore')->willReturn($this->store);
         $order->method('getGiftCards')->willReturn('[{"i":365,"c":"testcode","a":10,"ba":10,"authorized":10}]');
 
+        $this->classToTest->setSendCategoryUrl(true);
         $result = $this->classToTest->addProductInfo($authorization, $order, false);
         $this->assertEquals($expected, $result);
     }
@@ -299,5 +315,17 @@ class InvoiceTest extends BaseTestCase
 
         $result = $this->classToTest->addProductInfo($authorization, $order, false, false, 5);
         $this->assertEquals($expected, $result);
+    }
+
+    public function testSetNegatePrice()
+    {
+        $result = $this->classToTest->setNegatePrice(true);
+        $this->assertNull($result);
+    }
+
+    public function testSetSendCategoryUrl()
+    {
+        $result = $this->classToTest->setSendCategoryUrl(true);
+        $this->assertNull($result);
     }
 }

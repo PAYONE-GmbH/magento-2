@@ -100,6 +100,13 @@ class Invoice
     protected $blNegatePrice = false;
 
     /**
+     * Determines if product category url has to be send
+     *
+     * @var bool
+     */
+    protected $blSendCategoryUrl = false;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
@@ -119,17 +126,26 @@ class Invoice
     }
 
     /**
+     * @param bool $blSendCategoryUrl
+     */
+    public function setSendCategoryUrl($blSendCategoryUrl)
+    {
+        $this->blSendCategoryUrl = $blSendCategoryUrl;
+    }
+
+    /**
      * Add parameters for a invoice position
      *
-     * @param  string $sId       item identification
-     * @param  double $dPrice    item price
-     * @param  string $sItemType item type
-     * @param  int    $iAmount   item amount
-     * @param  string $sDesc     item description
-     * @param  double $dVat      item tax rate
+     * @param  string $sId          item identification
+     * @param  double $dPrice       item price
+     * @param  string $sItemType    item type
+     * @param  int    $iAmount      item amount
+     * @param  string $sDesc        item description
+     * @param  double $dVat         item tax rate
+     * @param  string $sCategoryUrl category url
      * @return void
      */
-    protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat)
+    protected function addInvoicePosition($sId, $dPrice, $sItemType, $iAmount, $sDesc, $dVat, $sCategoryUrl = false)
     {
         $iMultiplier = 1;
         if ($this->blNegatePrice === true) {
@@ -141,6 +157,9 @@ class Invoice
         $this->oRequest->addParameter('no['.$this->iIndex.']', $iAmount); // add invoice item amount
         $this->oRequest->addParameter('de['.$this->iIndex.']', $sDesc); // add invoice item description
         $this->oRequest->addParameter('va['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dVat * 100, 0)); // expected * 100 to also handle vats with decimals
+        if ($sCategoryUrl !== false) {
+            $this->oRequest->addParameter('add_paydata[category_path_'.$sId.']', $sCategoryUrl); // add category url of a product, needed for BNPL payment methods
+        }
         $this->dAmount += $dPrice * $iAmount; // needed for return of the main method
         $this->iIndex++; // increase index for next item
     }
@@ -212,11 +231,41 @@ class Invoice
             if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                 $dPrice = $oItem->getPriceInclTax();
             }
-            $this->addInvoicePosition($oItem->getSku(), $dPrice, 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent()); // add invoice params to request
+
+            $sCategoryUrl = false;
+            if ($this->blSendCategoryUrl === true) {
+                $oCategory = $this->getProductCategory($oItem);
+                if (!empty($oCategory) && !empty($oCategory->getUrl())) {
+                    $sCategoryUrl = $oCategory->getUrl();
+                }
+            }
+
+            $this->addInvoicePosition($oItem->getSku(), $dPrice, 'goods', $iAmount, $oItem->getName(), $oItem->getTaxPercent(), $sCategoryUrl); // add invoice params to request
             if ($this->dTax === false) { // is dTax not set yet?
                 $this->dTax = $oItem->getTaxPercent(); // set the tax for following entities which dont have the vat attached to it
             }
         }
+    }
+
+    /**
+     * Try to get a category from given order item
+     *
+     * @param  \Magento\Sales\Model\Order\Item $oItem
+     * @return \Magento\Catalog\Model\Category|false
+     */
+    protected function getProductCategory($oItem)
+    {
+        $oProduct = $oItem->getProduct();
+        if ($oProduct) {
+            $oCategoryCollection = $oProduct->getCategoryCollection();
+            if (count($oCategoryCollection) > 0) {
+                $oCategory = $oCategoryCollection->getFirstItem();
+                if ($oCategory) {
+                    return $oCategory;
+                }
+            }
+        }
+        return false;
     }
 
     protected function addGiftCardItem($oOrder)
