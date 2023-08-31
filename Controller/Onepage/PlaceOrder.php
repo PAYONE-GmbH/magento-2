@@ -49,20 +49,30 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
     protected $cartManagement;
 
     /**
+     * Payone checkout helper
+     *
+     * @var \Payone\Core\Helper\Checkout
+     */
+    protected $checkoutHelper;
+
+    /**
      * @param \Magento\Framework\App\Action\Context              $context
      * @param \Magento\Checkout\Api\AgreementsValidatorInterface $agreementValidator
      * @param \Magento\Checkout\Model\Session                    $checkoutSession
      * @param \Magento\Quote\Api\CartManagementInterface         $cartManagement
+     * @param \Payone\Core\Helper\Checkout                       $checkoutHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Api\AgreementsValidatorInterface $agreementValidator,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Quote\Api\CartManagementInterface $cartManagement
+        \Magento\Quote\Api\CartManagementInterface $cartManagement,
+        \Payone\Core\Helper\Checkout $checkoutHelper
     ) {
         $this->agreementsValidator = $agreementValidator;
         $this->checkoutSession = $checkoutSession;
         $this->cartManagement = $cartManagement;
+        $this->checkoutHelper = $checkoutHelper;
         parent::__construct($context);
     }
 
@@ -86,7 +96,30 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
         }
 
         try {
-            $this->placeOrder();
+            $oQuote = $this->checkoutSession->getQuote();
+
+            if ($this->checkoutHelper->getQuoteComparisonString($oQuote) != $this->checkoutSession->getPayoneQuoteComparisonString()) {
+                // The basket was changed - abort current checkout
+                $this->messageManager->addErrorMessage('An error occured during the Checkout.');
+                $this->_redirect('checkout/cart');
+                return;
+            }
+
+            $this->placeOrder($oQuote);
+
+            $sPayoneRedirectUrl = $this->checkoutSession->getPayoneRedirectUrl();
+            if (!empty($sPayoneRedirectUrl)) {
+                $this->checkoutSession->setPayoneCustomerIsRedirected(true);
+                $this->checkoutSession->setPayonePayPalExpressRetry(true);
+                $this->_redirect($sPayoneRedirectUrl);
+                return;
+            }
+
+            // "last successful quote"
+            $sQuoteId = $oQuote->getId();
+            $this->checkoutSession->setLastQuoteId($sQuoteId)->setLastSuccessQuoteId($sQuoteId)->unsPayoneWorkorderId()->unsIsPayonePayPalExpress()->unsPayoneUserAgent()->unsPayoneDeviceFingerprint();
+
+            $oQuote->setIsActive(false)->save();
 
             $this->_redirect('checkout/onepage/success');
         } catch (\Exception $e) {
@@ -101,19 +134,11 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
     /**
      * Place the order and put it in a finished state
      *
+     * @param Magento\Quote\Model\Quote $oQuote
      * @return void
      */
-    protected function placeOrder()
+    protected function placeOrder($oQuote)
     {
-        $oQuote = $this->checkoutSession->getQuote();
-
-        if ($oQuote->getSubtotal() != $this->checkoutSession->getPayoneGenericpaymentSubtotal()) {
-            // The basket was changed - abort current checkout
-            $this->messageManager->addErrorMessage('An error occured during the Checkout.');
-            $this->_redirect('checkout/cart');
-            return;
-        }
-
         $oQuote->getBillingAddress()->setShouldIgnoreValidation(true);
         if (!$oQuote->getIsVirtual()) {
             $oQuote->getShippingAddress()->setShouldIgnoreValidation(true);
@@ -129,12 +154,6 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
         }
 
         $this->cartManagement->placeOrder($oQuote->getId());
-
-        // "last successful quote"
-        $sQuoteId = $oQuote->getId();
-        $this->checkoutSession->setLastQuoteId($sQuoteId)->setLastSuccessQuoteId($sQuoteId)->unsPayoneWorkorderId()->unsIsPayonePayPalExpress()->unsPayoneUserAgent()->unsPayoneDeviceFingerprint();
-
-        $oQuote->setIsActive(false)->save();
     }
 
     /**

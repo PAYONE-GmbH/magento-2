@@ -19,16 +19,17 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2022 Payone GmbH
+ * @copyright 2003 - 2023 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Model\Methods\BNPL;
+namespace Payone\Core\Test\Unit\Model\Methods\Klarna;
 
-use Payone\Core\Model\Methods\BNPL\Debit as ClassToTest;
+use Payone\Core\Model\Methods\Klarna\Debit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Info;
@@ -36,6 +37,7 @@ use Magento\Framework\DataObject;
 use Magento\Store\Model\Store;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class DebitTest extends BaseTestCase
 {
@@ -49,27 +51,55 @@ class DebitTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
-        $info = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getAdditionalInformation', 'getOrder'])->getMock();
-        $info->method('getAdditionalInformation')->willReturn('test');
+        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
-        $this->classToTest->setInfoInstance($info);
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'scopeConfig' => $this->scopeConfig
+        ]);
     }
 
-    public function testGetSubTypeSpecificParameters()
+    public function testIsAvailable()
     {
+        $this->scopeConfig->method('getValue')->willReturn(0);
+
+        $result = $this->classToTest->isAvailable();
+        $this->assertFalse($result);
+    }
+
+    public function testIsAvailableB2B()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(1);
+
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
-        $address->method('getFirstname')->willReturn('Max');
-        $address->method('getLastname')->willReturn('Mustermann');
+        $address->method('getCompany')->willReturn("Test GmbH");
 
-        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
-        $order->method('getBillingAddress')->willReturn($address);
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote->method('getBillingAddress')->willReturn($address);
 
-        $result = $this->classToTest->getSubTypeSpecificParameters($order);
-        $this->assertCount(2, $result);
+        $result = $this->classToTest->isAvailable($quote);
+        $this->assertFalse($result);
+    }
+
+    public function testIsAvailableNotB2B()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(1);
+
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+        $address->method('getCompany')->willReturn(null);
+
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $quote->method('getBillingAddress')->willReturn($address);
+
+        $result = $this->classToTest->isAvailable($quote);
+        $this->assertTrue($result);
     }
 }

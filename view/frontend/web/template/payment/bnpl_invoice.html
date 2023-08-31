@@ -99,13 +99,30 @@
                     </div>
                 </div>
                 <!--/ko-->
+                <!-- ko if: isB2BOrder() -->
+                <div class="field">
+                    <label data-bind="attr: {for: getCode() + '_vatid'}" class="label">
+                        <span><!-- ko i18n: 'VAT-ID'--><!-- /ko --></span>
+                    </label>
+                    <div class="control">
+                        <input type="text" name="payment[vatid]" class="input-text" value=""
+                               data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_vatid',
+                                    title: $t('VAT-ID'),
+                                    'data-container': getCode() + '-vatid'},
+                              value: vatid,
+                              valueUpdate: 'keyup' "/>
+                    </div>
+                </div>
+                <!--/ko-->
             </fieldset>
         </form>
         <p data-bind="html: getInstructions()"></p>
         <div class="bnpl-legal-text">
             <!-- ko i18n: 'bnpl_legal_text_snippet_1'--><!-- /ko -->
             <a target='_blank' data-bind="attr: {href: $t('bnpl_payment_terms_url')}"><!-- ko i18n: 'bnpl_legal_text_snippet_2'--><!-- /ko --></a>
-            <!-- ko i18n: 'bnpl_legal_text_snippet_3'--><!-- /ko --><br>
+            <!-- ko i18n: 'bnpl_legal_text_snippet_3'--><!-- /ko -->
             <!-- ko i18n: 'bnpl_legal_text_snippet_4'--><!-- /ko -->
             <a target='_blank' data-bind="attr: {href: $t('bnpl_data_protection_url')}"><!-- ko i18n: 'bnpl_legal_text_snippet_5'--><!-- /ko --></a>
             <!-- ko i18n: 'bnpl_legal_text_snippet_6'--><!-- /ko --><br><br>
@@ -155,9 +172,6 @@
         </div>
         <div class="payone_place_order_not_allowed" data-bind="visible: isAddressDifferent()"><br>
             <span><!-- ko i18n: 'Payment with differing billing- and shipping-address is not supported for this payment type'--><!-- /ko --></span>
-        </div>
-        <div class="payone_place_order_not_allowed" data-bind="visible: !isAddressDifferent() && isB2BOrder()"><br>
-            <span><!-- ko i18n: 'B2B orders are not supported for this payment method'--><!-- /ko --></span>
         </div>
     </div>
 </div>

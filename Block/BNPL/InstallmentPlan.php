@@ -64,11 +64,11 @@ class InstallmentPlan extends \Magento\Framework\View\Element\Template
      */
     public function getSelectLinkText($aInstallment)
     {
-        $sText  = $this->formatPrice($aInstallment['monthly_amount_value']).' ';
-        $sText .= $aInstallment['monthly_amount_currency'].' ';
-        $sText .= __('per month').' - ';
-        $sText .= $aInstallment['number_of_payments'].' ';
-        $sText .= __('installments');
+        $sText  = __('Payment in');
+        $sText .= ' '.$aInstallment['number_of_payments'].' ';
+        $sText .= __('installments of').' ';
+        $sText .= $this->formatPrice($aInstallment['monthly_amount_value']).' ';
+        $sText .= $aInstallment['monthly_amount_currency'];
         return $sText;
     }
 }

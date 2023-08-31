@@ -111,6 +111,11 @@ class LoadReview extends \Magento\Framework\App\Action\Action
     protected $confirmOrderReference;
 
     /**
+     * @var \Payone\Core\Model\Api\Request\Genericpayment\CancelOrderReference
+     */
+    protected $cancelOrderReference;
+
+    /**
      * Amazon Pay payment object
      *
      * @var \Payone\Core\Model\Methods\AmazonPay

@@ -401,14 +401,17 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
                 'environment' => [ // "t" for TEST, "p" for PROD
                     PayoneConfig::METHOD_BNPL_INVOICE => $this->requestHelper->getConfigParam('mode', PayoneConfig::METHOD_BNPL_INVOICE, 'payone_payment') == 'live' ? 'p' : 't',
                     PayoneConfig::METHOD_BNPL_INSTALLMENT => $this->requestHelper->getConfigParam('mode', PayoneConfig::METHOD_BNPL_INSTALLMENT, 'payone_payment') == 'live' ? 'p' : 't',
+                    PayoneConfig::METHOD_BNPL_DEBIT => $this->requestHelper->getConfigParam('mode', PayoneConfig::METHOD_BNPL_DEBIT, 'payone_payment') == 'live' ? 'p' : 't',
                 ],
                 'mid' => [
                     PayoneConfig::METHOD_BNPL_INVOICE => $this->paymentHelper->getCustomConfigParam('mid', PayoneConfig::METHOD_BNPL_INVOICE),
                     PayoneConfig::METHOD_BNPL_INSTALLMENT => $this->paymentHelper->getCustomConfigParam('mid', PayoneConfig::METHOD_BNPL_INSTALLMENT),
+                    PayoneConfig::METHOD_BNPL_DEBIT => $this->paymentHelper->getCustomConfigParam('mid', PayoneConfig::METHOD_BNPL_DEBIT),
                 ],
                 'differentAddressAllowed' => [
                     PayoneConfig::METHOD_BNPL_INVOICE => (bool)$this->requestHelper->getConfigParam('different_address_allowed', PayoneConfig::METHOD_BNPL_INVOICE, 'payment'),
                     PayoneConfig::METHOD_BNPL_INSTALLMENT => (bool)$this->requestHelper->getConfigParam('different_address_allowed', PayoneConfig::METHOD_BNPL_INSTALLMENT, 'payment'),
+                    PayoneConfig::METHOD_BNPL_DEBIT => (bool)$this->requestHelper->getConfigParam('different_address_allowed', PayoneConfig::METHOD_BNPL_DEBIT, 'payment'),
                 ],
                 'payla_partner_id' => BNPLBase::BNPL_PARTNER_ID,
                 'uuid' => $this->getUUID(),

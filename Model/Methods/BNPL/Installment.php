@@ -55,9 +55,10 @@ class Installment extends BNPLBase
     public function getSubTypeSpecificParameters(Order $oOrder)
     {
         $oInfoInstance = $this->getInfoInstance();
+        $oBilling = $oOrder->getBillingAddress();
 
         $aParams = [
-            'bankaccountholder' => $oInfoInstance->getAdditionalInformation('bankaccountholder'),
+            'bankaccountholder' => $oBilling->getFirstname().' '.$oBilling->getLastname(),
             'iban' => $oInfoInstance->getAdditionalInformation('iban'),
             'add_paydata[installment_option_id]' => $oInfoInstance->getAdditionalInformation('optionid'),
             'workorderid' => $this->checkoutSession->getInstallmentWorkorderId(),

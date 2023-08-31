@@ -92,6 +92,9 @@ class RatepayBase extends PayoneMethod
     protected $aAssignKeys = [
         'telephone',
         'dateofbirth',
+        'birthday',
+        'birthmonth',
+        'birthyear',
         'iban',
         'bic',
         'company_uid',
@@ -204,6 +207,11 @@ class RatepayBase extends PayoneMethod
         $sBirthday = $this->getInfoInstance()->getAdditionalInformation('dateofbirth');
         if ($sBirthday) {
             $aBaseParams['birthday'] = $sBirthday;
+        } elseif (!empty($this->getInfoInstance()->getAdditionalInformation('birthday'))) {
+            $sDayOfBirth = $this->getInfoInstance()->getAdditionalInformation('birthday');
+            $sMonthOfBirth = $this->getInfoInstance()->getAdditionalInformation('birthmonth');
+            $sYearOfBirth = $this->getInfoInstance()->getAdditionalInformation('birthyear');
+            $aBaseParams['birthday'] = $sYearOfBirth.$sMonthOfBirth.$sDayOfBirth;
         }
 
         $sTelephone = $this->getInfoInstance()->getAdditionalInformation('telephone');
@@ -266,6 +274,7 @@ class RatepayBase extends PayoneMethod
      */
     protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
+        $this->checkoutSession->unsPayoneRatepayDeviceFingerprintToken();
         if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
             && isset($aResponse['errorcode']) && $aResponse['errorcode'] == '307'
         ) {

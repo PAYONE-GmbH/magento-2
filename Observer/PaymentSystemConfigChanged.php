@@ -37,6 +37,11 @@ use Payone\Core\Helper\Ratepay;
 class PaymentSystemConfigChanged implements ObserverInterface
 {
     /**
+     * @var Ratepay
+     */
+    protected $ratepayHelper;
+
+    /**
      * Constructor
      *
      * @param Ratepay $ratepayHelper

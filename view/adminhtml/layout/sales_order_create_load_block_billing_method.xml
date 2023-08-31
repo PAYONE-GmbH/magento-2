@@ -32,5 +32,11 @@
                 <argument name="template" xsi:type="string">Payone_Core::payment/debit.phtml</argument>
             </action>
         </referenceBlock>
+        <referenceBlock name="order.create.billing.method.form">
+            <action method="setMethodFormTemplate">
+                <argument name="method" xsi:type="string">payone_ratepay_invoice</argument>
+                <argument name="template" xsi:type="string">Payone_Core::payment/ratepay_invoice.phtml</argument>
+            </action>
+        </referenceBlock>
     </body>
 </page>

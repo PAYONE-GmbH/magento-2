@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2020 Payone GmbH
+ * @copyright 2003 - 2023 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -83,9 +83,9 @@ class BNPLBase extends PayoneMethod
         'dateofbirth',
         'telephone',
         'iban',
-        'bankaccountholder',
         'installmentOption',
         'optionid',
+        'vatid',
     ];
 
     /**
@@ -217,16 +217,26 @@ class BNPLBase extends PayoneMethod
     {
         $oInfoInstance = $this->getInfoInstance();
 
+        $sBusinessrelation = 'b2c';
+        if (!empty($oOrder->getBillingAddress()->getCompany())) {
+            $sBusinessrelation = 'b2b';
+        }
+
         $aBaseParams = [
             'financingtype' => $this->getSubType(),
             'add_paydata[device_token]' => $this->getDeviceToken(),
-            'businessrelation' => 'b2c',
+            'businessrelation' => $sBusinessrelation,
             'birthday' => $oInfoInstance->getAdditionalInformation('dateofbirth')
         ];
 
         $sTelephone = $oInfoInstance->getAdditionalInformation('telephone');
         if (!empty($sTelephone)) {
             $aBaseParams['telephonenumber'] = $sTelephone;
+        }
+
+        $sVatId = $oInfoInstance->getAdditionalInformation('vatid');
+        if ($sBusinessrelation == 'b2b' && !empty($sVatId)) {
+            $aBaseParams['vatid'] = $sVatId;
         }
 
         $aSubTypeParams = $this->getSubTypeSpecificParameters($oOrder);
@@ -253,5 +263,30 @@ class BNPLBase extends PayoneMethod
         }
 
         return $this;
+    }
+
+    /**
+     * Perform certain actions with the response
+     *
+     * @param  array $aResponse
+     * @param  Order $oOrder
+     * @param  float $amount
+     * @return array
+     */
+    protected function handleResponse($aResponse, Order $oOrder, $amount)
+    {
+        if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && isset($aResponse['errorcode']) && $aResponse['errorcode'] == '307') {
+            $aBans = $this->checkoutSession->getPayonePaymentBans();
+            if (empty($aBans)) {
+                $aBans = [];
+            }
+            
+            $sBannedUntil = date('Y-m-d H:i:s', (time() + (60 * 60 * 8)));
+            $aBans[PayoneConfig::METHOD_BNPL_DEBIT] = $sBannedUntil;
+            $aBans[PayoneConfig::METHOD_BNPL_INSTALLMENT] = $sBannedUntil;
+            $aBans[PayoneConfig::METHOD_BNPL_INVOICE] = $sBannedUntil;
+            $this->checkoutSession->setPayonePaymentBans($aBans);
+        }
+        return $aResponse;
     }
 }

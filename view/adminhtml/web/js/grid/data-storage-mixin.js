@@ -32,7 +32,7 @@ define([
         initConfig: function () {
             this._super();
 
-            if (this.name.indexOf("payone") !== -1) {
+            if (this.name.indexOf("payone_protocol") !== -1) {
                 this.indexField = "id";
             }
 

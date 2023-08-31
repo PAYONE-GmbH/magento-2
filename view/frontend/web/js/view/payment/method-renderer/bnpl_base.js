@@ -100,7 +100,7 @@ define(
                 return false;
             },
             isPlaceOrderActionAllowedBNPL: function () {
-                return (this.isAddressDifferent() === false && this.isB2BOrder() === false);
+                return this.isAddressDifferent() === false && (this.getCode() === 'payone_bnpl_invoice' || this.isB2BOrder() === false);
             },
             loadJavascriptSnippet: function () {
                 if (window.checkoutConfig.payment.payone.bnpl === undefined || window.checkoutConfig.payment.payone.bnpl === false || window.payoneBNPLSnippetLoaded !== undefined || window.payoneBNPLSnippetLoaded === true) {

@@ -1,0 +1,156 @@
+<?php
+
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 8
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2023 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var Payone\Core\Block\Form\RatepayInvoice $block */
+
+$code = $block->escapeHtml($block->getMethodCode());
+
+$deviceIdentToken = $block->getDevicefingerprintToken();
+$deviceIdentSId = $block->getDevicefingerprintSnippetId();
+
+?>
+<fieldset class="admin__fieldset payment-method"
+          id="payment_form_<?php /* @noEscape */ echo $code; ?>"
+          style="display:none"
+>
+    <?php if ($block->isDifferingDeliveryAddressAllowed() === false && $block->hasDifferingDeliveryAddress() === true): ?>
+        <div class="admin__field">
+            <div class="admin__field-control control" style="color: red;">
+                <strong><?php echo __('Payment with differing billing- and shipping-address is not supported for this payment type'); ?></strong>
+            </div>
+        </div>
+    <?php endif; ?>
+    <?php if ($block->isB2BModeAllowed() === false && $block->isB2BMode() === true): ?>
+        <div class="admin__field">
+            <div class="admin__field-control control" style="color: red;">
+                <strong><?php echo __('B2B orders are not supported for this payment method'); ?></strong>
+            </div>
+        </div>
+    <?php endif; ?>
+    <?php if ($block->isTelephoneNeeded()): ?>
+        <div class="admin__field _required">
+            <label class="label admin__field-label" for="<?php /* @noEscape */ echo $code; ?>_phone">
+                <span><?php echo $block->escapeHtml(__('Phone')); ?></span>
+            </label>
+            <div class="admin__field-control control">
+                <input id="<?php /* @noEscape */ echo $code; ?>_phone" name="payment[telephone]" value="<?php echo $block->getInfoData('telephone'); ?>">
+            </div>
+        </div>
+    <?php endif; ?>
+    <?php if ($block->isBirthdayNeeded()): ?>
+        <?php if (empty($block->getBirthday())): ?>
+            <div class="admin__field _required" id="payone_<?php echo $code; ?>_birthday">
+                <label class="label admin__field-label" for="<?php /* @noEscape */ echo $code; ?>_dob_day">
+                    <span><?php echo $block->escapeHtml(__('Birthday')); ?></span>
+                </label>
+                <div class="admin__field-control control">
+                    <input type="text" placeholder="DD" size="3" maxlength="2" id="<?php /* @noEscape */ echo $code; ?>_dob_day" name="payment[birthday]" value="<?php echo $block->getInfoData('birthday'); ?>">
+                    <input type="text" placeholder="MM" size="3" maxlength="2" id="<?php /* @noEscape */ echo $code; ?>_dob_month" name="payment[birthmonth]" value="<?php echo $block->getInfoData('birthmonth'); ?>">
+                    <input type="text" placeholder="YYYY" size="5" maxlength="4" id="<?php /* @noEscape */ echo $code; ?>_dob_year" name="payment[birthyear]" value="<?php echo $block->getInfoData('birthyear'); ?>">
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="admin__field" id="payone_<?php echo $code; ?>_birthday">
+                <div class="admin__field-control control">
+                    <label><?php echo __('Date of Birth'); ?></label>
+                    <span><?php echo $block->getBirthday(); ?></span>
+                    <input type="hidden" name="payment[birthday]" value="<?php echo $block->getBirthdayPart('d'); ?>">
+                    <input type="hidden" name="payment[birthmonth]" value="<?php echo $block->getBirthdayPart('m'); ?>">
+                    <input type="hidden" name="payment[birthyear]" value="<?php echo $block->getBirthdayPart('Y'); ?>">
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+    <div id="payone_<?php echo $code; ?>_vatid" class="admin__field" style="margin-top:1.5rem;display: none;">
+        <label class="label admin__field-label" for="<?php /* @noEscape */ echo $code; ?>_vatid">
+            <span><?php echo $block->escapeHtml(__('VAT No.')); ?></span>
+        </label>
+        <div class="admin__field-control control">
+            <input type="text" size="20" id="<?php echo $code; ?>_vatid" name="payment[company_uid]" value="<?php echo $block->getInfoData('company_uid'); ?>">
+        </div>
+    </div>
+
+    <div class="admin__field _required">
+        <div class="ratepay-legal-text admin__field-control">
+            <?php echo __('ratepay_legal_text_snippet_1'); ?>
+            <?php echo __('Place Order'); ?>
+            <?php echo __('ratepay_legal_text_snippet_2'); ?>
+            <a target='_blank' href='https://www.ratepay.com/legal-payment-terms'><?php echo __('ratepay_legal_text_snippet_3'); ?></a>
+            <?php echo __('ratepay_legal_text_snippet_4'); ?>
+            <a target='_blank' href='https://www.ratepay.com/legal-payment-dataprivacy'><?php echo __('ratepay_legal_text_snippet_5'); ?></a>
+            <?php echo __('ratepay_legal_text_snippet_6'); ?>
+        </div>
+    </div>
+    <input type="submit" name="Submit" style="display: none;">
+</fieldset>
+<script language="JavaScript">
+    var di = {
+        t:'<?php echo $deviceIdentToken ?>',
+        v:'<?php echo $deviceIdentSId ?>', //defined by RatePAY
+        l:'Checkout'};
+</script>
+<script type="text/javascript" src="https://d.ratepay.com/<?php echo $deviceIdentSId ?>/di.js"></script>
+<noscript>
+    <link rel="stylesheet" type="text/css" href="https://d.ratepay.com/di.css?t=<?php echo $deviceIdentToken ?>&v=<?php echo $deviceIdentSId ?>&l=Checkout">
+</noscript>
+<script>
+    /**
+     * Disable card server validation in admin
+     */
+    require(["Magento_Sales/order/create/form"], function () {
+        order.addExcludedPaymentMethod('<?php /* @noEscape */ echo $code; ?>');
+    });
+
+    <?php if ($block->isB2BModeAllowed() === true): ?>
+        require(["jquery"], function ($jq) {
+            function handleRequiredData<?php echo $code; ?>() {
+                if ($jq('#order-billing_address_company').val() == '') {
+                    $jq('#payone_<?php echo $code; ?>_vatid').hide();
+                    $jq('#payone_<?php echo $code; ?>_birthday').show();
+                } else if($jq('#order-billing_address_vat_id').val() == '') {
+                    $jq('#payone_<?php echo $code; ?>_birthday').hide();
+                    $jq('#payone_<?php echo $code; ?>_vatid').show();
+                } else {
+                    if ($jq('#<?php echo $code; ?>_vatid').val() == '') {
+                        $jq('#<?php echo $code; ?>_vatid').val($jq('#order-billing_address_vat_id').val());
+                    }
+                    $jq('#payone_<?php echo $code; ?>_birthday').hide();
+                    $jq('#payone_<?php echo $code; ?>_vatid').hide();
+                }
+                setTimeout(function(){
+                    window.requestAnimationFrame(handleRequiredData<?php echo $code; ?>);
+                }, 1000);
+            }
+
+            $jq(document).ready(function () {
+                handleRequiredData<?php echo $code; ?>();
+            });
+        });
+    <?php endif; ?>
+</script>
+

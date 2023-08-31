@@ -110,7 +110,8 @@ class InvoiceTest extends BaseTestCase
                 'unsPayoneCanceledPaymentMethod',
                 'unsPayoneIsError',
                 'unsShowAmazonPendingNotice',
-                'unsAmazonRetryAsync'
+                'unsAmazonRetryAsync',
+                'unsPayoneRatepayDeviceFingerprintToken',
             ])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);

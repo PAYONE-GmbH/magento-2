@@ -372,13 +372,14 @@ class Ratepay extends \Payone\Core\Helper\Base
      * Return Ratepay configuration for given method code
      *
      * @param  string $sRatepayMethodCode
+     * @param  \Magento\Quote\Api\Data\CartInterface|null $quote
      * @return array|bool[]
      */
-    protected function getRatepaySingleConfig($sRatepayMethodCode)
+    public function getRatepaySingleConfig($sRatepayMethodCode, \Magento\Quote\Api\Data\CartInterface $quote = null)
     {
-        $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode);
+        $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode, $quote);
         if (empty($aShopConfig)) {
-            $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode, null, true);
+            $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode, $quote, true);
             if (empty($aShopConfig)) {
                 return [];
             }

@@ -99,22 +99,6 @@
                     </div>
                 </div>
                 <!--/ko-->
-
-                <div class="field number required" data-bind="attr: {id: getCode() + '_bankaccountholder_field'}">
-                    <label data-bind="attr: {for: getCode() + '_bankaccountholder'}" class="label">
-                        <span><!-- ko i18n: 'Bank account holder'--><!-- /ko --></span>
-                    </label>
-                    <div class="control">
-                        <input type="text" name="payment[bankaccountholder]" class="input-text" value=""
-                               data-bind="attr: {
-                                        autocomplete: off,
-                                        id: getCode() + '_bankaccountholder',
-                                        title: $t('bankaccountholder'),
-                                        'data-container': getCode() + '-bankaccountholder'},
-                                  value: bankaccountholder,
-                                  valueUpdate: 'keyup' "/>
-                    </div>
-                </div>
                 <div class="field number required" data-bind="attr: {id: getCode() + '_iban_field'}">
                     <label data-bind="attr: {for: getCode() + '_iban'}" class="label">
                         <span><!-- ko i18n: 'IBAN'--><!-- /ko --></span>
@@ -134,7 +118,7 @@
         <div class="bnpl-legal-text">
             <!-- ko i18n: 'bnpl_legal_text_snippet_1'--><!-- /ko -->
             <a target='_blank' data-bind="attr: {href: $t('bnpl_payment_terms_url')}"><!-- ko i18n: 'bnpl_legal_text_snippet_2'--><!-- /ko --></a>
-            <!-- ko i18n: 'bnpl_legal_text_snippet_3'--><!-- /ko --><br>
+            <!-- ko i18n: 'bnpl_legal_text_snippet_3'--><!-- /ko -->
             <!-- ko i18n: 'bnpl_legal_text_snippet_4'--><!-- /ko -->
             <a target='_blank' data-bind="attr: {href: $t('bnpl_data_protection_url')}"><!-- ko i18n: 'bnpl_legal_text_snippet_5'--><!-- /ko --></a>
             <!-- ko i18n: 'bnpl_legal_text_snippet_6'--><!-- /ko --><br><br>
