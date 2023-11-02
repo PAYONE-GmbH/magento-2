@@ -62,20 +62,20 @@ class Ideal extends OnlineBankTransferBase
      * @var array
      */
     protected static $aBankGroups = [
-        'ABNANL2A' => 'ABN AMRO',
-        'ASNBNL21' => 'ASN Bank',
-        'BUNQNL2A' => 'bunq',
-        'INGBNL2A' => 'ING',
-        'KNABNL2H' => 'Knab',
-        'NTSBDEB1' => 'N26',
-        'NNBANL2G' => 'Nationale-Nederlanden',
-        'RABONL2U' => 'Rabobank',
-        'RBRBNL21' => 'RegioBank',
-        'REVOLT21' => 'Revolut',
-        'SNSBNL2A' => 'SNS',
-        'TRIONL2U' => 'Triodos Bank',
-        'FVLBNL22' => 'Van Lanschot Kempen',
-        'BITSNL2A' => 'Yoursafe',
+        'ABN_AMRO_BANK' => 'ABN Amro Bank',
+        'ASN_BANK' => 'ASN Bank',
+        'ING_BANK' => 'ING Bank',
+        'RABOBANK' => 'Rabobank',
+        'SNS_BANK' => 'SNS Bank',
+        'SNS_REGIO_BANK' => 'SNS Regio Bank',
+        'TRIODOS_BANK' => 'Triodos Bank',
+        'VAN_LANSCHOT_BANKIERS' => 'Van Lanschot Kempen',
+        'KNAB_BANK' => 'Knab Bank',
+        'BUNQ_BANK' => 'Bunq Bank',
+        'REVOLUT' => 'Revolut',
+        'YOURSAFE' => 'Yoursafe',
+        'NATIONALE_NEDERLANDEN' => 'Nationale-Nederlanden',
+        'N26' => 'N26',
     ];
 
     /**
