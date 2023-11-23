@@ -73,11 +73,13 @@ class SessionHandler
      */
     protected function getCertificateFilePath()
     {
-        $sCertFile = $this->shopHelper->getConfigParam("certificate_file", PayoneConfig::METHOD_APPLEPAY, "payment");
-        $sCertFilePath = $this->applePayHelper->getApplePayUploadPath().$sCertFile;
-
         if ($this->applePayHelper->hasCertificateFile() === false) {
             throw new \Exception("Certificate file not configured or missing");
+        }
+        $sCertFile = $this->shopHelper->getConfigParam("certificate_file", PayoneConfig::METHOD_APPLEPAY, "payment");
+        $sCertFilePath = $this->applePayHelper->getApplePayUploadPath().$sCertFile;
+        if (!file_exists($sCertFilePath)) {
+            $sCertFilePath = $this->applePayHelper->getApplePayUploadPath(true).$sCertFile;
         }
         return $sCertFilePath;
     }
@@ -90,11 +92,13 @@ class SessionHandler
      */
     protected function getPrivateKeyFilePath()
     {
-        $sPrivateKeyFile = $this->shopHelper->getConfigParam("private_key_file", PayoneConfig::METHOD_APPLEPAY, "payment");
-        $sPrivateKeyFilePath = $this->applePayHelper->getApplePayUploadPath().$sPrivateKeyFile;
-
         if ($this->applePayHelper->hasPrivateKeyFile() === false) {
             throw new \Exception("Private key file not configured or missing");
+        }
+        $sPrivateKeyFile = $this->shopHelper->getConfigParam("private_key_file", PayoneConfig::METHOD_APPLEPAY, "payment");
+        $sPrivateKeyFilePath = $this->applePayHelper->getApplePayUploadPath().$sPrivateKeyFile;
+        if (!file_exists($sPrivateKeyFilePath)) {
+            $sPrivateKeyFilePath = $this->applePayHelper->getApplePayUploadPath(true).$sPrivateKeyFile;
         }
         return $sPrivateKeyFilePath;
     }
