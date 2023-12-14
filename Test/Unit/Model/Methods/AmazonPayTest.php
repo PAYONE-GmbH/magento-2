@@ -37,6 +37,7 @@ use Magento\Checkout\Model\Session;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Model\Order\Payment;
 
 class AmazonPayTest extends BaseTestCase
 {
@@ -156,8 +157,12 @@ class AmazonPayTest extends BaseTestCase
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
 
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getAdditionalInformation')->willReturn([]);
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getStore')->willReturn($store);
+        $order->method('getPayment')->willReturn($payment);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
