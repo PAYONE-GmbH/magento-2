@@ -54,6 +54,7 @@ class Capture extends Base
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
      * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
@@ -62,11 +63,12 @@ class Capture extends Base
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
         \Payone\Core\Helper\Database $databaseHelper
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $toolkitHelper, $apiLog);
         $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
     }

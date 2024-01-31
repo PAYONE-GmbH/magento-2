@@ -139,7 +139,7 @@ class ToolkitTest extends BaseTestCase
                 ]
             );
 
-        $hash = md5($key);
+        $hash = $this->toolkit->hashString($key);
         $result = $this->toolkit->isKeyValid($hash);
         $this->assertTrue($result);
 

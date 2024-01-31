@@ -33,6 +33,7 @@ class PaydirektAgreement extends AddressRequest
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
      * @param \Payone\Core\Helper\Customer            $customerHelper
      * @param \Magento\Framework\Url                  $url
@@ -41,12 +42,13 @@ class PaydirektAgreement extends AddressRequest
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
         \Payone\Core\Helper\Customer $customerHelper,
         \Magento\Framework\Url $url,
         \Payone\Core\Model\Methods\Paydirekt $paydirekt
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $toolkitHelper, $apiLog, $customerHelper);
         $this->url = $url;
         $this->paydirekt = $paydirekt;
     }

@@ -105,6 +105,13 @@ abstract class Base
     protected $apiHelper;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * API-log resource model
      *
      * @var \Payone\Core\Model\ResourceModel\ApiLog
@@ -124,17 +131,20 @@ abstract class Base
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog
     ) {
         $this->shopHelper = $shopHelper;
         $this->environmentHelper = $environmentHelper;
         $this->apiHelper = $apiHelper;
+        $this->toolkitHelper = $toolkitHelper;
         $this->apiLog = $apiLog;
         $this->initRequest();
     }
@@ -150,7 +160,7 @@ abstract class Base
         $this->aParameters = [];
         $this->addParameter('mid', $this->shopHelper->getConfigParam('mid', 'global', 'payone_general', $this->storeCode)); // PayOne Merchant ID
         $this->addParameter('portalid', $this->shopHelper->getConfigParam('portalid', 'global', 'payone_general', $this->storeCode)); // PayOne Portal ID
-        $this->addParameter('key', md5($this->shopHelper->getConfigParam('key', 'global', 'payone_general', $this->storeCode) ?? '')); // PayOne Portal Key
+        $this->addParameter('key', $this->toolkitHelper->hashString($this->shopHelper->getConfigParam('key', 'global', 'payone_general', $this->storeCode) ?? '')); // PayOne Portal Key
         $this->addParameter('encoding', $this->environmentHelper->getEncoding()); // Encoding
         $this->addParameter('integrator_name', 'Magento2'); // Shop-system
         $this->addParameter('integrator_version', $this->shopHelper->getMagentoVersion()); // Shop version
@@ -258,10 +268,9 @@ abstract class Base
             $sCustomConfig = $oPayment->getCustomConfigParam($sConfigName); // get custom config param
             if (!empty($sCustomConfig)) { // only add if the param is configured
                 if ($sConfigName == 'key') {
-                    $this->addParameter($sParamName, md5($sCustomConfig)); // key isn't hashed in db
-                } else {
-                    $this->addParameter($sParamName, $sCustomConfig); // add custom param to request
+                    $sCustomConfig = $this->toolkitHelper->hashString($sCustomConfig); // key isn't hashed in db
                 }
+                $this->addParameter($sParamName, $sCustomConfig); // add custom param to request
             }
         }
     }

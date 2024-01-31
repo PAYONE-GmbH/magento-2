@@ -58,38 +58,30 @@ class Authorization extends AddressRequest
     protected $checkoutSession;
 
     /**
-     * PAYONE toolkit helper
-     *
-     * @var \Payone\Core\Helper\Toolkit
-     */
-     protected $toolkitHelper;
-
-    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
      * @param \Payone\Core\Helper\Customer            $customerHelper
      * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Magento\Checkout\Model\Session         $checkoutSession
-     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
         \Payone\Core\Helper\Customer $customerHelper,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Helper\Toolkit $toolkitHelper
+        \Magento\Checkout\Model\Session $checkoutSession
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $toolkitHelper, $apiLog, $customerHelper);
         $this->invoiceGenerator = $invoiceGenerator;
         $this->checkoutSession = $checkoutSession;
-        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**

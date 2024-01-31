@@ -51,36 +51,28 @@ class Debit extends Base
     protected $databaseHelper;
 
     /**
-     * PAYONE toolkit helper
-     *
-     * @var \Payone\Core\Helper\Toolkit
-     */
-    protected $toolkitHelper;
-
-    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
      * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
      * @param \Payone\Core\Helper\Database            $databaseHelper
-     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator,
-        \Payone\Core\Helper\Database $databaseHelper,
-        \Payone\Core\Helper\Toolkit $toolkitHelper
+        \Payone\Core\Helper\Database $databaseHelper
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $toolkitHelper, $apiLog);
         $this->invoiceGenerator = $invoiceGenerator;
         $this->databaseHelper = $databaseHelper;
-        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
