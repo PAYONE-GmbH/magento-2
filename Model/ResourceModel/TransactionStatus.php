@@ -139,7 +139,12 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
     {
         $this->setRequest($aRequest);
 
-        $sRawStatus = serialize($this->getRequest());
+        $aRequestForLog = $this->getRequest();
+        if (!empty($aRequestForLog['customer_iban'])) {
+            $aRequestForLog['customer_iban'] = $this->toolkitHelper->maskIban($aRequestForLog['customer_iban']);
+        }
+
+        $sRawStatus = serialize($aRequestForLog);
         if (!$this->toolkitHelper->isUTF8($sRawStatus)) {
             $sRawStatus = mb_convert_encoding($sRawStatus, 'UTF-8'); // needed for serializing the array
         }
