@@ -121,9 +121,8 @@ class Request extends \Payone\Core\Helper\Base
             $this->getConfigParam('portalid').
             'creditcardcheck'.
             'JSON'.
-            'yes'.
-            $this->getConfigParam('key');
-        return $this->toolkitHelper->hashString($sStringToHash, 'sha384');
+            'yes';
+        return $this->toolkitHelper->hashString($sStringToHash, 'sha384', $this->getConfigParam('key'));
     }
 
     /**
@@ -140,9 +139,8 @@ class Request extends \Payone\Core\Helper\Base
             $this->getConfigParam('mode', PayoneConfig::METHOD_CREDITCARD, 'payone_payment').
             $this->getConfigParam('portalid').
             'bankaccountcheck'.
-            'JSON'.
-            $this->getConfigParam('key');
-        return $this->toolkitHelper->hashString($sStringToHash, 'sha384');
+            'JSON';
+        return $this->toolkitHelper->hashString($sStringToHash, 'sha384', $this->getConfigParam('key'));
     }
 
     /**

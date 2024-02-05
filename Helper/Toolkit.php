@@ -266,8 +266,11 @@ class Toolkit extends \Payone\Core\Helper\Base
      * @param  string $sString
      * @return string
      */
-    public function hashString($sString, $sAlgorithm = 'md5')
+    public function hashString($sString, $sAlgorithm = 'md5', $sKey = false)
     {
+        if ($sAlgorithm == "sha384" && $sKey !== false) {
+            return hash_hmac($sAlgorithm, $sString, $sKey);
+        }
         return hash($sAlgorithm, $sString);
     }
 }
