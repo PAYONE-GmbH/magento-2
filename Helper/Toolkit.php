@@ -108,7 +108,7 @@ class Toolkit extends \Payone\Core\Helper\Base
     {
         $aKeyValues = $this->getAllPayoneSecurityKeys();
         foreach ($aKeyValues as $sConfigKey) {
-            if (md5($sConfigKey ?? '') == $sKey) {
+            if ($this->hashString($sConfigKey ?? '') == $sKey) {
                 return true;
             }
         }
@@ -257,5 +257,20 @@ class Toolkit extends \Payone\Core\Helper\Base
 
         // Output the 36 character UUID.
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    /**
+     * In the Payone universe different hash mechanisms are needed
+     * Returns a hashed string and defines a default through the sAlgorithm parameter
+     *
+     * @param  string $sString
+     * @return string
+     */
+    public function hashString($sString, $sAlgorithm = 'md5', $sKey = false)
+    {
+        if ($sAlgorithm == "sha384" && $sKey !== false) {
+            return hash_hmac($sAlgorithm, $sString, $sKey);
+        }
+        return hash($sAlgorithm, $sString);
     }
 }

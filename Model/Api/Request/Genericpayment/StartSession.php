@@ -47,6 +47,7 @@ class StartSession extends Base
      * @param \Payone\Core\Helper\Shop                $shopHelper
      * @param \Payone\Core\Helper\Environment         $environmentHelper
      * @param \Payone\Core\Helper\Api                 $apiHelper
+     * @param \Payone\Core\Helper\Toolkit             $toolkitHelper
      * @param \Payone\Core\Model\ResourceModel\ApiLog $apiLog
      * @param \Payone\Core\Helper\Customer            $customerHelper
      * @param \Payone\Core\Model\Api\Invoice          $invoiceGenerator
@@ -55,11 +56,12 @@ class StartSession extends Base
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\Environment $environmentHelper,
         \Payone\Core\Helper\Api $apiHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Model\ResourceModel\ApiLog $apiLog,
         \Payone\Core\Helper\Customer $customerHelper,
         \Payone\Core\Model\Api\Invoice $invoiceGenerator
     ) {
-        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $apiLog, $customerHelper);
+        parent::__construct($shopHelper, $environmentHelper, $apiHelper, $toolkitHelper, $apiLog, $customerHelper);
         $this->customerHelper = $customerHelper;
         $this->invoiceGenerator = $invoiceGenerator;
     }

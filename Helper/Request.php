@@ -48,11 +48,19 @@ class Request extends \Payone\Core\Helper\Base
     protected $shopHelper;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context      $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Payone\Core\Helper\Toolkit                $toolkitHelper
      * @param \Magento\Framework\App\State               $state
      * @param \Payone\Core\Helper\Environment            $environmentHelper
      */
@@ -60,12 +68,14 @@ class Request extends \Payone\Core\Helper\Base
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Magento\Framework\App\State $state,
         \Payone\Core\Helper\Environment $environmentHelper
     ) {
         parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->environmentHelper = $environmentHelper;
         $this->shopHelper = $shopHelper;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -104,18 +114,15 @@ class Request extends \Payone\Core\Helper\Base
      */
     public function getHostedIframeRequestCCHash()
     {
-        $sHash = md5(
-            $this->getConfigParam('aid').
+        $sStringToHash = $this->getConfigParam('aid').
             $this->environmentHelper->getEncoding().
             $this->getConfigParam('mid').
             $this->getConfigParam('mode', PayoneConfig::METHOD_CREDITCARD, 'payone_payment').
             $this->getConfigParam('portalid').
             'creditcardcheck'.
             'JSON'.
-            'yes'.
-            $this->getConfigParam('key')
-        );
-        return $sHash;
+            'yes';
+        return $this->toolkitHelper->hashString($sStringToHash, 'sha384', $this->getConfigParam('key'));
     }
 
     /**
@@ -125,18 +132,15 @@ class Request extends \Payone\Core\Helper\Base
      */
     public function getBankaccountCheckRequestHash()
     {
-        $sHash = md5(
-            $this->getConfigParam('aid').
+        $sStringToHash = $this->getConfigParam('aid').
             $this->getConfigParam('bankaccountcheck_type', PayoneConfig::METHOD_DEBIT, 'payone_payment').
             $this->environmentHelper->getEncoding().
             $this->getConfigParam('mid').
             $this->getConfigParam('mode', PayoneConfig::METHOD_CREDITCARD, 'payone_payment').
             $this->getConfigParam('portalid').
             'bankaccountcheck'.
-            'JSON'.
-            $this->getConfigParam('key')
-        );
-        return $sHash;
+            'JSON';
+        return $this->toolkitHelper->hashString($sStringToHash, 'sha384', $this->getConfigParam('key'));
     }
 
     /**
