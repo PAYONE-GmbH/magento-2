@@ -39,6 +39,7 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Model\Api\Request\Authorization;
 use Magento\Payment\Model\Info;
+use Magento\Sales\Model\Order\Payment;
 
 class SafeInvoiceTest extends BaseTestCase
 {
@@ -102,9 +103,13 @@ class SafeInvoiceTest extends BaseTestCase
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
 
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getAdditionalInformation')->willReturn([]);
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getCustomerId')->willReturn('5');
         $order->method('getStore')->willReturn($store);
+        $order->method('getPayment')->willReturn($payment);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
@@ -121,9 +126,13 @@ class SafeInvoiceTest extends BaseTestCase
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn('test');
 
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getAdditionalInformation')->willReturn([]);
+
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getCustomerId')->willReturn(null);
         $order->method('getStore')->willReturn($store);
+        $order->method('getPayment')->willReturn($payment);
 
         $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);

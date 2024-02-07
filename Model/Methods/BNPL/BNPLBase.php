@@ -275,6 +275,7 @@ class BNPLBase extends PayoneMethod
      */
     protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
+        $aResponse = parent::handleResponse($aResponse, $oOrder, $amount);
         if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR' && isset($aResponse['errorcode']) && $aResponse['errorcode'] == '307') {
             $aBans = $this->checkoutSession->getPayonePaymentBans();
             if (empty($aBans)) {

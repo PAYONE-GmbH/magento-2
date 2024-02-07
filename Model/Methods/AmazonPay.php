@@ -143,6 +143,7 @@ class AmazonPay extends PayoneMethod
      */
     protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
+        $aResponse = parent::handleResponse($aResponse, $oOrder, $amount);
         if ($aResponse['status'] == 'ERROR') {
             if (!$this->blIsRetry && $this->checkoutSession->getAmazonRetryAsync() && $aResponse['errorcode'] == 980) {
                 $aResponse = $this->authorizationRequest->sendRequest($this, $oOrder, $amount);

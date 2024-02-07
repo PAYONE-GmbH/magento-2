@@ -274,6 +274,7 @@ class RatepayBase extends PayoneMethod
      */
     protected function handleResponse($aResponse, Order $oOrder, $amount)
     {
+        $aResponse = parent::handleResponse($aResponse, $oOrder, $amount);
         $this->checkoutSession->unsPayoneRatepayDeviceFingerprintToken();
         if (isset($aResponse['status']) && $aResponse['status'] == 'ERROR'
             && isset($aResponse['errorcode']) && $aResponse['errorcode'] == '307'
