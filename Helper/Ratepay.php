@@ -365,6 +365,8 @@ class Ratepay extends \Payone\Core\Helper\Base
                 $aReturn[$sRatepayMethod] = $this->getRatepaySingleConfig($sRatepayMethod);
             }
         }
+        $aReturn['snippetId'] = $this->getConfigParam('devicefingerprint_snippet_id', 'ratepay', 'payone_misc');
+        $aReturn['token'] = $this->getRatepayDeviceFingerprintToken();
         return $aReturn;
     }
 
