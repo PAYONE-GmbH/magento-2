@@ -1042,6 +1042,11 @@
 "Billing address as delivery address","Rechnungsadresse als Lieferadresse"
 "Transmit the billing address as delivery address if delivery address is missing.","Rechnungsadresse bei fehlender Lieferadresse als Lieferadresse &uuml;bergeben."
 
+"Secured order","Gesicherte Vorbestellung"
+"With a secured order, the merchant has a payment guarantee für the selected time period (max. 15 running days). Captures (partial payments) have to be done within the guarantee time period. Only available in preauthorization mode.","Bei einer gesicherten Vorbestellung wird dem Händler eine Zahlunqsgarantie für den gewählten Zeitraum (maximal 15 Kalendertage) gewährt. Captures (Teilzahlungen) müssen immer innerhalb des Garantiezeitraums ausgeruhrt werden. Nur im Vorautorisierung Modus verfügbar."
+"Guarantee time period","Garantiezeitraum"
+"Desired guarantee time period (max. 15 running days) für a secured order.","Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung."
+
 "PayPal Express Enabled","PayPal Express aktiviert"
 "An error occured during the PayPal Express transaction.","Während der PayPal Express Transaktion ist ein Fehler aufgetreten."
 "Please sign in to check out.","Bitte loggen Sie sich ein für den Einkauf."

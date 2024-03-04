@@ -60,10 +60,10 @@ define(
                 type: 'payone_obt_sofortueberweisung',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_sofortueberweisung-method'
             },
-            {
+            /*{
                 type: 'payone_obt_giropay',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_giropay-method'
-            },
+            }, Giropay has been disabled, Paydirekt is now Giropay */
             {
                 type: 'payone_obt_eps',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_eps-method'
