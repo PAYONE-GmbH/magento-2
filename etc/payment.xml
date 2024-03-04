@@ -52,9 +52,9 @@
         <method name="payone_obt_sofortueberweisung">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
-        <method name="payone_obt_giropay">
+        <!--method name="payone_obt_giropay">
             <allow_multiple_address>0</allow_multiple_address>
-        </method>
+        </method Giropay has been disabled, Paydirekt is now Giropay -->
         <method name="payone_obt_eps">
             <allow_multiple_address>0</allow_multiple_address>
         </method>

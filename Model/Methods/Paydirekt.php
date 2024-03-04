@@ -86,8 +86,14 @@ class Paydirekt extends PayoneMethod
             $aParams['add_paydata[terminal_address_streetnumber]'] = '';// IS THIS NECESSARY?
             $aParams['add_paydata[terminal_address_zip]'] = $this->shopHelper->getConfigParam('postcode', 'store_information', 'general');
             $aParams['add_paydata[terminal_id]'] = $this->shopHelper->getConfigParam('name', 'store_information', 'general');
-
         }
+
+        $blSecuredOrder = (bool)$this->getCustomConfigParam('order_secured');
+        if ($blSecuredOrder === true && $this->getAuthorizationMode() == PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION) { // params only available with preauth
+            $aParams['add_paydata[order_secured]'] = 'yes';
+            $aParams['add_paydata[preauthorization_validity]'] = (int)$this->getCustomConfigParam('preauthorization_validity');
+        }
+
         return $aParams;
     }
 
