@@ -77,7 +77,7 @@ define(
             },
             isCustomerTooOld: function () {
                 var oBirthDate = new Date(this.getBirthDate());
-                var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 126)); // max 125 years old
+                var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 125)); // max 125 years
                 if(oBirthDate > oMinDate) {
                     return false;
                 }
@@ -91,9 +91,21 @@ define(
                 }
                 return false;
             },
+            isDateInvalid: function () {
+                if (!this.birthyear() || isNaN(this.birthyear()) || this.birthyear().length != 4) {
+                    return true;
+                }
+                if (!this.birthmonth() || isNaN(this.birthmonth()) || parseInt(this.birthmonth()) < 1 || parseInt(this.birthmonth()) > 12) {
+                    return true;
+                }
+                if (!this.birthday() || isNaN(this.birthday()) || parseInt(this.birthday()) < 1 || parseInt(this.birthday()) > 31) {
+                    return true;
+                }
+                return false;
+            },
             validate: function () {
-                if (!this.isB2bMode() && this.isDateInFuture()) {
-                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid birthday.')});
+                if (!this.isB2bMode() && (this.isDateInvalid() || this.isDateInFuture())) {
+                    this.messageContainer.addErrorMessage({'message': $t('Please enter a valid birthdate.')});
                     return false;
                 }
                 if (!this.isB2bMode() && this.isCustomerTooYoung()) {
@@ -101,7 +113,7 @@ define(
                     return false;
                 }
                 if (!this.isB2bMode() && this.isCustomerTooOld()) {
-                    this.messageContainer.addErrorMessage({'message': $t('You can not be older than 125 years to use this payment type!')});
+                    this.messageContainer.addErrorMessage({'message': $t('An error occured. Please check the supplied data.')});
                     return false;
                 }
                 return true;

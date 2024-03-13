@@ -1068,6 +1068,8 @@
 "Show IBAN/BIC fields","IBAN/BIC Felder anzeigen"
 
 "You have to be at least 18 years old to use this payment type!","Sie müssen mindestens 18 Jahre alt sein um diese Zahlart nutzen zu können!"
+"An error occured. Please check the supplied data.","Ein Fehler ist aufgetreten. Bitte überprüfen Sie Ihre Angaben."
+"Please enter a valid birthdate.","Bitte geben Sie ein gültiges Geburtsdatum ein."
 
 "I agree with the transmission of the necessary data to Unzer which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an Unzer bin ich einverstanden."
 "I agree with the transmission of the necessary data to Klarna which is needed for processing the purchase, the identity-check and the credit rating.","Mit der Übermittlung der für die Abwicklung des Rechnungskaufes und einer Identitätsprüfung und Bonitätsprüfung erforderlicher Daten an Klarna bin ich einverstanden."
