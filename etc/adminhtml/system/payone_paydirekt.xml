@@ -42,7 +42,7 @@
         </field>
         <field id="order_secured" translate="label,comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Secured order</label>
-            <comment>With a secured order, the merchant has a payment guarantee für the selected time period (max. 15 running days). Captures (partial payments) have to be done within the guarantee time period. Only available in preauthorization mode.</comment>
+            <comment>In the case of a secured pre-order, the retailer is granted a payment guarantee for the selected period (maximum 15 calendar days). Captures (partial payments) must always be executed within the guarantee period. Only available in preauthorization mode.</comment>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <field id="preauthorization_validity" translate="label,comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -50,7 +50,7 @@
             <depends>
                 <field id="order_secured">1</field>
             </depends>
-            <comment>With a secured order, the merchant has a payment guarantee für the selected time period (max. 15 running days). Captures (partial payments) have to be done within the guarantee time period.</comment>
+            <comment>Desired guarantee time period (max. 15 running days) für a secured ore-order.</comment>
             <source_model>Payone\Core\Model\Source\GuaranteeTime</source_model>
         </field>
         <field id="order_status" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
