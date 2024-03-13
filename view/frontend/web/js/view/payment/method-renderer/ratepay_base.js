@@ -27,9 +27,10 @@ define(
         'Magento_Checkout/js/model/quote',
         'Magento_Customer/js/model/customer',
         'Payone_Core/js/action/ratepayconfig',
+        'Magento_Checkout/js/checkout-data',
         'mage/translate'
     ],
-    function (Component, quote, customer, ratepayconfig, $t) {
+    function (Component, quote, customer, ratepayconfig, checkoutData, $t) {
         'use strict';
         return Component.extend({
             initialize: function () {
@@ -38,7 +39,14 @@ define(
                     ratepayconfig();
                     window.checkoutConfig.payment.payone.ratepayRefreshed = true;
                 }
+                if (checkoutData.getSelectedPaymentMethod() === this.getCode()) {
+                    this.handleDeviceFingerprint();
+                }
                 return parentReturn;
+            },
+            selectPaymentMethod: function () {
+                this.handleDeviceFingerprint();
+                return this._super();
             },
             isPlaceOrderActionAllowedRatePay: function () {
                 return this.isDifferentAddressNotAllowed() === false && this.isB2BNotAllowed() === false;
@@ -154,6 +162,21 @@ define(
                     return false;
                 }
                 return true;
+            },
+            handleDeviceFingerprint: function () {
+                if (window.checkoutConfig.payment.payone.ratepay.token) {
+                    var diSkriptVar = document.createElement('script');
+                    diSkriptVar.type = 'text/javascript';
+                    diSkriptVar.text =  "var di = {t:'" + window.checkoutConfig.payment.payone.ratepay.token + "',v:'" + window.checkoutConfig.payment.payone.ratepay.snippetId + "',l:'checkout'};";
+                    document.getElementsByTagName('head')[0].appendChild(diSkriptVar);
+
+                    var diSkript = document.createElement('script');
+                    diSkript.type = 'text/javascript';
+                    diSkript.src = '//d.ratepay.com/' + window.checkoutConfig.payment.payone.ratepay.snippetId + '/di.js';
+                    document.getElementsByTagName('head')[0].appendChild(diSkript);
+
+                    window.checkoutConfig.payment.payone.ratepay.token = false;
+                }
             }
         });
     }
