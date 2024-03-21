@@ -57,7 +57,7 @@ define([
             }
         },
         updateAddresses: function () {
-            if (quote.paymentMethod().method.indexOf('payone') === -1) { // execute parent function for non payone methods
+            if (quote.paymentMethod()?.method.indexOf('payone') === -1) { // execute parent function for non payone methods
                 return this._super();
             }
 
