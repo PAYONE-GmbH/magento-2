@@ -186,9 +186,6 @@ class ReviewTest extends BaseTestCase
 
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
 
-        $databaseHelper = $this->getMockBuilder(Database::class)->disableOriginalConstructor()->getMock();
-        $databaseHelper->method('getPaydirektOneklickOrderCount')->willReturn(0);
-
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $checkoutSession,
@@ -352,20 +349,6 @@ class ReviewTest extends BaseTestCase
         $expected = 'expected';
         $result = $this->classToTest->getFingerprintJsUrl();
         $this->assertEquals($expected, $result);
-    }
-
-    public function testShowPaydirektEmailMessageTrue()
-    {
-        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYDIREKT);
-        $result = $this->classToTest->showPaydirektEmailMessage();
-        $this->assertTrue($result);
-    }
-
-    public function testShowPaydirektEmailMessageFalse()
-    {
-        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYPAL);
-        $result = $this->classToTest->showPaydirektEmailMessage();
-        $this->assertFalse($result);
     }
 
     public function testToHtml()

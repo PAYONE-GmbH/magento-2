@@ -338,19 +338,6 @@ class Review extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Check if paydirekt email message has to be shown
-     *
-     * @return bool
-     */
-    public function showPaydirektEmailMessage()
-    {
-        if ($this->_quote->getPayment()->getMethod() == PayoneConfig::METHOD_PAYDIREKT && $this->databaseHelper->getPaydirektOneklickOrderCount($this->_quote->getCustomerId()) == 0) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Retrieve payment method and assign additional template values
      *
      * @return $this

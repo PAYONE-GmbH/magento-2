@@ -135,11 +135,6 @@
             <argument name="substituteOrder" xsi:type="object">Payone\Core\Model\Handler\SubstituteOrder\Proxy</argument>
         </arguments>
     </type>
-    <type name="Payone\Core\Observer\AddPaydirektOneklickButton">
-        <arguments>
-            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
-        </arguments>
-    </type>
     <type name="Payone\Core\Model\Handler\SubstituteOrder">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>

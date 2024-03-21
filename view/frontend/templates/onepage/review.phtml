@@ -27,13 +27,6 @@
  * @var \Payone\Core\Block\Onepage\Review $block
  */
 ?>
-<?php if ($block->showPaydirektEmailMessage() === true): ?>
-<div class="messages">
-    <div class="message message-error notice">
-        <div><?php echo __('Please check your email account for the paydirekt registration email before continuing.'); ?></div>
-    </div><br>
-</div>
-<?php endif; ?>
 <div class="paypal-review view">
     <div class="block block-order-details-view">
         <div class="block-content">

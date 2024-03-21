@@ -38,12 +38,6 @@ define(
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
-            isPaydirektOneKlickDisplayable: function () {
-                return customer.isLoggedIn() && window.checkoutConfig.payment.payone.isPaydirektOneKlickDisplayable;
-            },
-            redirectToOneKlickController: function () {
-                window.location.replace(url.build('payone/paydirekt/agreement/'));
-            }
         });
     }
 );
