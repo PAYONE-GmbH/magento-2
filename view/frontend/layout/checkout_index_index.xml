@@ -73,9 +73,9 @@
                                                                         <item name="payone_obt_sofortueberweisung" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
-                                                                        <item name="payone_obt_giropay" xsi:type="array">
+                                                                        <!--item name="payone_obt_giropay" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
-                                                                        </item>
+                                                                        </item Giropay has been disabled, Paydirekt is now Giropay -->
                                                                         <item name="payone_obt_eps" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>

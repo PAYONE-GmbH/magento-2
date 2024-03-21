@@ -48,7 +48,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_ADVANCE_PAYMENT,
         PayoneConfig::METHOD_INVOICE,
         PayoneConfig::METHOD_OBT_SOFORTUEBERWEISUNG,
-        PayoneConfig::METHOD_OBT_GIROPAY,
+        #PayoneConfig::METHOD_OBT_GIROPAY,#Giropay has been disabled, Paydirekt is now Giropay
         PayoneConfig::METHOD_OBT_EPS,
         PayoneConfig::METHOD_OBT_POSTFINANCE_EFINANCE,
         PayoneConfig::METHOD_OBT_POSTFINANCE_CARD,

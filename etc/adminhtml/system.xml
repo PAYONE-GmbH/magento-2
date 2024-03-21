@@ -141,11 +141,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <field id="payone_obt_giropay" translate="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                <!--field id="payone_obt_giropay" translate="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>giropay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field>
+                </field Giropay has been disabled, Paydirekt is now Giropay -->
                 <field id="payone_obt_eps" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>eps - Online-Ueberweisung</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -177,7 +177,7 @@
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_paydirekt" translate="label" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Paydirekt</label>
+                    <label>Giropay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
@@ -306,7 +306,7 @@
             <include path="Payone_Core::system/payone_advance_payment.xml"/>
             <include path="Payone_Core::system/payone_invoice.xml"/>
             <include path="Payone_Core::system/payone_obt_sofortueberweisung.xml"/>
-            <include path="Payone_Core::system/payone_obt_giropay.xml"/>
+            <!--include path="Payone_Core::system/payone_obt_giropay.xml"/ Giropay has been disabled, Paydirekt is now Giropay -->
             <include path="Payone_Core::system/payone_obt_eps.xml"/>
             <include path="Payone_Core::system/payone_obt_postfinance_efinance.xml"/>
             <include path="Payone_Core::system/payone_obt_postfinance_card.xml"/>
