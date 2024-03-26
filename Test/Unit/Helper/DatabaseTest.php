@@ -321,24 +321,4 @@ class DatabaseTest extends BaseTestCase
         $result = $this->database->markUserAsRegisteredWithPaydirekt(12345);
         $this->assertEquals($expected, $result);
     }
-
-    public function testGetPaydirektOneklickOrderCount()
-    {
-        $expected = 1;
-
-        $this->connection->method('fetchOne')->willReturn($expected);
-
-        $result = $this->database->getPaydirektOneklickOrderCount(12345);
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testGetPaydirektOneklickOrderCountNull()
-    {
-        $expected = 0;
-
-        $this->connection->method('fetchOne')->willReturn(null);
-
-        $result = $this->database->getPaydirektOneklickOrderCount(12345);
-        $this->assertEquals($expected, $result);
-    }
 }

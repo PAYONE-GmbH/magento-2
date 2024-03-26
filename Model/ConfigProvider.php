@@ -284,7 +284,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'orderDeferredExists' => (bool)version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>='),
             'saveCCDataEnabled' => (bool)$this->requestHelper->getConfigParam('save_data_enabled', PayoneConfig::METHOD_CREDITCARD, 'payone_payment'),
             'savedPaymentData' => $this->savedPaymentData->getSavedPaymentData($this->checkoutSession->getQuote()->getCustomerId(), PayoneConfig::METHOD_CREDITCARD),
-            'isPaydirektOneKlickDisplayable' => $this->isPaydirektOneKlickDisplayable(),
             'currency' => $this->requestHelper->getConfigParam('currency'),
             'klarnaTitles' => $this->paymentHelper->getKlarnaMethodTitles(),
             'storeName' => $this->shopHelper->getStoreName(),
@@ -324,19 +323,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
         $this->checkoutSession->unsPayoneCanceledPaymentMethod();
         if ($sPaymentMethod) {
             return $sPaymentMethod;
-        }
-        return false;
-    }
-
-    /**
-     * Check if paydirekt oneklick is enabled, user is logged in and not yet marked as registered with paydirekt
-     *
-     * @return bool
-     */
-    protected function isPaydirektOneKlickDisplayable()
-    {
-        if ($this->customerSession->isLoggedIn() && (bool)$this->customerSession->getCustomer()->getPayonePaydirektRegistered() === false) {
-            return (bool)$this->requestHelper->getConfigParam('oneklick_active', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment');
         }
         return false;
     }

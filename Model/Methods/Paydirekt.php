@@ -72,22 +72,13 @@ class Paydirekt extends PayoneMethod
     public function getPaymentSpecificParameters(Order $oOrder)
     {
         $aParams = ['wallettype' => 'PDT'];
-        if ($this->checkoutSession->getPayoneExpressType() == $this->_code) {
-            $aParams['add_paydata[device_fingerprint]'] = $this->checkoutSession->getPayoneDeviceFingerprint();
-            $aParams['add_paydata[device_name]'] = $this->checkoutSession->getPayoneUserAgent();
-            $aParams['customer_is_present'] = 'no';
-            $aParams['recurrence'] = 'oneclick';
 
-            $aParams['add_paydata[terminal_address_city]'] = $this->shopHelper->getConfigParam('city', 'store_information', 'general');
-            $aParams['add_paydata[terminal_address_company]'] = $this->shopHelper->getConfigParam('name', 'store_information', 'general');
-            $aParams['add_paydata[terminal_address_country]'] = $this->shopHelper->getConfigParam('country_id', 'store_information', 'general'); // CHECKEN!
-            $aParams['add_paydata[terminal_address_name]'] = $this->shopHelper->getConfigParam('name', 'store_information', 'general');
-            $aParams['add_paydata[terminal_address_streetname]'] = $this->shopHelper->getConfigParam('street_line1', 'store_information', 'general');
-            $aParams['add_paydata[terminal_address_streetnumber]'] = '';// IS THIS NECESSARY?
-            $aParams['add_paydata[terminal_address_zip]'] = $this->shopHelper->getConfigParam('postcode', 'store_information', 'general');
-            $aParams['add_paydata[terminal_id]'] = $this->shopHelper->getConfigParam('name', 'store_information', 'general');
-
+        $blSecuredOrder = (bool)$this->getCustomConfigParam('order_secured');
+        if ($blSecuredOrder === true && $this->getAuthorizationMode() == PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION) { // params only available with preauth
+            $aParams['add_paydata[order_secured]'] = 'yes';
+            $aParams['add_paydata[preauthorization_validity]'] = (int)$this->getCustomConfigParam('preauthorization_validity');
         }
+
         return $aParams;
     }
 

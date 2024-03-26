@@ -389,24 +389,4 @@ class Database extends \Payone\Core\Helper\Base
         $where = ['entity_id = ?' => $iCustomerId];
         return $this->getDb()->update($table, $data, $where);
     }
-
-    /**
-     * Selects count of paydirekt oneclick orders from database
-     *
-     * @param  int $iCustomerId
-     * @return int
-     */
-    public function getPaydirektOneklickOrderCount($iCustomerId)
-    {
-        $oSelect = $this->getDb()
-            ->select()
-            ->from($this->databaseResource->getTableName('sales_order'), ['COUNT(entity_id)'])
-            ->where("customer_id = :customerId")
-            ->where("payone_express_type = :expressType");
-        $iCount = $this->getDb()->fetchOne($oSelect, ['customerId' => $iCustomerId, 'expressType' => PayoneConfig::METHOD_PAYDIREKT]);
-        if ($iCount === null) {
-            return 0;
-        }
-        return $iCount;
-    }
 }

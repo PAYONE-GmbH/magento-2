@@ -92,7 +92,7 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_sofortueberweisung>
-            <payone_obt_giropay translate="title" module="Payone_Core">
+            <!--payone_obt_giropay translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\OnlineBankTransfer\Giropay</model>
@@ -100,7 +100,7 @@
                 <title>PAYONE Giropay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
-            </payone_obt_giropay>
+            </payone_obt_giropay Giropay has been disabled, Paydirekt is now Giropay -->
             <payone_obt_eps translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
@@ -160,7 +160,7 @@
                 <payment_action>Authorization</payment_action>
                 <model>Payone\Core\Model\Methods\Paydirekt</model>
                 <order_status>pending</order_status>
-                <title>PAYONE paydirekt</title>
+                <title>PAYONE Giropay</title>
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_paydirekt>
@@ -376,7 +376,7 @@
                 <payone_invoice>{"_1338893611948_948":{"txaction":"appointed","state_status":"processing"}}</payone_invoice>
                 <payone_advance_payment>{"_1338893618715_715":{"txaction":"appointed","state_status":"pending"},"_1458214328719_719":{"txaction":"paid","state_status":"processing"}}</payone_advance_payment>
                 <payone_obt_sofortueberweisung>{"_1343137411652_152":{"txaction":"appointed","state_status":"processing"}}</payone_obt_sofortueberweisung>
-                <payone_obt_giropay>{"_1343137411652_252":{"txaction":"appointed","state_status":"processing"}}</payone_obt_giropay>
+                <!--payone_obt_giropay>{"_1343137411652_252":{"txaction":"appointed","state_status":"processing"}}</payone_obt_giropay Giropay has been disabled, Paydirekt is now Giropay -->
                 <payone_obt_eps>{"_1343137411652_352":{"txaction":"appointed","state_status":"processing"}}</payone_obt_eps>
                 <payone_obt_postfinance_efinance>{"_1343137411652_452":{"txaction":"appointed","state_status":"processing"}}</payone_obt_postfinance_efinance>
                 <payone_obt_postfinance_card>{"_1343137411652_552":{"txaction":"appointed","state_status":"processing"}}</payone_obt_postfinance_card>
@@ -481,9 +481,9 @@
             <payone_obt_sofortueberweisung>
                 <use_global>1</use_global>
             </payone_obt_sofortueberweisung>
-            <payone_obt_giropay>
+            <!--payone_obt_giropay>
                 <use_global>1</use_global>
-            </payone_obt_giropay>
+            </payone_obt_giropay Giropay has been disabled, Paydirekt is now Giropay -->
             <payone_obt_eps>
                 <use_global>1</use_global>
             </payone_obt_eps>
@@ -504,6 +504,8 @@
             </payone_barzahlen>
             <payone_paydirekt>
                 <use_global>1</use_global>
+                <order_secured>0</order_secured>
+                <preauthorization_validity>15</preauthorization_validity>
             </payone_paydirekt>
             <payone_safe_invoice>
                 <use_global>1</use_global>
