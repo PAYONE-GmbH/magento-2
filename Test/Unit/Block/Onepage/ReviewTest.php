@@ -193,7 +193,6 @@ class ReviewTest extends BaseTestCase
             'taxHelper' => $this->taxHelper,
             'priceCurrency' => $this->priceCurrency,
             'shopHelper' => $this->shopHelper,
-            'databaseHelper' => $databaseHelper,
         ]);
         #$this->classToTest->setCacheLifetime(1);
     }
