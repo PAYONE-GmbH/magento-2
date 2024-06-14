@@ -27,6 +27,7 @@
 namespace Payone\Core\Helper;
 
 use Payone\Core\Model\PayoneConfig;
+use Magento\Framework\App\Filesystem\DirectoryList;
 
 /**
  * Helper class for sending emails
@@ -34,12 +35,45 @@ use Payone\Core\Model\PayoneConfig;
 class ApplePay extends \Payone\Core\Helper\Base
 {
     /**
+     * @var \Magento\Framework\Filesystem
+     */
+    protected $filesystem;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\App\Helper\Context      $context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Magento\Framework\App\State               $state
+     * @param \Magento\Framework\Filesystem              $filesystem
+     */
+    public function __construct(
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\App\State $state,
+        \Magento\Framework\Filesystem $filesystem
+    ) {
+        parent::__construct($context, $storeManager, $shopHelper, $state);
+        $this->storeManager = $storeManager;
+        $this->shopHelper = $shopHelper;
+        $this->state = $state;
+        $this->filesystem = $filesystem;
+    }
+
+    /**
      * Returns ApplePay file upload path
      *
+     * @param  bool $blForceOldPath
      * @return string
      */
-    public function getApplePayUploadPath()
+    public function getApplePayUploadPath($blForceOldPath = false)
     {
+        $sNewPath = $this->filesystem->getDirectoryRead(DirectoryList::VAR_DIR)->getAbsolutePath('payone-gmbh/ApplePay/');
+        if($blForceOldPath === false && file_exists($sNewPath)) { // file upload path was refactored to work for Magento cloud too
+            return $sNewPath;
+        }
         return __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."ApplePay".DIRECTORY_SEPARATOR;
     }
 
@@ -81,7 +115,7 @@ class ApplePay extends \Payone\Core\Helper\Base
             return false;
         }
 
-        if (file_exists($this->getApplePayUploadPath().$sFile)) {
+        if (file_exists($this->getApplePayUploadPath().$sFile) || file_exists($this->getApplePayUploadPath(true).$sFile)) {
             return true;
         }
         return false;
