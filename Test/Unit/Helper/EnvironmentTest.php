@@ -33,7 +33,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\Http;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -58,7 +58,7 @@ class EnvironmentTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $request = $this->getMockBuilder(RequestInterface::class)
+        $request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
             ->setMethods([
                 'getClientIp'
