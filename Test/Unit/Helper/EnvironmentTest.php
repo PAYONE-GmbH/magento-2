@@ -33,7 +33,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Payone\Core\Model\Environment\RemoteAddress;
+use Magento\Framework\App\Request\Http;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -58,11 +58,16 @@ class EnvironmentTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $remoteAddress = $this->getMockBuilder(RemoteAddress::class)->disableOriginalConstructor()->getMock();
-        $remoteAddress->method('getRemoteAddress')->willReturn('192.168.1.100');
+        $request = $this->getMockBuilder(Http::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getClientIp'
+            ])
+            ->getMock();
+        $request->method('getClientIp')->willReturn('192.168.1.100');
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
-        $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig, 'remoteAddress' => $remoteAddress]);
+        $context = $this->objectManager->getObject(Context::class, ['scopeConfig' => $this->scopeConfig]);
 
         $store = $this->getMockBuilder(StoreInterface::class)->disableOriginalConstructor()->getMock();
         $store->method('getCode')->willReturn(null);
@@ -73,7 +78,7 @@ class EnvironmentTest extends BaseTestCase
         $this->environment = $this->objectManager->getObject(Environment::class, [
             'context' => $context,
             'storeManager' => $storeManager,
-            'remoteAddress' => $remoteAddress
+            'request' => $request
         ]);
     }
 
