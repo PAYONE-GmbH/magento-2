@@ -32,11 +32,9 @@ namespace Payone\Core\Helper;
 class Environment extends \Payone\Core\Helper\Base
 {
     /**
-     * Extended remote address object
-     *
-     * @var \Payone\Core\Model\Environment\RemoteAddress
+     * @var \Magento\Framework\App\RequestInterface
      */
-    protected $remoteAddress;
+    protected $request;
 
     /**
      * Constructor
@@ -45,17 +43,17 @@ class Environment extends \Payone\Core\Helper\Base
      * @param \Magento\Store\Model\StoreManagerInterface   $storeManager
      * @param \Payone\Core\Helper\Shop                     $shopHelper
      * @param \Magento\Framework\App\State                 $state
-     * @param \Payone\Core\Model\Environment\RemoteAddress $remoteAddress
+     * @param \Magento\Framework\App\RequestInterface      $request
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Shop $shopHelper,
         \Magento\Framework\App\State $state,
-        \Payone\Core\Model\Environment\RemoteAddress $remoteAddress
+        \Magento\Framework\App\RequestInterface $request
     ) {
         parent::__construct($context, $storeManager, $shopHelper, $state);
-        $this->remoteAddress = $remoteAddress;
+        $this->request = $request;
     }
 
     /**
@@ -76,10 +74,7 @@ class Environment extends \Payone\Core\Helper\Base
     public function getRemoteIp()
     {
         $blProxyMode = (bool)$this->getConfigParam('proxy_mode', 'processing', 'payone_misc');
-        if ($blProxyMode === true) {
-            $this->remoteAddress->useHttpXForwarded();
-        }
-        return $this->remoteAddress->getRemoteAddress();
+        return $this->request->getClientIp($blProxyMode);
     }
 
     /**
