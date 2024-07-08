@@ -58,7 +58,12 @@ class EnvironmentTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $request = $this->getMockBuilder(RequestInterface::class)->disableOriginalConstructor()->getMock();
+        $request = $this->getMockBuilder(RequestInterface::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getClientIp'
+            ])
+            ->getMock();
         $request->method('getClientIp')->willReturn('192.168.1.100');
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
