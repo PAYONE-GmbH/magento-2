@@ -33,9 +33,9 @@ $aInstallmentData = array_reverse($this->getInstallmentData());
 </label><br>
 <div style="float:left;">
     <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>
-        <a href="#" onclick="switchInstallmentPlan('<?php echo $sKey; ?>', '<?php echo $this->getCode(); ?>', '<?php echo $aInstallment['duration']; ?>');return false;">
+        <a href="#">
             <?php echo $this->getSelectLinkText($aInstallment) ?>
-        </a><br>
+        </a><input class="hiddenSwitchInstallmentPlan" type="hidden" value="<?php echo $sKey; ?>|||<?php echo $this->getCode(); ?>|||<?php echo $aInstallment['duration']; ?>"><br>
     <?php endforeach; ?>
 
     <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>

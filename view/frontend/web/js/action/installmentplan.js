@@ -59,6 +59,7 @@ define([
             function (response) {
                 if (response.success == true) {
                     $('#' + baseView.getCode() + '_installmentplan').html(response.installment_plan_html);
+                    baseView.addEvents("hiddenSwitchInstallmentPlan", "|||", 3);
                     $('#' + baseView.getCode() + '_installmentplan').show();
                     $('#' + baseView.getCode() + '_check').hide();
                     $('#' + baseView.getCode() + '_submit').show();
