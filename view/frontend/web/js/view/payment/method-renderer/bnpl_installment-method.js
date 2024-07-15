@@ -99,8 +99,23 @@ define(
                 }
                 return parentReturn;
             },
-            displayInstallmentInfo(installmentplan) {
+            addEvents: function (selectorClass, delimiter, valueCount) {
+                var elementsColl = document.getElementsByClassName(selectorClass);
+                for (var iVar = 0; iVar < elementsColl.length; iVar++) {
+                    console.log(elementsColl[iVar].previousElementSibling);
+                    elementsColl[iVar].previousElementSibling.addEventListener("click", function (e) {
+                        console.log(this.nextElementSibling);
+                        let splitVar = this.nextElementSibling.value.split(delimiter);
+                        if (splitVar.length === valueCount) {
+                            switchBNPLInstallmentPlan(splitVar[0], splitVar[1], splitVar[2], this);
+                        }
+                        e.preventDefault();
+                    });
+                }
+            },
+            displayInstallmentInfo: function (installmentplan) {
                 $('#' + this.getCode() + '_installmentplan').html(installmentplan.installment_plan_html);
+                this.addEvents("hiddenSwitchInstallmentPlanBnpl", "|||", 3);
                 $('#' + this.getCode() + '_installmentplan').show();
                 $('#' + this.getCode() + '_check').hide();
                 $('#' + this.getCode() + '_submit').show();

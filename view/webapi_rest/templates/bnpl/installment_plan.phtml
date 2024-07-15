@@ -38,12 +38,12 @@ $aInstallmentData = $aInstallmentResponse['runtimes'];
     </label><br>
     <div>
         <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>
-            <div class="payoneBNPLselector" onclick="switchBNPLInstallmentPlan('<?php echo $sKey; ?>', '<?php echo $this->getCode(); ?>', '<?php echo $aInstallment['installment_option_id']; ?>', this);">
+            <div class="payoneBNPLselector">
                 <input type="radio" name="bnplCondition" id="bnplCondition_<?php echo $sKey; ?>">
                 <a href="#" class="bnplCondition" onclick="return false;">
                     <?php echo $this->getSelectLinkText($aInstallment) ?>
                 </a>
-            </div>
+            </div><input class="hiddenSwitchInstallmentPlanBnpl" type="hidden" value="<?php echo $sKey; ?>|||<?php echo $this->getCode(); ?>|||<?php echo $aInstallment['installment_option_id']; ?>">
         <?php endforeach; ?>
 
         <?php foreach ($aInstallmentData as $sKey => $aInstallment): ?>

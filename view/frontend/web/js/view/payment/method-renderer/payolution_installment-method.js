@@ -149,6 +149,18 @@ define(
                     }
                 }
             },
+            addEvents: function (selectorClass, delimiter, valueCount) {
+                var elementsColl = document.getElementsByClassName(selectorClass);
+                for (var iVar = 0; iVar < elementsColl.length; iVar++) {
+                    elementsColl[iVar].previousElementSibling.addEventListener("click", function (e) {
+                        let splitVar = this.nextElementSibling.value.split(delimiter);
+                        if (splitVar.length === valueCount) {
+                            switchInstallmentPlan(splitVar[0], splitVar[1], splitVar[2]);
+                        }
+                        e.preventDefault();
+                    });
+                }
+            },
             switchInstallmentPlan: function (sKey, sCode, iInstallments) {
                 $('.payolution_installmentplans').hide();
                 $('.payolution_installment_overview').hide();
