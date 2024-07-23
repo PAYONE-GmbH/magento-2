@@ -267,7 +267,6 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             'bankCodeValidatedAndValid' => false,
             'blockedMessage' => $this->paymentHelper->getBankaccountCheckBlockedMessage(),
             'epsBankGroups' => Eps::getBankGroups(),
-            'idealBankGroups' => Ideal::getBankGroups(),
             'customerBirthday' => $this->customerHelper->getCustomerBirthday(),
             'addresscheckEnabled' => (int)$this->requestHelper->getConfigParam('enabled', 'address_check', 'payone_protect'),
             'addresscheckBillingEnabled' => $this->requestHelper->getConfigParam('check_billing', 'address_check', 'payone_protect') == 'NO' ? 0 : 1,

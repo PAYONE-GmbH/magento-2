@@ -57,28 +57,6 @@ class Ideal extends OnlineBankTransferBase
     protected $sSubType = self::METHOD_OBT_SUBTYPE_IDEAL;
 
     /**
-     * Array of all available bank groups
-     *
-     * @var array
-     */
-    protected static $aBankGroups = [
-        'ABN_AMRO_BANK' => 'ABN Amro Bank',
-        'ASN_BANK' => 'ASN Bank',
-        'ING_BANK' => 'ING Bank',
-        'RABOBANK' => 'Rabobank',
-        'SNS_BANK' => 'SNS Bank',
-        'SNS_REGIO_BANK' => 'SNS Regio Bank',
-        'TRIODOS_BANK' => 'Triodos Bank',
-        'VAN_LANSCHOT_BANKIERS' => 'Van Lanschot Kempen',
-        'KNAB_BANK' => 'Knab Bank',
-        'BUNQ_BANK' => 'Bunq Bank',
-        'REVOLUT' => 'Revolut',
-        'YOURSAFE' => 'Yoursafe',
-        'NATIONALE_NEDERLANDEN' => 'Nationale-Nederlanden',
-        'N26' => 'N26',
-    ];
-
-    /**
      * Return parameters specific to this payment sub type
      *
      * @param  Order $oOrder
@@ -86,48 +64,10 @@ class Ideal extends OnlineBankTransferBase
      */
     public function getSubTypeSpecificParameters(Order $oOrder)
     {
-        $oInfoInstance = $this->getInfoInstance();
-
         $aParams = [
             'bankcountry' => 'NL',
-            'bankgrouptype' => $oInfoInstance->getAdditionalInformation('bank_group'),
         ];
 
         return $aParams;
-    }
-
-    /**
-     * Add the checkout-form-data to the checkout session
-     *
-     * @param  DataObject $data
-     * @return $this
-     */
-    public function assignData(DataObject $data)
-    {
-        parent::assignData($data);
-
-        $oInfoInstance = $this->getInfoInstance();
-        $oInfoInstance->setAdditionalInformation('bank_group', $this->toolkitHelper->getAdditionalDataEntry($data, 'bank_group'));
-
-        return $this;
-    }
-
-    /**
-     * Return available bank groups
-     *
-     * @return array
-     */
-    public static function getBankGroups()
-    {
-        $aReturn = [];
-
-        foreach (self::$aBankGroups as $sKey => $sTitle) {
-            $aReturn[] = [
-                'id' => $sKey,
-                'title' => mb_convert_encoding($sTitle, 'UTF-8'),
-            ];
-        }
-
-        return $aReturn;
     }
 }

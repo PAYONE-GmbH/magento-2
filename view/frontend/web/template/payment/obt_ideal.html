@@ -41,28 +41,6 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        
-        <form class="debit_form" action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
-            <fieldset data-bind="attr: {class: 'fieldset payment items ' + getCode()}">
-                <div class="field">
-                    <label data-bind="attr: {for: getCode() + '_bank_group'}" class="label">
-                        <span><!-- ko i18n: 'Bank group'--><!-- /ko --></span>
-                    </label>
-                    <div class='control'>
-                        <select style="width:200px;" name="payment[bank_group]" class="select"
-                            data-bind=" attr: {id: getCode() + '_bank_group', 'data-container': getCode() + '_bank_group'},
-                                        enable: true,
-                                        options: getBankGroups(),
-                                        optionsValue: 'id',
-                                        optionsText: 'title',
-                                        optionsCaption: $t('--Please Select--'),
-                                        value: bankGroup">
-                        </select>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-        
         <p data-bind="html: getInstructions()"></p>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
