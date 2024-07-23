@@ -29,33 +29,12 @@ define(
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'Payone_Core/payment/obt_ideal',
-                bankGroup: ''
-            },
-            
-            initObservable: function () {
-                this._super()
-                    .observe([
-                        'bankGroup'
-                    ]);
-                return this;
-            },
-            
-            getData: function () {
-                var parentReturn = this._super();
-                if (parentReturn.additional_data === null) {
-                    parentReturn.additional_data = {};
-                }
-                parentReturn.additional_data.bank_group = this.bankGroup();
-                return parentReturn;
+                template: 'Payone_Core/payment/obt_ideal'
             },
 
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
-            },
-            getBankGroups: function () {
-                return window.checkoutConfig.payment.payone.idealBankGroups;
             }
         });
     }
