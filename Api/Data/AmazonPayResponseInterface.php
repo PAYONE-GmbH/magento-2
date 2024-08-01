@@ -55,4 +55,18 @@ interface AmazonPayResponseInterface
      * @return string
      */
     public function getAmazonReviewHtml();
+
+    /**
+     * Returns error message
+     *
+     * @return string
+     */
+    public function getPayload();
+
+    /**
+     * Returns error message
+     *
+     * @return string
+     */
+    public function getSignature();
 }

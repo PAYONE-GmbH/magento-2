@@ -1,0 +1,114 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2017 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+/** @var \Payone\Core\Block\Amazon\ButtonV2 $block */
+?>
+<div id="<?php echo $block->getButtonId(); ?>"></div>
+<style>
+    #AmazonPayButtonMiniBasket {
+        width: 100%!important;
+        margin-top: 1em;
+    }
+</style>
+<script type="text/javascript" charset="utf-8">
+    console.log("Moin");
+    function loadButton(buttonId)
+    {
+        let amazonPayButton = amazon.Pay.renderButton('#' + buttonId, {
+            // set checkout environment
+            merchantId: '<?php echo $block->getMerchantId(); ?>',
+            publicKeyId: '<?php echo $block->getPublicKeyId(); ?>',
+            ledgerCurrency: '<?php echo $block->getCurrency(); ?>',
+            productType: '<?php echo $block->getProductType(); ?>',
+            placement: '<?php echo $block->getPlacement(); ?>',
+            <?php if($block->getButtonLanguage() != 'none'): ?>
+                checkoutLanguage: '<?php echo $block->getButtonLanguage(); ?>',
+            <?php endif; ?>
+            <?php if($block->isTestMode() === true): ?>
+                sandbox: true,
+            <?php endif; ?>
+            buttonColor: '<?php echo $block->getButtonColor(); ?>'
+        });
+
+        amazonPayButton.onClick(function(){
+            // fix for checkout urlBuilder
+            if (window.checkoutConfig === undefined) {
+                window.checkoutConfig = {};
+            }
+            if (window.checkoutConfig.storeCode === undefined) {
+                window.checkoutConfig.storeCode = '<?php echo $block->getStoreCode(); ?>';
+            }
+            let quoteId = '<?php echo $block->getQuoteId(); ?>';
+            require(['Payone_Core/js/action/checkoutsessionpayload'], function(checkoutsessionpayload){
+                ajaxCall = checkoutsessionpayload(quoteId);
+                ajaxCall.done(
+                    function (response) {
+                        if (response && response.success === true) {
+                            amazonPayButton.initCheckout({
+                                estimatedOrderAmount: { "amount": "<?php echo $block->getAmount(); ?>", "currencyCode": "<?php echo $block->getCurrency(); ?>"},
+                                createCheckoutSessionConfig: {
+                                    payloadJSON: response.payload,
+                                    signature: response.signature,
+                                    publicKeyId: '<?php echo $block->getPublicKeyId(); ?>'
+                                }
+                            });
+                        }
+                    }
+                ).fail(
+                    function (response) {
+                        //errorProcessor.process(response, messageContainer);
+                        alert('An error occured.');
+                    }
+                );
+            });
+        });
+    }
+
+    function loadAmazonScript()
+    {
+        if (window.amazonJsLoaded === undefined || window.amazonJsLoaded !== true) {
+            require(['jquery'], function ($) {
+                $.getScript("https://static-eu.payments-amazon.com/checkout.js");
+            });
+            window.amazonJsLoaded = true;
+        }
+    }
+
+    function initButton(buttonId) {
+        console.log("initButton");
+        if (typeof amazon != 'object') { // javascript not loaded -> load it and try again
+            console.log("loadScript");
+            loadAmazonScript();
+            setTimeout(function() {
+                window.requestAnimationFrame(function() {initButton(buttonId)});
+            }, 250);
+        } else { // javascript loaded -> load button
+            console.log("loadButton " + buttonId);
+            loadButton(buttonId);
+        }
+    }
+
+    initButton('<?php echo $block->getButtonId(); ?>');
+</script>

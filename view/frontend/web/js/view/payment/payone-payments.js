@@ -117,6 +117,10 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/amazonpay-method'
             },
             {
+                type: 'payone_amazonpayv2',
+                component: 'Payone_Core/js/view/payment/method-renderer/amazonpayv2-method'
+            },
+            {
                 type: 'payone_klarna_base',
                 component: 'Payone_Core/js/view/payment/method-renderer/klarna-method'
             },
