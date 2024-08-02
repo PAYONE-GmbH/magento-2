@@ -40,10 +40,12 @@ use Magento\Framework\Controller\Result\Redirect;
 use Magento\Quote\Api\Data\CartExtension;
 use Magento\Quote\Model\ShippingAssignment;
 use Magento\Quote\Model\Shipping;
+use Payone\Core\Model\Methods\AmazonPayV2;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Payment;
+use Payone\Core\Model\Api\Request\Genericpayment\UpdateCheckoutSession;
 
 class ReviewTest extends BaseTestCase
 {
@@ -127,10 +129,13 @@ class ReviewTest extends BaseTestCase
         $pageFactory = $this->getMockBuilder(PageFactory::class)->disableOriginalConstructor()->getMock();
         $pageFactory->method('create')->willReturn($page);
 
+        $updateCheckoutSession = $this->getMockBuilder(UpdateCheckoutSession::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $this->checkoutSession,
-            'pageFactory' => $pageFactory
+            'pageFactory' => $pageFactory,
+            'updateCheckoutSession' => $updateCheckoutSession,
         ]);
     }
 
@@ -138,6 +143,19 @@ class ReviewTest extends BaseTestCase
     {
         $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
         $this->payment->method('getMethod')->willReturn('payone_paypal');
+
+        $this->request->method('getBeforeForwardInfo')->willReturn(false);
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Page::class, $result);
+    }
+
+    public function testExecuteAmazonPay()
+    {
+        $amazonPay = $this->getMockBuilder(AmazonPayV2::class)->disableOriginalConstructor()->getMock();
+        
+        $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
+        $this->payment->method('getMethod')->willReturn('payone_paypal');
+        $this->payment->method('getMethodInstance')->willReturn($amazonPay);
 
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();

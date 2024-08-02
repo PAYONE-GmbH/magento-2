@@ -76,7 +76,7 @@ class AmazonPayV2 extends PayoneMethod
     /**
      * @return bool
      */
-    protected function isAPBPayment()
+    public function isAPBPayment()
     {
         if ($this->isAmazonPayExpress() === true) {
             return false;
@@ -87,7 +87,7 @@ class AmazonPayV2 extends PayoneMethod
     /**
      * @return bool
      */
-    protected function isAmazonPayExpress()
+    public function isAmazonPayExpress()
     {
         if ($this->checkoutSession->getPayoneIsAmazonPayExpressPayment() === true) {
             return true;

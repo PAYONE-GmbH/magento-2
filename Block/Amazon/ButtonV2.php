@@ -43,6 +43,11 @@ class ButtonV2 extends Template implements \Magento\Catalog\Block\ShortcutInterf
     protected $alias = 'payone.block.amazon.buttonv2';
 
     /**
+     * @var string
+     */
+    protected $name;
+
+    /**
      * @var \Payone\Core\Helper\Api
      */
     protected $apiHelper;
@@ -129,9 +134,9 @@ class ButtonV2 extends Template implements \Magento\Catalog\Block\ShortcutInterf
     public function getButtonId()
     {
         $buttonId = "AmazonPayButton";
-        if (strpos($this->getName(), "checkout.cart.shortcut.buttons") !== false) {
+        if (strpos($this->getName() ?? '', "checkout.cart.shortcut.buttons") !== false) {
             $buttonId = "AmazonPayButtonBasket";
-        } elseif (strpos($this->getName(), "shortcutbuttons") !== false) {
+        } elseif (strpos($this->getName() ?? '', "shortcutbuttons") !== false) {
             $buttonId = "AmazonPayButtonMiniBasket";
         }
         return $buttonId;
