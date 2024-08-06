@@ -59,12 +59,15 @@ class OrderPaymentPlaceEnd implements ObserverInterface
      */
     protected $aCheckoutSessionClearList = [
         'is_payone_redirect_cancellation',
+        'is_payone_amazon_pay_auth',
+        'payone_workorder_id',
         'amazon_workorder_id',
         'amazon_address_token',
         'amazon_reference_id',
         'order_reference_details_executed',
         'trigger_invalid_payment',
-        'payone_ratepay_device_fingerprint_token'
+        'payone_ratepay_device_fingerprint_token',
+        'payone_is_amazon_pay_express_payment',
     ];
 
     /**

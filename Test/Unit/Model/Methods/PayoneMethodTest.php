@@ -154,4 +154,12 @@ class PayoneMethodTest extends BaseTestCase
         $result = $this->classToTest->getSuccessUrl();
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetFrontendConfig()
+    {
+        $expected = [];
+
+        $result = $this->classToTest->getFrontendConfig();
+        $this->assertEquals($expected, $result);
+    }
 }

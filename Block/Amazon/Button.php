@@ -47,6 +47,11 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
     protected $baseHelper;
 
     /**
+     * @var string
+     */
+    protected $name;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -71,6 +76,23 @@ class Button extends Template implements \Magento\Catalog\Block\ShortcutInterfac
     public function getAlias()
     {
         return $this->alias;
+    }
+
+    /**
+     * @param  string $name
+     * @return void
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

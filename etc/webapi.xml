@@ -177,4 +177,38 @@
             <parameter name="cartId" force="true">%cart_id%</parameter>
         </data>
     </route>
+
+    <route url="/V1/guest-carts/:cartId/payone-getCheckoutSessionPayload" method="POST">
+        <service class="Payone\Core\Api\AmazonPayInterface" method="getCheckoutSessionPayload"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <route url="/V1/carts/mine/payone-getCheckoutSessionPayload" method="POST">
+        <service class="Payone\Core\Api\AmazonPayInterface" method="getCheckoutSessionPayload"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <route url="/V1/guest-carts/:orderId/payone-getAmazonPayApbSession" method="POST">
+        <service class="Payone\Core\Api\AmazonPayInterface" method="getAmazonPayApbSession"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <route url="/V1/carts/mine/payone-getAmazonPayApbSession" method="POST">
+        <service class="Payone\Core\Api\AmazonPayInterface" method="getAmazonPayApbSession"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="orderId" force="true">%order_id%</parameter>
+        </data>
+    </route>
 </routes>

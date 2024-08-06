@@ -162,6 +162,19 @@ define(
             },
             getAgreementMessage: function () {
                 return window.checkoutConfig.payment.payone.agreementMessage;
+            },
+            getFrontendConfig: function () {
+                if (window.checkoutConfig.payment.payone[this.getCode()] !== undefined) {
+                    return window.checkoutConfig.payment.payone[this.getCode()];
+                }
+                return [];
+            },
+            getFrontendConfigParam: function (param, defaultReturn = '') {
+                let frontendConfig = this.getFrontendConfig();
+                if (param in frontendConfig) { // check if key exists
+                    return frontendConfig[param];
+                }
+                return defaultReturn;
             }
         });
     }

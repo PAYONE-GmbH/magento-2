@@ -72,11 +72,23 @@ class AmazonPay implements AmazonPayInterface
     protected $setOrderReferenceDetails;
 
     /**
+     * @var \Payone\Core\Model\Api\Request\Genericpayment\CreateCheckoutSessionPayload
+     */
+    protected $createCheckoutSessionPayload;
+
+    /**
      * Amazon Pay payment object
      *
      * @var \Payone\Core\Model\Methods\AmazonPay
      */
     protected $payment;
+
+    /**
+     * Amazon Pay payment object
+     *
+     * @var \Payone\Core\Model\Methods\AmazonPayV2
+     */
+    protected $paymentv2;
 
     /**
      * Cart management interface
@@ -100,13 +112,6 @@ class AmazonPay implements AmazonPayInterface
     protected $checkoutHelper;
 
     /**
-     * URL builder object
-     *
-     * @var \Magento\Framework\UrlInterface
-     */
-    protected $urlBuilder;
-
-    /**
      * Block object of review page
      *
      * @var \Payone\Core\Block\Onepage\Review
@@ -121,17 +126,17 @@ class AmazonPay implements AmazonPayInterface
     /**
      * Constructor.
      *
-     * @param \Payone\Core\Api\Data\AmazonPayResponseInterfaceFactory                $responseFactory
-     * @param \Magento\Checkout\Model\Session                                        $checkoutSession
-     * @param \Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration         $getConfiguration
-     * @param \Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails $getOrderReferenceDetails
-     * @param \Payone\Core\Model\Methods\AmazonPay                                   $payment
-     * @param \Magento\Quote\Api\CartManagementInterface                             $cartManagement
-     * @param \Payone\Core\Helper\Order                                              $orderHelper
-     * @param \Payone\Core\Helper\Checkout                                           $checkoutHelper
-     * @param \Magento\Framework\UrlInterface                                        $urlBuilder
-     * @param \Payone\Core\Block\Onepage\Review                                      $reviewBlock
-     * @param \Magento\Framework\App\ViewInterface                                   $view
+     * @param \Payone\Core\Api\Data\AmazonPayResponseInterfaceFactory                    $responseFactory
+     * @param \Magento\Checkout\Model\Session                                            $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration             $getConfiguration
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails     $getOrderReferenceDetails
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\CreateCheckoutSessionPayload $createCheckoutSessionPayload
+     * @param \Payone\Core\Model\Methods\AmazonPay                                       $payment
+     * @param \Magento\Quote\Api\CartManagementInterface                                 $cartManagement
+     * @param \Payone\Core\Helper\Order                                                  $orderHelper
+     * @param \Payone\Core\Helper\Checkout                                               $checkoutHelper
+     * @param \Payone\Core\Block\Onepage\Review                                          $reviewBlock
+     * @param \Magento\Framework\App\ViewInterface                                       $view
      */
     public function __construct(
         \Payone\Core\Api\Data\AmazonPayResponseInterfaceFactory $responseFactory,
@@ -139,11 +144,12 @@ class AmazonPay implements AmazonPayInterface
         \Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration $getConfiguration,
         \Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails $getOrderReferenceDetails,
         \Payone\Core\Model\Api\Request\Genericpayment\SetOrderReferenceDetails $setOrderReferenceDetails,
+        \Payone\Core\Model\Api\Request\Genericpayment\CreateCheckoutSessionPayload $createCheckoutSessionPayload,
         \Payone\Core\Model\Methods\AmazonPay $payment,
+        \Payone\Core\Model\Methods\AmazonPayV2 $paymentv2,
         \Magento\Quote\Api\CartManagementInterface $cartManagement,
         \Payone\Core\Helper\Order $orderHelper,
         \Payone\Core\Helper\Checkout $checkoutHelper,
-        \Magento\Framework\UrlInterface $urlBuilder,
         \Payone\Core\Block\Onepage\Review $reviewBlock,
         \Magento\Framework\App\ViewInterface $view
     ) {
@@ -152,11 +158,12 @@ class AmazonPay implements AmazonPayInterface
         $this->getConfiguration = $getConfiguration;
         $this->getOrderReferenceDetails = $getOrderReferenceDetails;
         $this->setOrderReferenceDetails = $setOrderReferenceDetails;
+        $this->createCheckoutSessionPayload = $createCheckoutSessionPayload;
         $this->payment = $payment;
+        $this->paymentv2 = $paymentv2;
         $this->cartManagement = $cartManagement;
         $this->orderHelper = $orderHelper;
         $this->checkoutHelper = $checkoutHelper;
-        $this->urlBuilder = $urlBuilder;
         $this->reviewBlock = $reviewBlock;
         $this->view = $view;
     }
@@ -234,6 +241,72 @@ class AmazonPay implements AmazonPayInterface
         $html = $this->view->getLayout()->getBlock('payone_onepage_review')->toHtml();
 
         $oResponse->setData('amazonReviewHtml', $html);
+        return $oResponse;
+    }
+
+    /**
+     * Returns Amazon Pay V2 checkout session payload
+     *
+     * @param  string $cartId
+     * @return \Payone\Core\Service\V1\Data\AmazonPayResponse
+     */
+    public function getCheckoutSessionPayload($cartId)
+    {
+        $blSuccess = false;
+        $oResponse = $this->responseFactory->create();
+
+        $oQuote = $this->checkoutSession->getQuote();
+
+        $oPayment = $oQuote->getPayment();
+        $oPayment->setMethod(PayoneConfig::METHOD_AMAZONPAYV2);
+
+        $oQuote->setPayment($oPayment);
+        $oQuote->save();
+
+        $this->checkoutSession->setPayoneIsAmazonPayExpressPayment(true);
+
+        $aResponse = $this->createCheckoutSessionPayload->sendRequest($this->paymentv2, $oQuote);
+        if (isset($aResponse['status'], $aResponse['add_paydata[signature]'], $aResponse['add_paydata[payload]']) && $aResponse['status'] == 'OK') {
+            $blSuccess = true;
+
+            $oResponse->setData('payload', $aResponse['add_paydata[payload]']);
+            $oResponse->setData('signature', $aResponse['add_paydata[signature]']);
+
+            if (!empty($aResponse['workorderid'])) {
+                $this->checkoutSession->setPayoneWorkorderId($aResponse['workorderid']);
+                $this->checkoutSession->setPayoneQuoteComparisonString($this->checkoutHelper->getQuoteComparisonString($oQuote));
+            }
+        }
+
+        if (isset($aResponse['status'], $aResponse['customermessage']) && $aResponse['status'] == 'ERROR') {
+            $oResponse->setData('errormessage', $aResponse['customermessage']);
+        }
+
+        $oResponse->setData('success', $blSuccess);
+        return $oResponse;
+    }
+
+    /**
+     * Returns Amazon Pay V2 checkout session payload for APB
+     *
+     * @param  string $cartId
+     * @return \Payone\Core\Service\V1\Data\AmazonPayResponse
+     */
+    public function getAmazonPayApbSession($cartId)
+    {
+        $blSuccess = false;
+        $oResponse = $this->responseFactory->create();
+
+        $sPayload = $this->checkoutSession->getPayoneAmazonPayPayload();
+        $sSignature = $this->checkoutSession->getPayoneAmazonPaySignature();
+        if (!empty($sPayload) && !empty($sSignature)) {
+            $blSuccess = true;
+
+            $oResponse->setData('payload', $sPayload);
+            $oResponse->setData('signature', $sSignature);
+        }
+
+        $oResponse->setData('success', $blSuccess);
         return $oResponse;
     }
 }

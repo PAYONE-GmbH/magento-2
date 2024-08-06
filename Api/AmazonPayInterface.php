@@ -38,4 +38,20 @@ interface AmazonPayInterface
      * @return \Payone\Core\Service\V1\Data\AmazonPayResponse
      */
     public function getWorkorderId($amazonReferenceId, $amazonAddressToken);
+
+    /**
+     * Returns Amazon Pay V2 checkout session payload
+     *
+     * @param  string $cartId
+     * @return \Payone\Core\Service\V1\Data\AmazonPayResponse
+     */
+    public function getCheckoutSessionPayload($cartId);
+
+    /**
+     * Returns Amazon Pay V2 checkout session payload for APB
+     *
+     * @param  string $orderId
+     * @return \Payone\Core\Service\V1\Data\AmazonPayResponse
+     */
+    public function getAmazonPayApbSession($orderId);
 }

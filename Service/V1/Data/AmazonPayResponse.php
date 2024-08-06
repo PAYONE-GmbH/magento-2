@@ -72,4 +72,24 @@ class AmazonPayResponse extends \Magento\Framework\Api\AbstractExtensibleObject 
     {
         return $this->_get('amazonReviewHtml');
     }
+
+    /**
+     * Returns error message
+     *
+     * @return string
+     */
+    public function getPayload()
+    {
+        return $this->_get('payload');
+    }
+
+    /**
+     * Returns error message
+     *
+     * @return string
+     */
+    public function getSignature()
+    {
+        return $this->_get('signature');
+    }
 }

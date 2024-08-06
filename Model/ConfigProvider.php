@@ -27,6 +27,7 @@
 namespace Payone\Core\Model;
 
 use Payone\Core\Model\Methods\BNPL\BNPLBase;
+use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Eps;
 use Payone\Core\Model\Methods\OnlineBankTransfer\Ideal;
@@ -209,16 +210,12 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
     /**
      * Get the payment description text
      *
-     * @param  string $sCode
+     * @param  PayoneMethod $sCode
      * @return string
      */
-    protected function getInstructionByCode($sCode)
+    protected function getInstructionByMethod($oMethodInstance)
     {
-        $oMethodInstance = $this->dataHelper->getMethodInstance($sCode);
-        if ($oMethodInstance) {
-            return nl2br($this->escaper->escapeHtml($oMethodInstance->getInstructions()));
-        }
-        return '';
+        return nl2br($this->escaper->escapeHtml($oMethodInstance->getInstructions()));
     }
 
     /**
@@ -307,7 +304,11 @@ class ConfigProvider extends \Magento\Payment\Model\CcGenericConfigProvider
             ],
         ]);
         foreach ($this->paymentHelper->getAvailablePaymentTypes() as $sCode) {
-            $config['payment']['instructions'][$sCode] = $this->getInstructionByCode($sCode);
+            $oMethodInstance = $this->dataHelper->getMethodInstance($sCode);
+            if ($oMethodInstance instanceof PayoneMethod && $oMethodInstance->isAvailable()) {
+                $config['payment']['payone'][$sCode] = $oMethodInstance->getFrontendConfig();
+                $config['payment']['instructions'][$sCode] = $this->getInstructionByMethod($oMethodInstance);
+            }
         }
         return $config;
     }
