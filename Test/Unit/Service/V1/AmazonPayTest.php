@@ -43,6 +43,7 @@ use Magento\Checkout\Model\Session;
 use Payone\Core\Model\Api\Request\Genericpayment\GetConfiguration;
 use Payone\Core\Model\Api\Request\Genericpayment\GetOrderReferenceDetails;
 use Payone\Core\Model\Api\Request\Genericpayment\SetOrderReferenceDetails;
+use Payone\Core\Model\Api\Request\Genericpayment\CreateCheckoutSessionPayload;
 use Payone\Core\Helper\Order;
 use Magento\Quote\Model\Quote\Payment;
 use Magento\Checkout\Model\Type\Onepage;
@@ -62,6 +63,11 @@ class AmazonPayTest extends BaseTestCase
      * @var AmazonPayResponse|\PHPUnit_Framework_MockObject_MockObject
      */
     private $response;
+
+    /**
+     * @var CreateCheckoutSessionPayload|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $createCheckoutSessionPayload;
 
     protected function setUp(): void
     {
@@ -112,10 +118,23 @@ class AmazonPayTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAmazonWorkorderId', 'getQuote', 'setAmazonWorkorderId', 'setAmazonAddressToken', 'setAmazonReferenceId'])
+            ->setMethods([
+                'getAmazonWorkorderId',
+                'getQuote',
+                'setAmazonWorkorderId',
+                'setAmazonAddressToken',
+                'setAmazonReferenceId',
+                'setPayoneIsAmazonPayExpressPayment',
+                'setPayoneWorkorderId',
+                'setPayoneQuoteComparisonString',
+                'getPayoneAmazonPayPayload',
+                'getPayoneAmazonPaySignature',
+            ])
             ->getMock();
         $checkoutSession->method('getAmazonWorkorderId')->willReturn(null);
         $checkoutSession->method('getQuote')->willReturn($quote);
+        $checkoutSession->method('getPayoneAmazonPayPayload')->willReturn('test');
+        $checkoutSession->method('getPayoneAmazonPaySignature')->willReturn('test');
 
         $aGetConfigurationResponse = [
             'status' => 'OK',
@@ -138,6 +157,8 @@ class AmazonPayTest extends BaseTestCase
         $setOrderReferenceDetails = $this->getMockBuilder(SetOrderReferenceDetails::class)->disableOriginalConstructor()->getMock();
         $setOrderReferenceDetails->method('sendRequest')->willReturn($aSetOrderReferenceDetailsResponse);
 
+        $this->createCheckoutSessionPayload = $this->getMockBuilder(CreateCheckoutSessionPayload::class)->disableOriginalConstructor()->getMock();
+
         $checkoutHelper = $this->getMockBuilder(Checkout::class)->disableOriginalConstructor()->getMock();
         $checkoutHelper->method('getCurrentCheckoutMethod')->willReturn(Onepage::METHOD_GUEST);
 
@@ -157,6 +178,7 @@ class AmazonPayTest extends BaseTestCase
             'getConfiguration' => $getConfiguration,
             'getOrderReferenceDetails' => $getOrderReferenceDetails,
             'setOrderReferenceDetails' => $setOrderReferenceDetails,
+            'createCheckoutSessionPayload' => $this->createCheckoutSessionPayload,
             'orderHelper' => $orderHelper,
             'checkoutHelper' => $checkoutHelper,
             'view' => $view
@@ -167,5 +189,38 @@ class AmazonPayTest extends BaseTestCase
     {
         $result = $this->classToTest->getWorkorderId('123', '123');
         $this->assertInstanceOf(AmazonPayResponse::class, $result);
+    }
+
+    public function testGetAmazonPayApbSession()
+    {
+        $result = $this->classToTest->getAmazonPayApbSession(4711);
+        $this->assertInstanceOf(AmazonPayResponse::class, $result);
+        $this->assertTrue($result->getSuccess());
+    }
+
+    public function testGetCheckoutSessionPayload()
+    {
+        $this->createCheckoutSessionPayload->method('sendRequest')->willReturn([
+            'status' => 'OK',
+            'add_paydata[signature]' => 'test',
+            'add_paydata[payload]' => 'test',
+            'workorderid' => 'test',
+        ]);
+
+        $result = $this->classToTest->getCheckoutSessionPayload(4711);
+        $this->assertInstanceOf(AmazonPayResponse::class, $result);
+        $this->assertTrue($result->getSuccess());
+    }
+
+    public function testGetCheckoutSessionPayloadError()
+    {
+        $this->createCheckoutSessionPayload->method('sendRequest')->willReturn([
+            'status' => 'ERROR',
+            'customermessage' => 'ERROR',
+        ]);
+
+        $result = $this->classToTest->getCheckoutSessionPayload(4711);
+        $this->assertInstanceOf(AmazonPayResponse::class, $result);
+        $this->assertFalse($result->getSuccess());
     }
 }

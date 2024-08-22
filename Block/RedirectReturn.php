@@ -29,6 +29,7 @@ namespace Payone\Core\Block;
 use Magento\Framework\View\Element\Template;
 use Magento\Quote\Model\Quote;
 use Magento\Checkout\Model\Session;
+use Payone\Core\Helper\Script;
 
 /**
  * Block class for re-setting the guest checkout information
@@ -43,16 +44,27 @@ class RedirectReturn extends Template
     protected $checkoutSession;
 
     /**
+     * @var Script
+     */
+    protected $scriptHelper;
+
+    /**
      * Constructor
      *
      * @param Template\Context $context
      * @param Session          $checkoutSession
+     * @param Script           $scriptHelper
      * @param array            $data
      */
-    public function __construct(Template\Context $context, Session $checkoutSession, array $data = [])
-    {
+    public function __construct(
+        Template\Context $context,
+        Session $checkoutSession,
+        Script $scriptHelper,
+        array $data = []
+    ) {
         parent::__construct($context, $data);
         $this->checkoutSession = $checkoutSession;
+        $this->scriptHelper = $scriptHelper;
     }
 
     /**
@@ -114,5 +126,13 @@ class RedirectReturn extends Template
     public function isGuest()
     {
         return $this->getQuote()->getCustomerIsGuest();
+    }
+
+    /**
+     * @return Script
+     */
+    public function getScriptHelper()
+    {
+        return $this->scriptHelper;
     }
 }

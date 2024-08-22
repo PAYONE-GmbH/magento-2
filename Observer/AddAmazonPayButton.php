@@ -64,6 +64,22 @@ class AddAmazonPayButton implements ObserverInterface
     }
 
     /**
+     * @return bool
+     */
+    protected function isAmazonV1Active()
+    {
+        return $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_AMAZONPAY);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAmazonV2Active()
+    {
+        return $this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_AMAZONPAYV2);
+    }
+
+    /**
      * Add PayPal shortcut buttons
      *
      * @param  Observer $observer
@@ -71,7 +87,7 @@ class AddAmazonPayButton implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if ($this->paymentHelper->isPaymentMethodActive(PayoneConfig::METHOD_AMAZONPAY) === false) {
+        if ($this->isAmazonV1Active() === false && $this->isAmazonV2Active() === false) {
             return;
         }
 
@@ -83,12 +99,18 @@ class AddAmazonPayButton implements ObserverInterface
             return;
         }
 
+        $sBlock = 'Payone\Core\Block\Amazon\Button';
+        if ($this->isAmazonV2Active()) {
+            $sBlock = 'Payone\Core\Block\Amazon\ButtonV2';
+        }
+
         /** @var Shortcut $shortcut */
         $shortcut = $shortcutButtons->getLayout()->createBlock(
-            'Payone\Core\Block\Amazon\Button',
+            $sBlock,
             '',
             ['data' => ['payoneLayoutName' => $shortcutButtons->getNameInLayout()]]
         );
+        $shortcut->setName($shortcutButtons->getNameInLayout());
 
         $shortcutButtons->addShortcut($shortcut);
     }

@@ -255,7 +255,8 @@ class MethodList
     public function removeAmazonPay($aPaymentMethods)
     {
         foreach ($aPaymentMethods as $key => $aPaymentMethod) {
-            if ($aPaymentMethod->getCode() == PayoneConfig::METHOD_AMAZONPAY) {
+            if ($aPaymentMethod->getCode() == PayoneConfig::METHOD_AMAZONPAY ||
+                ($aPaymentMethod->getCode() == PayoneConfig::METHOD_AMAZONPAYV2 && (bool)$this->customerHelper->getConfigParam('apb_active', PayoneConfig::METHOD_AMAZONPAYV2, 'payone_payment') === false)) {
                 unset($aPaymentMethods[$key]);
             }
         }

@@ -163,4 +163,14 @@ class ButtonTest extends BaseTestCase
         $result = $this->classToTest->getCounter();
         $this->assertEquals(3, $result);
     }
+
+    public function testSetName()
+    {
+        $expected = "testName";
+
+        $this->classToTest->setName($expected);
+        $result = $this->classToTest->getName();
+
+        $this->assertEquals($expected, $result);
+    }
 }

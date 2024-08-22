@@ -63,7 +63,7 @@ class Debit extends KlarnaBase
             return false;
         }
 
-        if ($this->isB2BOrder($quote) === true) {
+        if ($quote !== null && $this->isB2BOrder($quote) === true) {
             return false;
         }
 

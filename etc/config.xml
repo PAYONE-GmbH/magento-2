@@ -219,6 +219,16 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_amazonpay>
+            <payone_amazonpayv2>
+                <active>1</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\AmazonPayV2</model>
+                <order_status>pending</order_status>
+                <title>PAYONE Amazon Pay V2</title>
+                <request_type>preauthorization</request_type>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_amazonpayv2>
             <payone_klarna_base translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
@@ -390,6 +400,7 @@
                 <payone_payolution_installment>{"_payone_status_mapping9":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_installment>
                 <payone_alipay>{"_payone_status_alipay":{"txaction":"appointed","state_status":"processing"}}</payone_alipay>
                 <payone_amazonpay>{"_payone_status_amazon":{"txaction":"appointed","state_status":"processing"}}</payone_amazonpay>
+                <payone_amazonpayv2>{"_payone_status_amazonv2":{"txaction":"appointed","state_status":"processing"}}</payone_amazonpayv2>
                 <payone_klarna_invoice>{"_payone_status_mapping10":{"txaction":"appointed","state_status":"processing"}}</payone_klarna_invoice>
                 <payone_klarna_debit>{"_payone_status_mapping11":{"txaction":"appointed","state_status":"processing"}}</payone_klarna_debit>
                 <payone_klarna_installment>{"_payone_status_mapping12":{"txaction":"appointed","state_status":"processing"}}</payone_klarna_installment>
@@ -526,6 +537,10 @@
             <payone_amazonpay>
                 <use_global>1</use_global>
             </payone_amazonpay>
+            <payone_amazonpayv2>
+                <use_global>1</use_global>
+                <apb_active>1</apb_active>
+            </payone_amazonpayv2>
             <payone_klarna_invoice>
                 <use_global>1</use_global>
             </payone_klarna_invoice>

@@ -39,6 +39,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Quote\Model\Quote\Address;
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Quote\Model\Quote\Payment;
@@ -81,6 +82,11 @@ class PlaceOrderTest extends BaseTestCase
      */
     private $checkoutHelper;
 
+    /**
+     * @var Quote|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $quote;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -120,9 +126,9 @@ class PlaceOrderTest extends BaseTestCase
         $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getMethod')->willReturn('payone_paypal');
+        $payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYPAL);
 
-        $quote = $this->getMockBuilder(Quote::class)
+        $this->quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
             ->setMethods([
                 'getBillingAddress',
@@ -135,13 +141,13 @@ class PlaceOrderTest extends BaseTestCase
                 'save'
             ])
             ->getMock();
-        $quote->method('getBillingAddress')->willReturn($address);
-        $quote->method('getShippingAddress')->willReturn($address);
-        $quote->method('getIsVirtual')->willReturn(false);
-        $quote->method('getId')->willReturn('12345');
-        $quote->method('setIsActive')->willReturn($quote);
-        $quote->method('getSubtotal')->willReturn(100);
-        $quote->method('getPayment')->willReturn($payment);
+        $this->quote->method('getBillingAddress')->willReturn($address);
+        $this->quote->method('getShippingAddress')->willReturn($address);
+        $this->quote->method('getIsVirtual')->willReturn(false);
+        $this->quote->method('getId')->willReturn('12345');
+        $this->quote->method('setIsActive')->willReturn($this->quote);
+        $this->quote->method('getSubtotal')->willReturn(100);
+        $this->quote->method('getPayment')->willReturn($payment);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -161,9 +167,9 @@ class PlaceOrderTest extends BaseTestCase
                 'getPayoneRedirectUrl',
                 'setPayonePayPalExpressRetry',
                 'setPayoneCustomerIsRedirected',
+                'setIsPayoneAmazonPayAuth',
             ])
             ->getMock();
-        $this->checkoutSession->method('getQuote')->willReturn($quote);
         $this->checkoutSession->method('setLastQuoteId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('setLastSuccessQuoteId')->willReturn($this->checkoutSession);
         $this->checkoutSession->method('unsPayoneWorkorderId')->willReturn($this->checkoutSession);
@@ -190,6 +196,7 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecute()
     {
+        $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
         $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
@@ -199,6 +206,7 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecuteValidation()
     {
+        $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->request->method('getBeforeForwardInfo')->willReturn([]);
         $result = $this->classToTest->execute();
         $this->assertNull($result);
@@ -206,6 +214,7 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecuteException()
     {
+        $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
         $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
 
@@ -219,6 +228,7 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecuteSubtotalMismatch()
     {
+        $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
         $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteFalse");
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
@@ -228,9 +238,47 @@ class PlaceOrderTest extends BaseTestCase
 
     public function testExecutePayPal()
     {
+        $this->checkoutSession->method('getQuote')->willReturn($this->quote);
         $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
         $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
         $this->checkoutSession->method('getPayoneRedirectUrl')->willReturn("http://someurl.test");
+        $this->request->method('getBeforeForwardInfo')->willReturn(false);
+        $result = $this->classToTest->execute();
+        $this->assertNull($result);
+    }
+
+    public function testExecuteAmazonPay()
+    {
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getMethod')->willReturn(PayoneConfig::METHOD_AMAZONPAYV2);
+
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->getMock();
+
+        $quote = $this->getMockBuilder(Quote::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'getBillingAddress',
+                'getShippingAddress',
+                'getIsVirtual',
+                'getId',
+                'setIsActive',
+                'getSubtotal',
+                'getPayment',
+                'save'
+            ])
+            ->getMock();
+        $quote->method('getBillingAddress')->willReturn($address);
+        $quote->method('getShippingAddress')->willReturn($address);
+        $quote->method('getIsVirtual')->willReturn(false);
+        $quote->method('getId')->willReturn('12345');
+        $quote->method('setIsActive')->willReturn($quote);
+        $quote->method('getSubtotal')->willReturn(100);
+        $quote->method('getPayment')->willReturn($payment);
+
+        $this->checkoutHelper->method('getQuoteComparisonString')->willReturn("QuoteString");
+        $this->checkoutSession->method('getPayoneQuoteComparisonString')->willReturn("QuoteString");
+        $this->checkoutSession->method('getPayoneRedirectUrl')->willReturn("http://someurl.test");
+        $this->checkoutSession->method('getQuote')->willReturn($quote);
         $this->request->method('getBeforeForwardInfo')->willReturn(false);
         $result = $this->classToTest->execute();
         $this->assertNull($result);

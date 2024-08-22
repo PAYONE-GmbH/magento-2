@@ -47,6 +47,8 @@ class AmazonPayResponseTest extends BaseTestCase
             'success' => true,
             'redirectUrl' => 'http://www.test.com',
             'amazonReviewHtml' => 'test',
+            'payload' => 'testPayload',
+            'signature' => 'testSignature',
         ];
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
@@ -78,6 +80,20 @@ class AmazonPayResponseTest extends BaseTestCase
     {
         $result = $this->classToTest->getAmazonReviewHtml();
         $expected = 'test';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetPayload()
+    {
+        $result = $this->classToTest->getPayload();
+        $expected = 'testPayload';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetSignature()
+    {
+        $result = $this->classToTest->getSignature();
+        $expected = 'testSignature';
         $this->assertEquals($expected, $result);
     }
 }

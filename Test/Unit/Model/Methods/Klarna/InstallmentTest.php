@@ -110,7 +110,7 @@ class InstallmentTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
         $quote->method('getBillingAddress')->willReturn($address);
 
-        $result = $this->classToTest->isAvailable();
+        $result = $this->classToTest->isAvailable($quote);
         $this->assertFalse($result);
     }
 

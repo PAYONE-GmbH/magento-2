@@ -38,6 +38,7 @@ use Payone\Core\Helper\HostedIframe;
 use Payone\Core\Helper\Request;
 use Magento\Framework\Escaper;
 use Payone\Core\Helper\Consumerscore;
+use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -46,6 +47,8 @@ use Magento\Checkout\Model\Session;
 use Magento\Customer\Model\Session as CustomerSession;
 use Payone\Core\Model\ResourceModel\SavedPaymentData;
 use Magento\Customer\Model\Customer as CustomerModel;
+use Payone\Core\Helper\Ratepay;
+use Payone\Core\Model\Methods\Ratepay\Installment;
 
 class ConfigProviderTest extends BaseTestCase
 {
@@ -132,6 +135,12 @@ class ConfigProviderTest extends BaseTestCase
         $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $shopHelper->method('getMagentoVersion')->willReturn("2.4.4");
 
+        $ratepayHelper = $this->getMockBuilder(Ratepay::class)->disableOriginalConstructor()->getMock();
+        $ratepayHelper->method('getRatepayConfig')->willReturn([PayoneConfig::METHOD_RATEPAY_INSTALLMENT => []]);
+        
+        $ratepayInstallment = $this->getMockBuilder(Installment::class)->disableOriginalConstructor()->getMock();
+        $ratepayInstallment->method('getAllowedMonths')->willReturn(['test']);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'dataHelper' => $this->dataHelper,
             'countryHelper' => $countryHelper,
@@ -144,17 +153,19 @@ class ConfigProviderTest extends BaseTestCase
             'checkoutSession' => $this->checkoutSession,
             'savedPaymentData' => $savedPaymentData,
             'customerSession' => $this->customerSession,
-            'shopHelper' => $shopHelper
+            'shopHelper' => $shopHelper,
+            'ratepayHelper' => $ratepayHelper,
         ]);
     }
 
     public function testGetConfig()
     {
-        $method = $this->getMockBuilder(AbstractMethod::class)
+        $method = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getInstructions'])
+            ->setMethods(['getInstructions', 'isAvailable'])
             ->getMock();
         $method->method('getInstructions')->willReturn('Instruction');
+        $method->method('isAvailable')->willReturn(true);
         $this->dataHelper->method('getMethodInstance')->willReturn($method);
         $this->customerSession->method('isLoggedIn')->willReturn(false);
 
