@@ -74,7 +74,9 @@ class Environment extends \Payone\Core\Helper\Base
     public function getRemoteIp()
     {
         $blProxyMode = (bool)$this->getConfigParam('proxy_mode', 'processing', 'payone_misc');
-        return $this->request->getClientIp($blProxyMode);
+        $sClientIp = $this->request->getClientIp($blProxyMode); // may return a comma separated ip list like "<client>, <proxy1>, <proxy2>"
+        $aSplitIp = explode(",", $sClientIp); // split by comma
+        return trim(current($aSplitIp)); // return first array element
     }
 
     /**
