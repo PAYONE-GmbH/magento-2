@@ -120,7 +120,7 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
         if (isset($this->request[$sKey])) {
             $sParam = $this->request[$sKey];
             if (!$this->toolkitHelper->isUTF8($sParam)) {
-                $sParam = utf8_encode($sParam);
+                $sParam = mb_convert_encoding($sParam, 'UTF-8');
             }
             return $sParam;
         }
@@ -141,7 +141,7 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
 
         $sRawStatus = serialize($this->getRequest());
         if (!$this->toolkitHelper->isUTF8($sRawStatus)) {
-            $sRawStatus = utf8_encode($sRawStatus); // needed for serializing the array
+            $sRawStatus = mb_convert_encoding($sRawStatus, 'UTF-8'); // needed for serializing the array
         }
         $sOrderId = $oOrder !== null ? $oOrder->getIncrementId() : '';
         $this->getConnection()->insert(

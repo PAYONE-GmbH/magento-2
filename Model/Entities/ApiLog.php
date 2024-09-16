@@ -83,7 +83,7 @@ class ApiLog extends AbstractModel
     {
         foreach ($aArray as $sKey => $mValue) {
             if (!$this->toolkitHelper->isUTF8($mValue)) {
-                $aArray[$sKey] = utf8_encode($mValue);
+                $aArray[$sKey] = mb_convert_encoding($mValue ?? '', 'UTF-8');
             }
         }
         return $aArray;
@@ -105,7 +105,7 @@ class ApiLog extends AbstractModel
                 $aRequest = unserialize($sRequest);
             } catch(\Exception $exc) {
                 if ($this->toolkitHelper->isUTF8($sRequest)) {
-                    $aRequest = unserialize(utf8_decode($sRequest));
+                    $aRequest = unserialize(mb_convert_encoding($sRequest ?? '', 'ISO-8859-1', 'UTF-8'));
                 }
             }
             if (is_array($aRequest)) {

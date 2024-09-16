@@ -218,11 +218,11 @@ class ToolkitTest extends BaseTestCase
     public function testIsUTF8()
     {
         $input = 'not utf-8 - ä';
-        $result = $this->toolkit->isUTF8(utf8_decode($input));
+        $result = $this->toolkit->isUTF8(mb_convert_encoding($input, 'ISO-8859-1', 'UTF-8'));
         $this->assertFalse($result);
 
         $input = 'utf-8 äöü';
-        $result = $this->toolkit->isUTF8(utf8_encode($input));
+        $result = $this->toolkit->isUTF8(mb_convert_encoding($input, 'UTF-8'));
         $this->assertTrue($result);
     }
 
