@@ -75,7 +75,7 @@ class ApiLogTest extends BaseTestCase
     public function testGetRawStatusArrayException()
     {
         $aStatus = ['test1' => html_entity_decode("&nbsp;")];
-        $this->classToTest->setData('raw_request', utf8_encode(serialize($aStatus)));
+        $this->classToTest->setData('raw_request', mb_convert_encoding(serialize($aStatus), 'UTF-8'));
         $this->toolkitHelper->method('isUTF8')->willReturn(true);
 
         $result = $this->classToTest->getRawRequestArray();
