@@ -215,6 +215,10 @@ class Ratepay extends \Payone\Core\Helper\Base
         $aShopIds = $this->getRatepayShopConfigByPaymentMethod($sMethodCode);
         foreach ($aShopIds as $aConfig) {
             $aResult = $this->profile->sendRequest($aConfig['shop_id'], $aConfig['currency'], $sMode);
+            if (!isset($aResult['status']) || $aResult['status'] != 'OK') {
+                throw new \Exception("An error occured".(!empty($aResult['errormessage']) ? ": ".$aResult['errormessage'] : ""));
+            }
+
             $this->profileResource->updateProfileConfig($aConfig['shop_id'], $aResult);
         }
     }
