@@ -51,16 +51,7 @@ class IdealTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $info = $this->getMockBuilder(InfoInterface::class)->disableOriginalConstructor()->getMock();
-        $info->method('getAdditionalInformation')->willReturn('info');
-
-        $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
-        $toolkitHelper->method('getAdditionalDataEntry')->willReturn('info');
-
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
-            'toolkitHelper' => $toolkitHelper
-        ]);
-        $this->classToTest->setInfoInstance($info);
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
     }
 
     public function testGetSubTypeSpecificParameters()
@@ -68,15 +59,7 @@ class IdealTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
         $result = $this->classToTest->getSubTypeSpecificParameters($order);
-        $expected = ['bankcountry' => 'NL', 'bankgrouptype' => 'info'];
+        $expected = ['bankcountry' => 'NL'];
         $this->assertEquals($expected, $result);
-    }
-
-    public function testAssignData()
-    {
-        $data = $this->getMockBuilder(DataObject::class)->disableOriginalConstructor()->getMock();
-
-        $result = $this->classToTest->assignData($data);
-        $this->assertInstanceOf(ClassToTest::class, $result);
     }
 }

@@ -445,4 +445,13 @@ abstract class PayoneMethod extends BaseMethod
     {
         return $this->iNarrativeTextMax;
     }
+
+    /**
+     * @return array
+     */
+    public function getFrontendConfig()
+    {
+        // Hook to be overloaded by child classes
+        return [];
+    }
 }

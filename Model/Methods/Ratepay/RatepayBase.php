@@ -257,7 +257,7 @@ class RatepayBase extends PayoneMethod
             $quote = $this->checkoutSession->getQuote();
         }
 
-        if ($this->ratepayHelper->getShopIdByQuote($this->getCode(), $quote) === false) {
+        if ($quote !== null && $this->ratepayHelper->getShopIdByQuote($this->getCode(), $quote) === false) {
             return false;
         }
 

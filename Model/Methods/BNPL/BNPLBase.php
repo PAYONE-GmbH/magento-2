@@ -169,7 +169,7 @@ class BNPLBase extends PayoneMethod
         $blParentReturn = parent::isAvailable($quote);
 
         // BNPL payment types are only available for payment in Euro
-        if ($this->apiHelper->getCurrencyFromQuote($quote) != "EUR") {
+        if ($quote !== null && $this->apiHelper->getCurrencyFromQuote($quote) != "EUR") {
             return false;
         }
         return $blParentReturn;

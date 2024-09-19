@@ -149,6 +149,9 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
         if ($oQuote->getPayment()->getMethod() == PayoneConfig::METHOD_PAYPAL) {
             $this->checkoutSession->setIsPayonePayPalExpress(true);
         }
+        if ($oQuote->getPayment()->getMethod() == PayoneConfig::METHOD_AMAZONPAYV2) {
+            $this->checkoutSession->setIsPayoneAmazonPayAuth(true);
+        }
         if ($this->getRequest()->getParam('fingerprint')) {
             $this->checkoutSession->setPayoneDeviceFingerprint($this->getRequest()->getParam('fingerprint'));
         }

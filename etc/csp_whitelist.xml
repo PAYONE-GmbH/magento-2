@@ -8,6 +8,8 @@
                 <value id="payone_paypal_objects" type="host">www.paypalobjects.com</value>
                 <value id="payone_klarna" type="host">x.klarnacdn.net</value>
                 <value id="payone_amazon_cloud" type="host">*.cloudfront.net</value>
+                <value id="payone_amazon_media" type="host">m.media-amazon.com</value>
+                <value id="payone_amazon_img" type="host">static-eu.payments-amazon.com</value>
             </values>
         </policy>
         <policy id="script-src">
@@ -40,6 +42,7 @@
         <policy id="connect-src">
             <values>
                 <value id="payone_amazon_payments" type="host">payments.amazon.de</value>
+                <value id="payone_amazonv2_payments" type="host">payments-eu.amazon.com</value>
                 <value id="payone_ratepay_connect" type="host">d.ratepay.com</value>
                 <value id="payone_jsctool_connect" type="host">jsctool.com</value>
                 <value id="payone_klarna_connect" type="host">eu.playground.klarnaevt.com</value>

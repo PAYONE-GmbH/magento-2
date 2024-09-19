@@ -26,9 +26,11 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods\BNPL;
 
+use Payone\Core\Helper\Api;
 use Payone\Core\Model\Methods\BNPL\Debit as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Sales\Model\Order;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\Info;
@@ -36,6 +38,8 @@ use Magento\Framework\DataObject;
 use Magento\Store\Model\Store;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Quote\Api\Data\CartInterface;
 
 class DebitTest extends BaseTestCase
 {
@@ -49,14 +53,27 @@ class DebitTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
+        $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
+
         $info = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getAdditionalInformation', 'getOrder'])->getMock();
         $info->method('getAdditionalInformation')->willReturn('test');
 
-        $this->classToTest = $this->objectManager->getObject(ClassToTest::class);
+        $apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();
+        $apiHelper->method('getCurrencyFromOrder')->willReturn('GBP');
+
+        $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
+            'scopeConfig' => $this->scopeConfig,
+            'apiHelper' => $apiHelper,
+        ]);
         $this->classToTest->setInfoInstance($info);
     }
 
@@ -71,5 +88,23 @@ class DebitTest extends BaseTestCase
 
         $result = $this->classToTest->getSubTypeSpecificParameters($order);
         $this->assertCount(2, $result);
+    }
+
+    public function testIsAvailable()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(1);
+
+        $result = $this->classToTest->isAvailable();
+        $this->assertTrue($result);
+    }
+
+    public function testIsAvailableNotEuro()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(0);
+
+        $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->isAvailable($quote);
+        $this->assertFalse($result);
     }
 }

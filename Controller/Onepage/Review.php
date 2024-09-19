@@ -30,6 +30,7 @@ use Magento\Framework\View\Result\Page;
 use Magento\Quote\Model\Quote;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\Result\Redirect as CoreRedirect;
+use Payone\Core\Model\Methods\AmazonPayV2;
 use Payone\Core\Model\PayoneConfig;
 
 /**
@@ -57,6 +58,11 @@ class Review extends \Magento\Framework\App\Action\Action
     protected $quoteRepository;
 
     /**
+     * @var \Payone\Core\Model\Api\Request\Genericpayment\UpdateCheckoutSession
+     */
+    protected $updateCheckoutSession;
+
+    /**
      * List of all PAYONE payment methods available for this review step
      *
      * @var array
@@ -64,25 +70,30 @@ class Review extends \Magento\Framework\App\Action\Action
     protected $availableReviewMethods = [
         PayoneConfig::METHOD_PAYPAL,
         PayoneConfig::METHOD_PAYDIREKT,
+        PayoneConfig::METHOD_AMAZONPAYV2,
     ];
 
     /**
      * Constructor
      *
-     * @param \Magento\Framework\App\Action\Context        $context
-     * @param \Magento\Checkout\Model\Session              $checkoutSession
-     * @param \Magento\Framework\View\Result\PageFactory   $pageFactory
+     * @param \Magento\Framework\App\Action\Context                               $context
+     * @param \Magento\Checkout\Model\Session                                     $checkoutSession
+     * @param \Magento\Framework\View\Result\PageFactory                          $pageFactory
+     * @param \Magento\Quote\Api\CartRepositoryInterface                          $quoteRepository
+     * @param \Payone\Core\Model\Api\Request\Genericpayment\UpdateCheckoutSession $updateCheckoutSession
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Framework\View\Result\PageFactory $pageFactory,
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
+        \Payone\Core\Model\Api\Request\Genericpayment\UpdateCheckoutSession $updateCheckoutSession
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
         $this->pageFactory = $pageFactory;
         $this->quoteRepository = $quoteRepository;
+        $this->updateCheckoutSession = $updateCheckoutSession;
     }
 
     /**
@@ -116,16 +127,15 @@ class Review extends \Magento\Framework\App\Action\Action
      */
     protected function canReviewBeShown()
     {
-        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
-        if ($this->checkoutSession->getQuote()->getPayment()->getMethod() == PayoneConfig::METHOD_PAYPAL && empty($sWorkorderId)) {
+        if (!in_array($this->checkoutSession->getQuote()->getPayment()->getMethod(), $this->availableReviewMethods)) {
             return false;
         }
 
-        if (in_array($this->checkoutSession->getQuote()->getPayment()->getMethod(), $this->availableReviewMethods)) {
-            return true;
+        $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+        if (empty($sWorkorderId)) {
+            return false;
         }
-
-        return false;
+        return true;
     }
 
     /**
@@ -148,6 +158,12 @@ class Review extends \Magento\Framework\App\Action\Action
                 }
                 $oQuote->collectTotals();
                 $this->quoteRepository->save($oQuote);
+
+                $oPayment = $oQuote->getPayment()->getMethodInstance();
+                $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+                if ($oPayment instanceof AmazonPayV2) {
+                    $this->updateCheckoutSession->sendRequest($oPayment, $oQuote, $sWorkorderId);
+                }
             }
         }
     }

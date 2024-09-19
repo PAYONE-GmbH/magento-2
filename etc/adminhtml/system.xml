@@ -211,6 +211,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
+                <field id="payone_amazonpayv2" translate="label" sortOrder="270" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Amazon Pay V2</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
 
                 <field id="payone_klarna_invoice" translate="label" sortOrder="280" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Klarna "Pay Later"</label>
@@ -320,6 +325,7 @@
             <include path="Payone_Core::system/payone_payolution_installment.xml"/>
             <include path="Payone_Core::system/payone_alipay.xml"/>
             <include path="Payone_Core::system/payone_amazonpay.xml"/>
+            <include path="Payone_Core::system/payone_amazonpayv2.xml"/>
             <include path="Payone_Core::system/payone_klarna_base.xml"/>
             <include path="Payone_Core::system/payone_klarna_invoice.xml"/>
             <include path="Payone_Core::system/payone_klarna_debit.xml"/>

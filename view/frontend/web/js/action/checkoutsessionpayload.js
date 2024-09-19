@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<!--
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +12,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
@@ -23,12 +21,35 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
-    <module name="Payone_Core" setup_version="3.12.0">
-        <sequence>
-            <module name="Magento_Quote" />
-            <module name="Magento_Sales" />
-        </sequence>
-    </module>
-</config>
+/*jshint browser:true jquery:true*/
+/*global alert*/
+define([
+    'jquery',
+    'Magento_Checkout/js/model/url-builder',
+    'mage/storage',
+    'Magento_Checkout/js/model/full-screen-loader',
+    'Magento_Customer/js/model/customer'
+], function ($, urlBuilder, storage, fullScreenLoader, customer) {
+    'use strict';
+    return function (quoteId) {
+        var serviceUrl;
+
+        var request = {
+            cartId: quoteId
+        };
+        if (!customer.isLoggedIn()) {
+            serviceUrl = urlBuilder.createUrl('/guest-carts/:cartId/payone-getCheckoutSessionPayload', {
+                cartId: quoteId
+            });
+        } else {
+            serviceUrl = urlBuilder.createUrl('/carts/mine/payone-getCheckoutSessionPayload', {});
+        }
+
+        fullScreenLoader.startLoader();
+
+        return storage.post(
+            serviceUrl,
+            JSON.stringify(request)
+        );
+    };
+});
