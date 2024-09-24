@@ -140,9 +140,20 @@ class RatepayTest extends BaseTestCase
     {
         $aShopConfig = [['shop_id' => '12345', 'currency' => 'EUR']];
         $this->scopeConfig->method('getValue')->willReturn(json_encode($aShopConfig));
+        $this->profile->method('sendRequest')->willReturn(['status' => 'OK']);
 
         $result = $this->classToTest->refreshProfiles('payone_ratepay_invoice');
         $this->assertNull($result);
+    }
+
+    public function testRefreshProfilesException()
+    {
+        $aShopConfig = [['shop_id' => '12345', 'currency' => 'EUR']];
+        $this->scopeConfig->method('getValue')->willReturn(json_encode($aShopConfig));
+        $this->profile->method('sendRequest')->willReturn(['status' => 'ERROR']);
+
+        $this->expectException(\Exception::class);
+        $this->classToTest->refreshProfiles('payone_ratepay_invoice');
     }
 
     public function testGetRatepayDeviceFingerprintToken()

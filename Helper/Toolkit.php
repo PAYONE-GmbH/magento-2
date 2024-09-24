@@ -264,12 +264,14 @@ class Toolkit extends \Payone\Core\Helper\Base
      * Returns a hashed string and defines a default through the sAlgorithm parameter
      *
      * @param  string $sString
+     * @param  string $sAlgorithm
+     * @param  string $sKey
      * @return string
      */
     public function hashString($sString, $sAlgorithm = 'sha384', $sKey = false)
     {
         if ($sAlgorithm == "sha384" && $sKey !== false) {
-            return hash_hmac($sAlgorithm, $sString, $sKey);
+            return hash_hmac($sAlgorithm, $sString, $sKey ?? '');
         }
         return hash($sAlgorithm, $sString);
     }
