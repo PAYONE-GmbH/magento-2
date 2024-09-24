@@ -120,6 +120,28 @@ class SafeInvoice extends PayoneMethod
     }
 
     /**
+     * @param Order $oOrder
+     * @return string|false
+     */
+    protected function getBirthday(Order $oOrder)
+    {
+        $sDob = false;
+        if (!empty($oOrder->getCustomerDob())) {
+            $sDob = $oOrder->getCustomerDob();
+        } elseif (!empty($this->getInfoInstance()->getAdditionalInformation('dob'))) {
+            $sDob = $this->getInfoInstance()->getAdditionalInformation('dob');
+        }
+
+        if (!empty($sDob)) {
+            $iDobTime = strtotime($sDob);
+            if ($iDobTime !== false) {
+                $sDob = date('Ymd', $iDobTime);
+            }
+        }
+        return $sDob;
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder
@@ -129,7 +151,7 @@ class SafeInvoice extends PayoneMethod
     {
         $aParams = ['clearingsubtype' => 'POV'];
 
-        $sDob = $this->getInfoInstance()->getAdditionalInformation('dob');
+        $sDob = $this->getBirthday($oOrder);
         if ($sDob) {
             $aParams['birthday'] = $sDob;
         }
@@ -157,11 +179,7 @@ class SafeInvoice extends PayoneMethod
         $sBirthmonth = $this->toolkitHelper->getAdditionalDataEntry($data, 'birthmonth');
         $sBirthyear = $this->toolkitHelper->getAdditionalDataEntry($data, 'birthyear');
         if ($sBirthday && $sBirthmonth && $sBirthyear) {
-            $sDob = $sBirthyear.'-'.$sBirthmonth.'-'.$sBirthday;
-            $iDobTime = strtotime($sDob);
-            if ($iDobTime !== false) {
-                $sFormattedDob = date('Ymd', $iDobTime);
-            }
+            $sFormattedDob = $sBirthyear.'-'.$sBirthmonth.'-'.$sBirthday;
         }
         return $sFormattedDob;
     }
@@ -181,7 +199,6 @@ class SafeInvoice extends PayoneMethod
             $oInfoInstance = $this->getInfoInstance();
             $oInfoInstance->setAdditionalInformation('dob', $sFormattedDob);
         }
-
         return $this;
     }
 
