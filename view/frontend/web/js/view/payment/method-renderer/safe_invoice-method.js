@@ -25,9 +25,10 @@ define(
     [
         'Payone_Core/js/view/payment/method-renderer/base',
         'mage/translate',
-        'Magento_Checkout/js/model/quote'
+        'Magento_Checkout/js/model/quote',
+        'Magento_Customer/js/model/customer'
     ],
-    function (Component, $t, quote) {
+    function (Component, $t, quote, customer) {
         'use strict';
         return Component.extend({
             defaults: {
@@ -56,15 +57,12 @@ define(
                 return false;
             },
             requestBirthday: function () {
-                if (!window.checkoutConfig.payment.payone.customerBirthday && !this.isB2bMode()) {
+                if ((customer.customerData.dob == undefined || customer.customerData.dob === null) && !this.isB2bMode()) {
                     return true;
                 }
                 return false;
             },
             getBirthDate: function () {
-                if (window.checkoutConfig.payment.payone.customerBirthday) {
-                    return window.checkoutConfig.payment.payone.customerBirthday;
-                }
                 return this.birthyear() + "-" + this.birthmonth() + "-" + this.birthday();
             },
             isCustomerTooYoung: function () {
@@ -91,28 +89,16 @@ define(
                 }
                 return false;
             },
-            isDateInvalid: function () {
-                if (!this.birthyear() || isNaN(this.birthyear()) || this.birthyear().length != 4) {
-                    return true;
-                }
-                if (!this.birthmonth() || isNaN(this.birthmonth()) || parseInt(this.birthmonth()) < 1 || parseInt(this.birthmonth()) > 12) {
-                    return true;
-                }
-                if (!this.birthday() || isNaN(this.birthday()) || parseInt(this.birthday()) < 1 || parseInt(this.birthday()) > 31) {
-                    return true;
-                }
-                return false;
-            },
             validate: function () {
-                if (!this.isB2bMode() && (this.isDateInvalid() || this.isDateInFuture())) {
+                if (this.requestBirthday() === true && (this.isDateValid(this.birthyear(), this.birthmonth(), this.birthday()) === false || this.isDateInFuture())) {
                     this.messageContainer.addErrorMessage({'message': $t('Please enter a valid birthdate.')});
                     return false;
                 }
-                if (!this.isB2bMode() && this.isCustomerTooYoung()) {
+                if (this.requestBirthday() === true && this.isCustomerTooYoung()) {
                     this.messageContainer.addErrorMessage({'message': $t('You have to be at least 18 years old to use this payment type!')});
                     return false;
                 }
-                if (!this.isB2bMode() && this.isCustomerTooOld()) {
+                if (this.requestBirthday() === true && this.isCustomerTooOld()) {
                     this.messageContainer.addErrorMessage({'message': $t('An error occured. Please check the supplied data.')});
                     return false;
                 }
@@ -123,9 +109,11 @@ define(
                 if (parentReturn.additional_data === null) {
                     parentReturn.additional_data = {};
                 }
-                parentReturn.additional_data.birthday = this.birthday();
-                parentReturn.additional_data.birthmonth = this.birthmonth();
-                parentReturn.additional_data.birthyear = this.birthyear();
+                if (this.requestBirthday() === true) {
+                    parentReturn.additional_data.birthday = this.birthday();
+                    parentReturn.additional_data.birthmonth = this.birthmonth();
+                    parentReturn.additional_data.birthyear = this.birthyear();
+                }
                 return parentReturn;
             },
             /** Returns payment method instructions */
