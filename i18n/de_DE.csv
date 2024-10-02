@@ -1185,6 +1185,10 @@
 "I want to transfer the installments myself and not pay by direct debit","Ich möchte die Ratenzahlung selbst vornehmen und nicht per Lastschrift begleichen"
 "I want to settle the installments by direct debit","Ich möchte die Ratenzahlung per Lastschrift begleichen"
 
+"This order has been canceled by a safety mechanism.","Diese Bestellung wurde von einen Sicherheitsmechanismus storniert."
+"It has still been payed after cancellation. So a new substitute order has been created here: ","Sie wurde aber dennoch nach der Stornierung bezahlt. Daher wurde eine neue Ersatz-Bestellung angelegt hier: "
+"This is a substitute order for: ","Dies ist eine Ersatz-Bestellung für: "
+
 "PAYONE Credit Card", "PAYONE Kreditkarte"
 "Safe installment is not available for your current basket. Please choose another payment method.","Gesicherter Ratenkauf wird für Ihren aktuellen Warenkorb nicht unterstützt. Bitte wählen Sie eine andere Zahlart."
 "Payment with differing billing- and shipping-address is not supported for this payment type","Die Zahlung bei abweichender Rechnungs- und Lieferadressen wird für diese Zahlart nicht unterstützt"
