@@ -26,6 +26,9 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
+        <referenceContainer name="content">
+            <block class="Payone\Core\Block\Adminhtml\Order\View\SubstituteWarning" name="payone_sales_substitute_warning" before="sales_order_edit" template="order_substitute_warning.phtml" />
+        </referenceContainer>
         <referenceBlock name="sales_order_tabs">
             <block class="Payone\Core\Block\Adminhtml\Order\View\Tab\ApiLog" name="payone_sales_order_apilog.grid.container"/>
             <action method="addTab">
