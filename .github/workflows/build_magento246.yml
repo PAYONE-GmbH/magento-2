@@ -1,4 +1,4 @@
-name: Build and Test with PHP 8.1 and 8.2 on Magento 2.6-p8
+name: Build and Test with PHP 8.1 and 8.2 on Magento 2.4.6-p8
 
 on: [push, pull_request, workflow_dispatch]
 
