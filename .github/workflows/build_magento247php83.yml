@@ -1,4 +1,4 @@
-name: Build and Test with PHP 8.2 and Magento 2.6
+name: Build and Test with PHP 8.3 and Magento 2.7-p2
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -22,13 +22,13 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: magento
         ports:
-          - 3306/tcp
+          - 4444:3306/tcp
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@v3
       - name: Install PHP
-        uses: shivammathur/setup-php@master
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, gd, bcmath, ctype, curl, dom, hash, iconv, intl, openssl, simplexml, soap, xsl, zip
@@ -48,6 +48,7 @@ jobs:
 
       - name: Setup Magento 2 and run tests
         run: |
+          mysql --user=root --password=root --host=127.0.0.1 --port=4444 -e 'CREATE DATABASE IF NOT EXISTS magento;'
           git clone --depth=1 -b ${{ matrix.magento-versions }} https://github.com/magento/magento2 /tmp/build
           cd /tmp/build
           composer update
