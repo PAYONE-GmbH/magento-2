@@ -1,4 +1,4 @@
-name: Build and Test with PHP 8.3 and Magento 2.7-p2
+name: Build and Test with PHP 8.2 and 8.3 on Magento 2.7-p3
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -11,8 +11,8 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['8.3']
-        magento-versions: ['2.4.7-p2']
+        php-versions: ['8.2','8.3']
+        magento-versions: ['2.4.7-p3']
 
     services:
       mysql:
