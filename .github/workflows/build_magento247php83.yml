@@ -32,7 +32,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, gd, bcmath, ctype, curl, dom, hash, iconv, intl, openssl, simplexml, soap, xsl, zip
-          tools: composer:v2.1
+          tools: composer:v2.8
       - name: Validate composer.json and composer.lock
         run: composer validate
 
@@ -48,7 +48,6 @@ jobs:
 
       - name: Setup Magento 2 and run tests
         run: |
-          mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
           git clone --depth=1 -b ${{ matrix.magento-versions }} https://github.com/magento/magento2 /tmp/build
           cd /tmp/build
           composer update
