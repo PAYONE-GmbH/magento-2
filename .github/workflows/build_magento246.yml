@@ -63,5 +63,6 @@ jobs:
           php bin/magento setup:upgrade
           php bin/magento setup:di:compile
           php bin/magento cache:clean
+          sed -i 's+>allure/allure.config.php<+>dev/tests/unit/allure/allure.config.php<+g' dev/tests/unit/phpunit.xml.dist
           ./vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist vendor/payone-gmbh/magento-2/Test/Unit
 
