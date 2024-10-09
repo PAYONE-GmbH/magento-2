@@ -1,4 +1,4 @@
-name: Build and Test with PHP 8.2 and Magento 2.6
+name: Magento 2.4.4-p11 with PHP 8.1
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -11,25 +11,28 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['8.2']
-        magento-versions: ['2.4.6']
+        php-versions: ['8.1']
+        magento-versions: ['2.4.4-p11']
 
     services:
       mysql:
-        image: mysql:8.0.20
+        image: mysql:8.0
         env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
           MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: magento
         ports:
-          - 3306:3306
+          - 4444:3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@v3
       - name: Install PHP
-        uses: shivammathur/setup-php@master
+        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, gd, bcmath, ctype, curl, dom, hash, iconv, intl, openssl, simplexml, soap, xsl, zip
-          tools: composer:v2.1
+          tools: composer:v2.8
       - name: Validate composer.json and composer.lock
         run: composer validate
 
@@ -40,26 +43,30 @@ jobs:
           sudo sysctl -w fs.file-max=262144
           sudo sysctl -w vm.max_map_count=262144
 
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 7.6.0
+
       - name: PHP Syntax Checker
         run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
 
       - name: Setup Magento 2 and run tests
         run: |
-          mysql -u root --password=root -h 127.0.0.1 -e 'CREATE DATABASE IF NOT EXISTS magento;'
+          mysql --user=root --password=root --host=127.0.0.1 --port=4444 -e 'CREATE DATABASE IF NOT EXISTS magento;'
           git clone --depth=1 -b ${{ matrix.magento-versions }} https://github.com/magento/magento2 /tmp/build
           cd /tmp/build
           composer update
           php bin/magento setup:install --base-url=http://magebuild.integrations.p1-test.de/build/ \
-          --db-host=127.0.0.1 --db-name=magento --db-user=root --db-password=root --admin-firstname=Dieter \
+          --db-host=127.0.0.1:4444 --db-name=magento --db-user=root --db-password=root --admin-firstname=Dieter \
           --admin-lastname=Demo --admin-email=dieterdemo@payone.com --admin-user=DieterDemo \
           --admin-password=72q980hdfq2378ga9w87dg6 --language=de_DE --currency=EUR --timezone=Europe/Berlin \
-          --disable-modules=Magento_Elasticsearch7,Magento_Elasticsearch,Magento_OpenSearch
+          --search-engine=elasticsearch7 --elasticsearch-host=localhost \
+          --elasticsearch-port=9200
           composer require --ignore-platform-reqs payone-gmbh/magento-2 dev-master
           rm -rf /tmp/build/vendor/payone-gmbh/magento-2/*
           cp -R $GITHUB_WORKSPACE/* /tmp/build/vendor/payone-gmbh/magento-2
           php bin/magento setup:upgrade
           php bin/magento setup:di:compile
           php bin/magento cache:clean
-          sed -i 's+>allure/allure.config.php<+>dev/tests/unit/allure/allure.config.php<+g' dev/tests/unit/phpunit.xml.dist
           ./vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist vendor/payone-gmbh/magento-2/Test/Unit
-
