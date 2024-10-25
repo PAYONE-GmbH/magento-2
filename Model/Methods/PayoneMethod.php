@@ -48,6 +48,16 @@ abstract class PayoneMethod extends BaseMethod
     }
 
     /**
+     * Returns wallettype
+     *
+     * @return string
+     */
+    public function getWallettype()
+    {
+        return $this->sWallettype;
+    }
+
+    /**
      * Returns authorization-mode
      * preauthorization or authorization
      *

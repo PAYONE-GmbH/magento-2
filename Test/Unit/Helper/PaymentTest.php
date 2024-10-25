@@ -166,8 +166,23 @@ class PaymentTest extends BaseTestCase
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_PAYPAL.'/express_active', ScopeInterface::SCOPE_STORES, null, 1]]);
+            ->willReturnMap([
+                ['payone_payment/'.PayoneConfig::METHOD_PAYPAL.'/express_active', ScopeInterface::SCOPE_STORES, null, 1],
+                ['payment/'.PayoneConfig::METHOD_PAYPAL.'/active', ScopeInterface::SCOPE_STORES, null, 1],
+            ]);
         $result = $this->payment->isPayPalExpressActive();
+        $this->assertTrue($result);
+    }
+
+    public function testIsPayPalExpressV2Active()
+    {
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([
+                ['payone_payment/'.PayoneConfig::METHOD_PAYPALV2.'/express_active', ScopeInterface::SCOPE_STORES, null, 1],
+                ['payment/'.PayoneConfig::METHOD_PAYPALV2.'/active', ScopeInterface::SCOPE_STORES, null, 1],
+            ]);
+        $result = $this->payment->isPayPalExpressV2Active();
         $this->assertTrue($result);
     }
 
@@ -199,7 +214,7 @@ class PaymentTest extends BaseTestCase
     {
         $this->scopeConfig->expects($this->any())
             ->method('getValue')
-            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORES, null, $this->toolkitHelper->serialize([])]]);
+            ->willReturnMap([['payone_payment/'.PayoneConfig::METHOD_KLARNA.'/klarna_config', ScopeInterface::SCOPE_STORES, null, null]]);
 
         $expected = [];
         $result = $this->payment->getKlarnaStoreIds();
@@ -251,5 +266,40 @@ class PaymentTest extends BaseTestCase
 
         $result = $this->payment->getAvailableApplePayTypes();
         $this->assertCount(0, $result);
+    }
+
+    public function testGetCustomConfigParamGlobal()
+    {
+        $expected = "test";
+
+        $method = PayoneConfig::METHOD_PAYPAL;
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([
+                ['payone_payment/'.$method.'/use_global', ScopeInterface::SCOPE_STORES, null, 1],
+                ['payone_general/global/mode', ScopeInterface::SCOPE_STORES, null, $expected],
+            ]);
+
+        $result = $this->payment->getCustomConfigParam("mode", $method);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetCustomConfigParam()
+    {
+        $expected = "test";
+
+        $method = PayoneConfig::METHOD_PAYPAL;
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap([
+                ['payone_payment/'.$method.'/use_global', ScopeInterface::SCOPE_STORES, null, 0],
+                ['payone_payment/'.$method.'/mode', ScopeInterface::SCOPE_STORES, null, $expected],
+                ['payone_general/global/mode', ScopeInterface::SCOPE_STORES, null, "live"],
+            ]);
+
+        $result = $this->payment->getCustomConfigParam("mode", $method);
+
+        $this->assertEquals($expected, $result);
     }
 }

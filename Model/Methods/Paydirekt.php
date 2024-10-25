@@ -49,6 +49,13 @@ class Paydirekt extends PayoneMethod
     protected $sClearingtype = 'wlt';
 
     /**
+     * Wallettype for PAYONE requests
+     *
+     * @var string|bool
+     */
+    protected $sWallettype = 'PDT';
+
+    /**
      * Determines if the redirect-parameters have to be added
      * to the authorization-request
      *
@@ -71,7 +78,7 @@ class Paydirekt extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        $aParams = ['wallettype' => 'PDT'];
+        $aParams = ['wallettype' => $this->getWallettype()];
 
         $blSecuredOrder = (bool)$this->getCustomConfigParam('order_secured');
         if ($blSecuredOrder === true && $this->getAuthorizationMode() == PayoneConfig::REQUEST_TYPE_PREAUTHORIZATION) { // params only available with preauth

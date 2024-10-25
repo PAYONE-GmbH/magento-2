@@ -61,23 +61,25 @@ class AddPaypalExpressButtons implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        if ($this->paymentHelper->isPayPalExpressActive() === false) {
+        if ($this->paymentHelper->isPayPalExpressActive() === false && $this->paymentHelper->isPayPalExpressV2Active() === false) {
             return;
         }
 
         /** @var \Magento\Catalog\Block\ShortcutButtons $shortcutButtons */
         $shortcutButtons = $observer->getEvent()->getContainer();
 
-        if (in_array($shortcutButtons->getNameInLayout(), ['addtocart.shortcut.buttons', 'addtocart.shortcut.buttons.additional'])) {
+        if (in_array($shortcutButtons->getNameInLayout(), ['addtocart.shortcut.buttons', 'addtocart.shortcut.buttons.additional', 'map.shortcut.buttons'])) {
             return;
         }
 
+        $sBlock = 'Payone\Core\Block\Paypal\ExpressButton';
+        if ($this->paymentHelper->isPayPalExpressV2Active() === true) {
+            $sBlock = 'Payone\Core\Block\Paypal\ExpressButtonV2';
+        }
+
         /** @var Shortcut $shortcut */
-        $shortcut = $shortcutButtons->getLayout()->createBlock(
-            'Payone\Core\Block\Paypal\ExpressButton',
-            '',
-            []
-        );
+        $shortcut = $shortcutButtons->getLayout()->createBlock($sBlock, '', []);
+        $shortcut->setName($shortcutButtons->getNameInLayout());
 
         $shortcutButtons->addShortcut($shortcut);
     }

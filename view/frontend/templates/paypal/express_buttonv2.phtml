@@ -1,0 +1,110 @@
+<?php
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2024 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+
+/** @var \Payone\Core\Block\Paypal\ExpressButtonV2 $block */
+?>
+<div id="<?php echo $block->getButtonIdent(); ?>"></div>
+
+<script>
+    // fill javascript variable for url generation
+    if (window.checkoutConfig === undefined) {
+        window.checkoutConfig = {};
+    }
+    if (window.checkoutConfig.storeCode === undefined) {
+        window.checkoutConfig.storeCode = '<?php echo $block->getStoreCode(); ?>';
+    }
+
+    require(['Payone_Core/js/action/startpaypalexpress'], function(startpaypalexpress) {
+        var payonePayPalAttempts = 0;
+
+        function loadPayPalScript() {
+            if (window.paypalJsLoaded === undefined || window.paypalJsLoaded !== true) {
+                require(['jquery'], function($) {
+                    $("body").append("<script type=\"text/javascript\" src=\"<?php echo $block->getJavascriptUrl(); ?>\"><\/script>");
+                });
+                window.paypalJsLoaded = true;
+            }
+        }
+
+        function triggerPayPalButtonRender(buttonId) {
+            if (payonePayPalAttempts > 10) {
+                return; // abort
+            }
+
+            if (typeof paypal != 'object') {
+                loadPayPalScript();
+                setTimeout(function() {
+                    window.requestAnimationFrame(function() {
+                        triggerPayPalButtonRender(buttonId)
+                    });
+                }, 250);
+            } else {
+                initPayPalButton(buttonId);
+            }
+            payonePayPalAttempts++;
+        }
+
+        function initPayPalButton(buttonId) {
+            if (document.getElementById(buttonId).childNodes.length > 0) { // button already created, no need to init another button
+                return;
+            }
+
+            paypal.Buttons({
+                style: {
+                    layout: 'vertical',
+                    label:  'paypal',
+                    color:  '<?php echo $block->getButtonColor(); ?>',
+                    shape:  '<?php echo $block->getButtonShape(); ?>'
+                },
+                createOrder: function(data, actions) {
+                    return startpaypalexpress('<?php echo $block->getQuoteId(); ?>').then(function (res) {
+                        if (res.success === true) {
+                            return res.order_id;
+                        }
+                        return false;
+                    }).fail(function (res) {
+                        alert("An error occured.");
+                        return false;
+                    });
+                },
+                onApprove: function(data, actions) {
+                    // redirect to your serverside success handling script/page
+                    window.location = '<?php echo $block->getMethodInstance()->getReturnedUrl(); ?>';
+                },
+                onCancel: function(data, actions) {
+                    console.log("Customer cancelled the PayPal Checkout Flow");
+                    // add your actions on cancellation
+                },
+                onError: function() {
+                    alert("X");
+                    console.log("An Error occurred as part of the PayPal JS SDK");
+                    // add your actions if error occurs
+                }
+            }).render('#' + buttonId);
+        }
+
+        triggerPayPalButtonRender('<?php echo $block->getButtonIdent(); ?>');
+    });
+</script>

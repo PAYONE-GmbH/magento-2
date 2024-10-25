@@ -31,7 +31,7 @@ use Magento\Framework\View\Element\Template;
 /**
  * Block class for the PayPal Express button
  */
-class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutInterface
+class ExpressButton extends Base
 {
     /**
      * Shortcut alias
@@ -41,72 +41,9 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
     protected $alias = 'payone.block.paypal.expressbutton';
 
     /**
-     * Is mandate link to be shown?
-     *
-     * @var bool|null
+     * @var string
      */
-    protected $blShowMandateLink = null;
-
-    /**
-     * Instruction notes
-     *
-     * @var string|bool
-     */
-    protected $sInstructionNotes = false;
-
-    /**
-     * @var \Magento\Framework\Locale\ResolverInterface
-     */
-    protected $localeResolver;
-
-    /**
-     * Locale codes supported by misc images (marks, shortcuts etc)
-     *
-     * @var array
-     */
-    protected $aSupportedLocales = [
-        'de_DE',
-        'en_AU',
-        'en_GB',
-        'en_US',
-        'es_ES',
-        'es_XC',
-        'fr_FR',
-        'fr_XC',
-        'it_IT',
-        'ja_JP',
-        'nl_NL',
-        'pl_PL',
-        'zh_CN',
-        'zh_XC',
-    ];
-
-    /**
-     * Constructor
-     *
-     * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Magento\Framework\Locale\ResolverInterface      $localeResolver
-     * @param array                                            $data
-     */
-    public function __construct(
-        \Magento\Framework\View\Element\Template\Context $context,
-        \Magento\Framework\Locale\ResolverInterface $localeResolver,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-        $this->localeResolver = $localeResolver;
-        $this->setTemplate('paypal/express_button.phtml');
-    }
-
-    /**
-     * Get shortcut alias
-     *
-     * @return string
-     */
-    public function getAlias()
-    {
-        return $this->alias;
-    }
+    protected $sTemplate = 'paypal/express_button.phtml';
 
     /**
      * URL to paypal start controller
@@ -119,28 +56,12 @@ class ExpressButton extends Template implements \Magento\Catalog\Block\ShortcutI
     }
 
     /**
-     * Check whether specified locale code is supported. Fallback to en_US
-     *
-     * @param  string $sLocale
-     * @return string
-     */
-    protected function getSupportedLocaleCode($sLocale = null)
-    {
-        if (!$sLocale || !in_array($sLocale, $this->aSupportedLocales)) {
-            return 'en_US';
-        }
-        return $sLocale;
-    }
-
-    /**
      * Return URL to PayPal Express logo
      *
      * @return string
      */
     public function getPayPalExpressLogoUrl()
     {
-        $sCurrentLocal = $this->localeResolver->getLocale();
-        $sPayPalLocal = $this->getSupportedLocaleCode($sCurrentLocal);
-        return sprintf('https://www.paypal.com/%s/i/btn/btn_xpressCheckout.gif', $sPayPalLocal);
+        return sprintf('https://www.paypal.com/%s/i/btn/btn_xpressCheckout.gif', $this->getLocale());
     }
 }

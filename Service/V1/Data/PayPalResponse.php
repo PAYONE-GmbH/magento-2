@@ -19,58 +19,57 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2024 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Methods;
+namespace Payone\Core\Service\V1\Data;
 
-use Payone\Core\Model\PayoneConfig;
-use Magento\Sales\Model\Order;
+use Payone\Core\Api\Data\PayPalResponseInterface;
 
 /**
- * Model for AliPay payment method
+ * Object for PayPal Express V2 response
  */
-class AliPay extends PayoneMethod
+class PayPalResponse extends \Magento\Framework\Api\AbstractExtensibleObject implements PayPalResponseInterface
 {
     /**
-     * Payment method code
+     * Returns if the installment plan request was a success
      *
-     * @var string
+     * @return string
      */
-    protected $_code = PayoneConfig::METHOD_ALIPAY;
-
-    /**
-     * Clearingtype for PAYONE authorization request
-     *
-     * @var string
-     */
-    protected $sClearingtype = 'wlt';
-
-    /**
-     * Wallettype for PAYONE requests
-     *
-     * @var string|bool
-     */
-    protected $sWallettype = 'ALP';
-
-    /**
-     * Determines if the redirect-parameters have to be added
-     * to the authorization-request
-     *
-     * @var bool
-     */
-    protected $blNeedsRedirectUrls = true;
-
-    /**
-     * Return parameters specific to this payment type
-     *
-     * @param  Order $oOrder
-     * @return array
-     */
-    public function getPaymentSpecificParameters(Order $oOrder)
+    public function getWorkorderId()
     {
-        return ['wallettype' => $this->getWallettype()];
+        return $this->_get('workorderId');
+    }
+
+    /**
+     * Returns if the call was successful
+     *
+     * @return bool
+     */
+    public function getSuccess()
+    {
+        return $this->_get('success');
+    }
+
+    /**
+     * Return paypal order id
+     *
+     * @return string
+     */
+    public function getOrderId()
+    {
+        return $this->_get('orderId');
+    }
+
+    /**
+     * Returns errormessage
+     *
+     * @return string
+     */
+    public function getErrormessage()
+    {
+        return $this->_get('errormessage');
     }
 }

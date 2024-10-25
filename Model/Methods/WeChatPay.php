@@ -49,6 +49,13 @@ class WeChatPay extends PayoneMethod
     protected $sClearingtype = 'wlt';
 
     /**
+     * Wallettype for PAYONE requests
+     *
+     * @var string|bool
+     */
+    protected $sWallettype = 'WCP';
+
+    /**
      * Determines if the redirect-parameters have to be added
      * to the authorization-request
      *
@@ -65,7 +72,7 @@ class WeChatPay extends PayoneMethod
     public function getPaymentSpecificParameters(Order $oOrder)
     {
         return [
-            'wallettype' => 'WCP',
+            'wallettype' => $this->getWallettype(),
             'api_version' => '3.10'
         ];
     }

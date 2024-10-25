@@ -211,4 +211,21 @@
             <parameter name="orderId" force="true">%order_id%</parameter>
         </data>
     </route>
+
+    <route url="/V1/guest-carts/:cartId/payone-startPayPalExpress" method="POST">
+        <service class="Payone\Core\Api\PayPalInterface" method="startPayPalExpress"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+    <route url="/V1/carts/mine/payone-startPayPalExpress" method="POST">
+        <service class="Payone\Core\Api\PayPalInterface" method="startPayPalExpress"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
 </routes>

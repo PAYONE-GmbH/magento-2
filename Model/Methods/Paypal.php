@@ -49,6 +49,13 @@ class Paypal extends PayoneMethod
     protected $sClearingtype = 'wlt';
 
     /**
+     * Wallettype for PAYONE requests
+     *
+     * @var string|bool
+     */
+    protected $sWallettype = 'PPE';
+
+    /**
      * Determines if the redirect-parameters have to be added
      * to the authorization-request
      *
@@ -85,7 +92,7 @@ class Paypal extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        $aParams = ['wallettype' => 'PPE'];
+        $aParams = ['wallettype' => $this->getWallettype()];
 
         if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
             $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();

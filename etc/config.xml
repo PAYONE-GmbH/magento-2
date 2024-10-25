@@ -64,6 +64,15 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_paypal>
+            <payone_paypalv2>
+                <active>1</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\PaypalV2</model>
+                <order_status>pending</order_status>
+                <title>PAYONE PayPal V2</title>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_paypalv2>
             <payone_advance_payment translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
@@ -382,6 +391,7 @@
                 <payone_creditcard>{"_1343137391927_927":{"txaction":"appointed","state_status":"processing"}}</payone_creditcard>
                 <payone_debit>{"_1338893616379_379":{"txaction":"appointed","state_status":"processing"}}</payone_debit>
                 <payone_paypal>{"_1343137411652_652":{"txaction":"appointed","state_status":"processing"}}</payone_paypal>
+                <payone_paypalv2>{"_payone_status_paypalv2":{"txaction":"appointed","state_status":"processing"}}</payone_paypalv2>
                 <payone_cash_on_delivery>{"_1338893625332_332":{"txaction":"appointed","state_status":"processing"}}</payone_cash_on_delivery>
                 <payone_invoice>{"_1338893611948_948":{"txaction":"appointed","state_status":"processing"}}</payone_invoice>
                 <payone_advance_payment>{"_1338893618715_715":{"txaction":"appointed","state_status":"pending"},"_1458214328719_719":{"txaction":"paid","state_status":"processing"}}</payone_advance_payment>
@@ -483,6 +493,13 @@
                 <bill_as_del_address>1</bill_as_del_address>
                 <express_active>0</express_active>
             </payone_paypal>
+            <payone_paypalv2>
+                <use_global>1</use_global>
+                <bill_as_del_address>1</bill_as_del_address>
+                <express_active>0</express_active>
+                <button_color>gold</button_color>
+                <button_shape>rect</button_shape>
+            </payone_paypalv2>
             <payone_advance_payment>
                 <use_global>1</use_global>
             </payone_advance_payment>

@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,30 +19,20 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2020 Payone GmbH
+ * @copyright 2003 - 2024 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-.payone_place_order_not_allowed {
-    color: #999999;
-}
+namespace Payone\Core\Api;
 
-.payone_place_order_not_allowed SPAN {
-    float: right;
-}
-
-.payone_place_order_not_allowed DIV {
-    clear: both;
-}
-.payoneClear {
-    clear:both;
-}
-
-.payoneBNPLselector {
-    margin-bottom:0.7em;
-}
-
-#payone-paypal-button-minibasket {
-    margin-top: 1em;
+interface PayPalInterface
+{
+    /**
+     * Trigger PayPal Express v2 process
+     *
+     * @param  string $cartId
+     * @return \Payone\Core\Service\V1\Data\PayPalResponse
+     */
+    public function startPayPalExpress($cartId);
 }

@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,30 +19,34 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2020 Payone GmbH
+ * @copyright 2003 - 2024 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-.payone_place_order_not_allowed {
-    color: #999999;
-}
+namespace Payone\Core\Test\Unit\Model\Source;
 
-.payone_place_order_not_allowed SPAN {
-    float: right;
-}
+use Payone\Core\Model\Source\PayPalButtonShape as ClassToTest;
+use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Payone\Core\Test\Unit\BaseTestCase;
+use Payone\Core\Test\Unit\PayoneObjectManager;
 
-.payone_place_order_not_allowed DIV {
-    clear: both;
-}
-.payoneClear {
-    clear:both;
-}
+class PayPalButtonShapeTest extends BaseTestCase
+{
+    /**
+     * @var ClassToTest
+     */
+    private $classToTest;
 
-.payoneBNPLselector {
-    margin-bottom:0.7em;
-}
+    protected function setUp(): void
+    {
+        $objectManager = $this->getObjectManager();
+        $this->classToTest = $objectManager->getObject(ClassToTest::class);
+    }
 
-#payone-paypal-button-minibasket {
-    margin-top: 1em;
+    public function testToOptionArray()
+    {
+        $result = $this->classToTest->toOptionArray();
+        $this->assertCount(3, $result);
+    }
 }

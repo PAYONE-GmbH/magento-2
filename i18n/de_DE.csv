@@ -1048,6 +1048,7 @@
 "Desired guarantee time period (max. 15 running days) für a secured ore-order.","Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung."
 
 "PayPal Express Enabled","PayPal Express aktiviert"
+"Show Buy Now Pay Later Button","Später zahlen Button anzeigen"
 "An error occured during the PayPal Express transaction.","Während der PayPal Express Transaktion ist ein Fehler aufgetreten."
 "Please sign in to check out.","Bitte loggen Sie sich ein für den Einkauf."
 "Checkout with PayPal Express","Einkaufen mit PayPal Express"

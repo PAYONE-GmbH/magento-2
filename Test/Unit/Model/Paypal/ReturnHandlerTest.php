@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Paypal;
 
+use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\Paypal\ReturnHandler as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Checkout\Model\Session;
@@ -38,6 +39,8 @@ use Magento\Quote\Model\Quote\Payment;
 use Magento\Quote\Model\Quote\Address;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Payone\Core\Model\Methods\Paypal;
+use Magento\Payment\Helper\Data;
 
 class ReturnHandlerTest extends BaseTestCase
 {
@@ -51,11 +54,15 @@ class ReturnHandlerTest extends BaseTestCase
      */
     private $objectManager;
 
+
+    private $payment;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
-        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $this->payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
             ->setMethods(['getEmail', 'setEmail', 'setShouldIgnoreValidation'])
@@ -85,7 +92,7 @@ class ReturnHandlerTest extends BaseTestCase
             ->getMock();
         $quote->method('getId')->willReturn('12345');
         $quote->method('setIsActive')->willReturn($quote);
-        $quote->method('getPayment')->willReturn($payment);
+        $quote->method('getPayment')->willReturn($this->payment);
         $quote->method('collectTotals')->willReturn($quote);
         $quote->method('setCustomerId')->willReturn($quote);
         $quote->method('setCustomerEmail')->willReturn($quote);
@@ -117,17 +124,33 @@ class ReturnHandlerTest extends BaseTestCase
         $checkoutHelper = $this->getMockBuilder(Checkout::class)->disableOriginalConstructor()->getMock();
         $checkoutHelper->method('getCurrentCheckoutMethod')->willReturn(Onepage::METHOD_GUEST);
 
+        $paymentMethod = $this->getMockBuilder(Paypal::class)->disableOriginalConstructor()->getMock();
+
+        $dataHelper = $this->getMockBuilder(Data::class)->disableOriginalConstructor()->getMock();
+        $dataHelper->method('getMethodInstance')->willReturn($paymentMethod);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'checkoutSession' => $checkoutSession,
             'genericRequest' => $genericRequest,
             'orderHelper' => $orderHelper,
-            'checkoutHelper' => $checkoutHelper
+            'checkoutHelper' => $checkoutHelper,
+            'dataHelper' => $dataHelper,
         ]);
     }
 
     public function testHandlePayPalReturn()
     {
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYPAL);
+
         $result = $this->classToTest->handlePayPalReturn('12345');
         $this->assertNull($result);
+    }
+
+    public function testHandlePayPalReturnException()
+    {
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_CREDITCARD);
+
+        $this->expectException(\Exception::class);
+        $this->classToTest->handlePayPalReturn('12345');
     }
 }

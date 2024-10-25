@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 5
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2024 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="payone_paypalv2" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>PayPal V2</label>
+        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>payment/payone_paypalv2/active</config_path>
+        </field>
+        <field id="express_active" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>PayPal Express Enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="show_bnpl_button" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Show Buy Now Pay Later Button</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Title</label>
+            <config_path>payment/payone_paypalv2/title</config_path>
+        </field>
+        <field id="merchant_id" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>PayPal Merchant ID</label>
+        </field>
+        <field id="button_color" translate="label" type="select" sortOrder="43" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Express Button Color</label>
+            <depends>
+                <field id="express_active">1</field>
+            </depends>
+            <source_model>Payone\Core\Model\Source\PayPalButtonColor</source_model>
+        </field>
+        <field id="button_shape" translate="label" type="select" sortOrder="46" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Express Button Shape</label>
+            <depends>
+                <field id="express_active">1</field>
+            </depends>
+            <source_model>Payone\Core\Model\Source\PayPalButtonShape</source_model>
+        </field>
+        <field id="order_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>New Order Status</label>
+            <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+            <config_path>payment/payone_paypalv2/order_status</config_path>
+        </field>
+        <field id="instructions" translate="label" type="textarea" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Instructions</label>
+            <config_path>payment/payone_paypalv2/instructions</config_path>
+        </field>
+        <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Minimum Order Total</label>
+            <config_path>payment/payone_paypalv2/min_order_total</config_path>
+        </field>
+        <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Maximum Order Total</label>
+            <config_path>payment/payone_paypalv2/max_order_total</config_path>
+        </field>
+        <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Sort Order</label>
+            <config_path>payment/payone_paypalv2/sort_order</config_path>
+        </field>
+        <field id="bill_as_del_address" translate="label,comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Billing address as delivery address</label>
+            <comment>Transmit the billing address as delivery address if delivery address is missing.</comment>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <include path="Payone_Core::system/default_fields.xml"/>
+    </group>
+</include>

@@ -52,6 +52,13 @@ class AmazonPayV2 extends PayoneMethod
     protected $sClearingtype = 'wlt';
 
     /**
+     * Wallettype for PAYONE requests
+     *
+     * @var string|bool
+     */
+    protected $sWallettype = 'AMP';
+
+    /**
      * Determines if the redirect-parameters have to be added
      * to the authorization-request
      *
@@ -182,7 +189,7 @@ class AmazonPayV2 extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        $aParams = ['wallettype' => 'AMP'];
+        $aParams = ['wallettype' => $this->getWallettype()];
 
         $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
         if ($sWorkorderId) {

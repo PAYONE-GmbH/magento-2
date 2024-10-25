@@ -283,9 +283,16 @@ class Api extends Base
      */
     public function isInvoiceDataNeeded(PayoneMethod $oPayment, $aPositions = null)
     {
+        $oInfoInstance = false;
+        try {
+            $oInfoInstance = $oPayment->getInfoInstance(); // using getInfoInstance when it is not set will throw an exception
+        } catch (\Exception $exc) {
+            // do nothing
+        }
+
         $sStoreCode = null;
-        if ($oPayment->getInfoInstance()->getOrder()) {
-            $sStoreCode = $oPayment->getInfoInstance()->getOrder()->getStore()->getCode();
+        if ($oInfoInstance && $oInfoInstance->getOrder()) {
+            $sStoreCode = $oInfoInstance->getOrder()->getStore()->getCode();
         }
 
         if ($oPayment instanceof RatepayBase && is_array($aPositions) && empty($aPositions)) { // empty array means products and shipping costs were deselected
