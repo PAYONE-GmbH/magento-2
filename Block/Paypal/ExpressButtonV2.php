@@ -165,13 +165,7 @@ class ExpressButtonV2 extends Base
      */
     protected function getIntent()
     {
-        $oMethodInstance = $this->getMethodInstance();
-
-        $sIntent = "authorize"; // authorize = preauthorize
-        if ($oMethodInstance && $oMethodInstance->getAuthorizationMode() == PayoneConfig::REQUEST_TYPE_AUTHORIZATION) {
-            $sIntent = "capture"; // capture = authorize
-        }
-        return $sIntent;
+        return "authorize"; // authorize = preauthorize // capture = authorize but Payone said to always use authorize
     }
 
     /**
