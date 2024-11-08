@@ -107,6 +107,13 @@ abstract class BaseMethod extends AbstractMethod
     protected $sClearingtype = false;
 
     /**
+     * Wallettype for PAYONE requests
+     *
+     * @var string|bool
+     */
+    protected $sWallettype = false;
+
+    /**
      * Determines if the redirect-parameters have to be added
      * to the authorization-request
      *

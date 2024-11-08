@@ -44,6 +44,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_CREDITCARD,
         PayoneConfig::METHOD_DEBIT,
         PayoneConfig::METHOD_PAYPAL,
+        PayoneConfig::METHOD_PAYPALV2,
         PayoneConfig::METHOD_CASH_ON_DELIVERY,
         PayoneConfig::METHOD_ADVANCE_PAYMENT,
         PayoneConfig::METHOD_INVOICE,
@@ -96,6 +97,7 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_OBT_IDEAL => 'sb',
         PayoneConfig::METHOD_OBT_PRZELEWY => 'sb',
         PayoneConfig::METHOD_PAYPAL => 'wlt',
+        PayoneConfig::METHOD_PAYPALV2 => 'wlt',
         PayoneConfig::METHOD_PAYDIREKT => 'wlt',
         PayoneConfig::METHOD_BARZAHLEN => 'csh',
         PayoneConfig::METHOD_SAFE_INVOICE => 'rec',
@@ -240,7 +242,17 @@ class Payment extends \Payone\Core\Helper\Base
      */
     public function isPayPalExpressActive()
     {
-        return (bool)$this->getConfigParam('express_active', PayoneConfig::METHOD_PAYPAL, 'payone_payment');
+        return (bool)$this->getConfigParam('express_active', PayoneConfig::METHOD_PAYPAL, 'payone_payment') && $this->isPaymentMethodActive(PayoneConfig::METHOD_PAYPAL);
+    }
+
+    /**
+     * Return is PayPal Express V2 is activated in the configuration
+     *
+     * @return bool
+     */
+    public function isPayPalExpressV2Active()
+    {
+        return (bool)$this->getConfigParam('express_active', PayoneConfig::METHOD_PAYPALV2, 'payone_payment') && $this->isPaymentMethodActive(PayoneConfig::METHOD_PAYPALV2);
     }
 
     /**

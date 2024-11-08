@@ -26,6 +26,7 @@
 
 namespace Payone\Core\Model\Paypal;
 
+use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote;
@@ -52,11 +53,11 @@ class ReturnHandler
     protected $genericRequest;
 
     /**
-     * PayPal payment model
+     * Payment helper object
      *
-     * @var \Payone\Core\Model\Methods\Paypal
+     * @var \Magento\Payment\Helper\Data
      */
-    protected $paypalPayment;
+    protected $dataHelper;
 
     /**
      * PAYONE order helper
@@ -73,24 +74,32 @@ class ReturnHandler
     protected $checkoutHelper;
 
     /**
+     * @var array
+     */
+    protected $aAllowedMethods = [
+        PayoneConfig::METHOD_PAYPAL,
+        PayoneConfig::METHOD_PAYPALV2,
+    ];
+
+    /**
      * Constructor
      *
      * @param \Magento\Checkout\Model\Session                             $checkoutSession
      * @param \Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress $genericRequest
-     * @param \Payone\Core\Model\Methods\Paypal                           $paypalPayment
+     * @param \Magento\Payment\Helper\Data                                $dataHelper
      * @param \Payone\Core\Helper\Order                                   $orderHelper
      * @param \Payone\Core\Helper\Checkout                                $checkoutHelper
      */
     public function __construct(
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\Api\Request\Genericpayment\PayPalExpress $genericRequest,
-        \Payone\Core\Model\Methods\Paypal $paypalPayment,
+        \Magento\Payment\Helper\Data $dataHelper,
         \Payone\Core\Helper\Order $orderHelper,
         \Payone\Core\Helper\Checkout $checkoutHelper
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->genericRequest = $genericRequest;
-        $this->paypalPayment = $paypalPayment;
+        $this->dataHelper = $dataHelper;
         $this->orderHelper = $orderHelper;
         $this->checkoutHelper = $checkoutHelper;
     }
@@ -113,14 +122,24 @@ class ReturnHandler
                 ->setCustomerGroupId(Group::NOT_LOGGED_IN_ID);
         }
 
-        $oPayment = $oQuote->getPayment();
-        $oPayment->setMethod(PayoneConfig::METHOD_PAYPAL);
-
-        $oQuote->setPayment($oPayment);
         $oQuote->setInventoryProcessed(false);
         $oQuote->collectTotals()->save();
 
         return $oQuote;
+    }
+
+    /**
+     * @return PayoneMethod
+     * @throws \Exception
+     */
+    protected function getMethodInstance()
+    {
+        $sMethodCode = $this->checkoutSession->getQuote()->getPayment()->getMethod();
+        if (!in_array($sMethodCode, $this->aAllowedMethods)) {
+            throw new \Exception("Unexpected payment method");
+        }
+
+        return $this->dataHelper->getMethodInstance($sMethodCode);
     }
 
     /**
@@ -132,7 +151,7 @@ class ReturnHandler
     public function handlePayPalReturn($sWorkorderId)
     {
         $oQuote = $this->checkoutSession->getQuote();
-        $aResponse = $this->genericRequest->sendRequest($oQuote, $this->paypalPayment, $sWorkorderId);
+        $aResponse = $this->genericRequest->sendRequest($oQuote, $this->getMethodInstance(), $sWorkorderId);
 
         $this->handleQuote($oQuote, $aResponse);
     }

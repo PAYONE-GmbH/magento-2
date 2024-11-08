@@ -6,6 +6,9 @@
  */
 -->
 <page layout="3columns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Payone_Core::css/payone.css"/>
+    </head>
     <body>
         <referenceContainer name="minicart.addons">
             <block class="Payone\Core\Block\Amazon\Scripts" name="payone_amazon_scripts" template="amazon/scripts.phtml"/>

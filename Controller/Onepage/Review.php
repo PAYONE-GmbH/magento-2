@@ -69,6 +69,7 @@ class Review extends \Magento\Framework\App\Action\Action
      */
     protected $availableReviewMethods = [
         PayoneConfig::METHOD_PAYPAL,
+        PayoneConfig::METHOD_PAYPALV2,
         PayoneConfig::METHOD_PAYDIREKT,
         PayoneConfig::METHOD_AMAZONPAYV2,
     ];

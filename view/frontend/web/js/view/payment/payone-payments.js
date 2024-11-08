@@ -49,6 +49,10 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/paypal-method'
             },
             {
+                type: 'payone_paypalv2',
+                component: 'Payone_Core/js/view/payment/method-renderer/paypalv2-method'
+            },
+            {
                 type: 'payone_advance_payment',
                 component: 'Payone_Core/js/view/payment/method-renderer/advance_payment-method'
             },

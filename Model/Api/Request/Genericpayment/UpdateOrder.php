@@ -1,40 +1,13 @@
 <?php
 
-/**
- * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
- *
- * PHP version 5
- *
- * @category  Payone
- * @package   Payone_Magento2_Plugin
- * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
- * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
- * @link      http://www.payone.de
- */
-
 namespace Payone\Core\Model\Api\Request\Genericpayment;
 
-use Magento\Quote\Model\Quote;
 use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\Methods\PaypalV2;
 use Payone\Core\Model\PayoneConfig;
+use Magento\Quote\Model\Quote;
 
-/**
- * Class for the PAYONE Server API request genericpayment - "setexpresscheckout" and "getexpresscheckoutdetails"
- */
-class PayPalExpress extends Base
+class UpdateOrder extends Base
 {
     /**
      * Invoice generator
@@ -79,31 +52,22 @@ class PayPalExpress extends Base
     public function sendRequest(Quote $oQuote, PayoneMethod $oPayment, $sWorkorderId = false)
     {
         $this->addParameter('request', 'genericpayment');
+        $this->addParameter('add_paydata[action]', 'update_order');
+        $this->addParameter('workorderid', $sWorkorderId);
         $this->addParameter('mode', $oPayment->getOperationMode());
         $this->addParameter('aid', $this->shopHelper->getConfigParam('aid')); // ID of PayOne Sub-Account
         $this->addParameter('clearingtype', $oPayment->getClearingtype());
         $this->addParameter('wallettype', $oPayment->getWallettype());
-        $this->addParameter('narrative_text', 'Test');
 
         $this->addParameter('amount', number_format($this->apiHelper->getQuoteAmount($oQuote), 2, '.', '') * 100); // add price to request
         $this->addParameter('currency', $this->apiHelper->getCurrencyFromQuote($oQuote)); // add currency to request
 
-        if ($sWorkorderId !== false) {
-            $this->addParameter('workorderid', $sWorkorderId);
-            $this->addParameter('add_paydata[action]', 'getexpresscheckoutdetails');
-        } else {
-            $this->addParameter('add_paydata[action]', 'setexpresscheckout');
-
-            if ($oPayment instanceof PaypalV2) {
-                $this->addParameter('add_paydata[payment_action]', $oPayment->getAuthorizationMode() == PayoneConfig::REQUEST_TYPE_AUTHORIZATION ? 'Capture' : 'Authorize'); # Is either Capture (for Authorization call) or Authorize (for preauthorization call)
-            }
-        }
-
-        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
-            $this->invoiceGenerator->addProductInfo($this, $oQuote);
-        }
+        $this->addParameter('add_paydata[payment_action]', $oPayment->getAuthorizationMode() == PayoneConfig::REQUEST_TYPE_AUTHORIZATION ? 'Capture' : 'Authorize'); # Is either Capture (for Authorization call) or Authorize (for preauthorization call)
+        $this->addParameter('add_paydata[request_id]', 'TODO');
 
         $this->addRedirectUrls($oPayment);
+
+        $this->invoiceGenerator->addProductInfo($this, $oQuote);
 
         return $this->send($oPayment);
     }

@@ -68,6 +68,7 @@ class AddPaypalExpressButtonTest extends BaseTestCase
     public function testExecutePaypalInactive()
     {
         $this->paymentHelper->method('isPayPalExpressActive')->willReturn(false);
+        $this->paymentHelper->method('isPayPalExpressV2Active')->willReturn(false);
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
 
         $result = $this->classToTest->execute($observer);
@@ -77,6 +78,7 @@ class AddPaypalExpressButtonTest extends BaseTestCase
     public function testExecutePaypalActive()
     {
         $this->paymentHelper->method('isPayPalExpressActive')->willReturn(true);
+        $this->paymentHelper->method('isPayPalExpressV2Active')->willReturn(true);
 
         $shortcut = $this->getMockBuilder(Shortcut::class)->disableOriginalConstructor()->getMock();
 

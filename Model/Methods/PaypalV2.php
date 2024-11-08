@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2024 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -30,16 +30,16 @@ use Payone\Core\Model\PayoneConfig;
 use Magento\Sales\Model\Order;
 
 /**
- * Model for AliPay payment method
+ * Model for PayPalV2 payment method
  */
-class AliPay extends PayoneMethod
+class PaypalV2 extends PayoneMethod
 {
     /**
      * Payment method code
      *
      * @var string
      */
-    protected $_code = PayoneConfig::METHOD_ALIPAY;
+    protected $_code = PayoneConfig::METHOD_PAYPALV2;
 
     /**
      * Clearingtype for PAYONE authorization request
@@ -53,7 +53,7 @@ class AliPay extends PayoneMethod
      *
      * @var string|bool
      */
-    protected $sWallettype = 'ALP';
+    protected $sWallettype = 'PAL';
 
     /**
      * Determines if the redirect-parameters have to be added
@@ -64,6 +64,28 @@ class AliPay extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
+     * Return success url for redirect payment types
+     *
+     * @param  Order $oOrder
+     * @return string
+     */
+    public function getSuccessUrl(Order $oOrder = null)
+    {
+        if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
+            return $this->getReturnedUrl();
+        }
+        return parent::getSuccessUrl($oOrder);
+    }
+
+    /**
+     * @return string
+     */
+    public function getReturnedUrl()
+    {
+        return $this->url->getUrl('payone/paypal/returned');
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder
@@ -71,6 +93,16 @@ class AliPay extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        return ['wallettype' => $this->getWallettype()];
+        $aParams = [
+            'wallettype' => $this->getWallettype(),
+        ];
+
+        if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
+            $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
+            if ($sWorkorderId) {
+                $aParams['workorderid'] = $sWorkorderId;
+            }
+        }
+        return $aParams;
     }
 }

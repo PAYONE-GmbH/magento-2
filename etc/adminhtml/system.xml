@@ -121,6 +121,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
+                <field id="payone_paypalv2" translate="label" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>PayPal V2</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
                 <field id="payone_cash_on_delivery" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Cash on Delivery</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -307,6 +312,7 @@
             <include path="Payone_Core::system/payone_creditcard.xml"/>
             <include path="Payone_Core::system/payone_debit.xml"/>
             <include path="Payone_Core::system/payone_paypal.xml"/>
+            <include path="Payone_Core::system/payone_paypalv2.xml"/>
             <include path="Payone_Core::system/payone_cash_on_delivery.xml"/>
             <include path="Payone_Core::system/payone_advance_payment.xml"/>
             <include path="Payone_Core::system/payone_invoice.xml"/>

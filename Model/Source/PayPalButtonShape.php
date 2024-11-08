@@ -19,58 +19,40 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2024 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Methods;
+namespace Payone\Core\Model\Source;
 
-use Payone\Core\Model\PayoneConfig;
-use Magento\Sales\Model\Order;
+use Magento\Framework\Option\ArrayInterface;
 
 /**
- * Model for AliPay payment method
+ * Source class for PayPal Express button shape
  */
-class AliPay extends PayoneMethod
+class PayPalButtonShape implements ArrayInterface
 {
     /**
-     * Payment method code
+     * Return existing Amazon button types
      *
-     * @var string
-     */
-    protected $_code = PayoneConfig::METHOD_ALIPAY;
-
-    /**
-     * Clearingtype for PAYONE authorization request
-     *
-     * @var string
-     */
-    protected $sClearingtype = 'wlt';
-
-    /**
-     * Wallettype for PAYONE requests
-     *
-     * @var string|bool
-     */
-    protected $sWallettype = 'ALP';
-
-    /**
-     * Determines if the redirect-parameters have to be added
-     * to the authorization-request
-     *
-     * @var bool
-     */
-    protected $blNeedsRedirectUrls = true;
-
-    /**
-     * Return parameters specific to this payment type
-     *
-     * @param  Order $oOrder
      * @return array
      */
-    public function getPaymentSpecificParameters(Order $oOrder)
+    public function toOptionArray()
     {
-        return ['wallettype' => $this->getWallettype()];
+        return [
+            [
+                'value' => 'rect',
+                'label' => __('Default button shape')
+            ],
+            [
+                'value' => 'pill',
+                'label' => __('Round corners')
+            ],
+            [
+                'value' => 'sharp',
+                'label' => __('Sharp corners')
+            ]
+        ];
     }
 }

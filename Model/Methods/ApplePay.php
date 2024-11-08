@@ -50,6 +50,13 @@ class ApplePay extends PayoneMethod
     protected $sClearingtype = 'wlt';
 
     /**
+     * Wallettype for PAYONE requests
+     *
+     * @var string|bool
+     */
+    protected $sWallettype = 'APL';
+
+    /**
      * @var \Payone\Core\Helper\ApplePay
      */
     protected $applePayHelper;
@@ -165,7 +172,7 @@ class ApplePay extends PayoneMethod
         }
 
         $aParams = [
-            'wallettype' => 'APL',
+            'wallettype' => $this->getWallettype(),
             'api_version' => '3.11',
             'cardtype'                                              => $this->getPayoneCardType($aToken),
             'add_paydata[paymentdata_token_data]'                   => $aToken['paymentData']['data'],

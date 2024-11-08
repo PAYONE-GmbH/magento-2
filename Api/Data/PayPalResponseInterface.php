@@ -19,58 +19,40 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2024 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Model\Methods;
+namespace Payone\Core\Api\Data;
 
-use Payone\Core\Model\PayoneConfig;
-use Magento\Sales\Model\Order;
-
-/**
- * Model for AliPay payment method
- */
-class AliPay extends PayoneMethod
+interface PayPalResponseInterface
 {
     /**
-     * Payment method code
+     * Returns the PAYONE workorder id
      *
-     * @var string
+     * @return string
      */
-    protected $_code = PayoneConfig::METHOD_ALIPAY;
+    public function getWorkorderId();
 
     /**
-     * Clearingtype for PAYONE authorization request
+     * Returns if the call was successful
      *
-     * @var string
+     * @return bool
      */
-    protected $sClearingtype = 'wlt';
+    public function getSuccess();
 
     /**
-     * Wallettype for PAYONE requests
+     * Return paypal order id
      *
-     * @var string|bool
+     * @return string
      */
-    protected $sWallettype = 'ALP';
+    public function getOrderId();
 
     /**
-     * Determines if the redirect-parameters have to be added
-     * to the authorization-request
+     * Returns errormessage
      *
-     * @var bool
+     * @return string
      */
-    protected $blNeedsRedirectUrls = true;
-
-    /**
-     * Return parameters specific to this payment type
-     *
-     * @param  Order $oOrder
-     * @return array
-     */
-    public function getPaymentSpecificParameters(Order $oOrder)
-    {
-        return ['wallettype' => $this->getWallettype()];
-    }
+    public function getErrormessage();
 }

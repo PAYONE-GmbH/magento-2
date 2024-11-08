@@ -68,6 +68,7 @@ abstract class PayoneConfig
     const METHOD_ADVANCE_PAYMENT = 'payone_advance_payment';
     const METHOD_INVOICE = 'payone_invoice';
     const METHOD_PAYPAL = 'payone_paypal';
+    const METHOD_PAYPALV2 = 'payone_paypalv2';
     const METHOD_OBT_SOFORTUEBERWEISUNG = 'payone_obt_sofortueberweisung';
     const METHOD_OBT_GIROPAY = 'payone_obt_giropay';
     const METHOD_OBT_EPS = 'payone_obt_eps';

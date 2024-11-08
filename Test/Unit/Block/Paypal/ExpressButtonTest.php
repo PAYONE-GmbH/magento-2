@@ -105,4 +105,19 @@ class ExpressButtonTest extends BaseTestCase
         $expected = 'https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif';
         $this->assertEquals($expected, $result);
     }
+
+    public function testGetButtonIdent()
+    {
+        $testArray = [
+            'anything' => 'payone-paypal-button-container',
+            'checkout.cart.shortcut.buttons' => 'payone-paypal-button-basket',
+            'shortcutbuttons' => 'payone-paypal-button-minibasket',
+        ];
+
+        foreach ($testArray as $input => $expected) {
+            $this->classToTest->setName($input);
+            $result = $this->classToTest->getButtonIdent();
+            $this->assertEquals($expected, $result);
+        }
+    }
 }
