@@ -281,8 +281,6 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
-        $this->deactivateNewPaymentMethods($setup);
-
         if (version_compare($context->getVersion(), '2.8.0', '<=')) { // pre update version is less than or equal to 2.8.0
             $this->convertCreditcardTypesConfig($setup);
         }
@@ -374,56 +372,6 @@ class UpgradeData implements UpgradeDataInterface
             $data = ['value' => implode(",", $newCardTypes)];
             $where = ['config_id = ?' => $row['config_id']];
             $setup->getConnection()->update($setup->getTable('core_config_data'), $data, $where);
-        }
-    }
-
-    /**
-     * Adds a config entry to the database to set the payment method to inactive
-     *
-     * @param  string $methodCode
-     * @return void
-     */
-    protected function addPaymentInactiveConfig($methodCode)
-    {
-        if ($methodCode == PayoneConfig::METHOD_KLARNA_BASE) { // Klarna base has to stay active
-            return;
-        }
-        $this->configWriter->save('payment/'.$methodCode.'/active', 0);
-    }
-
-    /**
-     * Checks if there is a active config entry for the given payment method
-     *
-     * @param  ModuleDataSetupInterface $setup
-     * @param  string                   $methodCode
-     * @return bool
-     */
-    protected function isPaymentConfigExisting(ModuleDataSetupInterface $setup, $methodCode)
-    {
-        $select = $setup->getConnection()
-            ->select()
-            ->from($setup->getTable('core_config_data'), ['config_id', 'value'])
-            ->where('path LIKE "%'.$methodCode.'/active"');
-
-        $result = $setup->getConnection()->fetchAssoc($select);
-        if (!empty($result)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Deactivates new payment methods, since they have to be marked as active in the config.xml files to be shown in payment method select backend elements
-     *
-     * @param  ModuleDataSetupInterface $setup
-     * @return void
-     */
-    protected function deactivateNewPaymentMethods(ModuleDataSetupInterface $setup)
-    {
-        foreach ($this->paymentHelper->getAvailablePaymentTypes() as $methodCode) {
-            if ($this->isPaymentConfigExisting($setup, $methodCode) === false) {
-                $this->addPaymentInactiveConfig($methodCode);
-            }
         }
     }
 }

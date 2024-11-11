@@ -27,111 +27,111 @@
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
     <group id="payone_amazonpay" translate="label" type="text" sortOrder="270" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Amazon Pay</label>
-        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Enabled</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <config_path>payment/payone_amazonpay/active</config_path>
         </field>
-        <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Title</label>
             <config_path>payment/payone_amazonpay/title</config_path>
         </field>
-        <field id="request_type" translate="label,tooltip" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="request_type" translate="label,tooltip" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Authorize-method</label>
             <tooltip>The authorization mode for payments with Amazon Pay is "preauthorization" by default. Amazon allows you to charge your buyer only when you fulfill the items in the order. Thus "authorization" can be used for custom made goods and articles that will be delivered immediately (e.g. electronically supplied services)</tooltip>
             <source_model>Payone\Core\Model\Source\RequestType</source_model>
         </field>
-        <field id="client_id" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="client_id" translate="label" type="text" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Client-ID</label>
             <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\ReadonlyElement</frontend_model>
         </field>
-        <field id="seller_id" translate="label" type="text" sortOrder="17" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="seller_id" translate="label" type="text" sortOrder="17" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Seller-ID</label>
             <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\ReadonlyElement</frontend_model>
         </field>
-        <field id="get_configuration" translate="button_label" sortOrder="19" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="get_configuration" translate="button_label" sortOrder="19" showInDefault="1" showInWebsite="1" showInStore="1">
             <button_label>Get configuration</button_label>
             <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\AmazonConfiguration</frontend_model>
         </field>
-        <field id="button_type" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="button_type" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Button type</label>
             <source_model>Payone\Core\Model\Source\AmazonButtonType</source_model>
         </field>
-        <field id="button_color" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="button_color" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Button color</label>
             <source_model>Payone\Core\Model\Source\AmazonButtonColor</source_model>
         </field>
-        <field id="button_language" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="button_language" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Button language</label>
             <source_model>Payone\Core\Model\Source\AmazonButtonLanguage</source_model>
         </field>
-        <field id="amazon_mode" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="amazon_mode" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Amazon mode</label>
             <source_model>Payone\Core\Model\Source\AmazonMode</source_model>
         </field>
-        <field id="order_status" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="order_status" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>New Order Status</label>
             <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
             <config_path>payment/payone_amazonpay/order_status</config_path>
         </field>
-        <field id="instructions" translate="label" type="textarea" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="instructions" translate="label" type="textarea" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Instructions</label>
             <config_path>payment/payone_amazonpay/instructions</config_path>
         </field>
-        <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Minimum Order Total</label>
             <config_path>payment/payone_amazonpay/min_order_total</config_path>
         </field>
-        <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Maximum Order Total</label>
             <config_path>payment/payone_amazonpay/max_order_total</config_path>
         </field>
-        <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Sort Order</label>
             <config_path>payment/payone_amazonpay/sort_order</config_path>
         </field>
-        <field id="bill_as_del_address" translate="label,comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="bill_as_del_address" translate="label,comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Billing address as delivery address</label>
             <comment>Transmit the billing address as delivery address if delivery address is missing.</comment>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
-        <field id="narrative_text" translate="label,comment" type="textarea" sortOrder="485" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="narrative_text" translate="label,comment" type="textarea" sortOrder="485" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Narrative Text</label>
             <comment>Maximum 81 digits. Placeholders: {order_increment_id}</comment>
         </field>
-        <field id="mode" translate="label" type="select" sortOrder="490" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="mode" translate="label" type="select" sortOrder="490" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Mode</label>
             <source_model>Payone\Core\Model\Source\Mode</source_model>
         </field>
-        <field id="use_global" translate="label" type="select" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="use_global" translate="label" type="select" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Use Global Settings</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
-        <field id="mid" translate="label" type="text" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="mid" translate="label" type="text" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Merchant-ID</label>
             <depends>
                 <field id="use_global">0</field>
             </depends>
         </field>
-        <field id="portalid" translate="label" type="text" sortOrder="520" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="portalid" translate="label" type="text" sortOrder="520" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Portal-ID</label>
             <depends>
                 <field id="use_global">0</field>
             </depends>
         </field>
-        <field id="aid" translate="label" type="text" sortOrder="530" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="aid" translate="label" type="text" sortOrder="530" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Sub-Account-ID</label>
             <depends>
                 <field id="use_global">0</field>
             </depends>
         </field>
-        <field id="key" translate="label" type="text" sortOrder="540" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="key" translate="label" type="text" sortOrder="540" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Security Key</label>
             <depends>
                 <field id="use_global">0</field>
             </depends>
         </field>
-        <field id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="550" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="550" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Referencenumber prefix</label>
             <comment>optional</comment>
             <tooltip>A unique referencenumber has to be transferred to PAYONE with every request. This is a consecutive number, normally starting at 1. When operating multiple shops ( e.g. live- and test-shop ) with the same PAYONE account-data there will be problems when the current referencenumber was already used. This can be avoided by using different prefixes on different shops.</tooltip>
@@ -139,14 +139,14 @@
                 <field id="use_global">0</field>
             </depends>
         </field>
-        <field id="allowspecific" translate="label" type="select" sortOrder="560" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="allowspecific" translate="label" type="select" sortOrder="560" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Payment from Applicable Countries</label>
             <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
             <depends>
                 <field id="use_global">0</field>
             </depends>
         </field>
-        <field id="specificcountry" translate="label" type="multiselect" sortOrder="570" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="specificcountry" translate="label" type="multiselect" sortOrder="570" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Payment from Specific Countries</label>
             <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
             <depends>
