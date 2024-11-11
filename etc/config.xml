@@ -475,25 +475,30 @@
         </payone_protect>
         <payone_payment>
             <payone_cash_on_delivery>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_cash_on_delivery>
             <payone_creditcard>
+                <mode>test</mode>
                 <use_global>1</use_global>
                 <check_cvc>always</check_cvc>
                 <min_validity_period>35</min_validity_period>
                 <save_data_enabled>0</save_data_enabled>
             </payone_creditcard>
             <payone_debit>
+                <mode>test</mode>
                 <use_global>1</use_global>
                 <request_bic>0</request_bic>
                 <sepa_country>DE</sepa_country>
             </payone_debit>
             <payone_paypal>
+                <mode>test</mode>
                 <use_global>1</use_global>
                 <bill_as_del_address>1</bill_as_del_address>
                 <express_active>0</express_active>
             </payone_paypal>
             <payone_paypalv2>
+                <mode>test</mode>
                 <use_global>1</use_global>
                 <bill_as_del_address>1</bill_as_del_address>
                 <express_active>0</express_active>
@@ -501,100 +506,131 @@
                 <button_shape>rect</button_shape>
             </payone_paypalv2>
             <payone_advance_payment>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_advance_payment>
             <payone_invoice>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_invoice>
             <payone_obt_sofortueberweisung>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_obt_sofortueberweisung>
             <!--payone_obt_giropay>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_obt_giropay Giropay has been disabled, Paydirekt is now Giropay -->
             <payone_obt_eps>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_obt_eps>
             <payone_obt_postfinance_efinance>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_obt_postfinance_efinance>
             <payone_obt_postfinance_card>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_obt_postfinance_card>
             <payone_obt_ideal>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_obt_ideal>
             <payone_obt_przelewy>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_obt_przelewy>
             <payone_barzahlen>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_barzahlen>
             <payone_paydirekt>
+                <mode>test</mode>
                 <use_global>1</use_global>
                 <order_secured>0</order_secured>
                 <preauthorization_validity>15</preauthorization_validity>
             </payone_paydirekt>
             <payone_safe_invoice>
+                <mode>test</mode>
                 <use_global>1</use_global>
                 <disable_after_refusal>0</disable_after_refusal>
             </payone_safe_invoice>
             <payone_payolution_invoice>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_payolution_invoice>
             <payone_payolution_debit>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_payolution_debit>
             <payone_payolution_installment>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_payolution_installment>
             <payone_alipay>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_alipay>
             <payone_amazonpay>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_amazonpay>
             <payone_amazonpayv2>
+                <mode>test</mode>
                 <use_global>1</use_global>
                 <apb_active>1</apb_active>
             </payone_amazonpayv2>
             <payone_klarna_invoice>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_klarna_invoice>
             <payone_klarna_debit>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_klarna_debit>
             <payone_klarna_installment>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_klarna_installment>
             <payone_ratepay_invoice>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_ratepay_invoice>
             <payone_ratepay_debit>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_ratepay_debit>
             <payone_ratepay_installment>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_ratepay_installment>
             <payone_wechatpay>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_wechatpay>
             <payone_trustly>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_trustly>
             <payone_applepay>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_applepay>
             <payone_bancontact>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_bancontact>
             <payone_bnpl_invoice>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_bnpl_invoice>
             <payone_bnpl_debit>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_bnpl_debit>
             <payone_bnpl_installment>
+                <mode>test</mode>
                 <use_global>1</use_global>
             </payone_bnpl_installment>
         </payone_payment>
