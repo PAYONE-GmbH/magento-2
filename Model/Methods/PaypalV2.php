@@ -64,6 +64,14 @@ class PaypalV2 extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
+     * Determines if the invoice information has to be added
+     * to the authorization-request
+     *
+     * @var bool
+     */
+    protected $blNeedsProductInfo = true;
+
+    /**
      * Return success url for redirect payment types
      *
      * @param  Order $oOrder
