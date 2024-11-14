@@ -97,10 +97,10 @@ class PayPalExpress extends Base
             if ($oPayment instanceof PaypalV2) {
                 $this->addParameter('add_paydata[payment_action]', $oPayment->getAuthorizationMode() == PayoneConfig::REQUEST_TYPE_AUTHORIZATION ? 'Capture' : 'Authorize'); # Is either Capture (for Authorization call) or Authorize (for preauthorization call)
             }
-        }
 
-        if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
-            $this->invoiceGenerator->addProductInfo($this, $oQuote);
+            if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
+                $this->invoiceGenerator->addProductInfo($this, $oQuote);
+            }
         }
 
         $this->addRedirectUrls($oPayment);
