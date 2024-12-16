@@ -178,7 +178,7 @@ define(
                 return false;
             },
             isCardholderDataValid: function (sCardholder) {
-                if (sCardholder.search(/[^a-zA-ZÄäÖöÜüß\-\. ]+/) === -1) {
+                if (sCardholder.search(/[0-9]+/) === -1) {
                     return true;
                 }
                 return false;
