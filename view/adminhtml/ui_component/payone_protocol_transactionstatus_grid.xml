@@ -84,7 +84,6 @@
         </settings>
         <column name="id">
             <settings>
-                <indexField>id</indexField>
                 <sorting>desc</sorting>
                 <label translate="true">ID</label>
             </settings>
@@ -162,4 +161,3 @@
         </actionsColumn>
     </columns>
 </listing>
-
