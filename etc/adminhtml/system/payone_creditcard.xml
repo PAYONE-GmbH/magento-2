@@ -27,55 +27,55 @@
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
     <group id="payone_creditcard" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Creditcard</label>
-        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Enabled</label>
             <config_path>payment/payone_creditcard/active</config_path>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
-        <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Title</label>
             <config_path>payment/payone_creditcard/title</config_path>
         </field>
-        <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>New Order Status</label>
             <config_path>payment/payone_creditcard/order_status</config_path>
             <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
         </field>
-        <field id="instructions" translate="label" type="textarea" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="instructions" translate="label" type="textarea" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Instructions</label>
             <config_path>payment/payone_creditcard/instructions</config_path>
         </field>
-        <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Minimum Order Total</label>
             <config_path>payment/payone_creditcard/min_order_total</config_path>
         </field>
-        <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Maximum Order Total</label>
             <config_path>payment/payone_creditcard/max_order_total</config_path>
         </field>
-        <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Sort Order</label>
             <config_path>payment/payone_creditcard/sort_order</config_path>
         </field>
-        <field id="auto_cardtype_detection" translate="label,comment" type="select" sortOrder="105" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="auto_cardtype_detection" translate="label,comment" type="select" sortOrder="105" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Auto Cardtype Detection</label>
             <comment>Enables the cardtype auto-detection and disables the manual cardtype selection for customers.</comment>
             <config_path>payment/payone_creditcard/auto_cardtype_detection</config_path>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
-        <field id="types" translate="label" type="multiselect" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="types" translate="label" type="multiselect" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Creditcard-Type</label>
             <source_model>Payone\Core\Model\Source\CreditcardTypes</source_model>
         </field>
-        <field id="check_cvc" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="check_cvc" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Check Card Validation Code</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
-        <field id="min_validity_period" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="min_validity_period" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Minimum Validity Period</label>
             <comment>Minimum period a CreditCard has to be valid. (in days)</comment>
         </field>
-        <field id="save_data_enabled" translate="label,tooltip" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field canRestore="1" id="save_data_enabled" translate="label,tooltip" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Creditcard-management enabled</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <tooltip>Enables the customer to save his creditcard data for future use. The shop doesn't save the real creditcard number - only the PAYONE creditcard pan.</tooltip>
