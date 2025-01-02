@@ -45,22 +45,22 @@ define(
                             $('INPUT#' + sPaymentType).parents('.payment-method').remove();
                         });
                     };
-        
+
                     targetModule.process = wrapper.wrap(targetModule.process, function (originalAction, response, messageContainer) {
                         var origReturn = originalAction(response, messageContainer);
-        
-                        if (response.responseJSON.hasOwnProperty('parameters') && response.responseJSON.parameters.hasOwnProperty('paymentMethodWhitelist') && response.responseJSON.parameters.paymentMethodWhitelist.length > 0) {
+
+                        if (response.responseJSON?.hasOwnProperty('parameters') && response.responseJSON?.parameters.hasOwnProperty('paymentMethodWhitelist') && response.responseJSON?.parameters.paymentMethodWhitelist.length > 0) {
                             $.each(methodList(), function( key, value ) {
-                                if (response.responseJSON.parameters.paymentMethodWhitelist.includes(value.method) === false) {
+                                if (response.responseJSON?.parameters.paymentMethodWhitelist.includes(value.method) === false) {
                                     targetModule.disablePaymentType(value.method);
                                 }
                             });
                         }
                         if (response.status != 401) {
-                            if(response.responseJSON.message.indexOf('307 -') !== -1 && quote.paymentMethod().method.indexOf('payone_ratepay') !== -1) {
-                                targetModule.disablePaymentType(quote.paymentMethod().method);
+                            if(response.responseJSON?.message.indexOf('307 -') !== -1 && quote.paymentMethod()?.method.indexOf('payone_ratepay') !== -1) {
+                                targetModule.disablePaymentType(quote.paymentMethod()?.method);
                             }
-                            if(response.responseJSON.message.indexOf('307 -') !== -1 && quote.paymentMethod().method.indexOf('payone_bnpl_') !== -1) {
+                            if(response.responseJSON?.message.indexOf('307 -') !== -1 && quote.paymentMethod()?.method.indexOf('payone_bnpl_') !== -1) {
                                 // Hide all BNPL methods
                                 targetModule.disablePaymentType('payone_bnpl_invoice');
                                 targetModule.disablePaymentType('payone_bnpl_installment');
@@ -69,14 +69,14 @@ define(
                         }
                         return origReturn;
                     });
-        
+
                     // only extend if the option was enabled
                     if (window.checkoutConfig.payment.payone.disableSafeInvoice === true) {
                         targetModule.process = wrapper.wrap(targetModule.process, function (originalAction, response, messageContainer) {
                             var origReturn = originalAction(response, messageContainer);
-        
+
                             if (response.status != 401) {
-                                if(response.responseJSON.message.indexOf('351 -') !== -1) {
+                                if(response.responseJSON?.message.indexOf('351 -') !== -1) {
                                     targetModule.disablePaymentType('payone_safe_invoice');
                                 }
                             }
@@ -85,7 +85,7 @@ define(
                     }
                 });
             }
-            
+
             return targetModule;
         };
     }
