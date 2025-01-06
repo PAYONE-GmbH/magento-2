@@ -49,14 +49,14 @@ define(
                     targetModule.process = wrapper.wrap(targetModule.process, function (originalAction, response, messageContainer) {
                         var origReturn = originalAction(response, messageContainer);
         
-                        if (response.responseJSON.hasOwnProperty('parameters') && response.responseJSON.parameters.hasOwnProperty('paymentMethodWhitelist') && response.responseJSON.parameters.paymentMethodWhitelist.length > 0) {
+                        if (response.responseJSON && response.responseJSON.hasOwnProperty('parameters') && response.responseJSON.parameters.hasOwnProperty('paymentMethodWhitelist') && response.responseJSON.parameters.paymentMethodWhitelist.length > 0) {
                             $.each(methodList(), function( key, value ) {
                                 if (response.responseJSON.parameters.paymentMethodWhitelist.includes(value.method) === false) {
                                     targetModule.disablePaymentType(value.method);
                                 }
                             });
                         }
-                        if (response.status != 401) {
+                        if (response.status != 401 && response.responseJSON && quote.paymentMethod()) {
                             if(response.responseJSON.message.indexOf('307 -') !== -1 && quote.paymentMethod().method.indexOf('payone_ratepay') !== -1) {
                                 targetModule.disablePaymentType(quote.paymentMethod().method);
                             }
@@ -75,7 +75,7 @@ define(
                         targetModule.process = wrapper.wrap(targetModule.process, function (originalAction, response, messageContainer) {
                             var origReturn = originalAction(response, messageContainer);
         
-                            if (response.status != 401) {
+                            if (response.status != 401 && response.responseJSON) {
                                 if(response.responseJSON.message.indexOf('351 -') !== -1) {
                                     targetModule.disablePaymentType('payone_safe_invoice');
                                 }
