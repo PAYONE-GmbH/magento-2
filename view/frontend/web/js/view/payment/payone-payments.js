@@ -64,10 +64,6 @@ define(
                 type: 'payone_obt_sofortueberweisung',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_sofortueberweisung-method'
             },
-            /*{
-                type: 'payone_obt_giropay',
-                component: 'Payone_Core/js/view/payment/method-renderer/obt_giropay-method'
-            }, Giropay has been disabled, Paydirekt is now Giropay */
             {
                 type: 'payone_obt_eps',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_eps-method'
@@ -87,10 +83,6 @@ define(
             {
                 type: 'payone_obt_przelewy',
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_przelewy-method'
-            },
-            {
-                type: 'payone_barzahlen',
-                component: 'Payone_Core/js/view/payment/method-renderer/barzahlen-method'
             },
             {
                 type: 'payone_paydirekt',
@@ -155,10 +147,6 @@ define(
             {
                 type: 'payone_wechatpay',
                 component: 'Payone_Core/js/view/payment/method-renderer/wechatpay-method'
-            },
-            {
-                type: 'payone_trustly',
-                component: 'Payone_Core/js/view/payment/method-renderer/trustly-method'
             },
             {
                 type: 'payone_applepay',

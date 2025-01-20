@@ -36,7 +36,6 @@ class OnlineBankTransferBase extends \Payone\Core\Model\Methods\PayoneMethod
 {
     /* Payment method sub types */
     const METHOD_OBT_SUBTYPE_SOFORTUEBERWEISUNG = 'PNT';
-    const METHOD_OBT_SUBTYPE_GIROPAY = 'GPY';
     const METHOD_OBT_SUBTYPE_EPS = 'EPS';
     const METHOD_OBT_SUBTYPE_POSTFINANCE_EFINANCE = 'PFF';
     const METHOD_OBT_SUBTYPE_POSTFINANCE_CARD = 'PFC';
