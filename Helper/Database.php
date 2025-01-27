@@ -374,19 +374,4 @@ class Database extends \Payone\Core\Helper\Base
             ->where("payone_cancel_substitute_increment_id = :incrementId");
         return $this->getDb()->fetchOne($oSelect, ['incrementId' => $sIncrementId]);
     }
-
-    /**
-     * Writes the registered flag to the customer entity
-     * I'm sure there is a way to do this correctly with the entity object, but Mage2 did everything to prevent this
-     *
-     * @param  int $iCustomerId
-     * @return int
-     */
-    public function markUserAsRegisteredWithPaydirekt($iCustomerId)
-    {
-        $table = $this->databaseResource->getTableName('customer_entity');
-        $data = ['payone_paydirekt_registered' => 1];
-        $where = ['entity_id = ?' => $iCustomerId];
-        return $this->getDb()->update($table, $data, $where);
-    }
 }

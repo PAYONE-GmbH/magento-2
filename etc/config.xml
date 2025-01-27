@@ -146,15 +146,6 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_obt_przelewy>
-            <payone_paydirekt>
-                <active>1</active>
-                <payment_action>Authorization</payment_action>
-                <model>Payone\Core\Model\Methods\Paydirekt</model>
-                <order_status>pending</order_status>
-                <title>PAYONE Paydirekt</title>
-                <allowspecific>0</allowspecific>
-                <group>payone</group>
-            </payone_paydirekt>
             <payone_safe_invoice translate="title" module="Payone_Core">
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
@@ -374,7 +365,6 @@
                 <payone_obt_postfinance_card>{"_1343137411652_552":{"txaction":"appointed","state_status":"processing"}}</payone_obt_postfinance_card>
                 <payone_obt_ideal>{"_1343137411652_752":{"txaction":"appointed","state_status":"processing"}}</payone_obt_ideal>
                 <payone_obt_przelewy>{"_1343137411652_852":{"txaction":"appointed","state_status":"processing"}}</payone_obt_przelewy>
-                <payone_paydirekt>{"_1343118466182_183":{"txaction":"appointed","state_status":"processing"}}</payone_paydirekt>
                 <payone_safe_invoice>{"_payone_status_invoice":{"txaction":"appointed","state_status":"processing"}}</payone_safe_invoice>
                 <payone_payolution_invoice>{"_payone_status_mapping7":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_invoice>
                 <payone_payolution_debit>{"_payone_status_mapping8":{"txaction":"appointed","state_status":"processing"}}</payone_payolution_debit>
@@ -494,11 +484,6 @@
             <payone_obt_przelewy>
                 <use_global>1</use_global>
             </payone_obt_przelewy>
-            <payone_paydirekt>
-                <use_global>1</use_global>
-                <order_secured>0</order_secured>
-                <preauthorization_validity>15</preauthorization_validity>
-            </payone_paydirekt>
             <payone_safe_invoice>
                 <use_global>1</use_global>
                 <disable_after_refusal>0</disable_after_refusal>

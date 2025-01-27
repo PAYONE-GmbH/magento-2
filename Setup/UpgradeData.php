@@ -253,25 +253,6 @@ class UpgradeData implements UpgradeDataInterface
             );
         }
 
-        $customerInstaller = $this->customerSetupFactory->create(['setup' => $setup]);
-        if (!$customerInstaller->getAttribute(\Magento\Customer\Model\Customer::ENTITY, 'payone_paydirekt_registered', 'attribute_id')) {
-            $customerInstaller->addAttribute(
-                'customer',
-                'payone_paydirekt_registered',
-                [
-                    'type'         => 'int',
-                    'label'        => 'Payone paydirekt OneClick is registered',
-                    'input'        => 'text',
-                    'required'     => false,
-                    'visible'      => false,
-                    'user_defined' => true,
-                    'sort_order'   => 999,
-                    'position'     => 999,
-                    'system'       => 0,
-                ]
-            );
-        }
-
         if (!$setup->getConnection()->tableColumnExists($setup->getTable('sales_order'), 'payone_ratepay_shop_id')) {
             $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
             $salesInstaller->addAttribute(

@@ -171,11 +171,6 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <field id="payone_paydirekt" translate="label" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Paydirekt</label>
-                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field>
                 <field id="payone_safe_invoice" translate="label" sortOrder="230" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Safe Invoice</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -307,7 +302,6 @@
             <include path="Payone_Core::system/payone_obt_postfinance_card.xml"/>
             <include path="Payone_Core::system/payone_obt_ideal.xml"/>
             <include path="Payone_Core::system/payone_obt_przelewy.xml"/>
-            <include path="Payone_Core::system/payone_paydirekt.xml"/>
             <include path="Payone_Core::system/payone_safe_invoice.xml"/>
             <include path="Payone_Core::system/payone_payolution_invoice.xml"/>
             <include path="Payone_Core::system/payone_payolution_debit.xml"/>

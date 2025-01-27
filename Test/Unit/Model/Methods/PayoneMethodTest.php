@@ -26,7 +26,7 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods;
 
-use Payone\Core\Model\Methods\Paydirekt as ClassToTest;
+use Payone\Core\Model\Methods\Paypal as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Shop;
 use Payone\Core\Model\PayoneConfig;
@@ -81,8 +81,8 @@ class PayoneMethodTest extends BaseTestCase
             ->willReturnMap(
                 [
                     ['request_type', 'global', 'payone_general', null, 'global_request_type'],
-                    ['use_global', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment', null, '0'],
-                    ['request_type', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment', null, $expected]
+                    ['use_global', PayoneConfig::METHOD_PAYPAL, 'payone_payment', null, '0'],
+                    ['request_type', PayoneConfig::METHOD_PAYPAL, 'payone_payment', null, $expected]
                 ]
             );
         $result = $this->classToTest->getAuthorizationMode();
@@ -106,7 +106,7 @@ class PayoneMethodTest extends BaseTestCase
     public function testNeedsTransactionParam()
     {
         $result = $this->classToTest->needsTransactionParam();
-        $this->assertFalse($result);
+        $this->assertTrue($result);
     }
 
     public function testNeedsProductInfo()
@@ -143,7 +143,7 @@ class PayoneMethodTest extends BaseTestCase
     public function testGetNarrativeTextMaxLength()
     {
         $result = $this->classToTest->getNarrativeTextMaxLength();
-        $expected = 37;
+        $expected = 81;
         $this->assertEquals($expected, $result);
     }
 

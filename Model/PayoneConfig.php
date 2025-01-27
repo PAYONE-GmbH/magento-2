@@ -76,7 +76,6 @@ abstract class PayoneConfig
     const METHOD_OBT_IDEAL = 'payone_obt_ideal';
     const METHOD_OBT_PRZELEWY = 'payone_obt_przelewy';
     const METHOD_KLARNA = 'payone_klarna'; // method was deleted but constant is still useful for unit tests
-    const METHOD_PAYDIREKT = 'payone_paydirekt';
     const METHOD_SAFE_INVOICE = 'payone_safe_invoice';
     const METHOD_PAYOLUTION_INVOICE = 'payone_payolution_invoice';
     const METHOD_PAYOLUTION_DEBIT = 'payone_payolution_debit';

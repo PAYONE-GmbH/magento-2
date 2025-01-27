@@ -125,9 +125,7 @@ class ConfigProviderTest extends BaseTestCase
 
         $customer = $this->getMockBuilder(CustomerModel::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayonePaydirektRegistered'])
             ->getMock();
-        $customer->method('getPayonePaydirektRegistered')->willReturn('0');
         
         $this->customerSession = $this->getMockBuilder(CustomerSession::class)->disableOriginalConstructor()->getMock();
         $this->customerSession->method('getCustomer')->willReturn($customer);

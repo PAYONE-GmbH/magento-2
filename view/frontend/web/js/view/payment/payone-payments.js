@@ -85,10 +85,6 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/obt_przelewy-method'
             },
             {
-                type: 'payone_paydirekt',
-                component: 'Payone_Core/js/view/payment/method-renderer/paydirekt-method'
-            },
-            {
                 type: 'payone_safe_invoice',
                 component: 'Payone_Core/js/view/payment/method-renderer/safe_invoice-method'
             },
