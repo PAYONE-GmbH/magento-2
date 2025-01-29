@@ -44,7 +44,6 @@ class CreditcardTypes implements ArrayInterface
         'americanexpress'   => array('name' => 'American Express',      'cardtype' => 'A', 'cvc_length' => 4),
         'dinersclub'        => array('name' => 'Diners Club',           'cardtype' => 'D', 'cvc_length' => 3),
         'jcb'               => array('name' => 'JCB',                   'cardtype' => 'J', 'cvc_length' => 3),
-        'maestroint'        => array('name' => 'Maestro International', 'cardtype' => 'O', 'cvc_length' => 3),
         'cartebleue'        => array('name' => 'Carte Bleue',           'cardtype' => 'B', 'cvc_length' => 3),
     ];
 

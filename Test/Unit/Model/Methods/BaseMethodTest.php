@@ -30,11 +30,10 @@ use Braintree\PaymentMethod;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\Store;
-use Payone\Core\Model\Methods\Paydirekt as ClassToTest;
+use Payone\Core\Model\Methods\Paypal as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Helper\Shop;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Payone\Core\Model\Methods\Paydirekt;
 use Payone\Core\Model\PayoneConfig;
 use Magento\Payment\Model\Info;
 use Payone\Core\Model\Api\Request\Authorization;
@@ -163,7 +162,7 @@ class BaseMethodTest extends BaseTestCase
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
 
         $result = $this->classToTest->authorize($paymentInfo, 100);
-        $this->assertInstanceOf(Paydirekt::class, $result);
+        $this->assertInstanceOf(ClassToTest::class, $result);
     }
 
     public function testAuthorizeError()
@@ -225,7 +224,7 @@ class BaseMethodTest extends BaseTestCase
         $this->debitRequest->method('sendRequest')->willReturn($aResponse);
 
         $result = $this->classToTest->refund($paymentInfo, 100);
-        $this->assertInstanceOf(Paydirekt::class, $result);
+        $this->assertInstanceOf(ClassToTest::class, $result);
     }
 
     public function testRefundError()
@@ -292,7 +291,7 @@ class BaseMethodTest extends BaseTestCase
         $this->captureRequest->method('sendRequest')->willReturn($aResponse);
 
         $result = $this->classToTest->capture($paymentInfo, 100);
-        $this->assertInstanceOf(Paydirekt::class, $result);
+        $this->assertInstanceOf(ClassToTest::class, $result);
     }
 
     public function testCaptureError()
@@ -361,7 +360,7 @@ class BaseMethodTest extends BaseTestCase
         $this->authorizationRequest->method('sendRequest')->willReturn($aResponse);
 
         $result = $this->classToTest->capture($paymentInfo, 100);
-        $this->assertInstanceOf(Paydirekt::class, $result);
+        $this->assertInstanceOf(ClassToTest::class, $result);
     }
 
     public function testCanUseForCountryFalse()
@@ -372,9 +371,9 @@ class BaseMethodTest extends BaseTestCase
                 [
                     ['allowspecific', 'global', 'payone_general', null, 0],
                     ['specificcountry', 'global', 'payone_general', null, 'DE,AT'],
-                    ['use_global', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment', null, '0'],
-                    ['allowspecific', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment', null, '1'],
-                    ['specificcountry', PayoneConfig::METHOD_PAYDIREKT, 'payone_payment', null, 'NL,AT'],
+                    ['use_global', PayoneConfig::METHOD_PAYPAL, 'payone_payment', null, '0'],
+                    ['allowspecific', PayoneConfig::METHOD_PAYPAL, 'payone_payment', null, '1'],
+                    ['specificcountry', PayoneConfig::METHOD_PAYPAL, 'payone_payment', null, 'NL,AT'],
                 ]
             );
         $result = $this->classToTest->canUseForCountry('DE');

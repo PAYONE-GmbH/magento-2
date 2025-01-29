@@ -86,7 +86,7 @@ abstract class BaseMethod extends AbstractMethod
 
     /**
      * Determines if payment type can use partial captures
-     * Is true for all PAYONE Payment Methods except Barzahlen
+     * Is true for all PAYONE Payment Methods
      *
      * @var bool
      */

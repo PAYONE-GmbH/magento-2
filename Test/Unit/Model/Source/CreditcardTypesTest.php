@@ -48,7 +48,7 @@ class CreditcardTypesTest extends BaseTestCase
     public function testToOptionArray()
     {
         $result = $this->classToTest->toOptionArray();
-        $this->assertCount(7, $result);
+        $this->assertCount(6, $result);
     }
 
     public function testGetCreditcardTypes()

@@ -84,7 +84,7 @@ class MethodListTest extends BaseTestCase
         $this->consumerscoreHelper->expects($this->any())
             ->method('getAllowedMethodsForScore')
             ->willReturnMap([
-                    ['Y', [PayoneConfig::METHOD_CREDITCARD, PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_OBT_GIROPAY]],
+                    ['Y', [PayoneConfig::METHOD_CREDITCARD, PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_OBT_IDEAL]],
                     ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_CASH_ON_DELIVERY, PayoneConfig::METHOD_AMAZONPAY]],
                 ]);
 
@@ -111,7 +111,7 @@ class MethodListTest extends BaseTestCase
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($this->quote);
         $checkoutSession->method('getPayonePaymentBans')->willReturn([PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00']);
-        $checkoutSession->method('getPayonePaymentWhitelist')->willReturn(['payone_creditcard', 'payone_paypal', 'payone_debit', 'payone_barzahlen', 'payone_cash_on_delivery', 'payone_amazonpay', 'payone_klarna_base', 'payone_klarna_invoice']);
+        $checkoutSession->method('getPayonePaymentWhitelist')->willReturn(['payone_creditcard', 'payone_paypal', 'payone_debit', 'payone_cash_on_delivery', 'payone_amazonpay', 'payone_klarna_base', 'payone_klarna_invoice']);
 
         $addresscheck = $this->getMockBuilder(Addresscheck::class)->disableOriginalConstructor()->getMock();
         $addresscheck->method('getPersonstatusMapping')->willReturn(['PPV' => 'R']);
@@ -174,7 +174,7 @@ class MethodListTest extends BaseTestCase
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_BARZAHLEN);
+        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_ADVANCE_PAYMENT);
         $paymentMethods = [$payment];
 
         $this->quote->method('getCustomerId')->willReturn('5');
@@ -246,7 +246,7 @@ class MethodListTest extends BaseTestCase
         $subject = $this->getMockBuilder(MethodList::class)->disableOriginalConstructor()->getMock();
 
         $payment = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
-        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_OBT_GIROPAY);
+        $payment->method('getCode')->willReturn(PayoneConfig::METHOD_OBT_IDEAL);
         $paymentMethods = [$payment];
 
         $this->quote->method('getCustomerId')->willReturn('5');

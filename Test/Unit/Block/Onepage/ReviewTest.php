@@ -324,22 +324,8 @@ class ReviewTest extends BaseTestCase
 
     public function testIsPayPalExpressFalse()
     {
-        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYDIREKT);
+        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_DEBIT);
         $result = $this->classToTest->isPayPalExpress();
-        $this->assertFalse($result);
-    }
-
-    public function testIsPaydirektTrue()
-    {
-        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYDIREKT);
-        $result = $this->classToTest->isPaydirekt();
-        $this->assertTrue($result);
-    }
-
-    public function testIsPaydirektFalse()
-    {
-        $this->payment->method('getMethod')->willReturn(PayoneConfig::METHOD_PAYPAL);
-        $result = $this->classToTest->isPaydirekt();
         $this->assertFalse($result);
     }
 

@@ -310,19 +310,6 @@ class Review extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Check if paypal express is used
-     *
-     * @return bool
-     */
-    public function isPaydirekt()
-    {
-        if ($this->_quote->getPayment()->getMethod() == PayoneConfig::METHOD_PAYDIREKT) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Generate URL to the fingerprint.js Javascript file
      *
      * @return string

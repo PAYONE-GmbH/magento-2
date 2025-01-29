@@ -436,7 +436,6 @@ abstract class PayoneMethod extends BaseMethod
 
     /**
      * Formats the reference number if needed for this payment method
-     * Needed for Paydirekt
      *
      * @param  string $sRefNr
      * @return string

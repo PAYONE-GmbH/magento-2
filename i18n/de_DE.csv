@@ -60,9 +60,6 @@
 "New Creditcard Channel Frontend","Kreditkarte Channel Frontend"
 "Add Creditcard Channel Frontend","Kreditkarte Channel Frontend hinzufügen"
 "Edit Creditcard Channel Frontend","Kreditkarte Channel Frontend bearbeiten"
-"New Barzahlen","Barzahlen"
-"Add Barzahlen","Barzahlen hinzufügen"
-"Edit Barzahlen","Barzahlen bearbeiten"
 "New Debit Payment","Lastschrift"
 "Add Debit Payment","Lastschrift hinzufügen"
 "Edit Debit Payment","Lastschrift bearbeiten"
@@ -135,7 +132,6 @@
 "Transactionstatus-message","Transaktionsstatus-Meldung"
 "Magento-status","Magento-Status"
 "Add Statusmapping","Füge Statusmapping hinzu"
-"Barzahlen","Barzahlen"
 
 "Mapping configuration is used by the addresscheck and the credit rating with combined addresscheck.","Mapping Konfiguration wird von der Adressprüfung und der Bonitätsprüfung mit kombinierter Adressprüfung verwendet"
 "Address checking","Adressprüfung"
@@ -420,7 +416,6 @@
 "GETFILE","Download Mandat als PDF (getfile)"
 
 "INSTANT_MONEY_TRANSFER","SOFORT Überweisung"
-"GIROPAY","giropay"
 "EPS_ONLINE_BANK_TRANSFER","eps Online-Überweisung"
 "POSTFINANCE_EFINANCE","PostFinance E-Finance"
 "POSTFINANCE_CARD","PostFinance Card"
@@ -447,8 +442,6 @@
 "AMEX","American Express"
 "DINERS","Diners-Club"
 "JCB","JCB"
-"MAESTRO_INTERNATIONAL","Maestro International"
-"MAESTRO_UK","Maestro UK"
 "DISCOVER","Discover"
 "CARTE_BLEUE","Carte Bleue"
 
@@ -578,7 +571,7 @@
 "Define the countries to which this settings should apply. This setting follows the Magento country standard.","Definieren Sie die Länder, in denen diese Einstellungen gelten. Die Einstellung folgt dem Magento Länderauswahlstandard."
 "Authorization method","Autorisierungsmethode"
 "Chose here which method to apply for your payments","Hier können Sie einstellen welches Verfahren Sie für Ihre Transaktion verwenden wollen."
-"Note: For the online transfer methods giropay, SOFORT Banking, eps, PostFinance and iDEAL the payment is carried out fully and completely even if you have selected ""Pre-authorisation"". Despite this, you would still have to post the receivable via a separate capture, in this case.","Note: For the online transfer methods giropay, SOFORT Banking, eps, PostFinance and iDEAL the payment is carried out fully and completely even if you have selected “Pre-authorisation“. Despite this, you would still have to post the receivable via a separate capture, in this case."
+"Note: For the online transfer methods SOFORT Banking, eps, PostFinance and iDEAL the payment is carried out fully and completely even if you have selected ""Pre-authorisation"". Despite this, you would still have to post the receivable via a separate capture, in this case.","Note: For the online transfer methods SOFORT Banking, eps, PostFinance and iDEAL the payment is carried out fully and completely even if you have selected “Pre-authorisation“. Despite this, you would still have to post the receivable via a separate capture, in this case."
 "Options:","Optionen:"
 "Pre-authorization","Vorautorisierung"
 "When selecting "Pre-authorisation" the amount to be paid is reserved during the ordering process. In this case, the actual capture of the amount must be initiated in a second step upon delivery of the goods. The receivable will only be posted after the amount has been captured.","Dieses Verfahren versucht zunächst eine Reservierung des Betrages auf dem ausgewählten Zahlungsmittel. Zu einen späteren Zeitpunkt wird per Capture das Geld vom Zahlungsmittel abgebucht. Dieses Verfahren ist zu empfehlen, wenn Sie Versender von materiellen Gütern sind. Erst zum Zeitpunkt des Warenversandes wird dann der Geldeinzug vorgenommen."
@@ -789,7 +782,7 @@
 "Security Key","Sicherheitsschlüssel (Key)"
 "The key that you defined in the PMI to encrypt the queries sent to the PAYONE Platform.","Tragen Sie hier den von Ihnen definierten PMI-Sicherheitsschlüssel ein, um eine gesicherte Kommunikation zu gewährleisten.",
 "Authorization method","Autorisierungsmethode"
-"Chose here which method to apply for your payments. Note: For the online transfer methods giropay, SOFORT Banking, eps, PostFinance and iDEAL the payment is carried out fully and completely even if you have selected ""Pre-authorisation"". Despite this, you would still have to post the receivable via a separate capture, in this case.","Hier können Sie einstellen welches Verfahren Sie für Ihre Transaktion verwenden wollen.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Chose here which method to apply for your payments. Note: For the online transfer methods SOFORT Banking, eps, PostFinance and iDEAL the payment is carried out fully and completely even if you have selected ""Pre-authorisation"". Despite this, you would still have to post the receivable via a separate capture, in this case.","Hier können Sie einstellen welches Verfahren Sie für Ihre Transaktion verwenden wollen.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 "Pre-authorization","Vorautorisierung"
 "When selecting ""Pre-authorisation"" the amount to be paid is reserved during the ordering process. In this case, the actual capture of the amount must be initiated in a second step upon delivery of the goods. The receivable will only be posted after the amount has been captured.","Dieses Verfahren versucht zunächst eine Reservierung des Betrages auf dem ausgewählten Zahlungsmittel. Zu einen späteren Zeitpunkt wird per Capture das Geld vom Zahlungsmittel abgebucht. Dieses Verfahren ist zu empfehlen, wenn Sie Versender von materiellen Gütern sind. Erst zum Zeitpunkt des Warenversandes wird dann der Geldeinzug vorgenommen."
 "Authorization","Autorisierung"
@@ -1153,8 +1146,6 @@
 "Please choose your desired Klarna payment method:","Bitte wählen Sie Ihre gewünscht Klarna Zahlart:"
 
 "Payment method is not available anymore","Zahlart steht nicht mehr zur Verfügung"
-
-"Please check your email account for the paydirekt registration email before continuing.","Bitte prüfen Sie Ihr Email-Konto bzgl. der Registrierungs-Email von paydirekt bevor Sie fortfahren."
 
 "ratepay_legal_text_snippet_1","Mit Klicken auf"
 "ratepay_legal_text_snippet_2","erklären Sie sich mit den"

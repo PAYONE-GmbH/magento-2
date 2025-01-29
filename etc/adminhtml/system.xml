@@ -146,11 +146,6 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <!--field id="payone_obt_giropay" translate="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>giropay</label>
-                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field Giropay has been disabled, Paydirekt is now Giropay -->
                 <field id="payone_obt_eps" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>eps - Online-Ueberweisung</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -173,16 +168,6 @@
                 </field>
                 <field id="payone_obt_przelewy" translate="label" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Przelewy24</label>
-                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field>
-                <field id="payone_barzahlen" translate="label" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Barzahlen</label>
-                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field>
-                <field id="payone_paydirekt" translate="label" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Giropay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
@@ -257,11 +242,6 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
-                <field id="payone_trustly" translate="label" sortOrder="330" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Trustly</label>
-                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
-                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
-                </field>
                 <field id="payone_applepay" translate="label" sortOrder="350" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Apple Pay</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -317,14 +297,11 @@
             <include path="Payone_Core::system/payone_advance_payment.xml"/>
             <include path="Payone_Core::system/payone_invoice.xml"/>
             <include path="Payone_Core::system/payone_obt_sofortueberweisung.xml"/>
-            <!--include path="Payone_Core::system/payone_obt_giropay.xml"/ Giropay has been disabled, Paydirekt is now Giropay -->
             <include path="Payone_Core::system/payone_obt_eps.xml"/>
             <include path="Payone_Core::system/payone_obt_postfinance_efinance.xml"/>
             <include path="Payone_Core::system/payone_obt_postfinance_card.xml"/>
             <include path="Payone_Core::system/payone_obt_ideal.xml"/>
             <include path="Payone_Core::system/payone_obt_przelewy.xml"/>
-            <include path="Payone_Core::system/payone_barzahlen.xml"/>
-            <include path="Payone_Core::system/payone_paydirekt.xml"/>
             <include path="Payone_Core::system/payone_safe_invoice.xml"/>
             <include path="Payone_Core::system/payone_payolution_invoice.xml"/>
             <include path="Payone_Core::system/payone_payolution_debit.xml"/>
@@ -340,7 +317,6 @@
             <include path="Payone_Core::system/payone_ratepay_debit.xml"/>
             <include path="Payone_Core::system/payone_ratepay_installment.xml"/>
             <include path="Payone_Core::system/payone_wechatpay.xml"/>
-            <include path="Payone_Core::system/payone_trustly.xml"/>
             <include path="Payone_Core::system/payone_applepay.xml"/>
             <include path="Payone_Core::system/payone_bancontact.xml"/>
             <include path="Payone_Core::system/payone_bnpl_invoice.xml"/>

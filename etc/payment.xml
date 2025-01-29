@@ -55,9 +55,6 @@
         <method name="payone_obt_sofortueberweisung">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
-        <!--method name="payone_obt_giropay">
-            <allow_multiple_address>0</allow_multiple_address>
-        </method Giropay has been disabled, Paydirekt is now Giropay -->
         <method name="payone_obt_eps">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
@@ -71,12 +68,6 @@
             <allow_multiple_address>0</allow_multiple_address>
         </method>
         <method name="payone_obt_przelewy">
-            <allow_multiple_address>0</allow_multiple_address>
-        </method>
-        <method name="payone_barzahlen">
-            <allow_multiple_address>0</allow_multiple_address>
-        </method>
-        <method name="payone_paydirekt">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
         <method name="payone_safe_invoice">
@@ -122,9 +113,6 @@
             <allow_multiple_address>0</allow_multiple_address>
         </method>
         <method name="payone_wechatpay">
-            <allow_multiple_address>0</allow_multiple_address>
-        </method>
-        <method name="payone_trustly">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
         <method name="payone_applepay">

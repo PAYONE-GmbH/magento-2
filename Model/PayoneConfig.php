@@ -70,15 +70,12 @@ abstract class PayoneConfig
     const METHOD_PAYPAL = 'payone_paypal';
     const METHOD_PAYPALV2 = 'payone_paypalv2';
     const METHOD_OBT_SOFORTUEBERWEISUNG = 'payone_obt_sofortueberweisung';
-    const METHOD_OBT_GIROPAY = 'payone_obt_giropay';
     const METHOD_OBT_EPS = 'payone_obt_eps';
     const METHOD_OBT_POSTFINANCE_EFINANCE = 'payone_obt_postfinance_efinance';
     const METHOD_OBT_POSTFINANCE_CARD = 'payone_obt_postfinance_card';
     const METHOD_OBT_IDEAL = 'payone_obt_ideal';
     const METHOD_OBT_PRZELEWY = 'payone_obt_przelewy';
     const METHOD_KLARNA = 'payone_klarna'; // method was deleted but constant is still useful for unit tests
-    const METHOD_BARZAHLEN = 'payone_barzahlen';
-    const METHOD_PAYDIREKT = 'payone_paydirekt';
     const METHOD_SAFE_INVOICE = 'payone_safe_invoice';
     const METHOD_PAYOLUTION_INVOICE = 'payone_payolution_invoice';
     const METHOD_PAYOLUTION_DEBIT = 'payone_payolution_debit';
@@ -94,7 +91,6 @@ abstract class PayoneConfig
     const METHOD_RATEPAY_INVOICE = 'payone_ratepay_invoice';
     const METHOD_RATEPAY_INSTALLMENT = 'payone_ratepay_installment';
     const METHOD_RATEPAY_DEBIT = 'payone_ratepay_debit';
-    const METHOD_TRUSTLY = 'payone_trustly';
     const METHOD_APPLEPAY = 'payone_applepay';
     const METHOD_BANCONTACT = 'payone_bancontact';
     const METHOD_BNPL_INVOICE = 'payone_bnpl_invoice';

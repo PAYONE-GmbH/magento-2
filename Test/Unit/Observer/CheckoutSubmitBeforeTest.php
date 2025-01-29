@@ -395,7 +395,7 @@ class CheckoutSubmitBeforeTest extends BaseTestCase
             ->method('getAllowedMethodsForScore')
             ->willReturnMap([
                 ['Y', [PayoneConfig::METHOD_ADVANCE_PAYMENT, PayoneConfig::METHOD_CASH_ON_DELIVERY]],
-                ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_BARZAHLEN]]
+                ['R', [PayoneConfig::METHOD_DEBIT, PayoneConfig::METHOD_BNPL_DEBIT]]
             ]);
 
         $observer = $this->getExecuteObserver();

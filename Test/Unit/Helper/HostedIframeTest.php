@@ -169,7 +169,6 @@ class HostedIframeTest extends BaseTestCase
                         'A' => 4,
                         'D' => 3,
                         'J' => 3,
-                        'O' => 3,
                         'B' => 3,
                     ],
                 ],

@@ -58,7 +58,6 @@ class Installment extends PayolutionBase
 
     /**
      * Returns authorization-mode
-     * Barzahlen only supports preauthorization
      *
      * @return string
      */
