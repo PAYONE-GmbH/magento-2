@@ -34,7 +34,7 @@ PAYONE GmbH<br>
 Lyoner Straße 9<br>
 60528 Frankfurt am Main, Germany<br>
 Phone +49 431 25968-400<br>
-tech-support@payone.com<br>
+tech.support@payone.com<br>
 
 ## License
 See our License Agreement at: https://www.payone.de/fileadmin/downloads/sonstiges/PAYONE_Haftungs_und_Lizenzvereinbarung_Extensions.pdf
