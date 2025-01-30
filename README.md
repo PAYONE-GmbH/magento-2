@@ -31,7 +31,7 @@ Support for Magento 2.2 was phased out in December 2019. From that date, we disc
 
 ## Contact
 PAYONE GmbH<br>
-Lyoner Straße 9<br>
+Lyoner Straße 15<br>
 60528 Frankfurt am Main, Germany<br>
 Phone +49 431 25968-400<br>
 tech.support@payone.com<br>
