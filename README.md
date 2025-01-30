@@ -31,11 +31,10 @@ Support for Magento 2.2 was phased out in December 2019. From that date, we disc
 
 ## Contact
 PAYONE GmbH<br>
-Office Kiel<br>
-Fraunhoferstraße 2-4<br>
-24118 Kiel, Germany<br>
-Phone +49 431 25968-400 Fax +49 431 25968-1400<br>
-magento@payone.com<br>
+Lyoner Straße 9<br>
+60528 Frankfurt am Main, Germany<br>
+Phone +49 431 25968-400<br>
+tech-support@payone.com<br>
 
 ## License
 See our License Agreement at: https://www.payone.de/fileadmin/downloads/sonstiges/PAYONE_Haftungs_und_Lizenzvereinbarung_Extensions.pdf
