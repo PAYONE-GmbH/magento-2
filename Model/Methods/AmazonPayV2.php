@@ -115,7 +115,7 @@ class AmazonPayV2 extends PayoneMethod
      */
     public function getButtonColor()
     {
-        return $this->getCustomConfigParam('button_color');
+        return $this->getCustomConfigParam('button_color') ?? 'Gold';
     }
 
     /**
@@ -123,7 +123,7 @@ class AmazonPayV2 extends PayoneMethod
      */
     public function getButtonLanguage()
     {
-        return str_replace("-", "_", $this->getCustomConfigParam('button_language'));
+        return str_replace("-", "_", $this->getCustomConfigParam('button_language') ?? 'none');
     }
 
     /**

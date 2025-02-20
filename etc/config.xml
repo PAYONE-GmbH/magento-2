@@ -557,6 +557,8 @@
             <payone_amazonpayv2>
                 <use_global>1</use_global>
                 <apb_active>1</apb_active>
+                <button_language>none</button_language>
+                <button_color>Gold</button_color>
             </payone_amazonpayv2>
             <payone_klarna_invoice>
                 <use_global>1</use_global>
