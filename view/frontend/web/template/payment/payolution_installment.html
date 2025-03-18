@@ -55,7 +55,7 @@
                                style="width:auto;margin-right:10px;"
                                size="3" maxlength="2"
                                data-bind="attr: {
-                                    autocomplete: off,
+                                    autocomplete: 'off',
                                     id: getCode() + '_birthday',
                                     title: $t('Day of birth'),
                                     'data-container': getCode() + '-birthday'},
@@ -65,7 +65,7 @@
                                style="width:auto;margin-right:10px;"
                                size="3" maxlength="2"
                                data-bind="attr: {
-                                    autocomplete: off,
+                                    autocomplete: 'off',
                                     id: getCode() + '_birthmonth',
                                     title: $t('Month of birth'),
                                     'data-container': getCode() + '-birthmonth'},
@@ -75,7 +75,7 @@
                                style="width:auto;margin-right:10px;"
                                size="8" maxlength="4"
                                data-bind="attr: {
-                                    autocomplete: off,
+                                    autocomplete: 'off',
                                     id: getCode() + '_birthyear',
                                     title: $t('Year of birth'),
                                     'data-container': getCode() + '-birthyear'},
@@ -93,7 +93,7 @@
                     </label>
                     <div class="control">
                         <input type="text" name="payment[iban]" class="input-text" value=""
-                               data-bind="attr: {autocomplete: off, id: getCode() + '_iban', title: $t('IBAN'), 'data-container': getCode() + '-iban'},
+                               data-bind="attr: {autocomplete: 'off', id: getCode() + '_iban', title: $t('IBAN'), 'data-container': getCode() + '-iban'},
                                           value: iban,
                                           valueUpdate: 'keyup' "/>
                     </div>
@@ -104,7 +104,7 @@
                     </label>
                     <div class="control">
                         <input type="text" name="payment[bic]" class="input-text" value=""
-                               data-bind="attr: {autocomplete: off, id: getCode() + '_bic', title: $t('BIC'), 'data-container': getCode() + '-bic'},
+                               data-bind="attr: {autocomplete: 'off', id: getCode() + '_bic', title: $t('BIC'), 'data-container': getCode() + '-bic'},
                                           value: bic,
                                           valueUpdate: 'keyup' "/>
                     </div>
