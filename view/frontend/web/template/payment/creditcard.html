@@ -44,7 +44,7 @@
 
         <form class="creditcard_form" id="creditcard_form" action="#" method="post" data-bind="attr: {id: getCode() + '_creditcard_form'}">
             <input type="hidden" name="payment[cc_pseudocardpan]" value=""
-                   data-bind="attr: {autocomplete: off, id: getCode() + '_pseudocardpan'},
+                   data-bind="attr: {autocomplete: 'off', id: getCode() + '_pseudocardpan'},
                               value: pseudocardpan">
 
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'payone_form_cc'}">
@@ -100,7 +100,7 @@
                         <div class="control">
                             <input type="text" name="payment[cc_cardholder]" class="input-text" value=""
                                    data-bind="attr: {
-                                        autocomplete: off,
+                                        autocomplete: 'off',
                                         id: getCode() + '_cardholder',
                                         title: $t('Cardholder'),
                                         'data-container': getCode() + '-cardholder'},
