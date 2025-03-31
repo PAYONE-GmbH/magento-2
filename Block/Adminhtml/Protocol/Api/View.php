@@ -78,6 +78,15 @@ class View extends \Magento\Backend\Block\Widget\Container
         return $this->oApiLog;
     }
 
+    public function isVerticalDisplayNeeded()
+    {
+        // not done and used yet, but may be useful in the future
+        if (false) { // add criteria ti discern between horizontal and vertical display
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Adding the Back button
      *
@@ -105,7 +114,7 @@ class View extends \Magento\Backend\Block\Widget\Container
      */
     public function formatValue($sKey, $sValue)
     {
-        if ($sKey == 'add_paydata[amazon_address_token]') {
+        if (in_array($sKey, ['add_paydata[amazon_address_token]', 'add_paydata[paymentmethod_token_data]'])) {
             return '<span title="'.$sValue.'">[...]</span>';
         }
         return $sValue;

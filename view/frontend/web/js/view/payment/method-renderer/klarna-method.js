@@ -162,13 +162,6 @@ define(
                 return totals.base_shipping_incl_tax;
             },
 
-            getCurrency: function (totals) {
-                if (window.checkoutConfig.payment.payone.currency === "display") {
-                    return totals.quote_currency_code;
-                }
-                return totals.base_currency_code;
-            },
-
             validate: function () {
                 if (this.canBeAuthorized === false) {
                     this.messageContainer.addErrorMessage({'message': $t('Please choose your desired Klarna payment method:')});
@@ -183,7 +176,7 @@ define(
 
                 var data = {
                     purchase_country: billingAddress.countryId,
-                    purchase_currency: this.getCurrency(totals),
+                    purchase_currency: this.getCurrency(),
                     locale: window.checkoutConfig.payment.payone.fullLocale.replace('_', '-'),
                     billing_address: {
                         given_name: billingAddress.firstname,

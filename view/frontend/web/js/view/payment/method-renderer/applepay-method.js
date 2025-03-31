@@ -56,13 +56,6 @@ define(
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
 
-            getCurrency: function () {
-                if (window.checkoutConfig.payment.payone.currency === "display") {
-                    return quote.totals().quote_currency_code;
-                }
-                return quote.totals().base_currency_code;
-            },
-
             isApplePayAvailable: function () {
                 try {
                     return window.ApplePaySession && window.ApplePaySession.canMakePayments();
@@ -84,19 +77,6 @@ define(
                 parentReturn.additional_data.token = JSON.stringify(this.token());
                 return parentReturn;
             },
-
-            getOrderTotal: function () {
-                if (window.checkoutConfig.payment.payone.currency === "display") {
-                    return parseFloat(totals.getSegment('grand_total').value);
-                }
-
-                var total = quote.getTotals();
-                if (total) {
-                    return parseFloat(total()['base_grand_total']);
-                }
-                return 0;
-            },
-
             getPlaceOrderDeferredObject: function () {
                 var self = this;
 
