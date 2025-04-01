@@ -135,7 +135,7 @@ define(
                 // Add shipping
                 let shipping = quote.shippingMethod();
                 if (shipping && shipping.amount > 0) {
-                    lineItems.push(this.getSingleLineItem($t("Shipping") + shipping.carrier_title + " - " + shipping.method_title, shipping.base_amount, shipping.amount));
+                    lineItems.push(this.getSingleLineItem($t("Shipping") + shipping.carrier_title + " - " + shipping.method_title, shipping.price_incl_tax, shipping.price_incl_tax)); // no base_price_incl_tax here...
                 }
 
                 return lineItems;
