@@ -104,7 +104,8 @@ class Api extends Base
         'clearing_bankaccountholder' => 'payone_clearing_bankaccountholder',
         'clearing_bankcity' => 'payone_clearing_bankcity',
         'clearing_bankiban' => 'payone_clearing_bankiban',
-        'clearing_bankbic' => 'payone_clearing_bankbic'
+        'clearing_bankbic' => 'payone_clearing_bankbic',
+        'clearing_duedate' => 'payone_clearing_duedate',
     ];
 
     /**

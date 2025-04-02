@@ -103,7 +103,7 @@ class BNPLBase extends PayoneMethod
      *
      * @var string
      */
-    protected $_infoBlockType = 'Payone\Core\Block\Info\ClearingReference';
+    protected $_infoBlockType = 'Payone\Core\Block\Info\BNPL';
 
     /**
      * @var \Payone\Core\Helper\Api
@@ -208,6 +208,28 @@ class BNPLBase extends PayoneMethod
     }
 
     /**
+     * @param Order $oOrder
+     * @return string|false
+     */
+    protected function getBirthday(Order $oOrder)
+    {
+        $sDob = false;
+        if (!empty($oOrder->getCustomerDob())) {
+            $sDob = $oOrder->getCustomerDob();
+        } elseif (!empty($this->getInfoInstance()->getAdditionalInformation('dateofbirth'))) {
+            $sDob = $this->getInfoInstance()->getAdditionalInformation('dateofbirth');
+        }
+
+        if (!empty($sDob)) {
+            $iDobTime = strtotime($sDob);
+            if ($iDobTime !== false) {
+                $sDob = date('Ymd', $iDobTime);
+            }
+        }
+        return $sDob;
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param Order $oOrder
@@ -226,7 +248,7 @@ class BNPLBase extends PayoneMethod
             'financingtype' => $this->getSubType(),
             'add_paydata[device_token]' => $this->getDeviceToken(),
             'businessrelation' => $sBusinessrelation,
-            'birthday' => $oInfoInstance->getAdditionalInformation('dateofbirth')
+            'birthday' => $this->getBirthday($oOrder),
         ];
 
         $sTelephone = $oInfoInstance->getAdditionalInformation('telephone');
