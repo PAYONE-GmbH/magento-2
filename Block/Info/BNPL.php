@@ -65,7 +65,11 @@ class BNPL extends Base
                     $data[(string)__('Due date')] = date((string)__('Y-m-d'), strtotime($oOrder->getPayoneClearingDuedate()));
                 }
             }
-            $data[(string)__('Payment reference')] = $oOrder->getPayoneTxid();
+            $sPaymentReference = $oOrder->getPayoneTxid();
+            if (!empty($oOrder->getPayoneClearingReference())) {
+                $sPaymentReference = $oOrder->getPayoneClearingReference();
+            }
+            $data[(string)__('Payment reference')] = $sPaymentReference;
         }
         return $transport->setData(array_merge($data, $transport->getData()));
     }
