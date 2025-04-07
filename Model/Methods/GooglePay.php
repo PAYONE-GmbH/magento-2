@@ -129,12 +129,25 @@ class GooglePay extends PayoneMethod
     }
 
     /**
+     * @return string
+     */
+    protected function getMerchantId()
+    {
+        $sMid = $this->shopHelper->getConfigParam('mid');
+        $sCustomMid = $this->getCustomConfigParam('mid');
+        if ($this->hasCustomConfig() && !empty($sCustomMid)) {
+            $sMid = $sCustomMid;
+        }
+        return $sMid;
+    }
+
+    /**
      * @return array
      */
     public function getFrontendConfig()
     {
         return [
-            'merchantId' => $this->getCustomConfigParam('mid'),
+            'merchantId' => $this->getMerchantId(),
             'storeName' => $this->getStoreName(),
             'operationMode' => $this->getOperationMode(),
         ];

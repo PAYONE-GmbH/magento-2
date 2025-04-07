@@ -155,6 +155,7 @@ class GooglePayTest extends BaseTestCase
         $this->shopHelper->method('getConfigParam')->willReturnMap(
             [
                 ['mid', PayoneConfig::METHOD_GOOGLE_PAY, 'payone_payment', 'test', $expectedConfigParam],
+                ['mid', 'global', 'payone_general', null, $expectedConfigParam],
                 ['store_name', PayoneConfig::METHOD_GOOGLE_PAY, 'payment', 'test', null],
                 ['mode', PayoneConfig::METHOD_GOOGLE_PAY, 'payone_payment', 'test', $expectedConfigParam],
             ]
@@ -179,6 +180,7 @@ class GooglePayTest extends BaseTestCase
         $this->shopHelper->method('getConfigParam')->willReturnMap(
             [
                 ['mid', PayoneConfig::METHOD_GOOGLE_PAY, 'payone_payment', 'test', $expectedConfigParam],
+                ['mid', 'global', 'payone_general', null, $expectedConfigParam],
                 ['store_name', PayoneConfig::METHOD_GOOGLE_PAY, 'payment', 'test', null],
                 ['mode', PayoneConfig::METHOD_GOOGLE_PAY, 'payone_payment', 'test', $expectedConfigParam],
             ]
