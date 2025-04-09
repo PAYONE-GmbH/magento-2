@@ -66,13 +66,6 @@ define(
                 return parentReturn;
             },
 
-            getCurrency: function () {
-                if (window.checkoutConfig.payment.payone.currency === "display") {
-                    return quote.totals().quote_currency_code;
-                }
-                return quote.totals().base_currency_code;
-            },
-
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
@@ -102,17 +95,6 @@ define(
                     });
                     this.buttonLoaded(true);
                 }
-            },
-            getOrderTotal: function () {
-                if (window.checkoutConfig.payment.payone.currency === "display") {
-                    return parseFloat(totals.getSegment('grand_total').value);
-                }
-
-                var total = quote.getTotals();
-                if (total) {
-                    return parseFloat(total()['base_grand_total']);
-                }
-                return 0;
             },
             getProductType: function () {
                 if (quote.isVirtual()) {

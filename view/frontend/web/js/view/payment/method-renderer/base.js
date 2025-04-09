@@ -25,6 +25,7 @@ define(
     [
         'Magento_Checkout/js/view/payment/default',
         'jquery',
+        'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/payment/additional-validators',
         'Magento_Checkout/js/action/set-payment-information',
         'mage/url',
@@ -33,7 +34,7 @@ define(
         'Magento_Checkout/js/action/select-payment-method',
         'Magento_Checkout/js/action/place-order'
     ],
-    function (Component, $, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction, placeOrderAction) {
+    function (Component, $, quote, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction, placeOrderAction) {
         'use strict';
         return Component.extend({
             redirectToPayoneController: function(sUrl) {
@@ -118,7 +119,28 @@ define(
 
                 return true;
             },
+            getCurrency: function () {
+                if (window.checkoutConfig.payment.payone.currency === "display") {
+                    return quote.totals().quote_currency_code;
+                }
+                return quote.totals().base_currency_code;
+            },
+            getOrderTotal: function () {
+                let orderTotal = 0;
 
+                let totals = quote.getTotals();
+                if (totals) {
+                    if (window.checkoutConfig.payment.payone.currency === "display") {
+                        orderTotal = totals().grand_total;
+                    } else {
+                        orderTotal = totals().base_grand_total;
+                    }
+                }
+                return parseFloat(orderTotal);
+            },
+            getBillingCountry: function () {
+                return quote.billingAddress().countryId.toUpperCase();
+            },
             isBirthdayValid: function (iYear, iMonth, iDay) {
                 var sBirthDate = iYear + "-" + iMonth + "-" + iDay;
                 var oBirthDate = new Date(sBirthDate);

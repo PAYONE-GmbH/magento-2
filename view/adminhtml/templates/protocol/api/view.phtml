@@ -24,14 +24,16 @@
  */
 
 $oApiLog = $block->getApiLogEntry();
+$blVerticalDisplay = $block->isVerticalDisplayNeeded();
+
 ?>
 <?php if (!$oApiLog): ?>
     <?php echo __('API-log entry could not be found!'); ?>
 <?php else: ?>
 <div data-mage-init='{"floatingHeader": {}}' class="page-actions"><?php echo $block->getButtonsHtml() ?></div>
-<section class="admin__page-section  order-view-account-information">
+<section class="admin__page-section order-view-account-information">
     <div class="admin__page-section-content">
-        <div class="admin__page-section-item order-information">
+        <div class="admin__page-section-item <?php if ($blVerticalDisplay === false): ?>order-information<?php endif ?>">
             <div class="admin__page-section-item-title">
                 <span class="title"><?php echo __('Request'); ?></span>
             </div>
@@ -48,7 +50,10 @@ $oApiLog = $block->getApiLogEntry();
                 </table>
             </div>
         </div>
-        <div class="admin__page-section-item order-account-information">
+        <?php if ($blVerticalDisplay === true): ?>
+            <br><br>
+        <?php endif; ?>
+        <div class="admin__page-section-item <?php if ($blVerticalDisplay === false): ?>order-account-information<?php endif; ?>">
             <div class="admin__page-section-item-title">
                 <span class="title"><?php echo __('Response'); ?></span>
             </div>
