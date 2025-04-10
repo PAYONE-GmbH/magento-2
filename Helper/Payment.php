@@ -137,6 +137,9 @@ class Payment extends \Payone\Core\Helper\Base
 
             $aCreditcardTypes = explode(',', $sCreditcardTypes);
             foreach ($aCreditcardTypes as $sTypeId) {
+                if (!isset($aAllTypes[$sTypeId])) {
+                    continue;
+                }
                 $aReturn[] = [
                     'id' => $aAllTypes[$sTypeId]['cardtype'],
                     'title' => $aAllTypes[$sTypeId]['name'],

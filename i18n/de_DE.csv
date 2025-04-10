@@ -1185,3 +1185,4 @@
 "Safe installment is not available for your current basket. Please choose another payment method.","Gesicherter Ratenkauf wird für Ihren aktuellen Warenkorb nicht unterstützt. Bitte wählen Sie eine andere Zahlart."
 "Payment with differing billing- and shipping-address is not supported for this payment type","Die Zahlung bei abweichender Rechnungs- und Lieferadressen wird für diese Zahlart nicht unterstützt"
 "Place Order","Jetzt kaufen"
+"Y-m-d","d.m.Y"
