@@ -32,7 +32,7 @@ namespace Payone\Core\Model;
 abstract class PayoneConfig
 {
     /* Module version */
-    const MODULE_VERSION = '3.13.3';
+    const MODULE_VERSION = '3.14.0';
 
     /* Authorization request types */
     const REQUEST_TYPE_PREAUTHORIZATION = 'preauthorization';
