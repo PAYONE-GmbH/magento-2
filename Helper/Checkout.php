@@ -28,6 +28,7 @@ namespace Payone\Core\Helper;
 
 use Magento\Quote\Model\Quote;
 use Magento\Checkout\Model\Type\Onepage;
+use Magento\Quote\Api\Data\AddressInterface;
 
 /**
  * Helper class for everything that has to do with the checkout
@@ -45,6 +46,22 @@ class Checkout extends \Payone\Core\Helper\Base
      * @var \Magento\Checkout\Helper\Data
      */
     protected $checkoutData;
+
+    /**
+     * All parameters used for the address hash
+     *
+     * @var array
+     */
+    protected $aHashParams = [
+        'firstname',
+        'lastname',
+        'company',
+        'street',
+        'zip',
+        'city',
+        'country',
+        'state',
+    ];
 
     /**
      * Constructor
@@ -103,5 +120,67 @@ class Checkout extends \Payone\Core\Helper\Base
             $sComparisonString .= $oItem->getProductId().$oItem->getSku().$oItem->getQty()."|";
         }
         return $sComparisonString;
+    }
+
+    /**
+     * Get address array for hash creation
+     *
+     * @param  AddressInterface $oAddress
+     * @return array
+     */
+    protected function getAddressArray(AddressInterface $oAddress)
+    {
+        return [
+            'firstname' => $oAddress->getFirstname(),
+            'lastname' => $oAddress->getLastname(),
+            'company' => $oAddress->getCompany(),
+            'street' => $oAddress->getStreet()[0],
+            'zip' => $oAddress->getPostcode(),
+            'city' => $oAddress->getCity(),
+            'country' => $oAddress->getCountryId(),
+            'state' => $oAddress->getRegionCode(),
+        ];
+    }
+
+    /**
+     * Generate a unique hash of an address
+     *
+     * @param  AddressInterface $oAddress
+     * @param  array            $aResponse
+     * @return string
+     */
+    public function getHashFromAddress(AddressInterface $oAddress, $aResponse = false)
+    {
+        $aAddressArray = $this->getAddressArray($oAddress); // collect data from the address object
+
+        $sAddress = '';
+        foreach ($this->aHashParams as $sParamKey) {
+            $sParamValue = isset($aAddressArray[$sParamKey]) ? $aAddressArray[$sParamKey] : false;
+            if ($sParamValue) {
+                if ($aResponse !== false && array_key_exists($sParamKey, $aResponse) !== false && $aResponse[$sParamKey] != $sParamValue) {
+                    //take the corrected value from the address-check
+                    $sParamValue = $aResponse[$sParamKey];
+                }
+                $sAddress .= $sParamValue;
+            }
+        }
+        $sHash = md5($sAddress); // generate hash from address for identification
+
+        return $sHash;
+    }
+
+    /**
+     * Generate hash for the addresses used in the quote at the current moment
+     *
+     * @param Quote $oQuote
+     * @return string
+     */
+    public function getQuoteAddressHash(Quote $oQuote)
+    {
+        $sHash = $this->getHashFromAddress($oQuote->getBillingAddress());
+        if ($oQuote->getIsVirtual() === false && !empty($oQuote->getShippingAddress())) {
+            $sHash .= $this->getHashFromAddress($oQuote->getShippingAddress());
+        }
+        return $sHash;
     }
 }

@@ -107,6 +107,8 @@ class ReturnedTest extends BaseTestCase
                 'getPayonePayPalExpressRetry',
                 'unsPayonePayPalExpressRetry',
                 'getQuote',
+                'setPayoneQuoteAddressHash',
+                'setPayoneExpressAddressResponse',
             ])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);

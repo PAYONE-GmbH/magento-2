@@ -37,6 +37,7 @@ define(
         return Component.extend({
             defaults: {
                 template: 'Payone_Core/payment/amazonpayv2',
+                containerId: 'AmazonPayAPB',
                 telephone: '',
                 buttonLoaded: false
             },
@@ -73,7 +74,7 @@ define(
             initialize: function () {
                 let parentReturn = this._super();
                 if (checkoutData.getSelectedPaymentMethod() === this.getCode()) {
-                    this.initAmazonPayButton();
+                    this.startInitButton();
                 }
                 return parentReturn;
             },
@@ -84,8 +85,25 @@ define(
                 return true;
             },
             selectPaymentMethod: function () {
-                this.initAmazonPayButton();
+                this.startInitButton();
                 return this._super();
+            },
+            startInitButton: function (trys = 0) {
+                // Button may not be rendered on first try - try again but not more than 10 times
+                if (trys > 10) {
+                    return false;
+                }
+
+                let elem = document.getElementById(this.containerId);
+                if (elem === null) {
+                    let self = this;
+                    trys++;
+                    setTimeout(function() {
+                        window.requestAnimationFrame(function() {self.startInitButton(trys);});
+                    }, 250);
+                } else {
+                    this.initAmazonPayButton();
+                }
             },
             initAmazonPayButton: function () {
                 if (this.buttonLoaded() === false) {
@@ -121,7 +139,7 @@ define(
                     buttonConfig.sandbox = true;
                 }
 
-                let amazonPayButton = amazon.Pay.renderButton('#AmazonPayAPB', buttonConfig);
+                let amazonPayButton = amazon.Pay.renderButton('#' + this.containerId, buttonConfig);
                 amazonPayButton.onClick(function(){
                     self.isPlaceOrderActionAllowed(false);
                     self.getPlaceOrderDeferredObject()

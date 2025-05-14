@@ -28,7 +28,7 @@ namespace Payone\Core\Test\Unit\Model\ResourceModel;
 
 use Payone\Core\Model\ResourceModel\CheckedAddresses as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Payone\Core\Helper\Shop;
+use Payone\Core\Helper\Checkout;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\App\ResourceConnection;
@@ -55,9 +55,9 @@ class CheckedAddressesTest extends BaseTestCase
     private $address;
 
     /**
-     * @var Shop|\PHPUnit_Framework_MockObject_MockObject
+     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $shopHelper;
+    private $checkoutHelper;
 
     /**
      * @var ResourceConnection|\PHPUnit_Framework_MockObject_MockObject
@@ -78,7 +78,7 @@ class CheckedAddressesTest extends BaseTestCase
         $this->address->method('getCountryId')->willReturn('DE');
         $this->address->method('getRegionCode')->willReturn('');
 
-        $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
+        $this->checkoutHelper = $this->getMockBuilder(Checkout::class)->disableOriginalConstructor()->getMock();
 
         $this->connection = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
@@ -96,7 +96,7 @@ class CheckedAddressesTest extends BaseTestCase
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
-            'shopHelper' => $this->shopHelper
+            'checkoutHelper' => $this->checkoutHelper
         ]);
     }
 
@@ -119,7 +119,7 @@ class CheckedAddressesTest extends BaseTestCase
 
     public function testWasAddressCheckedBeforeNoLifetime()
     {
-        $this->shopHelper->method('getConfigParam')->willReturn(null);
+        $this->checkoutHelper->method('getConfigParam')->willReturn(null);
 
         $result = $this->classToTest->wasAddressCheckedBefore($this->address, 'BA', true);
         $this->assertFalse($result);
@@ -127,7 +127,7 @@ class CheckedAddressesTest extends BaseTestCase
 
     public function testWasAddressCheckedBeforeNoResult()
     {
-        $this->shopHelper->method('getConfigParam')->willReturn(5);
+        $this->checkoutHelper->method('getConfigParam')->willReturn(5);
         $this->connection->method('fetchOne')->willReturn(false);
 
         $result = $this->classToTest->wasAddressCheckedBefore($this->address, 'BA', true);
@@ -138,7 +138,7 @@ class CheckedAddressesTest extends BaseTestCase
     {
         $expected = "R";
 
-        $this->shopHelper->method('getConfigParam')->willReturn(5);
+        $this->checkoutHelper->method('getConfigParam')->willReturn(5);
         $this->connection->method('fetchOne')->willReturn($expected);
 
         $result = $this->classToTest->getLatestScoreForAddress($this->address, true);
@@ -147,7 +147,7 @@ class CheckedAddressesTest extends BaseTestCase
 
     public function testWasAddressCheckedBefore()
     {
-        $this->shopHelper->method('getConfigParam')->willReturn(5);
+        $this->checkoutHelper->method('getConfigParam')->willReturn(5);
         $this->connection->method('fetchOne')->willReturn('2017-01-01 01:01:01');
 
         $result = $this->classToTest->wasAddressCheckedBefore($this->address, 'BA', true);

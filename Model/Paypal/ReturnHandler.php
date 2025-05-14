@@ -115,6 +115,10 @@ class ReturnHandler
     {
         $oQuote = $this->orderHelper->updateAddresses($oQuote, $aResponse);
 
+        // Generate hash of the delivered addresses for later comparison to prevent address fraud
+        $this->checkoutSession->setPayoneQuoteAddressHash($this->checkoutHelper->getQuoteAddressHash($oQuote));
+        $this->checkoutSession->setPayoneExpressAddressResponse($aResponse);
+
         if ($this->checkoutHelper->getCurrentCheckoutMethod($oQuote) == Onepage::METHOD_GUEST) {
             $oQuote->setCustomerId(null)
                 ->setCustomerEmail($oQuote->getBillingAddress()->getEmail())
