@@ -168,6 +168,7 @@ class PlaceOrderTest extends BaseTestCase
                 'setPayonePayPalExpressRetry',
                 'setPayoneCustomerIsRedirected',
                 'setIsPayoneAmazonPayAuth',
+                'getPayoneQuoteAddressHash',
             ])
             ->getMock();
         $this->checkoutSession->method('setLastQuoteId')->willReturn($this->checkoutSession);

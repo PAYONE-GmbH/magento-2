@@ -36,40 +36,24 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     /**
      * Shop helper object
      *
-     * @var \Payone\Core\Helper\Shop
+     * @var \Payone\Core\Helper\Checkout
      */
-    protected $shopHelper;
-
-    /**
-     * All parameters used for the address hash
-     *
-     * @var array
-     */
-    protected $aHashParams = [
-        'firstname',
-        'lastname',
-        'company',
-        'street',
-        'zip',
-        'city',
-        'country',
-        'state',
-    ];
+    protected $checkoutHelper;
 
     /**
      * Class constructor
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
-     * @param \Payone\Core\Helper\Shop $shopHelper
+     * @param \Payone\Core\Helper\Checkout $checkoutHelper
      * @param string $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
-        \Payone\Core\Helper\Shop $shopHelper,
+        \Payone\Core\Helper\Checkout $checkoutHelper,
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
-        $this->shopHelper = $shopHelper;
+        $this->checkoutHelper = $checkoutHelper;
     }
 
     /**
@@ -83,53 +67,6 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     }
 
     /**
-     * Get address array for hash creation
-     *
-     * @param  AddressInterface $oAddress
-     * @return array
-     */
-    protected function getAddressArray(AddressInterface $oAddress)
-    {
-        return [
-            'firstname' => $oAddress->getFirstname(),
-            'lastname' => $oAddress->getLastname(),
-            'company' => $oAddress->getCompany(),
-            'street' => $oAddress->getStreet()[0],
-            'zip' => $oAddress->getPostcode(),
-            'city' => $oAddress->getCity(),
-            'country' => $oAddress->getCountryId(),
-            'state' => $oAddress->getRegionCode(),
-        ];
-    }
-
-    /**
-     * Generate a unique hash of an address
-     *
-     * @param  AddressInterface $oAddress
-     * @param  array            $aResponse
-     * @return string
-     */
-    protected function getHashFromAddress(AddressInterface $oAddress, $aResponse = false)
-    {
-        $aAddressArray = $this->getAddressArray($oAddress); // collect data from the address object
-
-        $sAddress = '';
-        foreach ($this->aHashParams as $sParamKey) {
-            $sParamValue = isset($aAddressArray[$sParamKey]) ? $aAddressArray[$sParamKey] : false;
-            if ($sParamValue) {
-                if ($aResponse !== false && array_key_exists($sParamKey, $aResponse) !== false && $aResponse[$sParamKey] != $sParamValue) {
-                    //take the corrected value from the address-check
-                    $sParamValue = $aResponse[$sParamKey];
-                }
-                $sAddress .= $sParamValue;
-            }
-        }
-        $sHash = md5($sAddress); // generate hash from address for identification
-
-        return $sHash;
-    }
-
-    /**
      * Save Api-log entry to database
      *
      * @param  AddressInterface $oAddress
@@ -140,7 +77,7 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      */
     public function addCheckedAddress(AddressInterface $oAddress, $aResponse, $sChecktype, $blIsBonicheck = false)
     {
-        $sHash = $this->getHashFromAddress($oAddress, $aResponse); // generate hash from given address
+        $sHash = $this->checkoutHelper->getHashFromAddress($oAddress, $aResponse); // generate hash from given address
         $this->getConnection()->insert(
             $this->getMainTable(),
             [
@@ -166,7 +103,7 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
         if ($blIsBonicheck === true) {
             $sGroup = 'creditrating';
         }
-        return $this->shopHelper->getConfigParam($sConfigField, $sGroup, 'payone_protect');
+        return $this->checkoutHelper->getConfigParam($sConfigField, $sGroup, 'payone_protect');
     }
 
     /**
@@ -190,7 +127,7 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             ->where('checkdate > DATE_SUB(NOW(), INTERVAL :lifetime DAY)');
 
         $aParams = [
-            'hash' => $this->getHashFromAddress($oAddress),
+            'hash' => $this->checkoutHelper->getHashFromAddress($oAddress),
             'isBoni' => $blIsBonicheck,
             'checkType' => $sChecktype,
             'lifetime' => $sLifetime

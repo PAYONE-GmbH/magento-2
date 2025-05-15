@@ -68,6 +68,8 @@ class OrderPaymentPlaceEnd implements ObserverInterface
         'trigger_invalid_payment',
         'payone_ratepay_device_fingerprint_token',
         'payone_is_amazon_pay_express_payment',
+        'payone_quote_address_hash',
+        'payone_express_address_response',
     ];
 
     /**

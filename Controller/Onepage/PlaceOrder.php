@@ -56,23 +56,33 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
     protected $checkoutHelper;
 
     /**
+     * Payone order helper
+     *
+     * @var \Payone\Core\Helper\Order
+     */
+    protected $orderHelper;
+
+    /**
      * @param \Magento\Framework\App\Action\Context              $context
      * @param \Magento\Checkout\Api\AgreementsValidatorInterface $agreementValidator
      * @param \Magento\Checkout\Model\Session                    $checkoutSession
      * @param \Magento\Quote\Api\CartManagementInterface         $cartManagement
      * @param \Payone\Core\Helper\Checkout                       $checkoutHelper
+     * @param \Payone\Core\Helper\Order                          $orderHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Api\AgreementsValidatorInterface $agreementValidator,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Quote\Api\CartManagementInterface $cartManagement,
-        \Payone\Core\Helper\Checkout $checkoutHelper
+        \Payone\Core\Helper\Checkout $checkoutHelper,
+        \Payone\Core\Helper\Order $orderHelper
     ) {
         $this->agreementsValidator = $agreementValidator;
         $this->checkoutSession = $checkoutSession;
         $this->cartManagement = $cartManagement;
         $this->checkoutHelper = $checkoutHelper;
+        $this->orderHelper = $orderHelper;
         parent::__construct($context);
     }
 
@@ -103,6 +113,17 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
                 $this->messageManager->addErrorMessage('An error occured during the Checkout.');
                 $this->_redirect('checkout/cart');
                 return;
+            }
+
+            if (!empty($this->checkoutSession->getPayoneQuoteAddressHash()) && $this->checkoutHelper->getQuoteAddressHash($oQuote) != $this->checkoutSession->getPayoneQuoteAddressHash()) {
+                // Address has been changed which is not allowed to happen - reset it to the address given by the Express payment method
+                $aExpressAddressResponse = $this->checkoutSession->getPayoneExpressAddressResponse();
+
+                $blUseBilling = true;
+                if (in_array($oQuote->getPayment()->getMethod(), [PayoneConfig::METHOD_PAYPAL, PayoneConfig::METHOD_PAYPALV2])) {
+                    $blUseBilling = false;
+                }
+                $oQuote = $this->orderHelper->updateAddresses($oQuote, $aExpressAddressResponse, $blUseBilling);
             }
 
             $this->placeOrder($oQuote);
