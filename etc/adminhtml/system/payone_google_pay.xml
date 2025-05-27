@@ -45,6 +45,11 @@
             <label>Instructions</label>
             <config_path>payment/payone_google_pay/instructions</config_path>
         </field>
+        <field id="google_pay_merchant_id" translate="label,comment" type="text" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>GooglePay MerchantId</label>
+            <config_path>payment/payone_google_pay/google_pay_merchant_id</config_path>
+            <comment>Needed for Live mode.</comment>
+        </field>
         <field id="store_name" translate="label,comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Store Name</label>
             <config_path>payment/payone_google_pay/store_name</config_path>

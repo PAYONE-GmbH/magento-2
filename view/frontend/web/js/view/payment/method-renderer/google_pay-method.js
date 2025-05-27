@@ -228,6 +228,11 @@ define(
                 paymentDataRequest.merchantInfo = {
                     merchantName: this.getFrontendConfigParam('storeName')
                 };
+
+                if (this.getFrontendConfigParam('operationMode') == "live") {
+                    paymentDataRequest.merchantInfo.merchantId = this.getFrontendConfigParam('googlePayMerchantId');
+                }
+
                 return paymentDataRequest;
             },
             addGooglePayButton: function () {
