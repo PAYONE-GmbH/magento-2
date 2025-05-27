@@ -149,6 +149,7 @@ class GooglePay extends PayoneMethod
         return [
             'merchantId' => $this->getMerchantId(),
             'storeName' => $this->getStoreName(),
+            'googlePayMerchantId' => $this->shopHelper->getConfigParam('google_pay_merchant_id', PayoneConfig::METHOD_GOOGLE_PAY, 'payment'),
             'operationMode' => $this->getOperationMode(),
         ];
     }

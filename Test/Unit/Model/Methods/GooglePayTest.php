@@ -137,6 +137,7 @@ class GooglePayTest extends BaseTestCase
         $expected = [
             'merchantId' => $expectedConfigParam,
             'storeName' => $expectedConfigParam,
+            'googlePayMerchantId' => $expectedConfigParam,
             'operationMode' => $expectedConfigParam,
         ];
 
@@ -148,6 +149,7 @@ class GooglePayTest extends BaseTestCase
     {
         $expectedConfigParam = "testValue";
         $expectedStoreName = "storeFrontendName";
+        $expectedGooglePayMerchantId = "testValue";
 
         $this->quote->method('getStore')->willReturn($this->store);
         $this->store->method('getFrontendName')->willReturn($expectedStoreName);
@@ -157,6 +159,7 @@ class GooglePayTest extends BaseTestCase
                 ['mid', PayoneConfig::METHOD_GOOGLE_PAY, 'payone_payment', 'test', $expectedConfigParam],
                 ['mid', 'global', 'payone_general', null, $expectedConfigParam],
                 ['store_name', PayoneConfig::METHOD_GOOGLE_PAY, 'payment', 'test', null],
+                ['google_pay_merchant_id', PayoneConfig::METHOD_GOOGLE_PAY, 'payment', null, $expectedGooglePayMerchantId],
                 ['mode', PayoneConfig::METHOD_GOOGLE_PAY, 'payone_payment', 'test', $expectedConfigParam],
             ]
         );
@@ -164,6 +167,7 @@ class GooglePayTest extends BaseTestCase
         $expected = [
             'merchantId' => $expectedConfigParam,
             'storeName' => $expectedStoreName,
+            'googlePayMerchantId' => $expectedGooglePayMerchantId,
             'operationMode' => $expectedConfigParam,
         ];
 
@@ -174,6 +178,7 @@ class GooglePayTest extends BaseTestCase
     public function testGetFrontendConfigStoreDoubleEmpty()
     {
         $expectedConfigParam = "testValue";
+        $expectedGooglePayMerchantId = "testValue";
 
         $this->quote->method('getStore')->willReturn(null);
 
@@ -182,6 +187,7 @@ class GooglePayTest extends BaseTestCase
                 ['mid', PayoneConfig::METHOD_GOOGLE_PAY, 'payone_payment', 'test', $expectedConfigParam],
                 ['mid', 'global', 'payone_general', null, $expectedConfigParam],
                 ['store_name', PayoneConfig::METHOD_GOOGLE_PAY, 'payment', 'test', null],
+                ['google_pay_merchant_id', PayoneConfig::METHOD_GOOGLE_PAY, 'payment', null, $expectedGooglePayMerchantId],
                 ['mode', PayoneConfig::METHOD_GOOGLE_PAY, 'payone_payment', 'test', $expectedConfigParam],
             ]
         );
@@ -189,6 +195,7 @@ class GooglePayTest extends BaseTestCase
         $expected = [
             'merchantId' => $expectedConfigParam,
             'storeName' => 'Online Store',
+            'googlePayMerchantId' => $expectedGooglePayMerchantId,
             'operationMode' => $expectedConfigParam,
         ];
 
