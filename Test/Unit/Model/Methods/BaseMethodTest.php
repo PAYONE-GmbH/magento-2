@@ -26,7 +26,6 @@
 
 namespace Payone\Core\Test\Unit\Model\Methods;
 
-use Braintree\PaymentMethod;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\Store;
@@ -149,7 +148,7 @@ class BaseMethodTest extends BaseTestCase
     {
         $this->shopHelper->method('getConfigParam')->willReturn('display');
 
-        $payment = $this->getMockBuilder(PaymentMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
+        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
         $payment->method('getAdditionalInformation')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
@@ -172,7 +171,7 @@ class BaseMethodTest extends BaseTestCase
 
     public function testAuthorizeError()
     {
-        $payment = $this->getMockBuilder(PaymentMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
+        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
         $payment->method('getAdditionalInformation')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
@@ -344,7 +343,7 @@ class BaseMethodTest extends BaseTestCase
 
     public function testCaptureAuth()
     {
-        $payment = $this->getMockBuilder(PaymentMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
+        $payment = $this->getMockBuilder(AbstractMethod::class)->disableOriginalConstructor()->addMethods(['getAdditionalInformation'])->getMock();
         $payment->method('getAdditionalInformation')->willReturn([]);
 
         $store = $this->getMockBuilder(Store::class)->disableOriginalConstructor()->getMock();
