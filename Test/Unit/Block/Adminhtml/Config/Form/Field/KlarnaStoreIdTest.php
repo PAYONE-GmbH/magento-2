@@ -56,7 +56,17 @@ class KlarnaStoreIdTest extends BaseTestCase
 
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setForm', 'getForm', 'setName', 'getName', 'setHtmlId', 'setValues', 'getElementHtml'])
+            ->onlyMethods([
+                'setForm',
+                'getForm',
+                'getName',
+                'getElementHtml'
+            ])
+            ->addMethods([
+                'setName',
+                'setHtmlId',
+                'setValues',
+            ])
             ->getMock();
         $element->method('getForm')->willReturn($form);
         $element->method('getName')->willReturn("test");

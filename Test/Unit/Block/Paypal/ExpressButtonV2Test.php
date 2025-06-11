@@ -72,7 +72,7 @@ class ExpressButtonV2Test extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote'])
+            ->onlyMethods(['getQuote'])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
 

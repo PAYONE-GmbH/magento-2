@@ -74,7 +74,7 @@ class TotalsTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
+            ->addMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
             ->getMock();
         $quote->method('getBaseCurrencyCode')->willReturn('EUR');
         $quote->method('getQuoteCurrencyCode')->willReturn('GBP');
@@ -89,7 +89,7 @@ class TotalsTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
+            ->addMethods(['getBaseCurrencyCode', 'getQuoteCurrencyCode'])
             ->getMock();
         $quote->method('getBaseCurrencyCode')->willReturn('EUR');
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');

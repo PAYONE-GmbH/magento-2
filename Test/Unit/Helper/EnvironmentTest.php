@@ -60,9 +60,7 @@ class EnvironmentTest extends BaseTestCase
 
         $request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
-            ->setMethods([
-                'getClientIp'
-            ])
+            ->onlyMethods(['getClientIp'])
             ->getMock();
         $request->method('getClientIp')->willReturn('192.168.1.100');
 

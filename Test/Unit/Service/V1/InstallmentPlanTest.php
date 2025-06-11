@@ -87,7 +87,7 @@ class InstallmentPlanTest extends BaseTestCase
         $this->response = $objectManager->getObject(InstallmentPlanResponse::class);
         $responseFactory = $this->getMockBuilder(InstallmentPlanResponseInterfaceFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
@@ -96,14 +96,16 @@ class InstallmentPlanTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseGrandTotal', 'getBillingAddress'])
+            ->onlyMethods(['getBillingAddress'])
+            ->addMethods(['getBaseGrandTotal'])
             ->getMock();
         $quote->method('getBaseGrandTotal')->willReturn(100);
         $quote->method('getBillingAddress')->willReturn($address);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setInstallmentDraftLinks', 'setInstallmentWorkorderId', 'getQuote'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['setInstallmentDraftLinks', 'setInstallmentWorkorderId'])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
 
@@ -114,7 +116,8 @@ class InstallmentPlanTest extends BaseTestCase
 
         $block = $this->getMockBuilder(InstallmentPlan::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setInstallmentData', 'setCode', 'toHtml'])
+            ->onlyMethods(['toHtml'])
+            ->addMethods(['setInstallmentData', 'setCode'])
             ->getMock();
         $block->method('toHtml')->willReturn('InstallmentPlanHtml');
 

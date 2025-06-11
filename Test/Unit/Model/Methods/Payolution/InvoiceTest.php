@@ -56,6 +56,11 @@ class InvoiceTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var PreCheck|\PHPUnit_Framework_MockObject_MockObject
      */
     private $precheckRequest;
@@ -103,7 +108,11 @@ class InvoiceTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
-        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder', 'getAdditionalInformation'])->getMock();
+        $payment = $this->getMockBuilder(Info::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getAdditionalInformation'])
+            ->addMethods(['getOrder'])
+            ->getMock();
         $payment->method('getOrder')->willReturn($order);
         $payment->method('getAdditionalInformation')->willReturn([]);
 
@@ -128,7 +137,7 @@ class InvoiceTest extends BaseTestCase
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getStore')->willReturn($store);
 
-        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $payment->method('getOrder')->willReturn($order);
 
         $this->expectException(LocalizedException::class);

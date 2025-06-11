@@ -51,7 +51,7 @@ class PayoneObjectManager extends ObjectManager
             ->disableOriginalConstructor()
             ->disableOriginalClone()
             ->disableArgumentCloning()
-            ->setMethods(['getIdFieldName', '__sleep', '__wakeup'])
+            ->addMethods(['getIdFieldName', '__sleep', '__wakeup'])
             ->getMock();
         $resourceMock->expects(
             $this->_testObject->any()

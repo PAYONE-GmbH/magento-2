@@ -68,7 +68,7 @@ class StateTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getMethodInstance'])
+            ->onlyMethods(['getMethodInstance'])
             ->getMock();
         $payment->method('getMethodInstance')->willReturn($method);
 
@@ -77,7 +77,8 @@ class StateTest extends BaseTestCase
         
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayment', 'getState', 'getIsInProcess', 'isCanceled', 'canUnhold', 'canInvoice', 'canCreditmemo', 'canShip', 'getIsVirtual', 'getConfig'])
+            ->onlyMethods(['getPayment', 'getState', 'isCanceled', 'canUnhold', 'canInvoice', 'canCreditmemo', 'canShip', 'getIsVirtual', 'getConfig'])
+            ->addMethods(['getIsInProcess'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getState')->willReturn(Order::STATE_NEW);
@@ -105,7 +106,7 @@ class StateTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getMethodInstance'])
+            ->onlyMethods(['getMethodInstance'])
             ->getMock();
         $payment->method('getMethodInstance')->willReturn($method);
 
@@ -114,7 +115,8 @@ class StateTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayment', 'getState', 'getIsInProcess', 'isCanceled', 'canUnhold', 'canInvoice', 'canCreditmemo', 'canShip', 'getIsVirtual', 'getConfig'])
+            ->onlyMethods(['getPayment', 'getState', 'isCanceled', 'canUnhold', 'canInvoice', 'canCreditmemo', 'canShip', 'getIsVirtual', 'getConfig'])
+            ->addMethods(['getIsInProcess'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getState')->willReturn(Order::STATE_NEW);
@@ -142,7 +144,7 @@ class StateTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(Payment::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getMethodInstance'])
+            ->onlyMethods(['getMethodInstance'])
             ->getMock();
         $payment->method('getMethodInstance')->willReturn($method);
 

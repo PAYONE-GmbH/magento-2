@@ -77,7 +77,7 @@ class ButtonV2Test extends BaseTestCase
         
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote'])
+            ->onlyMethods(['getQuote'])
             ->getMock();
 
         $amazonPayment = $this->getMockBuilder(AmazonPayV2::class)->disableOriginalConstructor()->getMock();

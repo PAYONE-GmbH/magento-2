@@ -77,7 +77,7 @@ class AmazonPayTest extends BaseTestCase
 
         $responseFactory = $this->getMockBuilder(AmazonPayResponseInterfaceFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
@@ -93,17 +93,19 @@ class AmazonPayTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'save',
                 'getPayment',
                 'getBillingAddress',
                 'collectTotals',
                 'setIsActive',
+                'setCustomerIsGuest',
+                'setPayment',
+            ])
+            ->addMethods([
                 'setCustomerId',
                 'setCustomerEmail',
-                'setCustomerIsGuest',
                 'setCustomerGroupId',
-                'setPayment',
                 'setInventoryProcessed',
             ])
             ->getMock();
@@ -118,9 +120,9 @@ class AmazonPayTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods(['getQuote'])
+            ->addMethods([
                 'getAmazonWorkorderId',
-                'getQuote',
                 'setAmazonWorkorderId',
                 'setAmazonAddressToken',
                 'setAmazonReferenceId',

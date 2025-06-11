@@ -72,10 +72,10 @@ class CancellationTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods(['getQuote'])
+            ->addMethods([
                 'getPayoneCustomerIsRedirected',
                 'unsPayoneCustomerIsRedirected',
-                'getQuote',
                 'getLastOrderId',
                 'unsLastOrderId',
                 'getLastQuoteId',
@@ -101,7 +101,7 @@ class CancellationTest extends BaseTestCase
 
         $orderFactory = $this->getMockBuilder(OrderFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $orderFactory->method('create')->willReturn($this->order);
 

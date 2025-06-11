@@ -64,7 +64,8 @@ class InstallmentTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getShippingAddress', 'getGrandTotal'])
+            ->onlyMethods(['getShippingAddress'])
+            ->addMethods(['getGrandTotal'])
             ->getMock();
         $quote->method('getShippingAddress')->willReturn($shipping);
         $quote->method('getGrandTotal')->willReturn(100);

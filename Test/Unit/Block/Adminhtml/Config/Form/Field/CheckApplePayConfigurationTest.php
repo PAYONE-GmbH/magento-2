@@ -47,6 +47,11 @@ class CheckApplePayConfigurationTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var ApplePay|\PHPUnit\Framework\MockObject\MockObject
      */
     private $applePayHelper;
@@ -66,11 +71,13 @@ class CheckApplePayConfigurationTest extends BaseTestCase
     {
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
+                    'getHtmlId'
+            ])
+            ->addMethods([
                 'unsScope',
                 'unsCanUseWebsiteValue',
                 'unsCanUseDefaultValue',
-                'getHtmlId',
                 'getLabel',
                 'getOriginalData'
             ])

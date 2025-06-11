@@ -256,7 +256,8 @@ class ConsumerscoreTest extends BaseTestCase
         $this->databaseHelper->method('getOldAddressStatus')->willReturn($expected);
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setPayoneProtectScore', 'save', 'getPayoneProtectScore'])
+            ->onlyMethods(['save'])
+            ->addMethods(['setPayoneProtectScore', 'getPayoneProtectScore'])
             ->getMock();
         $address->method('setPayoneProtectScore')->willReturn($address);
         $address->method('save')->willReturn(true);

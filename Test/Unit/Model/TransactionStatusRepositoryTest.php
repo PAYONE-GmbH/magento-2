@@ -58,7 +58,7 @@ class TransactionStatusRepositoryTest extends BaseTestCase
 
         $transactionStatusFactory = $this->getMockBuilder(TransactionStatusFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $transactionStatusFactory->method('create')->willReturn($transactionStatus);
 

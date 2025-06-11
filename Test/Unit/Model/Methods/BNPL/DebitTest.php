@@ -64,7 +64,11 @@ class DebitTest extends BaseTestCase
 
         $this->scopeConfig = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
 
-        $info = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getAdditionalInformation', 'getOrder'])->getMock();
+        $info = $this->getMockBuilder(Info::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getAdditionalInformation'])
+            ->addMethods(['getOrder'])
+            ->getMock();
         $info->method('getAdditionalInformation')->willReturn('test');
 
         $apiHelper = $this->getMockBuilder(Api::class)->disableOriginalConstructor()->getMock();

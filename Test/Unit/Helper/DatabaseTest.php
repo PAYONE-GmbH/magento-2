@@ -82,7 +82,8 @@ class DatabaseTest extends BaseTestCase
 
         $this->connection = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
-            ->setMethods(['fetchOne', 'fetchAll', 'select', 'from', 'where', 'limit', 'order', 'update', 'joinInner'])
+            ->onlyMethods(['from', 'where', 'limit', 'order', 'joinInner'])
+            ->addMethods(['fetchOne', 'fetchAll', 'select', 'update'])
             ->getMock();
         $this->connection->method('select')->willReturn($this->connection);
         $this->connection->method('from')->willReturn($this->connection);
@@ -202,7 +203,8 @@ class DatabaseTest extends BaseTestCase
 
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getFirstname', 'getLastname', 'getStreet', 'getCity', 'getRegion', 'getPostcode', 'getCountryId', 'getId', 'getCustomerId', 'getAddressType'])
+            ->onlyMethods(['getFirstname', 'getLastname', 'getStreet', 'getCity', 'getRegion', 'getPostcode', 'getCountryId', 'getId', 'getCustomerId'])
+            ->addMethods(['getAddressType'])
             ->getMock();
         $address->method('getFirstname')->willReturn('Paul');
         $address->method('getLastname')->willReturn('Payer');
@@ -229,7 +231,8 @@ class DatabaseTest extends BaseTestCase
     {
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getFirstname', 'getLastname', 'getStreet', 'getCity', 'getRegion', 'getPostcode', 'getCountryId', 'getId', 'getCustomerId', 'getAddressType'])
+            ->onlyMethods(['getFirstname', 'getLastname', 'getStreet', 'getCity', 'getRegion', 'getPostcode', 'getCountryId', 'getId', 'getCustomerId'])
+            ->addMethods(['getAddressType'])
             ->getMock();
         $address->method('getFirstname')->willReturn('Paul');
         $address->method('getLastname')->willReturn('Payer');

@@ -46,6 +46,11 @@ class CreditcardTemplateTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var Multiselect
      */
     private $element;

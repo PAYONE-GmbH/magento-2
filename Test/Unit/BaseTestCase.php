@@ -27,10 +27,18 @@
 namespace Payone\Core\Test\Unit;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
+use Magento\Framework\App\ObjectManager as ObjectManagerReal;
 use PHPUnit\Framework\TestCase;
 
 class BaseTestCase extends TestCase
 {
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = false;
+
+    private $origObjectManager;
+
     /**
      * Return ObjectManager object based on the current Magento 2 version
      *
@@ -38,11 +46,25 @@ class BaseTestCase extends TestCase
      */
     public function getObjectManager()
     {
+        if ($this->needsObjectManagerMock === true) {
+            $this->mockObjectManager();
+        }
+
         // This is a version-switch -> class was added with Magento 2.2.0
         // Couldnt find a direct way to obtain the version using only the Unittest-Objectmanager
         if (class_exists('\Magento\Framework\Serialize\Serializer\Json') === false) {
             return new PayoneObjectManager($this);
         }
         return new ObjectManager($this);
+    }
+
+    /**
+     * Mocks the original object manager since it creates problems with unit test execution
+     *
+     * @return void
+     */
+    protected function mockObjectManager()
+    {
+        ObjectManagerReal::setInstance($this->getMockBuilder(ObjectManagerReal::class)->disableOriginalConstructor()->getMock());
     }
 }

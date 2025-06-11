@@ -66,7 +66,7 @@ class RedirectTest extends BaseTestCase
 
         $response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setRedirect'])
+            ->addMethods(['setRedirect'])
             ->getMock();
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
@@ -78,7 +78,7 @@ class RedirectTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneRedirectUrl', 'setPayoneCustomerIsRedirected'])
+            ->addMethods(['getPayoneRedirectUrl', 'setPayoneCustomerIsRedirected'])
             ->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

@@ -51,6 +51,11 @@ class LabelTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -71,12 +76,15 @@ class LabelTest extends BaseTestCase
                 $this->objectManager->getObject(\Magento\Framework\Escaper::class),
                 []
             ])
-            ->setMethods([
+            ->onlyMethods([
+                'getHtmlId',
+                'getName',
+                'generateElementId',
+            ])
+            ->addMethods([
                 'unsScope',
                 'unsCanUseWebsiteValue',
                 'unsCanUseDefaultValue',
-                'getHtmlId',
-                'getName',
                 'getLabel',
                 'getComment',
                 'getOriginalData'
@@ -87,6 +95,7 @@ class LabelTest extends BaseTestCase
         $element->method('unsCanUseDefaultValue')->willReturn($element);
         $element->method('getHtmlId')->willReturn('test');
         $element->method('getName')->willReturn('test');
+        $element->setData('formelementhookid', 'test');
         $element->method('getComment')->willReturn('comment');
         $element->method('getLabel')->willReturn('test');
         $element->method('getOriginalData')->willReturn(['path' => 'payone_payment/ratepay_invoice']);

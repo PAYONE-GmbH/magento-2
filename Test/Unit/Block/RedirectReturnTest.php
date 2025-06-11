@@ -58,7 +58,8 @@ class RedirectReturnTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getIsPayoneRedirectCancellation', 'unsIsPayoneRedirectCancellation', 'getQuote'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['getIsPayoneRedirectCancellation', 'unsIsPayoneRedirectCancellation'])
             ->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

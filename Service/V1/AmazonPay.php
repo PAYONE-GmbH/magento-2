@@ -289,10 +289,10 @@ class AmazonPay implements AmazonPayInterface
     /**
      * Returns Amazon Pay V2 checkout session payload for APB
      *
-     * @param  string $cartId
+     * @param  string $orderId
      * @return \Payone\Core\Service\V1\Data\AmazonPayResponse
      */
-    public function getAmazonPayApbSession($cartId)
+    public function getAmazonPayApbSession($orderId)
     {
         $blSuccess = false;
         $oResponse = $this->responseFactory->create();

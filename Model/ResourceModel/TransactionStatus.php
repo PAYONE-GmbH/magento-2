@@ -135,7 +135,7 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
      * @param  bool  $blHasBeenHandled
      * @return $this
      */
-    public function addTransactionLogEntry($aRequest, Order $oOrder = null, $blHasBeenHandled = true)
+    public function addTransactionLogEntry($aRequest, ?Order $oOrder = null, $blHasBeenHandled = true)
     {
         $this->setRequest($aRequest);
 

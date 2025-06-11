@@ -50,7 +50,7 @@ class ViewActionTest extends BaseTestCase
 
         $request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getHeader'])
+            ->onlyMethods(['getHeader'])
             ->getMock();
         $request->method('getHeader')->willReturn('html');
         $context = $objectManager->getObject(Context::class, [

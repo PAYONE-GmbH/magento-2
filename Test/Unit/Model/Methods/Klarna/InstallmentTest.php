@@ -69,7 +69,7 @@ class InstallmentTest extends BaseTestCase
         $quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
         $quote->method('getBillingAddress')->willReturn($address);
         
-        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->setMethods(['getQuote'])->getMock();
+        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->onlyMethods(['getQuote'])->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
         
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

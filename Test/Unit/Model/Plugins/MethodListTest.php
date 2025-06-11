@@ -91,7 +91,8 @@ class MethodListTest extends BaseTestCase
 
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneAddresscheckScore', 'setPayoneProtectScore', 'getPayoneProtectScore', 'save'])
+            ->onlyMethods(['save'])
+            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneProtectScore', 'getPayoneProtectScore'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn('Y');
         $address->method('getPayoneProtectScore')->willReturn('Y');
@@ -100,14 +101,16 @@ class MethodListTest extends BaseTestCase
 
         $this->quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getShippingAddress', 'getGrandTotal', 'getCustomerId'])
+            ->onlyMethods(['getShippingAddress'])
+            ->addMethods(['getGrandTotal', 'getCustomerId'])
             ->getMock();
         $this->quote->method('getShippingAddress')->willReturn($address);
         $this->quote->method('getGrandTotal')->willReturn(100.00);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote', 'getPayonePaymentBans', 'getPayonePaymentWhitelist'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['getPayonePaymentBans', 'getPayonePaymentWhitelist'])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($this->quote);
         $checkoutSession->method('getPayonePaymentBans')->willReturn([PayoneConfig::METHOD_DEBIT => '2100-01-01 12:00:00']);

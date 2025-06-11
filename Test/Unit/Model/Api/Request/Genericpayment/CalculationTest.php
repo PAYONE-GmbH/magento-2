@@ -74,7 +74,8 @@ class CalculationTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getBillingAddress'])
+            ->onlyMethods(['getBillingAddress'])
+            ->addMethods(['getQuoteCurrencyCode'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getBillingAddress')->willReturn($address);
@@ -98,7 +99,7 @@ class CalculationTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode'])
+            ->addMethods(['getQuoteCurrencyCode'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
 

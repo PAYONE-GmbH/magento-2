@@ -145,7 +145,8 @@ class LoadReviewTest extends BaseTestCase
 
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getEmail', 'getShippingMethod', 'setShippingMethod', 'setCollectShippingRates'])
+            ->onlyMethods(['getEmail', 'getShippingMethod'])
+            ->addMethods(['setShippingMethod', 'setCollectShippingRates'])
             ->getMock();
         $address->method('getEmail')->willReturn('test@test.de');
         $address->method('getShippingMethod')->willReturn('free');
@@ -160,27 +161,29 @@ class LoadReviewTest extends BaseTestCase
 
         $extensionAttributes = $this->getMockBuilder(CartExtension::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getShippingAssignments'])
+            ->onlyMethods(['getShippingAssignments'])
             ->getMock();
         $extensionAttributes->method('getShippingAssignments')->willReturn($aAssignments);
 
         $this->quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getPayment',
                 'collectTotals',
-                'setCustomerId',
-                'setCustomerEmail',
-                'setCustomerIsGuest',
-                'setCustomerGroupId',
                 'getBillingAddress',
                 'getShippingAddress',
                 'setIsActive',
                 'save',
                 'getIsVirtual',
                 'getExtensionAttributes',
-                'getCouponCode',
                 'getItemsCount',
+                'setCustomerIsGuest',
+            ])
+            ->addMethods([
+                'setCustomerId',
+                'setCustomerEmail',
+                'setCustomerGroupId',
+                'getCouponCode',
                 'setCouponCode',
             ])
             ->getMock();
@@ -199,8 +202,8 @@ class LoadReviewTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
-                'getQuote',
+            ->onlyMethods(['getQuote'])
+            ->addMethods([
                 'getAmazonWorkorderId',
                 'setAmazonWorkorderId',
                 'unsAmazonWorkorderId',
@@ -250,7 +253,7 @@ class LoadReviewTest extends BaseTestCase
 
         $couponFactory = $this->getMockBuilder(CouponFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $couponFactory->method('create')->willReturn($this->coupon);
 

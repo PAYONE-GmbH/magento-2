@@ -309,7 +309,7 @@ class Ratepay extends \Payone\Core\Helper\Base
      * @param  bool $blGetConfigWithoutTotals
      * @return array
      */
-    public function getShopConfigByQuote($sMethodCode, \Magento\Quote\Api\Data\CartInterface $quote = null, $blGetConfigWithoutTotals = false)
+    public function getShopConfigByQuote($sMethodCode, ?\Magento\Quote\Api\Data\CartInterface $quote = null, $blGetConfigWithoutTotals = false)
     {
         if ($quote === null) {
             $quote = $this->checkoutSession->getQuote();
@@ -381,7 +381,7 @@ class Ratepay extends \Payone\Core\Helper\Base
      * @param  \Magento\Quote\Api\Data\CartInterface|null $quote
      * @return array|bool[]
      */
-    public function getRatepaySingleConfig($sRatepayMethodCode, \Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function getRatepaySingleConfig($sRatepayMethodCode, ?\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
         $aShopConfig = $this->getShopConfigByQuote($sRatepayMethodCode, $quote);
         if (empty($aShopConfig)) {

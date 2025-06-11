@@ -54,6 +54,11 @@ class SafeInvoiceTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var Authorization|\PHPUnit_Framework_MockObject_MockObject
      */
     private $authorizationRequest;
@@ -111,7 +116,7 @@ class SafeInvoiceTest extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '351', 'customermessage' => 'error'];
@@ -134,7 +139,7 @@ class SafeInvoiceTest extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => '351', 'customermessage' => 'error'];

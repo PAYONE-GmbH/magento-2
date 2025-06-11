@@ -63,7 +63,8 @@ class DownloadTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneMandateId', 'getPayment'])
+            ->onlyMethods(['getPayment'])
+            ->addMethods(['getPayoneMandateId'])
             ->getMock();
         $order->method('getPayoneMandateId')->willReturn('12345');
         $order->method('getPayment')->willReturn($payment);
@@ -80,7 +81,7 @@ class DownloadTest extends BaseTestCase
         $rawResponse = $this->getMockBuilder(Raw::class)->disableOriginalConstructor()->getMock();
         $resultRawFactory = $this->getMockBuilder(RawFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $resultRawFactory->method('create')->willReturn($rawResponse);
 

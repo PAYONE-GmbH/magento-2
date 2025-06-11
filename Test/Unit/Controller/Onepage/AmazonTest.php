@@ -98,7 +98,7 @@ class AmazonTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(CheckoutSession::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote'])
+            ->onlyMethods(['getQuote'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($this->quote);
 

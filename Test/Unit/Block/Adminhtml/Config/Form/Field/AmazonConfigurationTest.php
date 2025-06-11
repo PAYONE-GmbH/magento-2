@@ -41,6 +41,11 @@ class AmazonConfigurationTest extends BaseTestCase
     private $classToTest;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
@@ -56,11 +61,13 @@ class AmazonConfigurationTest extends BaseTestCase
     {
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
+                'getHtmlId',
+            ])
+            ->addMethods([
                 'unsScope',
                 'unsCanUseWebsiteValue',
                 'unsCanUseDefaultValue',
-                'getHtmlId',
                 'getLabel',
                 'getOriginalData'
             ])

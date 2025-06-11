@@ -94,7 +94,7 @@ class DebitTest extends BaseTestCase
 
         $response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setRedirect'])
+            ->addMethods(['setRedirect'])
             ->getMock();
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
@@ -115,7 +115,8 @@ class DebitTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setPayoneMandate', 'getPayoneMandate', 'setPayoneDebitError', 'getQuote'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['setPayoneMandate', 'getPayoneMandate', 'setPayoneDebitError'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($this->quote);
 

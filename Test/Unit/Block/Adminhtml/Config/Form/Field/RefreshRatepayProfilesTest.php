@@ -45,6 +45,11 @@ class RefreshRatepayProfilesTest extends BaseTestCase
      */
     private $objectManager;
 
+    /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -56,11 +61,13 @@ class RefreshRatepayProfilesTest extends BaseTestCase
     {
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
+                'getHtmlId',
+            ])
+            ->addMethods([
                 'unsScope',
                 'unsCanUseWebsiteValue',
                 'unsCanUseDefaultValue',
-                'getHtmlId',
                 'getLabel',
                 'getOriginalData'
             ])

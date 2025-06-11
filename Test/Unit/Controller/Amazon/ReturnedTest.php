@@ -73,17 +73,19 @@ class ReturnedTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getBillingAddress',
-                'setCustomerId',
-                'setCustomerEmail',
                 'setCustomerIsGuest',
-                'setCustomerGroupId',
                 'getPayment',
                 'setPayment',
-                'setInventoryProcessed',
                 'collectTotals',
                 'save',
+            ])
+            ->addMethods([
+                'setCustomerId',
+                'setCustomerEmail',
+                'setCustomerGroupId',
+                'setInventoryProcessed',
             ])
             ->getMock();
         $quote->method('getBillingAddress')->willReturn($address);
@@ -101,12 +103,14 @@ class ReturnedTest extends BaseTestCase
         
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
+                'getQuote'
+            ])
+            ->addMethods([
                 'getPayoneWorkorderId',
                 'setIsPayonePayPalExpress',
                 'getPayonePayPalExpressRetry',
                 'unsPayonePayPalExpressRetry',
-                'getQuote',
                 'setPayoneQuoteAddressHash',
                 'setPayoneExpressAddressResponse',
             ])

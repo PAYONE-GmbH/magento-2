@@ -67,7 +67,7 @@ class InstallmentTest extends BaseTestCase
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn('value');
 
-        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->setMethods(['getInstallmentWorkorderId'])->getMock();
+        $checkoutSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->addMethods(['getInstallmentWorkorderId'])->getMock();
         $checkoutSession->method('getInstallmentWorkorderId')->willReturn('WORKORDERID');
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

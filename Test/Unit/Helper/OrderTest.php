@@ -81,7 +81,7 @@ class OrderTest extends BaseTestCase
         $this->orderCore->method('loadByIncrementId')->willReturn($this->orderCore);
         $orderFactory = $this->getMockBuilder(OrderFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $orderFactory->method('create')->willReturn($this->orderCore);
 
@@ -114,7 +114,7 @@ class OrderTest extends BaseTestCase
 
         $rate1 = $this->getMockBuilder(Rate::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPrice', 'getCode'])
+            ->addMethods(['getPrice', 'getCode'])
             ->getMock();
         $rate2 = clone $rate1;
         $rate1->method('getPrice')->willReturn('5.00');
@@ -150,7 +150,7 @@ class OrderTest extends BaseTestCase
     {
         $rate = $this->getMockBuilder(Rate::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPrice', 'getCode'])
+            ->addMethods(['getPrice', 'getCode'])
             ->getMock();
         $rate->method('getPrice')->willReturn('0.00');
         $rate->method('getCode')->willReturn('free_free');
@@ -244,7 +244,7 @@ class OrderTest extends BaseTestCase
     {
         $rate = $this->getMockBuilder(Rate::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPrice', 'getCode'])
+            ->addMethods(['getPrice', 'getCode'])
             ->getMock();
         $rate->method('getPrice')->willReturn('0.00');
         $rate->method('getCode')->willReturn('free_free');

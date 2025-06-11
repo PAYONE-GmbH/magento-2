@@ -92,7 +92,8 @@ class RatepayTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneRatepayDeviceFingerprintToken', 'setPayoneRatepayDeviceFingerprintToken', 'getQuote'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['getPayoneRatepayDeviceFingerprintToken', 'setPayoneRatepayDeviceFingerprintToken'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 

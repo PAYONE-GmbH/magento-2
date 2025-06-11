@@ -70,7 +70,7 @@ class PayPalExpressTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getGrandTotal', 'getQuoteCurrencyCode'])
+            ->addMethods(['getGrandTotal', 'getQuoteCurrencyCode'])
             ->getMock();
         $quote->method('getGrandTotal')->willReturn(123);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
@@ -96,7 +96,7 @@ class PayPalExpressTest extends BaseTestCase
     {
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getGrandTotal', 'getQuoteCurrencyCode'])
+            ->addMethods(['getGrandTotal', 'getQuoteCurrencyCode'])
             ->getMock();
         $quote->method('getGrandTotal')->willReturn(123);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');

@@ -87,7 +87,7 @@ class PaidTest extends BaseTestCase
         $order->method('getPayment')->willReturn($payment);
         $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
 
         $result = $this->classToTest->execute($observer);
@@ -96,7 +96,7 @@ class PaidTest extends BaseTestCase
 
     public function testExecuteNoOrder()
     {
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn(null);
 
         $result = $this->classToTest->execute($observer);

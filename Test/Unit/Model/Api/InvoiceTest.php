@@ -95,10 +95,18 @@ class InvoiceTest extends BaseTestCase
      */
     private function getItemMock($type = Item::class)
     {
+        $onlyMethods = ['isDummy', 'getProductId', 'getQtyOrdered', 'getSku', 'getPriceInclTax', 'getBasePriceInclTax', 'getName', 'getTaxPercent', 'getOrigData', 'getParentItemId', 'getProduct'];
+        $addMethods = ['getQty'];
+        if ($type === \Magento\Quote\Model\Quote\Item::class) {
+            $onlyMethods = ['getSku', 'getName', 'getOrigData', 'getProduct', 'getQty'];
+            $addMethods = ['getProductId', 'isDummy', 'getPriceInclTax', 'getBasePriceInclTax', 'getQtyOrdered', 'getTaxPercent', 'getParentItemId'];
+        }
         $item = $this->getMockBuilder($type)
             ->disableOriginalConstructor()
-            ->setMethods(['isDummy', 'getProductId', 'getQtyOrdered', 'getSku', 'getPriceInclTax', 'getBasePriceInclTax', 'getName', 'getTaxPercent', 'getOrigData', 'getParentItemId', 'getQty', 'getProduct'])
+            ->onlyMethods($onlyMethods)
+            ->addMethods($addMethods)
             ->getMock();
+
         $item->method('isDummy')->willReturn(false);
         $item->method('getProductId')->willReturn('12345');
         $item->method('getQtyOrdered')->willReturn('1');
@@ -138,13 +146,15 @@ class InvoiceTest extends BaseTestCase
         $expected = 110;
 
         $order = $this->getMockBuilder(Order::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getAllItems',
                 'getBaseShippingInclTax',
                 'getBaseDiscountAmount',
                 'getCouponCode',
                 'getBaseGrandTotal',
                 'getStore',
+            ])
+            ->addMethods([
                 'getGiftCards'
             ])
             ->disableOriginalConstructor()->getMock();
@@ -176,7 +186,7 @@ class InvoiceTest extends BaseTestCase
         $expected = 106;
 
         $order = $this->getMockBuilder(Order::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getAllItems',
                 'getBaseShippingInclTax',
                 'getShippingInclTax',
@@ -186,8 +196,12 @@ class InvoiceTest extends BaseTestCase
                 'getBaseGrandTotal',
                 'getGrandTotal',
                 'getStore',
+            ])
+            ->addMethods([
                 'getGiftCards'
-            ])->disableOriginalConstructor()->getMock();
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
         $order->method('getAllItems')->willReturn($items);
         $order->method('getBaseShippingInclTax')->willReturn(-5);
         $order->method('getShippingInclTax')->willReturn(-7);
@@ -297,13 +311,15 @@ class InvoiceTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getAllItems',
+                'getStore',
+            ])
+            ->addMethods([
                 'getBaseShippingInclTax',
                 'getBaseDiscountAmount',
                 'getCouponCode',
                 'getBaseGrandTotal',
-                'getStore',
             ])
             ->getMock();
         $order->method('getAllItems')->willReturn($items);

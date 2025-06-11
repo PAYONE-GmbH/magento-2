@@ -93,14 +93,15 @@ class AppointedTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save', 'canInvoice', 'getInvoiceCollection'])
+            ->onlyMethods(['getPayment', 'getEmailSent', 'save', 'canInvoice', 'getInvoiceCollection'])
+            ->addMethods(['getPayoneAuthmode'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getPayoneAuthmode')->willReturn('authorization');
         $order->method('canInvoice')->willReturn(true);
         $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
 
         $result = $this->classToTest->execute($observer);
@@ -124,14 +125,15 @@ class AppointedTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayment', 'getEmailSent', 'getPayoneAuthmode', 'save', 'canInvoice', 'getInvoiceCollection'])
+            ->onlyMethods(['getPayment', 'getEmailSent', 'save', 'canInvoice', 'getInvoiceCollection'])
+            ->addMethods(['getPayoneAuthmode'])
             ->getMock();
         $order->method('getPayment')->willReturn($payment);
         $order->method('getPayoneAuthmode')->willReturn('authorization');
         $order->method('canInvoice')->willReturn(true);
         $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn($order);
 
         $result = $this->classToTest->execute($observer);
@@ -140,7 +142,7 @@ class AppointedTest extends BaseTestCase
 
     public function testExecuteNoOrder()
     {
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $observer->method('getOrder')->willReturn(null);
 
         $result = $this->classToTest->execute($observer);

@@ -83,7 +83,8 @@ class GooglePayTest extends BaseTestCase
 
         $info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalInformation', 'getOrder'])
+            ->onlyMethods(['getAdditionalInformation'])
+            ->addMethods(['getOrder'])
             ->getMock();
         $info->method('getAdditionalInformation')->willReturn('info');
         $info->method('getOrder')->willReturn($order);
@@ -93,7 +94,8 @@ class GooglePayTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneMandate', 'unsPayoneMandate', 'getQuote'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['getPayoneMandate', 'unsPayoneMandate'])
             ->getMock();
         $checkoutSession->method('getPayoneMandate')->willReturn(['mandate_identification' => '123', 'mandate_status' => 'pending']);
         $checkoutSession->method('getQuote')->willReturn($this->quote);

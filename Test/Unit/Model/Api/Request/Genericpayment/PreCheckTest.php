@@ -87,7 +87,8 @@ class PreCheckTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getBillingAddress'])
+            ->onlyMethods(['getBillingAddress'])
+            ->addMethods(['getQuoteCurrencyCode'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getBillingAddress')->willReturn($address);
@@ -97,7 +98,8 @@ class PreCheckTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(Paypal::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOperationMode', 'getClearingtype', 'getSubType', 'getLongSubType', 'getData', 'getInfoInstance', 'hasCustomConfig', 'getCustomConfigParam'])
+            ->onlyMethods(['getOperationMode', 'getClearingtype', 'getSubType', 'getData', 'getInfoInstance', 'hasCustomConfig', 'getCustomConfigParam'])
+            ->addMethods(['getLongSubType'])
             ->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getClearingtype')->willReturn('fnc');

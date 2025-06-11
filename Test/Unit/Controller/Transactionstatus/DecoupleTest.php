@@ -56,12 +56,12 @@ class DecoupleTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $post = $this->getMockBuilder(self::class)->disableOriginalConstructor()->setMethods(['toArray'])->getMock();
+        $post = $this->getMockBuilder(self::class)->disableOriginalConstructor()->addMethods(['toArray'])->getMock();
         $post->method('toArray')->willReturn(['test' => 'array']);
 
         $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getParam', 'setParam', 'getPost', 'isPost'])
+            ->onlyMethods(['getParam', 'setParam', 'getPost', 'isPost'])
             ->getMock();
         $this->request->method('getPost')->willReturn($post);
         $this->request->method('isPost')->willReturn(true);
@@ -72,7 +72,7 @@ class DecoupleTest extends BaseTestCase
         $rawResponse = $this->getMockBuilder(Raw::class)->disableOriginalConstructor()->getMock();
         $resultRawFactory = $this->getMockBuilder(RawFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $resultRawFactory->method('create')->willReturn($rawResponse);
 

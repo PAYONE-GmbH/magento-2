@@ -60,7 +60,7 @@ class AddresscheckTest extends BaseTestCase
         $this->response = $objectManager->getObject(AddresscheckResponse::class);
         $responseFactory = $this->getMockBuilder(AddresscheckResponseFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 

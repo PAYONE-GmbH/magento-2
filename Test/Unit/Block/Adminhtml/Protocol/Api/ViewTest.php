@@ -58,7 +58,7 @@ class ViewTest extends BaseTestCase
 
         $apiLogFactory = $this->getMockBuilder(ApiLogFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $apiLogFactory->method('create')->willReturn($apiLog);
 

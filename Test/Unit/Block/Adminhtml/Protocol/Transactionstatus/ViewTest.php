@@ -58,7 +58,7 @@ class ViewTest extends BaseTestCase
 
         $statusFactory = $this->getMockBuilder(TransactionStatusFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $statusFactory->method('create')->willReturn($status);
 

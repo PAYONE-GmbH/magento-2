@@ -41,7 +41,7 @@ class GetConfiguration extends Base
      * @param  Quote        $oQuote
      * @return array
      */
-    public function sendRequest(PayoneMethod $oPayment, Quote $oQuote = null)
+    public function sendRequest(PayoneMethod $oPayment, ?Quote $oQuote = null)
     {
         $this->addParameter('request', 'genericpayment');
         $this->addParameter('add_paydata[action]', 'getconfiguration');

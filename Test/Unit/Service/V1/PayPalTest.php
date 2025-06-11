@@ -70,7 +70,7 @@ class PayPalTest extends BaseTestCase
 
         $responseFactory = $this->getMockBuilder(PayPalResponseInterfaceFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
@@ -78,7 +78,7 @@ class PayPalTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'save',
                 'getPayment',
                 'setPayment',
@@ -88,8 +88,8 @@ class PayPalTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
-                'getQuote',
+            ->onlyMethods(['getQuote'])
+            ->addMethods([
                 'setIsPayonePayPalExpress',
                 'setPayoneWorkorderId',
                 'setPayoneQuoteComparisonString',

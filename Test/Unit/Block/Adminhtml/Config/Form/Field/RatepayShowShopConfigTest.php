@@ -67,7 +67,16 @@ class RatepayShowShopConfigTest extends BaseTestCase
 
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setForm', 'getForm', 'setName', 'setHtmlId', 'setValues', 'getElementHtml'])
+            ->onlyMethods([
+                'setForm',
+                'getForm',
+                'getElementHtml'
+            ])
+            ->addMethods([
+                'setName',
+                'setHtmlId',
+                'setValues',
+            ])
             ->getMock();
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');
@@ -108,7 +117,7 @@ class RatepayShowShopConfigTest extends BaseTestCase
 
         $element = $this->getMockBuilder(Multiselect::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOriginalData'])
+            ->addMethods(['getOriginalData'])
             ->getMock();
         $element->method('getOriginalData')->willReturn($origData);
 

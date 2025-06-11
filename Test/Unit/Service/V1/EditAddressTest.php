@@ -56,7 +56,7 @@ class EditAddressTest extends BaseTestCase
         $this->response = $objectManager->getObject(EditAddressResponse::class);
         $responseFactory = $this->getMockBuilder(EditAddressResponseFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 

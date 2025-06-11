@@ -57,7 +57,7 @@ class CreditmemoServiceTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->addMethods([
                 'getPayoneDebitRequest',
                 'getPayoneDebitResponse',
                 'getPayoneDebitOrderId',

@@ -56,7 +56,7 @@ class Installment extends KlarnaBase
      * @param \Magento\Quote\Api\Data\CartInterface|null $quote
      * @return bool
      */
-    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function isAvailable(?\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
         $blParentReturn = parent::isAvailable($quote);
         if ($blParentReturn === false) {

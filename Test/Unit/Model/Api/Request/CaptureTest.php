@@ -89,7 +89,7 @@ class CaptureTest extends BaseTestCase
 
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered'])
+            ->onlyMethods(['getItemId', 'getProductId', 'getQtyOrdered'])
             ->getMock();
         $item->method('getItemId')->willReturn('id');
         $item->method('getProductId')->willReturn('sku');
@@ -117,7 +117,7 @@ class CaptureTest extends BaseTestCase
         
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getAllItems', 'getStore', 'getInvoiceCollection'])
+            ->onlyMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getAllItems', 'getStore', 'getInvoiceCollection'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
@@ -127,7 +127,7 @@ class CaptureTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId'])
+            ->addMethods(['getOrder', 'getParentTransactionId'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12345');
@@ -153,7 +153,7 @@ class CaptureTest extends BaseTestCase
 
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered'])
+            ->onlyMethods(['getItemId', 'getProductId', 'getQtyOrdered'])
             ->getMock();
         $item->method('getItemId')->willReturn('id');
         $item->method('getProductId')->willReturn('sku');
@@ -172,7 +172,7 @@ class CaptureTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getStore', 'getInvoiceCollection', 'getAllItems'])
+            ->onlyMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getStore', 'getInvoiceCollection', 'getAllItems'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
@@ -182,7 +182,7 @@ class CaptureTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId'])
+            ->addMethods(['getOrder', 'getParentTransactionId'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12345');

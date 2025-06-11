@@ -54,6 +54,11 @@ class DebitTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var PreCheck|\PHPUnit_Framework_MockObject_MockObject
      */
     private $precheckRequest;
@@ -97,7 +102,11 @@ class DebitTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
 
-        $payment = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder', 'getAdditionalInformation'])->getMock();
+        $payment = $this->getMockBuilder(Info::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getAdditionalInformation'])
+            ->addMethods(['getOrder'])
+            ->getMock();
         $payment->method('getOrder')->willReturn($order);
         $payment->method('getAdditionalInformation')->willReturn(['iban' => '12345']);
 
