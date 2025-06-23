@@ -93,7 +93,8 @@ class ReviewTest extends BaseTestCase
 
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getShippingMethod', 'setShippingMethod'])
+            ->onlyMethods(['getShippingMethod'])
+            ->addMethods(['setShippingMethod'])
             ->getMock();
         $address->method('getShippingMethod')->willReturn('not_free');
         $address->method('setShippingMethod')->willReturn($address);
@@ -105,7 +106,7 @@ class ReviewTest extends BaseTestCase
 
         $cartExtension = $this->getMockBuilder(CartExtension::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getShippingAssignments'])
+            ->onlyMethods(['getShippingAssignments'])
             ->getMock();
         $cartExtension->method('getShippingAssignments')->willReturn([$assignment]);
 
@@ -120,7 +121,8 @@ class ReviewTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote', 'getPayoneWorkorderId'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['getPayoneWorkorderId'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 

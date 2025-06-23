@@ -73,7 +73,7 @@ class IndexTest extends BaseTestCase
 
         $resultRawFactory = $this->getMockBuilder(RawFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $resultRawFactory->method('create')->willReturn($raw);
 

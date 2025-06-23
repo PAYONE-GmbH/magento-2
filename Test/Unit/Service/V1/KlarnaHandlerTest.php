@@ -66,7 +66,7 @@ class KlarnaHandlerTest extends BaseTestCase
         $this->response = $objectManager->getObject(KlarnaHandlerResponse::class);
         $responseFactory = $this->getMockBuilder(KlarnaHandlerResponseFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
@@ -81,7 +81,7 @@ class KlarnaHandlerTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote'])
+            ->onlyMethods(['getQuote'])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
 

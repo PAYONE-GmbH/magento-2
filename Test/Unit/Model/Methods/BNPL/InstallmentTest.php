@@ -77,7 +77,11 @@ class InstallmentTest extends BaseTestCase
         $shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
         $shopHelper->method('getConfigParam')->willReturn("value");
 
-        $info = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getAdditionalInformation', 'getOrder'])->getMock();
+        $info = $this->getMockBuilder(Info::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getAdditionalInformation'])
+            ->addMethods(['getOrder'])
+            ->getMock();
         $info->method('getAdditionalInformation')->willReturn('test');
         $info->method('getOrder')->willReturn($this->order);
 

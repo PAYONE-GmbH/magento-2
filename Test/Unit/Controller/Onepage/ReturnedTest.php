@@ -93,14 +93,16 @@ class ReturnedTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getLastRealOrder',
+                'getQuote'
+            ])
+            ->addMethods([
                 'setLastRealOrderId',
+                'setLastOrderId',
                 'unsPayoneCustomerIsRedirected',
                 'setPayoneCreatingSubstituteOrder',
                 'unsPayoneCreatingSubstituteOrder',
-                'setLastOrderId',
-                'getQuote'
             ])
             ->getMock();
 
@@ -125,7 +127,7 @@ class ReturnedTest extends BaseTestCase
 
         $statusFactory = $this->getMockBuilder(TransactionStatusFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $statusFactory->method('create')->willReturn($status);
 

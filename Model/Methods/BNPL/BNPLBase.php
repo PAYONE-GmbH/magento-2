@@ -150,8 +150,8 @@ class BNPLBase extends PayoneMethod
         \Payone\Core\Model\Api\Request\Authorization $authorizationRequest,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
         \Payone\Core\Helper\Api $apiHelper,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $savedPaymentData, $resource, $resourceCollection, $data);
@@ -164,7 +164,7 @@ class BNPLBase extends PayoneMethod
      * @param \Magento\Quote\Api\Data\CartInterface|null $quote
      * @return bool
      */
-    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function isAvailable(?\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
         $blParentReturn = parent::isAvailable($quote);
 

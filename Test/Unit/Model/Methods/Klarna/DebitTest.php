@@ -52,6 +52,11 @@ class DebitTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var ScopeConfigInterface
      */
     private $scopeConfig;

@@ -143,7 +143,7 @@ class AmazonPayV2 extends PayoneMethod
      * @param  Order $oOrder
      * @return string
      */
-    public function getSuccessUrl(Order $oOrder = null)
+    public function getSuccessUrl(?Order $oOrder = null)
     {
         if ($this->blNeedsReturnedUrl === true) {
             return $this->url->getUrl('payone/amazon/returned');

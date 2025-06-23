@@ -83,8 +83,8 @@ class SuccessTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
-                'getLastRealOrder',
+            ->onlyMethods(['getLastRealOrder'])
+            ->addMethods([
                 'getPayoneInstructionNotes',
                 'unsPayoneInstructionNotes',
                 'unsShowAmazonPendingNotice',
@@ -107,7 +107,7 @@ class SuccessTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneMandateId'])
+            ->addMethods(['getPayoneMandateId'])
             ->getMock();
         $order->method('getPayoneMandateId')->willReturn('15');
 

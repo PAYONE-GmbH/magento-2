@@ -64,7 +64,7 @@ class AddAmazonPayButtonTest extends BaseTestCase
 
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
-            ->setMethods(['isCurrentlySecure'])
+            ->onlyMethods(['isCurrentlySecure'])
             ->getMock();
         $store->method('isCurrentlySecure')->willReturn(true);
 
@@ -100,7 +100,7 @@ class AddAmazonPayButtonTest extends BaseTestCase
 
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getContainer'])
+            ->addMethods(['getContainer'])
             ->getMock();
         $event->method('getContainer')->willReturn($shortcutButtons);
 
@@ -130,7 +130,7 @@ class AddAmazonPayButtonTest extends BaseTestCase
 
         $event = $this->getMockBuilder(Event::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getContainer'])
+            ->addMethods(['getContainer'])
             ->getMock();
         $event->method('getContainer')->willReturn($shortcutButtons);
 

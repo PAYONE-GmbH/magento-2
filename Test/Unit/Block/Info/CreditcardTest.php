@@ -63,19 +63,20 @@ class CreditcardTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneTxid'])
+            ->addMethods(['getPayoneTxid'])
             ->getMock();
         $order->method('getPayoneTxid')->willReturn('12345');
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getLastTransId', 'getOrder', 'getAdditionalInformation'])
+            ->onlyMethods(['getAdditionalInformation'])
+            ->addMethods(['getLastTransId', 'getOrder'])
             ->getMock();
         $this->info->method('getOrder')->willReturn($order);
 
         $this->transactionStatus = $this->getMockBuilder(TransactionStatus::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->addMethods([
                 'getCardpan',
                 'getCardtype',
                 'getCardexpiredate'

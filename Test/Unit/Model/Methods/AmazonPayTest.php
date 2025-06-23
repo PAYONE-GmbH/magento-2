@@ -74,7 +74,7 @@ class AmazonPayTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->addMethods([
                 'getAmazonWorkorderId',
                 'getAmazonAddressToken',
                 'getAmazonReferenceId',
@@ -164,7 +164,7 @@ class AmazonPayTest extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
 
         $aResponse = ['status' => 'ERROR', 'errorcode' => 980, 'customermessage' => 'test'];

@@ -77,7 +77,7 @@ class PaypalV2 extends PayoneMethod
      * @param  Order $oOrder
      * @return string
      */
-    public function getSuccessUrl(Order $oOrder = null)
+    public function getSuccessUrl(?Order $oOrder = null)
     {
         if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
             return $this->getReturnedUrl();

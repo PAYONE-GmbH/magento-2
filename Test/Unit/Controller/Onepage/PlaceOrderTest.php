@@ -98,14 +98,14 @@ class PlaceOrderTest extends BaseTestCase
 
         $response = $this->getMockBuilder(Response::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setRedirect'])
+            ->addMethods(['setRedirect'])
             ->getMock();
 
         $url = $this->getMockBuilder(UrlInterface::class)->disableOriginalConstructor()->getMock();
 
         $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getBeforeForwardInfo',
                 'getHeader',
                 'getParam',
@@ -130,15 +130,17 @@ class PlaceOrderTest extends BaseTestCase
 
         $this->quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getBillingAddress',
                 'getShippingAddress',
                 'getIsVirtual',
                 'getId',
                 'setIsActive',
-                'getSubtotal',
                 'getPayment',
                 'save'
+            ])
+            ->addMethods([
+                'getSubtotal',
             ])
             ->getMock();
         $this->quote->method('getBillingAddress')->willReturn($address);
@@ -151,8 +153,10 @@ class PlaceOrderTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getQuote',
+            ])
+            ->addMethods([
                 'setLastQuoteId',
                 'setLastSuccessQuoteId',
                 'unsPayoneWorkorderId',
@@ -257,15 +261,17 @@ class PlaceOrderTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getBillingAddress',
                 'getShippingAddress',
                 'getIsVirtual',
                 'getId',
                 'setIsActive',
-                'getSubtotal',
                 'getPayment',
                 'save'
+            ])
+            ->addMethods([
+                'getSubtotal',
             ])
             ->getMock();
         $quote->method('getBillingAddress')->willReturn($address);

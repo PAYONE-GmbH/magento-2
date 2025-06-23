@@ -62,13 +62,15 @@ class OrderPaymentPlaceEndTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getIsPayoneRedirectCancellation', 'unsIsPayoneRedirectCancellation', 'getQuote', 'getData', 'unsetData'])
+            ->onlyMethods(['getQuote', 'getData'])
+            ->addMethods(['getIsPayoneRedirectCancellation', 'unsIsPayoneRedirectCancellation', 'unsetData'])
             ->getMock();
         $this->checkoutSession->method('getData')->willReturn(['amazon_workorder_id' => '12345']);
 
         $consumerscoreHelper = $this->getMockBuilder(Consumerscore::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalDataEntry', 'getConsumerscoreSampleCounter', 'incrementConsumerscoreSampleCounter'])
+            ->onlyMethods(['getConsumerscoreSampleCounter', 'incrementConsumerscoreSampleCounter'])
+            ->addMethods(['getAdditionalDataEntry'])
             ->getMock();
         $consumerscoreHelper->method('getAdditionalDataEntry')->willReturn(true);
         $consumerscoreHelper->method('getConsumerscoreSampleCounter')->willReturn(0);
@@ -94,7 +96,7 @@ class OrderPaymentPlaceEndTest extends BaseTestCase
         $payment->method('getMethodInstance')->willReturn($paymentMethod);
         $payment->method('getOrder')->willReturn($order);
 
-        $event = $this->getMockBuilder(Event::class)->disableOriginalConstructor()->setMethods(['getPayment'])->getMock();
+        $event = $this->getMockBuilder(Event::class)->disableOriginalConstructor()->addMethods(['getPayment'])->getMock();
         $event->method('getPayment')->willReturn($payment);
 
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();

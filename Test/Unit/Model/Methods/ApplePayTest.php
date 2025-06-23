@@ -86,7 +86,7 @@ class ApplePayTest extends BaseTestCase
     {
         $this->objectManager = $this->getObjectManager();
 
-        $this->info = $this->getMockBuilder(Order\Payment::class)->disableOriginalConstructor()->setMethods(['getAdditionalInformation'])->getMock();
+        $this->info = $this->getMockBuilder(Order\Payment::class)->disableOriginalConstructor()->onlyMethods(['getAdditionalInformation'])->getMock();
 
         $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
         $toolkitHelper->method('getAdditionalDataEntry')->willReturn($this->token);

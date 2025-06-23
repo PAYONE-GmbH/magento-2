@@ -113,13 +113,14 @@ class ConfigProviderTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getCustomerId'])
+            ->addMethods(['getCustomerId'])
             ->getMock();
         $quote->method('getCustomerId')->willReturn(123);
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneCanceledPaymentMethod', 'unsPayoneCanceledPaymentMethod', 'getPayoneIsError', 'getQuote', 'getPayoneUUID', 'setPayoneUUID'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['getPayoneCanceledPaymentMethod', 'unsPayoneCanceledPaymentMethod', 'getPayoneIsError', 'getPayoneUUID', 'setPayoneUUID'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 
@@ -160,7 +161,7 @@ class ConfigProviderTest extends BaseTestCase
     {
         $method = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getInstructions', 'isAvailable'])
+            ->onlyMethods(['getInstructions', 'isAvailable'])
             ->getMock();
         $method->method('getInstructions')->willReturn('Instruction');
         $method->method('isAvailable')->willReturn(true);

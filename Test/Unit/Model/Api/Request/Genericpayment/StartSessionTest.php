@@ -87,7 +87,8 @@ class StartSessionTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuoteCurrencyCode', 'getBillingAddress', 'getShippingAddress', 'getCustomerEmail'])
+            ->onlyMethods(['getBillingAddress', 'getShippingAddress'])
+            ->addMethods(['getQuoteCurrencyCode', 'getCustomerEmail'])
             ->getMock();
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');
         $quote->method('getCustomerEmail')->willReturn('tester@payone.de');
@@ -99,7 +100,7 @@ class StartSessionTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(Invoice::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOperationMode', 'getSubType', 'getInfoInstance', 'hasCustomConfig', 'getCustomConfigParam'])
+            ->onlyMethods(['getOperationMode', 'getSubType', 'getInfoInstance', 'hasCustomConfig', 'getCustomConfigParam'])
             ->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getSubType')->willReturn('KIV');

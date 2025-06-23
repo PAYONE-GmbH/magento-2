@@ -59,7 +59,8 @@ class PaymentBanTest extends BaseTestCase
 
         $this->connection = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
-            ->setMethods(['fetchAll', 'select', 'from', 'where', 'insert', 'order'])
+            ->onlyMethods(['from', 'where', 'order'])
+            ->addMethods(['fetchAll', 'select', 'insert'])
             ->getMock();
         $this->connection->method('select')->willReturn($this->connection);
         $this->connection->method('from')->willReturn($this->connection);

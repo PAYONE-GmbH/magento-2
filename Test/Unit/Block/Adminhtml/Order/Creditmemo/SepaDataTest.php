@@ -61,7 +61,13 @@ class SepaDataTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneRefundIban', 'getPayoneRefundBic', 'getPayment'])
+            ->onlyMethods([
+                'getPayment',
+            ])
+            ->addMethods([
+                'getPayoneRefundIban',
+                'getPayoneRefundBic',
+            ])
             ->getMock();
         $order->method('getPayoneRefundIban')->willReturn('DE85123456782599100003');
         $order->method('getPayoneRefundBic')->willReturn('TESTTEST');

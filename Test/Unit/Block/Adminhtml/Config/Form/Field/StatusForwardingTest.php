@@ -56,7 +56,16 @@ class StatusForwardingTest extends BaseTestCase
 
         $element = $this->getMockBuilder(AbstractElement::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setForm', 'getForm', 'setName', 'setHtmlId', 'setValues', 'getElementHtml'])
+            ->onlyMethods([
+                'setForm',
+                'getForm',
+                'getElementHtml'
+            ])
+            ->addMethods([
+                'setName',
+                'setHtmlId',
+                'setValues',
+            ])
             ->getMock();
         $element->method('getForm')->willReturn($form);
         $element->method('getElementHtml')->willReturn('html');

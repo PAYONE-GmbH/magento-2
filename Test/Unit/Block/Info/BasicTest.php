@@ -58,7 +58,7 @@ class BasicTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->addMethods([
                 'getPayoneTxid',
                 'getPayoneClearingBankcode',
                 'getPayoneClearingBankaccountholder',
@@ -78,13 +78,13 @@ class BasicTest extends BaseTestCase
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getLastTransId', 'getOrder'])
+            ->addMethods(['getLastTransId', 'getOrder'])
             ->getMock();
         $this->info->method('getOrder')->willReturn($order);
 
         $transactionStatus = $this->getMockBuilder(TransactionStatus::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getClearingBankcode'])
+            ->addMethods(['getClearingBankcode'])
             ->getMock();
         $transactionStatus->method('getClearingBankcode')->willReturn('12345');
 

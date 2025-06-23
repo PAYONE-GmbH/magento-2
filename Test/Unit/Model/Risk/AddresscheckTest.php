@@ -86,7 +86,8 @@ class AddresscheckTest extends BaseTestCase
 
         $this->quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['isVirtual', 'getSubtotal'])
+            ->onlyMethods(['isVirtual'])
+            ->addMethods(['getSubtotal'])
             ->getMock();
         $this->quote->method('isVirtual')->willReturn(false);
         $this->quote->method('getSubtotal')->willReturn(100);
@@ -100,7 +101,7 @@ class AddresscheckTest extends BaseTestCase
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->addMethods([
                 'getPayoneBillingAddresscheckScore',
                 'getPayoneShippingAddresscheckScore',
                 'unsPayoneBillingAddresscheckScore',
@@ -173,7 +174,8 @@ class AddresscheckTest extends BaseTestCase
     {
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
+            ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
+            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
         $address->method('getStreet')->willReturn(['Teststr. 12', '3rd floor']);
@@ -191,7 +193,8 @@ class AddresscheckTest extends BaseTestCase
     {
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
+            ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
+            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
 
@@ -211,7 +214,8 @@ class AddresscheckTest extends BaseTestCase
     {
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
+            ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
+            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
 
@@ -230,7 +234,8 @@ class AddresscheckTest extends BaseTestCase
     {
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
+            ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
+            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
 
@@ -249,7 +254,8 @@ class AddresscheckTest extends BaseTestCase
     {
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore', 'getStreet', 'setStreet', 'getData', 'setData'])
+            ->onlyMethods(['getStreet', 'setStreet', 'getData', 'setData'])
+            ->addMethods(['getPayoneAddresscheckScore', 'setPayoneAddresscheckScore'])
             ->getMock();
         $address->method('getPayoneAddresscheckScore')->willReturn(null);
 

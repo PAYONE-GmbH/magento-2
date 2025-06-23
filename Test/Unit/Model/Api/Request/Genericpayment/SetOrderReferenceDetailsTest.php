@@ -78,7 +78,7 @@ class SetOrderReferenceDetailsTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getGrandTotal'])
+            ->addMethods(['getGrandTotal'])
             ->getMock();
         $quote->method('getGrandTotal')->willReturn(100);
 

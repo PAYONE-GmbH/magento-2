@@ -74,7 +74,7 @@ class PendingTest extends BaseTestCase
             'reasoncode' => 981
         ];
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder', 'getTransactionstatus'])->getMock();
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder', 'getTransactionstatus'])->getMock();
         $observer->method('getOrder')->willReturn($order);
         $observer->method('getTransactionstatus')->willReturn($transactionStatus);
 
@@ -93,7 +93,7 @@ class PendingTest extends BaseTestCase
 
         $transactionStatus = ['status' => 'error'];
 
-        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->setMethods(['getOrder', 'getTransactionstatus'])->getMock();
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->addMethods(['getOrder', 'getTransactionstatus'])->getMock();
         $observer->method('getOrder')->willReturn($order);
         $observer->method('getTransactionstatus')->willReturn($transactionStatus);
 

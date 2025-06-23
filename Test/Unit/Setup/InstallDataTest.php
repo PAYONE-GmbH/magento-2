@@ -55,7 +55,7 @@ class InstallDataTest extends BaseTestCase
         $salesSetup = $this->getMockBuilder(SalesSetup::class)->disableOriginalConstructor()->getMock();
         $salesSetupFactory = $this->getMockBuilder(SalesSetupFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $salesSetupFactory->method('create')->willReturn($salesSetup);
 
@@ -69,7 +69,8 @@ class InstallDataTest extends BaseTestCase
         $fetchResult = [['scope' => 'website', 'scope_id' => 2]];
 
         $connection = $this->getMockBuilder(Mysql::class)
-            ->setMethods(['select', 'from', 'where', 'order', 'fetchAssoc', 'insert'])
+            ->onlyMethods(['select', 'insert', 'fetchAssoc'])
+            ->addMethods(['from', 'where', 'order'])
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('select')->willReturn($connection);

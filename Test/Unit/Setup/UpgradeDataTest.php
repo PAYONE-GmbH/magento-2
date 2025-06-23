@@ -59,7 +59,7 @@ class UpgradeDataTest extends BaseTestCase
         $salesSetup = $this->getMockBuilder(SalesSetup::class)->disableOriginalConstructor()->getMock();
         $salesSetupFactory = $this->getMockBuilder(SalesSetupFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $salesSetupFactory->method('create')->willReturn($salesSetup);
 
@@ -68,7 +68,7 @@ class UpgradeDataTest extends BaseTestCase
 
         $customerSetupFactory = $this->getMockBuilder(CustomerSetupFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $customerSetupFactory->method('create')->willReturn($customerSetup);
 
@@ -91,7 +91,8 @@ class UpgradeDataTest extends BaseTestCase
         $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
 
         $connection = $this->getMockBuilder(Mysql::class)
-            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
+            ->onlyMethods(['tableColumnExists', 'select', 'fetchAssoc', 'update'])
+            ->addMethods(['from', 'where'])
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('tableColumnExists')->willReturn(false);
@@ -117,7 +118,8 @@ class UpgradeDataTest extends BaseTestCase
         $fetchResult = [['value' => serialize(['a' => 'b']), 'config_id' => 12]];
 
         $connection = $this->getMockBuilder(Mysql::class)
-            ->setMethods(['tableColumnExists', 'select', 'from', 'where', 'fetchAssoc', 'update'])
+            ->onlyMethods(['tableColumnExists', 'select', 'fetchAssoc', 'update'])
+            ->addMethods(['from', 'where'])
             ->disableOriginalConstructor()
             ->getMock();
         $connection->method('tableColumnExists')->willReturn(false);

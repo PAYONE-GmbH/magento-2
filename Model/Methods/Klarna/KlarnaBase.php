@@ -148,7 +148,7 @@ class KlarnaBase extends PayoneMethod
      * @param \Magento\Quote\Api\Data\CartInterface|null $quote
      * @return bool
      */
-    protected function isB2BOrder(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    protected function isB2BOrder(?\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
         if ($quote === null) {
             $quote = $this->checkoutSession->getQuote();

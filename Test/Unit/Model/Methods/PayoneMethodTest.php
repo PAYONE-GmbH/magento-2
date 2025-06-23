@@ -47,6 +47,11 @@ class PayoneMethodTest extends BaseTestCase
     private $objectManager;
 
     /**
+     * @var bool
+     */
+    protected $needsObjectManagerMock = true;
+
+    /**
      * @var Shop|\PHPUnit_Framework_MockObject_MockObject
      */
     private $shopHelper;

@@ -64,7 +64,7 @@ class ShippingInformationManagementTest extends BaseTestCase
 
         $extensionAttributes = $this->getMockBuilder(AddressExtension::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getGender', 'getDateofbirth'])
+            ->onlyMethods(['getGender', 'getDateofbirth'])
             ->getMock();
         $extensionAttributes->method('getGender')->willReturn(2);
         $extensionAttributes->method('getDateofbirth')->willReturn('12/12/1977');

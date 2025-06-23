@@ -306,7 +306,7 @@ abstract class Base
      * @param  Order        $oOrder
      * @return void
      */
-    protected function addRedirectUrls(PayoneMethod $oPayment, Order $oOrder = null)
+    protected function addRedirectUrls(PayoneMethod $oPayment, ?Order $oOrder = null)
     {
         $this->addParameter('successurl', $oPayment->getSuccessUrl($oOrder));
         $this->addParameter('errorurl', $oPayment->getErrorUrl());
@@ -333,7 +333,7 @@ abstract class Base
      * @param  PayoneMethod $oPayment
      * @return array
      */
-    protected function send(PayoneMethod $oPayment = null)
+    protected function send(?PayoneMethod $oPayment = null)
     {
         if ($oPayment !== null && $oPayment->hasCustomConfig()) { // if payment type doesnt use the global settings
             $this->addCustomParameters($oPayment); // add custom connection settings

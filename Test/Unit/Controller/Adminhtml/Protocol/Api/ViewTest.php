@@ -71,7 +71,8 @@ class ViewTest extends BaseTestCase
 
         $page = $this->getMockBuilder(Page::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setActiveMenu', 'getConfig'])
+            ->onlyMethods(['getConfig'])
+            ->addMethods(['setActiveMenu'])
             ->getMock();
         $page->method('getConfig')->willReturn($config);
 

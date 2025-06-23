@@ -95,7 +95,8 @@ class DebitTest extends BaseTestCase
 
         $payment = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOperationMode', 'getCreditmemo', 'hasCustomConfig', 'getCustomConfigParam'])
+            ->onlyMethods(['getOperationMode', 'hasCustomConfig', 'getCustomConfigParam'])
+            ->addMethods(['getCreditmemo'])
             ->getMock();
         $payment->method('getOperationMode')->willReturn('test');
         $payment->method('getCreditmemo')->willReturn($creditmemo);
@@ -114,7 +115,8 @@ class DebitTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getIncrementId', 'getId', 'getCustomerId', 'getPayoneRefundIban', 'getPayoneRefundBic', 'getAllItems', 'getStore'])
+            ->onlyMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getIncrementId', 'getId', 'getCustomerId', 'getAllItems', 'getStore'])
+            ->addMethods(['getPayoneRefundIban', 'getPayoneRefundBic'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
@@ -133,7 +135,7 @@ class DebitTest extends BaseTestCase
 
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
+            ->onlyMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
             ->getMock();
         $item->method('getItemId')->willReturn('id');
         $item->method('getProductId')->willReturn('sku');
@@ -156,7 +158,7 @@ class DebitTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
+            ->addMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12-345');
@@ -187,7 +189,7 @@ class DebitTest extends BaseTestCase
 
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
+            ->onlyMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
             ->getMock();
         $item->method('getItemId')->willReturn('id');
         $item->method('getProductId')->willReturn('sku');
@@ -212,7 +214,7 @@ class DebitTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
+            ->addMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12-345');
@@ -234,7 +236,7 @@ class DebitTest extends BaseTestCase
 
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
+            ->onlyMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
             ->getMock();
         $item->method('getItemId')->willReturn('id');
         $item->method('getProductId')->willReturn('sku');
@@ -257,7 +259,7 @@ class DebitTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
+            ->addMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12-345');
@@ -279,7 +281,7 @@ class DebitTest extends BaseTestCase
 
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
+            ->onlyMethods(['getItemId', 'getProductId', 'getQtyOrdered', 'getParentItemId'])
             ->getMock();
         $item->method('getItemId')->willReturn('id');
         $item->method('getProductId')->willReturn('sku');
@@ -297,7 +299,8 @@ class DebitTest extends BaseTestCase
 
         $oCreditmemo = $this->getMockBuilder(Creditmemo::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getBaseDiscountAmount', 'getDiscountAmount', 'getAllItems', 'getPayoneIban', 'getPayoneBic'])
+            ->onlyMethods(['getBaseDiscountAmount', 'getDiscountAmount', 'getAllItems'])
+            ->addMethods(['getPayoneIban', 'getPayoneBic'])
             ->getMock();
         $oCreditmemo->method('getBaseDiscountAmount')->willReturn(0);
         $oCreditmemo->method('getDiscountAmount')->willReturn(0);
@@ -307,7 +310,7 @@ class DebitTest extends BaseTestCase
 
         $paymentInfo = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
+            ->addMethods(['getOrder', 'getParentTransactionId', 'getCreditmemo'])
             ->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
         $paymentInfo->method('getParentTransactionId')->willReturn('12-345');

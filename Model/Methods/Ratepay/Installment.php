@@ -138,7 +138,7 @@ class Installment extends RatepayBase
      * @param \Magento\Quote\Api\Data\CartInterface|null $quote
      * @return array
      */
-    public function getAllowedMonths(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function getAllowedMonths(?\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
         if ($quote === null) {
             $quote = $this->checkoutSession->getQuote();

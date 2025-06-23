@@ -85,7 +85,7 @@ class ConfirmOrderErrorTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->addMethods([
                 'setIsPayoneRedirectCancellation',
                 'unsAmazonWorkorderId',
                 'unsAmazonAddressToken',

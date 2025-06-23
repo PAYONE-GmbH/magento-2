@@ -86,7 +86,8 @@ class AmazonTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError', 'getAmazonReferenceId', 'getTriggerInvalidPayment', 'getQuote'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError', 'getAmazonReferenceId', 'getTriggerInvalidPayment'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 

@@ -258,8 +258,8 @@ abstract class BaseMethod extends AbstractMethod
         \Payone\Core\Model\Api\Request\Capture $captureRequest,
         \Payone\Core\Model\Api\Request\Authorization $authorizationRequest,
         \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $resource, $resourceCollection, $data);

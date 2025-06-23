@@ -62,7 +62,7 @@ class CreditcardTest extends BaseTestCase
 
         $this->info = $this->getMockBuilder(Order\Payment::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalInformation', 'getOrder'])
+            ->onlyMethods(['getAdditionalInformation', 'getOrder'])
             ->getMock();
         $this->info->method('getAdditionalInformation')->willReturn('info');
 
@@ -74,13 +74,13 @@ class CreditcardTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getCustomerId'])
+            ->addMethods(['getCustomerId'])
             ->getMock();
         $quote->method('getCustomerId')->willReturn(123);
 
         $checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote'])
+            ->onlyMethods(['getQuote'])
             ->getMock();
         $checkoutSession->method('getQuote')->willReturn($quote);
 
@@ -114,7 +114,7 @@ class CreditcardTest extends BaseTestCase
 
         $data = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalData'])
+            ->addMethods(['getAdditionalData'])
             ->getMock();
         $data->method('getAdditionalData')->willReturn($addData);
 
@@ -140,7 +140,7 @@ class CreditcardTest extends BaseTestCase
 
         $data = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalData'])
+            ->addMethods(['getAdditionalData'])
             ->getMock();
         $data->method('getAdditionalData')->willReturn($addData);
 
@@ -160,7 +160,7 @@ class CreditcardTest extends BaseTestCase
 
         $data = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalData'])
+            ->addMethods(['getAdditionalData'])
             ->getMock();
         $data->method('getAdditionalData')->willReturn($addData);
 

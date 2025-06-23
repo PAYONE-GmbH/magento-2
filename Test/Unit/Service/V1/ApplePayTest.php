@@ -58,7 +58,7 @@ class ApplePayTest extends BaseTestCase
         $this->response = $objectManager->getObject(ApplePayResponse::class);
         $responseFactory = $this->getMockBuilder(ApplePayResponseFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 

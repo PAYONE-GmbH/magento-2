@@ -58,7 +58,8 @@ class SavedPaymentDataTest extends BaseTestCase
 
         $this->connection = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
-            ->setMethods(['fetchAll', 'fetchOne', 'select', 'from', 'where', 'insert', 'order', 'update', 'delete'])
+            ->onlyMethods(['where', 'order', 'from'])
+            ->addMethods(['fetchAll', 'fetchOne', 'select', 'insert', 'update', 'delete'])
             ->getMock();
         $this->connection->method('select')->willReturn($this->connection);
         $this->connection->method('from')->willReturn($this->connection);

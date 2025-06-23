@@ -67,7 +67,7 @@ class DebitTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError'])
+            ->addMethods(['getPayoneMandate', 'getPayoneDebitError', 'unsPayoneDebitError'])
             ->getMock();
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [

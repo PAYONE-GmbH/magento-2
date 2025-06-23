@@ -52,14 +52,14 @@ class GetfileTest extends BaseTestCase
     {
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneMandateId', 'getPayoneMode'])
+            ->addMethods(['getPayoneMandateId', 'getPayoneMode'])
             ->getMock();
         $order->method('getPayoneMandateId')->willReturn('12345');
         $order->method('getPayoneMode')->willReturn('test');
 
         $payment = $this->getMockBuilder(PayoneMethod::class)
             ->disableOriginalConstructor()
-            ->setMethods(['hasCustomConfig', 'getCustomConfigParam'])
+            ->onlyMethods(['hasCustomConfig', 'getCustomConfigParam'])
             ->getMock();
         $payment->method('hasCustomConfig')->willReturn(true);
         $payment->method('getCustomConfigParam')->willReturn('getfile');

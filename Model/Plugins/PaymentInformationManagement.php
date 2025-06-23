@@ -78,7 +78,7 @@ class PaymentInformationManagement
         callable $proceed,
         $cartId,
         \Magento\Quote\Api\Data\PaymentInterface $paymentMethod,
-        \Magento\Quote\Api\Data\AddressInterface $billingAddress = null
+        ?\Magento\Quote\Api\Data\AddressInterface $billingAddress = null
     ) {
         if (version_compare($this->shopHelper->getMagentoVersion(), '2.1.0', '>=') &&
             version_compare($this->shopHelper->getMagentoVersion(), '2.2.0', '<') &&

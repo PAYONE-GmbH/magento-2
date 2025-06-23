@@ -34,6 +34,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Framework\DB\Select;
 
 class RatepayProfileConfigTest extends BaseTestCase
 {
@@ -58,7 +59,8 @@ class RatepayProfileConfigTest extends BaseTestCase
 
         $this->connection = $this->getMockBuilder(Select::class)
             ->disableOriginalConstructor()
-            ->setMethods(['fetchAll', 'fetchOne', 'select', 'from', 'where', 'insert', 'order', 'limit', 'update'])
+            ->onlyMethods(['where', 'from', 'order', 'limit'])
+            ->addMethods(['fetchAll', 'fetchOne', 'select', 'insert', 'update'])
             ->getMock();
         $this->connection->method('select')->willReturn($this->connection);
         $this->connection->method('from')->willReturn($this->connection);

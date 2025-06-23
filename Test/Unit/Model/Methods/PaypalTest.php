@@ -57,7 +57,7 @@ class PaypalTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneWorkorderId', 'getIsPayonePayPalExpress'])
+            ->addMethods(['getPayoneWorkorderId', 'getIsPayonePayPalExpress'])
             ->getMock();
         $this->checkoutSession->method('getPayoneWorkorderId')->willReturn('12345');
 

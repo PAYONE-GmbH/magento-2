@@ -45,7 +45,7 @@ class AuthorizationException extends LocalizedException
      * @param array                     $response
      * @param \Exception                $cause
      */
-    public function __construct(Phrase $phrase, $response, \Exception $cause = null)
+    public function __construct(Phrase $phrase, $response, ?\Exception $cause = null)
     {
         parent::__construct($phrase, $cause);
         $this->response = $response;

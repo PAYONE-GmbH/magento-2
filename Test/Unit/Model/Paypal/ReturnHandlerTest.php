@@ -65,29 +65,32 @@ class ReturnHandlerTest extends BaseTestCase
 
         $address = $this->getMockBuilder(Address::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getEmail', 'setEmail', 'setShouldIgnoreValidation'])
+            ->onlyMethods(['getEmail', 'setEmail'])
+            ->addMethods(['setShouldIgnoreValidation'])
             ->getMock();
         $address->method('getEmail')->willReturn('test@email.com');
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getId',
                 'setIsActive',
                 'save',
-                'setCustomerId',
-                'setCustomerEmail',
                 'getBillingAddress',
                 'setCustomerIsGuest',
-                'setCustomerGroupId',
                 'getPayment',
                 'setPayment',
-                'setInventoryProcessed',
                 'collectTotals',
                 'setBillingAddress',
                 'getIsVirtual',
                 'getShippingAddress',
                 'setShippingAddress'
+            ])
+            ->addMethods([
+                'setCustomerId',
+                'setCustomerEmail',
+                'setCustomerGroupId',
+                'setInventoryProcessed',
             ])
             ->getMock();
         $quote->method('getId')->willReturn('12345');

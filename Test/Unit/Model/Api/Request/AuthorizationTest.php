@@ -167,7 +167,7 @@ class AuthorizationTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
+            ->onlyMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn($expectedOrderId);
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
@@ -197,7 +197,7 @@ class AuthorizationTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
+            ->onlyMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');
@@ -238,7 +238,7 @@ class AuthorizationTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
+            ->onlyMethods(['getRealOrderId', 'getOrderCurrencyCode', 'getCustomerId', 'getCustomerEmail', 'getBillingAddress', 'getShippingAddress', 'getStore'])
             ->getMock();
         $order->method('getRealOrderId')->willReturn('54321');
         $order->method('getOrderCurrencyCode')->willReturn('EUR');

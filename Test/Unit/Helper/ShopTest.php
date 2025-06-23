@@ -68,7 +68,7 @@ class ShopTest extends BaseTestCase
 
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getId', 'getName', 'getBaseUrl'])
+            ->onlyMethods(['getId', 'getName', 'getBaseUrl'])
             ->getMock();
         $store->method('getId')->willReturn(1);
         $store->method('getName')->willReturn('test');

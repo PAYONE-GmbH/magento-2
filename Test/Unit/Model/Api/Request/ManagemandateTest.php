@@ -103,7 +103,8 @@ class ManagemandateTest extends BaseTestCase
 
         $quote = $this->getMockBuilder(Quote::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getCustomer', 'getQuoteCurrencyCode', 'getBillingAddress'])
+            ->onlyMethods(['getCustomer', 'getBillingAddress'])
+            ->addMethods(['getQuoteCurrencyCode'])
             ->getMock();
         $quote->method('getCustomer')->willReturn($customer);
         $quote->method('getQuoteCurrencyCode')->willReturn('EUR');

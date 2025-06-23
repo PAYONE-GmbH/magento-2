@@ -56,7 +56,7 @@ class DeleteTest extends BaseTestCase
         $resultRedirect->method('setPath')->willReturn($resultRedirect);
         $resultRedirectFactory = $this->getMockBuilder(RedirectFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $resultRedirectFactory->method('create')->willReturn($resultRedirect);
 

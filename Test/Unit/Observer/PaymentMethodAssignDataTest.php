@@ -66,7 +66,8 @@ class PaymentMethodAssignDataTest extends BaseTestCase
         $data = $this->objectManager->getObject(DataObject::class);
         $observer = $this->getMockBuilder(Observer::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPaymentModel', 'getData'])
+            ->onlyMethods(['getData'])
+            ->addMethods(['getPaymentModel'])
             ->getMock();
         $observer->method('getPaymentModel')->willReturn($paymentInfo);
         $observer->method('getData')->willReturn($data);

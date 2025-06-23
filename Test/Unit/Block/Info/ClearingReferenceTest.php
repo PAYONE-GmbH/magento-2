@@ -58,20 +58,20 @@ class ClearingReferenceTest extends BaseTestCase
 
         $order = $this->getMockBuilder(Order::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getPayoneTxid', 'getPayoneClearingReference'])
+            ->addMethods(['getPayoneTxid', 'getPayoneClearingReference'])
             ->getMock();
         $order->method('getPayoneTxid')->willReturn('12345');
         $order->method('getPayoneClearingReference')->willReturn('REFERENCE');
 
         $this->info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getLastTransId', 'getOrder'])
+            ->addMethods(['getLastTransId', 'getOrder'])
             ->getMock();
         $this->info->method('getOrder')->willReturn($order);
 
         $transactionStatus = $this->getMockBuilder(TransactionStatus::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->addMethods([
                 'getClearingBankcode',
                 'getClearingBankaccountholder',
                 'getClearingBankaccount',

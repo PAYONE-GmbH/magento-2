@@ -74,7 +74,7 @@ class ManagementTest extends BaseTestCase
 
         $pageFactory = $this->getMockBuilder(PageFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $pageFactory->method('create')->willReturn($page);
 
@@ -82,7 +82,7 @@ class ManagementTest extends BaseTestCase
         $resultRedirect->method('setPath')->willReturn($resultRedirect);
         $resultRedirectFactory = $this->getMockBuilder(RedirectFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
         $resultRedirectFactory->method('create')->willReturn($resultRedirect);
 

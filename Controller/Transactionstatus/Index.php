@@ -145,7 +145,7 @@ class Index extends \Payone\Core\Controller\ExternalAction
      * @param  bool  $blWillBeHandled
      * @return void
      */
-    protected function logTransactionStatus(Order $oOrder = null, $aRequest, $blWillBeHandled)
+    protected function logTransactionStatus(Order $oOrder, $aRequest, $blWillBeHandled)
     {
         $this->transactionStatus->addTransactionLogEntry($aRequest, $oOrder, $blWillBeHandled);
     }

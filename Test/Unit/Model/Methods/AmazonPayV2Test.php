@@ -81,7 +81,8 @@ class AmazonPayV2Test extends BaseTestCase
 
         $info = $this->getMockBuilder(Info::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalInformation', 'getOrder'])
+            ->onlyMethods(['getAdditionalInformation'])
+            ->addMethods(['getOrder'])
             ->getMock();
         $info->method('getAdditionalInformation')->willReturn('19010101');
         $info->method('getOrder')->willReturn($order);
@@ -93,7 +94,7 @@ class AmazonPayV2Test extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->addMethods([
                 'unsPayoneRedirectUrl',
                 'unsPayoneRedirectedPaymentMethod',
                 'unsPayoneCanceledPaymentMethod',
@@ -235,7 +236,7 @@ class AmazonPayV2Test extends BaseTestCase
         $order->method('getStore')->willReturn($store);
         $order->method('getPayment')->willReturn($payment);
 
-        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->setMethods(['getOrder'])->getMock();
+        $paymentInfo = $this->getMockBuilder(Info::class)->disableOriginalConstructor()->addMethods(['getOrder'])->getMock();
         $paymentInfo->method('getOrder')->willReturn($order);
 
         $aResponse = ['status' => 'REDIRECT', 'txid' => '12345', 'redirecturl' => 'http://testdomain.com', 'add_paydata[signature]' => 'test', 'add_paydata[payload]' => 'test'];

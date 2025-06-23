@@ -128,11 +128,11 @@ class CheckoutTest extends BaseTestCase
 
         $item = $this->getMockBuilder(\Magento\Quote\Model\Quote\Item::class)
             ->disableOriginalConstructor()
-            ->setMethods([
-                'getProductId',
+            ->onlyMethods([
                 'getSku',
                 'getQty',
             ])
+            ->addMethods(['getProductId'])
             ->getMock();
         $item->method("getProductId")->willReturn($productId);
         $item->method("getSku")->willReturn("Test12");

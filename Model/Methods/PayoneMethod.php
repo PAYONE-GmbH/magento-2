@@ -261,7 +261,7 @@ abstract class PayoneMethod extends BaseMethod
      * @param  Order $oOrder
      * @return string
      */
-    public function getSuccessUrl(Order $oOrder = null)
+    public function getSuccessUrl(?Order $oOrder = null)
     {
         $sAddedParams = '';
         if ($oOrder !== null) {

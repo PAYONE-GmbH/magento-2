@@ -93,13 +93,15 @@ class CustomerTest extends BaseTestCase
 
         $this->checkoutSession = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getQuote', 'getPayoneGuestGender', 'getPayoneGuestDateofbirth'])
+            ->onlyMethods(['getQuote'])
+            ->addMethods(['getPayoneGuestGender', 'getPayoneGuestDateofbirth'])
             ->getMock();
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 
         $this->region = $this->getMockBuilder(Region::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getId', 'getCode', 'loadByName', 'loadByCode'])
+            ->onlyMethods(['getId', 'loadByName', 'loadByCode'])
+            ->addMethods(['getCode'])
             ->getMock();
         $regionFactory = $this->getMockBuilder(RegionFactory::class)->disableOriginalConstructor()->getMock();
         $regionFactory->method('create')->willReturn($this->region);

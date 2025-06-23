@@ -82,7 +82,7 @@ class ToolkitTest extends BaseTestCase
 
         $store = $this->getMockBuilder(Store::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getCode', 'getDefaultCurrencyCode', 'getBaseCurrencyCode', 'getBaseCurrency'])
+            ->onlyMethods(['getCode', 'getDefaultCurrencyCode', 'getBaseCurrencyCode', 'getBaseCurrency'])
             ->getMock();
         $store->method('getCode')->willReturn(null);
         $store->method('getDefaultCurrencyCode')->willReturn('EUR');
@@ -245,7 +245,7 @@ class ToolkitTest extends BaseTestCase
 
         $dataObject = $this->getMockBuilder(DataObject::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getAdditionalData'])
+            ->addMethods(['getAdditionalData'])
             ->getMock();
         $dataObject->method('getAdditionalData')->willReturn(['key' => $expected]);
 
