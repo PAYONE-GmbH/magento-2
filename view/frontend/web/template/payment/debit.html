@@ -44,6 +44,7 @@
         
         <form class="debit_form" id="debit_form" action="#" method="post" data-bind="attr: {id: getCode() + '_debit_form'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'payone_form_debit'}">
+                <legend class="visually-hidden payone" data-bind="text: getTitle()"></legend>
                 <div class="field">
                     <label data-bind="attr: {for: getCode() + '_country'}" class="label">
                         <span><!-- ko i18n: 'Bank country'--><!-- /ko --></span>
@@ -70,7 +71,6 @@
                                data-bind="attr: {
                                     autocomplete: 'off',
                                     id: getCode() + '_iban',
-                                    title: $t('IBAN'),
                                     'data-container': getCode() + '-iban'},
                               value: iban,
                               valueUpdate: 'keyup' "/>
@@ -87,7 +87,6 @@
                                data-bind="attr: {
                                     autocomplete: 'off',
                                     id: getCode() + '_bic',
-                                    title: $t('BIC'),
                                     'data-container': getCode() + '-bic'},
                               value: bic,
                               valueUpdate: 'keyup' "/>

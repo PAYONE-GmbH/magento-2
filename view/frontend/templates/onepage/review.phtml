@@ -32,13 +32,13 @@
         <div class="block-content">
             <?php if ($block->getShippingAddress()): ?>
                 <div class="box box-order-shipping-method">
-                    <strong class="box-title"><span><?php echo $block->escapeHtml(__('Shipping Method')) ?></span></strong>
+                    <strong class="box-title"><span id="shippinglabel"><?php echo $block->escapeHtml(__('Shipping Method')) ?></span></strong>
                     <div class="box-content">
                         <form method="post" id="shipping-method-form" action="<?php echo $block->escapeUrl($block->getShippingMethodSubmitUrl()); ?>" class="form">
                             <?php if ($groups = $block->getShippingRateGroups()): ?>
                                 <?php $currentRate = $block->getCurrentShippingRate(); ?>
                                 <div class="field shipping required">
-                                    <select name="shipping_method" id="shipping-method" class="select">
+                                    <select name="shipping_method" id="shipping-method" class="select" aria-labelledby="shippinglabel">
                                         <?php if (!$currentRate): ?>
                                             <option value=""><?php echo $block->escapeHtml(__('Please select a shipping method...')); ?></option>
                                         <?php endif; ?>

@@ -43,6 +43,7 @@
         </div>
         <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
+                <legend class="visually-hidden payone" data-bind="text: getTitle()"></legend>
                 <!-- ko if: requestTelephone() -->
                 <div class="field number required">
                     <label data-bind="attr: {for: getCode() + '_telephone'}" class="label">
@@ -53,7 +54,6 @@
                                data-bind="attr: {
                                     autocomplete: 'off',
                                     id: getCode() + '_telephone',
-                                    title: $t('Telephone'),
                                     'data-container': getCode() + '-telephone'},
                               value: telephone,
                               valueUpdate: 'keyup' "/>
@@ -109,7 +109,6 @@
                                data-bind="attr: {
                                     autocomplete: 'off',
                                     id: getCode() + '_vatid',
-                                    title: $t('VAT-ID'),
                                     'data-container': getCode() + '-vatid'},
                               value: vatid,
                               valueUpdate: 'keyup' "/>

@@ -48,6 +48,7 @@
                               value: pseudocardpan">
 
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'payone_form_cc'}">
+                <legend class="visually-hidden payone" data-bind="text: getTitle()"></legend>
                 <!-- ko if: useSaveDataMode() -->
                 <div data-bind="foreach: getSavedPaymentData()">
                     <div class="payment-method">
@@ -72,7 +73,7 @@
                 <!--/ko-->
                 <div data-bind="attr: {id: getCode() + '_new_data_container'}" class="fieldset ccard">
                     <!-- ko if: isAutoCardtypeDetectionEnabled() -->
-                    <input name="payment[cc_type]" type="hidden" value="" data-bind="attr: {id: getCode() + '_credit_card_type', value: getCreditcardTypes()[0].id, 'data-container': getCode() + '_credit_card_type'}" />
+                    <input name="payment[cc_type]" type="hidden" value="" data-bind="attr: {id: getCode() + '_credit_card_type', value: getCreditcardTypes()[0].id, 'data-container': getCode() + '_credit_card_type'}, 'autocomplete': 'off'" />
                     <!--/ko-->
                     <!-- ko if: !isAutoCardtypeDetectionEnabled() -->
                     <div class="field">
@@ -102,7 +103,6 @@
                                    data-bind="attr: {
                                         autocomplete: 'off',
                                         id: getCode() + '_cardholder',
-                                        title: $t('Cardholder'),
                                         'data-container': getCode() + '-cardholder'},
                                   value: cardholder,
                                   valueUpdate: 'keyup' "/>
@@ -110,23 +110,19 @@
                     </div>
 
                     <div class="field number required">
-                        <label class="label">
-                            <span><!-- ko i18n: 'Credit Card Number'--><!-- /ko --></span>
-                            <!-- ko if: isAutoCardtypeDetectionEnabled() -->
-                            <!-- ko foreach: getCreditcardTypes() -->
-                            <img class="cc-icon" data-bind="attr: {id: $parent.getCode() + '_cc_icon_' + id.toLowerCase(), src: 'https://cdn.pay1.de/cc/' + id.toLowerCase() + '/s/default.png'}"/>
-                            <!--/ko-->
-                            <!--/ko-->
-                        </label>
+                        <span class="label"><!-- ko i18n: 'Credit Card Number'--><!-- /ko --></span>
+                        <!-- ko if: isAutoCardtypeDetectionEnabled() -->
+                        <!-- ko foreach: getCreditcardTypes() -->
+                        <img class="cc-icon" data-bind="attr: {id: $parent.getCode() + '_cc_icon_' + id.toLowerCase(), src: 'https://cdn.pay1.de/cc/' + id.toLowerCase() + '/s/default.png'}"/>
+                        <!--/ko-->
+                        <!--/ko-->
                         <div class="control">
                             <span id="cardpan" class="inputIframe"></span>
                         </div>
                     </div>
 
                     <div class="field date required" data-bind="attr: {id: getCode() + '_cc_type_exp_div'}">
-                        <label class="label">
-                            <span><!-- ko i18n: 'Expiration Date'--><!-- /ko --></span>
-                        </label>
+                        <span class="label"><!-- ko i18n: 'Expiration Date'--><!-- /ko --></span>
                         <div class="control">
                             <div class="fields group group-2">
                                 <div class="field no-label month">
@@ -145,9 +141,7 @@
 
                     <!-- ko if: showCvc() -->
                     <div class="field cvv required" data-bind="attr: {id: getCode() + '_cc_type_cvv_div'}">
-                        <label class="label">
-                            <span><!-- ko i18n: 'Card Verification Number'--><!-- /ko --></span>
-                        </label>
+                        <span class="label"><!-- ko i18n: 'Card Verification Number'--><!-- /ko --></span>
                         <div class="control">
                             <span id="cardcvc2" class="inputIframe"></span>
                         </div>

@@ -44,6 +44,7 @@
 
         <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
+                <legend class="visually-hidden payone" data-bind="text: getTitle()"></legend>
                 <!-- ko if: isB2bMode() -->
                 <div class="field number">
                     <label data-bind="attr: {for: getCode() + '_companyUid'}" class="label">
@@ -54,7 +55,6 @@
                                data-bind="attr: {
                                     autocomplete: 'off',
                                     id: getCode() + '_companyUid',
-                                    title: $t('VAT No.'),
                                     'data-container': getCode() + '-companyUid'},
                               value: companyUid,
                               valueUpdate: 'keyup' "/>
@@ -69,7 +69,6 @@
                                data-bind="attr: {
                                     autocomplete: 'off',
                                     id: getCode() + '_tradeRegistryNumber',
-                                    title: $t('Company trade registry number'),
                                     'data-container': getCode() + '-tradeRegistryNumber'},
                               value: tradeRegistryNumber,
                               valueUpdate: 'keyup' "/>

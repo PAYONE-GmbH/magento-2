@@ -44,6 +44,7 @@
 
         <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
+                <legend class="visually-hidden payone" data-bind="text: getTitle()"></legend>
                 <!-- ko if: requestBirthday() -->
                 <div class="field number required">
                     <label data-bind="attr: {for: getCode() + '_birthday'}" class="label">

@@ -45,6 +45,7 @@
         <form action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
             <input type="hidden" name="payment[duration]" value="" data-bind="attr: {id: getCode() + '_duration'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode()}">
+                <legend class="visually-hidden payone" data-bind="text: getTitle()"></legend>
                 <!-- ko if: requestBirthday() -->
                 <div class="field number required" data-bind="attr: {id: getCode() + '_birthday_field'}">
                     <label data-bind="attr: {for: getCode() + '_birthday'}" class="label">
@@ -93,7 +94,7 @@
                     </label>
                     <div class="control">
                         <input type="text" name="payment[iban]" class="input-text" value=""
-                               data-bind="attr: {autocomplete: 'off', id: getCode() + '_iban', title: $t('IBAN'), 'data-container': getCode() + '-iban'},
+                               data-bind="attr: {autocomplete: 'off', id: getCode() + '_iban', 'data-container': getCode() + '-iban'},
                                           value: iban,
                                           valueUpdate: 'keyup' "/>
                     </div>
@@ -104,7 +105,7 @@
                     </label>
                     <div class="control">
                         <input type="text" name="payment[bic]" class="input-text" value=""
-                               data-bind="attr: {autocomplete: 'off', id: getCode() + '_bic', title: $t('BIC'), 'data-container': getCode() + '-bic'},
+                               data-bind="attr: {autocomplete: 'off', id: getCode() + '_bic', 'data-container': getCode() + '-bic'},
                                           value: bic,
                                           valueUpdate: 'keyup' "/>
                     </div>
