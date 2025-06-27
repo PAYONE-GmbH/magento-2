@@ -107,6 +107,7 @@ class PayPal implements PayPalInterface
         $oPayment->setMethod(PayoneConfig::METHOD_PAYPALV2);
 
         $oQuote->setPayment($oPayment);
+        $oQuote->collectTotals();
         $oQuote->save();
 
         $oMethodInstance = $this->dataHelper->getMethodInstance(PayoneConfig::METHOD_PAYPALV2);
