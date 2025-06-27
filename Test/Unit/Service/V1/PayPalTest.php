@@ -80,6 +80,7 @@ class PayPalTest extends BaseTestCase
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'save',
+                'collectTotals',
                 'getPayment',
                 'setPayment',
             ])

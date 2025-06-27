@@ -173,7 +173,25 @@ class ExpressButtonV2 extends Base
      */
     protected function getCurrency()
     {
-        return $this->apiHelper->getCurrencyFromQuote($this->checkoutSession->getQuote());
+        $sCurrency = $this->apiHelper->getCurrencyFromQuote($this->checkoutSession->getQuote());
+        if (empty($sCurrency)) {
+            // currency will be empty when the first item is put into the basket
+            // read default currency settings from config and use them in that case
+            $sCurrency = $this->getDefaultCurrency();
+        }
+        return $sCurrency;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDefaultCurrency()
+    {
+        $sCurrency = $this->apiHelper->getConfigParam('base', 'options', 'currency');
+        if ($this->getConfigParam('currency', 'global', 'payone_general', $this->checkoutSession->getQuote()->getStore()->getCode()) == 'display') {
+            $sCurrency = $this->apiHelper->getConfigParam('default', 'options', 'currency');
+        }
+        return $sCurrency;
     }
 
     /**
