@@ -103,6 +103,16 @@ class AmazonPayV2 extends PayoneMethod
     }
 
     /**
+     * Returns if the current payment process is a express payment
+     *
+     * @return false
+     */
+    public function isExpressPayment()
+    {
+        return $this->isAmazonPayExpress();
+    }
+
+    /**
      * @return string
      */
     public function getMerchantId()

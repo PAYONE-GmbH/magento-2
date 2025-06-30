@@ -106,6 +106,9 @@
     <type name="Magento\Checkout\Block\Checkout\LayoutProcessor">
         <plugin name="guest_checkout_layout_processor" type="Payone\Core\Model\Plugins\GuestCheckoutLayoutProcessor" sortOrder="300"/>
     </type>
+    <type name="Magento\Quote\Model\CustomerManagement">
+        <plugin name="Payone_Core_Plugin_CustomerManagementPlugin" type="Payone\Core\Model\Plugins\CustomerManagementPlugin" sortOrder="10"/>
+    </type>
     <type name="Payone\Core\Model\Logger\Info">
         <arguments>
             <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
