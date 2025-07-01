@@ -44,6 +44,7 @@
         
         <form class="debit_form" action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
             <fieldset data-bind="attr: {class: 'fieldset payment items ' + getCode()}">
+                <legend class="visually-hidden payone" data-bind="text: getTitle()"></legend>
                 <div class="field">
                     <label data-bind="attr: {for: getCode() + '_bank_group'}" class="label">
                         <span><!-- ko i18n: 'Bank group'--><!-- /ko --></span>
