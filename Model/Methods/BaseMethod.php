@@ -367,4 +367,14 @@ abstract class BaseMethod extends AbstractMethod
         }
         return true; // can use for given country
     }
+
+    /**
+     * Returns if the current payment process is a express payment
+     *
+     * @return false
+     */
+    public function isExpressPayment()
+    {
+        return false;
+    }
 }

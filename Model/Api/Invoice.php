@@ -79,6 +79,11 @@ class Invoice
     protected $amastyHelper;
 
     /**
+     * @var \Magento\Framework\Pricing\PriceCurrencyInterface
+     */
+    protected $priceCurrency;
+
+    /**
      * Request object
      *
      * @var Base
@@ -109,12 +114,18 @@ class Invoice
     /**
      * Constructor
      *
-     * @param \Payone\Core\Helper\Toolkit $toolkitHelper Toolkit helper
+     * @param \Payone\Core\Helper\Toolkit $toolkitHelper
+     * @param \Payone\Core\Helper\AmastyGiftcard $amastyHelper
+     * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      */
-    public function __construct(\Payone\Core\Helper\Toolkit $toolkitHelper, \Payone\Core\Helper\AmastyGiftcard $amastyHelper)
-    {
+    public function __construct(
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Payone\Core\Helper\AmastyGiftcard $amastyHelper,
+        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
+    ) {
         $this->toolkitHelper = $toolkitHelper;
         $this->amastyHelper = $amastyHelper;
+        $this->priceCurrency = $priceCurrency;
     }
 
     /**
@@ -317,6 +328,26 @@ class Invoice
             $dPrice = $oOrder->getBaseShippingInclTax();
             if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
                 $dPrice = $oOrder->getShippingInclTax();
+            }
+        }
+
+        if ($oOrder instanceof Quote && ($dPrice === false || $dPrice === null) && !empty($oOrder->getShippingAddress()->getShippingMethod())) {
+            $sShippingMethod = $oOrder->getShippingAddress()->getShippingMethod();
+
+            $oShippingAddress = $oOrder->getShippingAddress();
+            $oShippingAddress->setCollectShippingRates(true);
+            $oShippingAddress->collectShippingRates();
+            $aShippingRates = $oShippingAddress->getGroupedAllShippingRates();
+
+            foreach ($aShippingRates as $aCarrierRates) {
+                foreach ($aCarrierRates as $oRate) {
+                    if ($oRate->getCode() == $sShippingMethod) {
+                        $dPrice = $oRate->getPrice(); // base price
+                        if ($this->toolkitHelper->getConfigParam('currency', 'global', 'payone_general', $this->getStoreCode()) == 'display') {
+                            $dPrice = $this->priceCurrency->convert($oRate->getPrice(), $oOrder->getStore()); // display price
+                        }
+                    }
+                }
             }
         }
 
