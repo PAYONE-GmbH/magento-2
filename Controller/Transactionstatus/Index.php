@@ -83,6 +83,13 @@ class Index extends \Payone\Core\Controller\ExternalAction
     protected $substituteOrder;
 
     /**
+     * CacheInterface object
+     *
+     * @var \Magento\Framework\App\CacheInterface
+     */
+    protected $cache;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context              $context
@@ -94,6 +101,7 @@ class Index extends \Payone\Core\Controller\ExternalAction
      * @param \Payone\Core\Model\Handler\TransactionStatus       $transactionStatusHandler,
      * @param \Magento\Framework\Controller\Result\RawFactory    $resultRawFactory
      * @param \Payone\Core\Model\Handler\SubstituteOrder         $substituteOrder
+     * @param \Magento\Framework\App\CacheInterface              $cache
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -104,7 +112,8 @@ class Index extends \Payone\Core\Controller\ExternalAction
         \Payone\Core\Helper\Order $orderHelper,
         \Payone\Core\Model\Handler\TransactionStatus $transactionStatusHandler,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        \Payone\Core\Model\Handler\SubstituteOrder $substituteOrder
+        \Payone\Core\Model\Handler\SubstituteOrder $substituteOrder,
+        \Magento\Framework\App\CacheInterface $cache
     ) {
         parent::__construct($context, $formKey);
         $this->transactionStatus = $transactionStatus;
@@ -114,6 +123,7 @@ class Index extends \Payone\Core\Controller\ExternalAction
         $this->transactionStatusHandler = $transactionStatusHandler;
         $this->resultRawFactory = $resultRawFactory;
         $this->substituteOrder = $substituteOrder;
+        $this->cache = $cache;
     }
 
     /**
@@ -168,14 +178,31 @@ class Index extends \Payone\Core\Controller\ExternalAction
             return 'Order not found';
         }
 
-        if ($this->getParam('txaction') == 'appointed' && $oOrder->getStatus() == 'canceled') {
-            // order was canceled in checkout, probably due to browser-back-button usage -> create a new order for incoming payment
-            $oOrder = $this->substituteOrder->createSubstituteOrder($oOrder, false);
+        if ($this->getParam('txaction') != 'appointed' && empty($this->transactionStatus->getAppointedIdByTxid($this->getParam('txid')))) {
+            return 'Appointed status has to be handled first!';
         }
 
-        $this->logTransactionStatus($oOrder, $this->getPostArray(), true);
+        $lockKey = 'payone_order_status_lock_' . $oOrder->getId();
+        if ($this->cache->load($lockKey)) {
+            return 'Another status is being handled at the moment.';
+        }
 
-        $this->transactionStatusHandler->handle($oOrder, $this->getPostArray());
+        // Lock transaction status handling for this order for 50 seconds to not handle multiple statuses at the same time
+        $this->cache->save('1', $lockKey, [], 50);
+
+        try {
+            if ($this->getParam('txaction') == 'appointed' && $oOrder->getStatus() == 'canceled') {
+                // order was canceled in checkout, probably due to browser-back-button usage -> create a new order for incoming payment
+                $oOrder = $this->substituteOrder->createSubstituteOrder($oOrder, false);
+            }
+
+            $this->logTransactionStatus($oOrder, $this->getPostArray(), true);
+
+            $this->transactionStatusHandler->handle($oOrder, $this->getPostArray());
+        } catch (\Exception $e) {
+            $this->cache->remove($lockKey);
+            throw $e;
+        }
 
         return 'TSOK';
     }
