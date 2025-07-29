@@ -34,6 +34,14 @@ use Magento\Sales\Model\Order;
 class Index extends \Payone\Core\Controller\ExternalAction
 {
     /**
+     * @var array
+     */
+    protected $aFirstContactWhitelist = [
+        'appointed',
+        'failed',
+    ];
+
+    /**
      * TransactionStatus model
      *
      * @var \Payone\Core\Model\ResourceModel\TransactionStatus
@@ -178,7 +186,7 @@ class Index extends \Payone\Core\Controller\ExternalAction
             return 'Order not found';
         }
 
-        if ($this->getParam('txaction') != 'appointed' && empty($this->transactionStatus->getAppointedIdByTxid($this->getParam('txid')))) {
+        if (in_array($this->getParam('txaction'), $this->aFirstContactWhitelist) === false && empty($this->transactionStatus->getAppointedIdByTxid($this->getParam('txid')))) {
             return 'Appointed status has to be handled first!';
         }
 
