@@ -110,6 +110,21 @@ class Order extends \Payone\Core\Helper\Base
     }
 
     /**
+     * Return the order related to the given order id
+     *
+     * @param  string $sOrderId
+     * @return SalesOrder|null
+     */
+    public function getOrderById($sOrderId)
+    {
+        $oOrder = $this->orderFactory->create()->load($sOrderId);
+        if ($oOrder && $oOrder->getId()) {
+            return $oOrder;
+        }
+        return null;
+    }
+
+    /**
      * Fill billing and shipping addresses with the needed information from the response
      *
      * @param  Address $oAddress

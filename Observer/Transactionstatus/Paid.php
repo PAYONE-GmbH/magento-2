@@ -32,8 +32,9 @@ use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
-use Payone\Core\Helper\Base;
+use Payone\Core\Helper\Order as OrderHelper;
 use Payone\Core\Model\PayoneConfig;
+use Magento\Framework\App\CacheInterface;
 
 /**
  * Event observer for Transactionstatus paid
@@ -55,24 +56,55 @@ class Paid implements ObserverInterface
     protected $invoiceSender;
 
     /**
-     * Payone base helper
+     * PAYONE order helper
      *
-     * @var Base
+     * @var OrderHelper
      */
-    protected $baseHelper;
+    protected $orderHelper;
+
+    /**
+     * CacheInterface object
+     *
+     * @var CacheInterface
+     */
+    protected $cache;
 
     /**
      * Constructor.
      *
      * @param InvoiceService $invoiceService
      * @param InvoiceSender  $invoiceSender
-     * @param Base           $baseHelper
+     * @param OrderHelper    $orderHelper
+     * @param CacheInterface $cache
      */
-    public function __construct(InvoiceService $invoiceService, InvoiceSender $invoiceSender, Base $baseHelper)
-    {
+    public function __construct(
+        InvoiceService $invoiceService,
+        InvoiceSender  $invoiceSender,
+        OrderHelper    $orderHelper,
+        CacheInterface $cache
+    ) {
         $this->invoiceService = $invoiceService;
         $this->invoiceSender  = $invoiceSender;
-        $this->baseHelper     = $baseHelper;
+        $this->orderHelper    = $orderHelper;
+        $this->cache          = $cache;
+    }
+
+    /**
+     * Waits till the appointed lock is removed
+     *
+     * @param string $sLockKey
+     * @return void
+     */
+    protected function waitTillAppointedIsFinished($sLockKey)
+    {
+        $iTrys = 10;
+        while ($iTrys > 0) {
+            sleep(5);
+            $iTrys--;
+            if (!$this->cache->load($sLockKey)) {
+                break;
+            }
+        }
     }
 
     /**
@@ -92,9 +124,16 @@ class Paid implements ObserverInterface
             return;
         }
 
+        $sAppointedLockKey = Appointed::STATUS_LOCK_IDENT.$oOrder->getId();
+        if ($this->cache->load($sAppointedLockKey)) { // Appointed status is being processed at the moment
+            $this->waitTillAppointedIsFinished($sAppointedLockKey);
+
+            $oOrder = $this->orderHelper->getOrderById($oOrder->getId()); // Reload order because it will have changed in the meantime
+        }
+
         // if advance payment is paid should create an invoice
         if ($oOrder->getPayment()->getMethodInstance()->getCode() === PayoneConfig::METHOD_ADVANCE_PAYMENT) {
-            if ($this->baseHelper->getConfigParam('create_invoice', 'payone_advance_payment', 'payone_payment')) {
+            if ($this->orderHelper->getConfigParam('create_invoice', 'payone_advance_payment', 'payone_payment')) {
                 $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
                 $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
                 $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
@@ -103,7 +142,7 @@ class Paid implements ObserverInterface
 
                 $oOrder->save();
 
-                if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
+                if ($this->orderHelper->getConfigParam('send_invoice_email', 'emails')) {
                     $this->invoiceSender->send($oInvoice);
                 }
             }
