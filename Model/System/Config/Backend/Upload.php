@@ -3,7 +3,6 @@
 namespace Payone\Core\Model\System\Config\Backend;
 
 use Magento\Framework\Filesystem;
-use Magento\Framework\Filesystem\DirectoryList;
 
 class Upload extends \Magento\Framework\App\Config\Value
 {
@@ -11,6 +10,16 @@ class Upload extends \Magento\Framework\App\Config\Value
      * @var \Magento\Framework\Filesystem\Directory\ReadInterface
      */
     protected $_tmpDirectory;
+
+    /**
+     * @var \Magento\Framework\Filesystem\Directory\ReadInterface
+     */
+    protected $varDirectory;
+
+    /**
+     * @var \Magento\Framework\Filesystem\Directory\WriteFactory
+     */
+    protected $writeFactory;
 
     /**
      * @var \Payone\Core\Helper\ApplePay
@@ -23,6 +32,7 @@ class Upload extends \Magento\Framework\App\Config\Value
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $config
      * @param \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList
      * @param \Magento\Framework\Filesystem $filesystem
+     * @param \Magento\Framework\Filesystem\Directory\WriteFactory $writeFactory
      * @param \Payone\Core\Helper\ApplePay $applePayHelper
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
@@ -34,6 +44,7 @@ class Upload extends \Magento\Framework\App\Config\Value
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
         \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
         \Magento\Framework\Filesystem $filesystem,
+        \Magento\Framework\Filesystem\Directory\WriteFactory $writeFactory,
         \Payone\Core\Helper\ApplePay $applePayHelper,
         ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
@@ -41,7 +52,9 @@ class Upload extends \Magento\Framework\App\Config\Value
     )
     {
         parent::__construct($context, $registry, $config, $cacheTypeList, $resource, $resourceCollection, $data);
-        $this->_tmpDirectory = $filesystem->getDirectoryRead(DirectoryList::SYS_TMP);
+        $this->_tmpDirectory = $filesystem->getDirectoryRead(\Magento\Framework\Filesystem\DirectoryList::SYS_TMP);
+        $this->varDirectory = $filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR);
+        $this->writeFactory = $writeFactory;
         $this->applePayHelper = $applePayHelper;
     }
 
@@ -65,6 +78,11 @@ class Upload extends \Magento\Framework\App\Config\Value
             $sCurrentFile = $this->applePayHelper->getApplePayUploadPath().$value['value'];
             if (file_exists($sCurrentFile)) {
                 unlink($sCurrentFile);
+            } else {
+                $sCurrentFile = $this->applePayHelper->getApplePayUploadPath(true).$value['value'];
+                if (file_exists($sCurrentFile)) {
+                    unlink($sCurrentFile);
+                }
             }
             $this->setValue('');
             return $this;
@@ -88,6 +106,7 @@ class Upload extends \Magento\Framework\App\Config\Value
 
     /**
      * Copies file to upload path
+     * New version which should be compatible to Magento Cloud too
      *
      * @param  string $sFilePath
      * @param  string $sFileName
@@ -95,10 +114,14 @@ class Upload extends \Magento\Framework\App\Config\Value
      */
     protected function moveFile($sFilePath, $sFileName)
     {
-        $sUploadPath = $this->applePayHelper->getApplePayUploadPath();
-        if (!file_exists($sUploadPath)) {
-            mkdir($sUploadPath);
+        $sModuleDirPath = $this->varDirectory->getAbsolutePath('payone-gmbh/ApplePay/');
+
+        $oVarModuleDir = $this->writeFactory->create($sModuleDirPath);
+        $oWriteDriver = $oVarModuleDir->getDriver();
+        if ($oWriteDriver->isExists($sModuleDirPath) === false) {
+            $oWriteDriver->createDirectory($sModuleDirPath);
         }
-        move_uploaded_file($sFilePath, $sUploadPath.$sFileName);
+
+        $oWriteDriver->copy($sFilePath, $oVarModuleDir->getAbsolutePath($sFileName));
     }
 }
