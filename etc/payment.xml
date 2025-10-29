@@ -133,5 +133,8 @@
         <method name="payone_google_pay">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="payone_wero">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
     </methods>
 </payment>
