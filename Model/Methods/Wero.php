@@ -71,6 +71,26 @@ class Wero extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
+     * If not empty, the payment method will only be shown if one of the allowed currencies is active in checkout
+     *
+     * @var array
+     */
+    protected $aAllowedCurrencies = [
+        'EUR'
+    ];
+
+    /**
+     * Available countries for current payment method
+     *
+     * @var string[]
+     */
+    protected $aAvailableCountries = [
+        'DE',
+        'BE',
+        'FR',
+    ];
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder

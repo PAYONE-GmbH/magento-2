@@ -51,22 +51,10 @@ class Installment extends KlarnaBase
     protected $sSubType = self::METHOD_KLARNA_SUBTYPE_INSTALLMENT;
 
     /**
-     * Check whether payment method can be used
+     * Determines if B2B orders are not allowed for this payment method
+     * B2B is assumed when the company field in the billing address is filled
      *
-     * @param \Magento\Quote\Api\Data\CartInterface|null $quote
-     * @return bool
+     * @var bool
      */
-    public function isAvailable(?\Magento\Quote\Api\Data\CartInterface $quote = null)
-    {
-        $blParentReturn = parent::isAvailable($quote);
-        if ($blParentReturn === false) {
-            return false;
-        }
-
-        if ($quote !== null && $this->isB2BOrder($quote) === true) {
-            return false;
-        }
-
-        return $blParentReturn;
-    }
+    protected $blIsB2BNotAllowed = true;
 }
