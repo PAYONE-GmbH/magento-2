@@ -159,7 +159,7 @@ class TransactionStatus extends \Magento\Framework\Model\ResourceModel\Db\Abstra
                 'txaction' => $this->getParam('txaction'),
                 'sequencenumber' => $this->getParam('sequencenumber'),
                 'clearingtype' => $this->getParam('clearingtype'),
-                'txtime' => date('Y-m-d H:i:s', $this->getParam('txtime')),
+                'txtime' => is_numeric($this->getParam('txtime')) ? date('Y-m-d H:i:s', (int)$this->getParam('txtime')) : (string)$this->getParam('txtime'),
                 'price' => $this->getParam('price'),
                 'balance' => $this->getParam('balance'),
                 'receivable' => $this->getParam('receivable'),
