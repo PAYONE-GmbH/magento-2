@@ -141,4 +141,22 @@ class KlarnaBase extends PayoneMethod
 
         return $this;
     }
+
+    /**
+     * Checks if a company is given in the billing address
+     *
+     * @param \Magento\Quote\Api\Data\CartInterface|null $quote
+     * @return bool
+     */
+    protected function isB2BOrder(?\Magento\Quote\Api\Data\CartInterface $quote = null)
+    {
+        if ($quote === null) {
+            $quote = $this->checkoutSession->getQuote();
+        }
+
+        if ($quote && $quote->getBillingAddress() && !empty($quote->getBillingAddress()->getCompany())) {
+            return true;
+        }
+        return false;
+    }
 }

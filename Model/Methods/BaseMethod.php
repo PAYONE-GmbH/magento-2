@@ -165,13 +165,6 @@ abstract class BaseMethod extends AbstractMethod
     protected $shopHelper;
 
     /**
-     * PAYONE api helper
-     *
-     * @var \Payone\Core\Helper\Api
-     */
-    protected $apiHelper;
-
-    /**
      * URL helper
      *
      * @var \Magento\Framework\Url
@@ -228,28 +221,6 @@ abstract class BaseMethod extends AbstractMethod
     protected $savedPaymentData;
 
     /**
-     * If not empty, the payment method will only be shown if one of the allowed currencies is active in checkout
-     *
-     * @var array
-     */
-    protected $aAllowedCurrencies = [];
-
-    /**
-     * Available countries for current payment method
-     *
-     * @var string[]
-     */
-    protected $aAvailableCountries = [];
-
-    /**
-     * Determines if B2B orders are not allowed for this payment method
-     * B2B is assumed when the company field in the billing address is filled
-     *
-     * @var bool
-     */
-    protected $blIsB2BNotAllowed = false;
-
-    /**
      * Constructor
      *
      * @param \Magento\Framework\Model\Context                        $context
@@ -261,7 +232,6 @@ abstract class BaseMethod extends AbstractMethod
      * @param \Magento\Payment\Model\Method\Logger                    $logger
      * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
      * @param \Payone\Core\Helper\Shop                                $shopHelper
-     * @param \Payone\Core\Helper\Api                                 $apiHelper
      * @param \Magento\Framework\Url                                  $url
      * @param \Magento\Checkout\Model\Session                         $checkoutSession
      * @param \Payone\Core\Model\Api\Request\Debit                    $debitRequest
@@ -282,7 +252,6 @@ abstract class BaseMethod extends AbstractMethod
         \Magento\Payment\Model\Method\Logger $logger,
         \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Helper\Api $apiHelper,
         \Magento\Framework\Url $url,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\Api\Request\Debit $debitRequest,
@@ -296,7 +265,6 @@ abstract class BaseMethod extends AbstractMethod
         parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $resource, $resourceCollection, $data);
         $this->toolkitHelper = $toolkitHelper;
         $this->shopHelper = $shopHelper;
-        $this->apiHelper = $apiHelper;
         $this->url = $url;
         $this->checkoutSession = $checkoutSession;
         $this->debitRequest = $debitRequest;
@@ -384,22 +352,13 @@ abstract class BaseMethod extends AbstractMethod
      */
     public function canUseForCountry($country)
     {
-        if (!empty($this->aAvailableCountries)) { // payment method has specific countries specified?
-            if (in_array($country, $this->aAvailableCountries) === false) {
-                return false;
-            }
-            return true;
-        }
-
         $aAvailableCountries = [];
-
         $iAllowSpecific = $this->shopHelper->getConfigParam('allowspecific');
         $sSpecificCountry = $this->shopHelper->getConfigParam('specificcountry');
         if ($this->hasCustomConfig()) {// check for non-global configuration
             $iAllowSpecific = $this->getCustomConfigParam('allowspecific'); // only specific countries allowed?
             $sSpecificCountry = $this->getCustomConfigParam('specificcountry');
         }
-
         if (!empty($sSpecificCountry)) {
             $aAvailableCountries = explode(',', $sSpecificCountry);
         }

@@ -73,7 +73,6 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_BNPL_INSTALLMENT,
         PayoneConfig::METHOD_BNPL_DEBIT,
         PayoneConfig::METHOD_GOOGLE_PAY,
-        PayoneConfig::METHOD_WERO,
     ];
 
     /**
@@ -111,7 +110,6 @@ class Payment extends \Payone\Core\Helper\Base
         PayoneConfig::METHOD_APPLEPAY => 'wlt',
         PayoneConfig::METHOD_BANCONTACT => 'sb',
         PayoneConfig::METHOD_GOOGLE_PAY => 'wlt',
-        PayoneConfig::METHOD_WERO => 'sb',
     ];
 
     /**

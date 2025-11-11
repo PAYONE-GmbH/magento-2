@@ -154,9 +154,6 @@
                                                                         <item name="payone_google_pay" xsi:type="array">
                                                                             <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
                                                                         </item>
-                                                                        <item name="payone_wero" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
-                                                                        </item>
                                                                     </item>
                                                                 </item>
                                                             </item>
