@@ -89,7 +89,7 @@ class BNPLBase extends PayoneMethod
     ];
 
     /**
-     * Available countries for BNPL payment usage
+     * Available countries for current payment method
      *
      * @var string[]
      */
@@ -99,97 +99,20 @@ class BNPLBase extends PayoneMethod
     ];
 
     /**
+     * If not empty, the payment method will only be shown if one of the allowed currencies is active in checkout
+     *
+     * @var string[]
+     */
+    protected $aAllowedCurrencies = [
+        'EUR'
+    ];
+
+    /**
      * Info instructions block path
      *
      * @var string
      */
     protected $_infoBlockType = 'Payone\Core\Block\Info\BNPL';
-
-    /**
-     * @var \Payone\Core\Helper\Api
-     */
-    protected $apiHelper;
-
-    /**
-     * Constructor
-     *
-     * @param \Magento\Framework\Model\Context                        $context
-     * @param \Magento\Framework\Registry                             $registry
-     * @param \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory
-     * @param \Magento\Framework\Api\AttributeValueFactory            $customAttrFactory
-     * @param \Magento\Payment\Helper\Data                            $paymentData
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface      $scopeConfig
-     * @param \Magento\Payment\Model\Method\Logger                    $logger
-     * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
-     * @param \Payone\Core\Helper\Shop                                $shopHelper
-     * @param \Magento\Framework\Url                                  $url
-     * @param \Magento\Checkout\Model\Session                         $checkoutSession
-     * @param \Payone\Core\Model\Api\Request\Debit                    $debitRequest
-     * @param \Payone\Core\Model\Api\Request\Capture                  $captureRequest
-     * @param \Payone\Core\Model\Api\Request\Authorization            $authorizationRequest
-     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData       $savedPaymentData
-     * @param \Payone\Core\Helper\Api                                 $apiHelper
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
-     * @param array                                                   $data
-     */
-    public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
-        \Magento\Framework\Api\AttributeValueFactory $customAttrFactory,
-        \Magento\Payment\Helper\Data $paymentData,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Payment\Model\Method\Logger $logger,
-        \Payone\Core\Helper\Toolkit $toolkitHelper,
-        \Payone\Core\Helper\Shop $shopHelper,
-        \Magento\Framework\Url $url,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Payone\Core\Model\Api\Request\Debit $debitRequest,
-        \Payone\Core\Model\Api\Request\Capture $captureRequest,
-        \Payone\Core\Model\Api\Request\Authorization $authorizationRequest,
-        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
-        \Payone\Core\Helper\Api $apiHelper,
-        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $savedPaymentData, $resource, $resourceCollection, $data);
-        $this->apiHelper = $apiHelper;
-    }
-
-    /**
-     * Check whether payment method can be used
-     *
-     * @param \Magento\Quote\Api\Data\CartInterface|null $quote
-     * @return bool
-     */
-    public function isAvailable(?\Magento\Quote\Api\Data\CartInterface $quote = null)
-    {
-        $blParentReturn = parent::isAvailable($quote);
-
-        // BNPL payment types are only available for payment in Euro
-        if ($quote !== null && $this->apiHelper->getCurrencyFromQuote($quote) != "EUR") {
-            return false;
-        }
-        return $blParentReturn;
-    }
-
-    /**
-     * To check billing country is allowed for the payment method
-     *
-     * @param string $country
-     * @return bool
-     * @deprecated 100.2.0
-     */
-    public function canUseForCountry($country)
-    {
-        // BNPL payments are only available for DE and AT orders
-        if (in_array($country, $this->aAvailableCountries) === false) {
-            return false;
-        }
-        return true;
-    }
 
     /**
      * Returns device token
