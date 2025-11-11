@@ -36,12 +36,15 @@ use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Payone\Core\Helper\Base;
 use Payone\Core\Model\PayoneConfig;
+use Magento\Framework\App\CacheInterface;
 
 /**
  * Event observer for Transactionstatus appointed
  */
 class Appointed implements ObserverInterface
 {
+    const STATUS_LOCK_IDENT = 'order_appointed_lock_';
+
     /**
      * Logger object
      *
@@ -78,6 +81,13 @@ class Appointed implements ObserverInterface
     protected $baseHelper;
 
     /**
+     * CacheInterface object
+     *
+     * @var CacheInterface
+     */
+    protected $cache;
+
+    /**
      * Constructor.
      *
      * @param LoggerInterface $logger
@@ -85,19 +95,22 @@ class Appointed implements ObserverInterface
      * @param InvoiceService  $invoiceService
      * @param InvoiceSender   $invoiceSender
      * @param Base            $baseHelper
+     * @param CacheInterface  $cache
      */
     public function __construct(
         LoggerInterface $logger,
         OrderSender $orderSender,
         InvoiceService $invoiceService,
         InvoiceSender $invoiceSender,
-        Base $baseHelper
+        Base $baseHelper,
+        CacheInterface $cache
     ) {
         $this->logger = $logger;
         $this->orderSender = $orderSender;
         $this->invoiceService = $invoiceService;
         $this->invoiceSender = $invoiceSender;
         $this->baseHelper = $baseHelper;
+        $this->cache = $cache;
     }
 
     /**
@@ -116,33 +129,45 @@ class Appointed implements ObserverInterface
             return;
         }
 
-        if (!$oOrder->getEmailSent()) {
-            // the email should not have been sent at this given moment,
-            // but some custom modules may have changed this behaviour
-            try {
-                $this->orderSender->send($oOrder);
-            } catch (\Exception $e) {
-                $this->logger->critical($e);
-            }
-        }
-
-        // preauthorization-orders and advance payment should not create an invoice
-        if ($oOrder->getPayoneAuthmode() !== 'authorization' || $oOrder->getPayment()->getMethodInstance()->getCode() === PayoneConfig::METHOD_ADVANCE_PAYMENT || !$oOrder->canInvoice()){
+        $lockKey = self::STATUS_LOCK_IDENT.$oOrder->getId();
+        if ($this->cache->load($lockKey)) {
             return;
         }
 
-        if ($oOrder->getInvoiceCollection()->count() == 0) {
-            $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
-            $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
-            $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
-            $oInvoice->register();
-            $oInvoice->save();
+        // set lock for 60 seconds
+        $this->cache->save('1', $lockKey, [], 60);
 
-            $oOrder->save();
-
-            if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
-                $this->invoiceSender->send($oInvoice);
+        try {
+            if (!$oOrder->getEmailSent()) {
+                // the email should not have been sent at this given moment,
+                // but some custom modules may have changed this behaviour
+                try {
+                    $this->orderSender->send($oOrder);
+                } catch (\Exception $e) {
+                    $this->logger->critical($e);
+                }
             }
+
+            // preauthorization-orders and advance payment should not create an invoice
+            if ($oOrder->getPayoneAuthmode() !== 'authorization' || $oOrder->getPayment()->getMethodInstance()->getCode() === PayoneConfig::METHOD_ADVANCE_PAYMENT || !$oOrder->canInvoice()) {
+                return;
+            }
+
+            if ($oOrder->getInvoiceCollection()->count() == 0) {
+                $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
+                $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
+                $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());
+                $oInvoice->register();
+                $oInvoice->save();
+
+                $oOrder->save();
+
+                if ($this->baseHelper->getConfigParam('send_invoice_email', 'emails')) {
+                    $this->invoiceSender->send($oInvoice);
+                }
+            }
+        } finally {
+            $this->cache->remove($lockKey);
         }
     }
 }
