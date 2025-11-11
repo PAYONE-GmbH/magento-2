@@ -83,7 +83,6 @@ class SafeInvoice extends PayoneMethod
      * @param \Magento\Payment\Model\Method\Logger                    $logger
      * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
      * @param \Payone\Core\Helper\Shop                                $shopHelper
-     * @param \Payone\Core\Helper\Api                                 $apiHelper
      * @param \Magento\Framework\Url                                  $url
      * @param \Magento\Checkout\Model\Session                         $checkoutSession
      * @param \Payone\Core\Model\Api\Request\Debit                    $debitRequest
@@ -105,7 +104,6 @@ class SafeInvoice extends PayoneMethod
         \Magento\Payment\Model\Method\Logger $logger,
         \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Helper\Api $apiHelper,
         \Magento\Framework\Url $url,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\Api\Request\Debit $debitRequest,
@@ -117,7 +115,7 @@ class SafeInvoice extends PayoneMethod
         ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $apiHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $savedPaymentData, $resource, $resourceCollection, $data);
+        parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $savedPaymentData, $resource, $resourceCollection, $data);
         $this->paymentBan = $paymentBan;
     }
 

@@ -97,7 +97,6 @@ abstract class PayoneConfig
     const METHOD_BNPL_INSTALLMENT = 'payone_bnpl_installment';
     const METHOD_BNPL_DEBIT = 'payone_bnpl_debit';
     const METHOD_GOOGLE_PAY = 'payone_google_pay';
-    const METHOD_WERO = 'payone_wero';
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
