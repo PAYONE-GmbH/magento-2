@@ -14,32 +14,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2024 Payone GmbH
+ * @copyright 2003 - 2025 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
 namespace Payone\Core\Model\Methods;
 
-use Payone\Core\Model\PayoneConfig;
 use Magento\Sales\Model\Order;
+use Payone\Core\Model\PayoneConfig;
 
 /**
- * Model for PayPalV2 payment method
+ * Model for Wero payment method
  */
-class PaypalV2 extends PayoneMethod
+class Wero extends PayoneMethod
 {
     /**
      * Payment method code
      *
      * @var string
      */
-    protected $_code = PayoneConfig::METHOD_PAYPALV2;
+    protected $_code = PayoneConfig::METHOD_WERO;
+
+    /**
+     * Info instructions block path
+     *
+     * @var string
+     */
+    protected $_infoBlockType = 'Payone\Core\Block\Info\ClearingReference';
 
     /**
      * Clearingtype for PAYONE authorization request
@@ -53,7 +60,7 @@ class PaypalV2 extends PayoneMethod
      *
      * @var string|bool
      */
-    protected $sWallettype = 'PAL';
+    protected $sWallettype = 'WRO';
 
     /**
      * Determines if the redirect-parameters have to be added
@@ -64,55 +71,24 @@ class PaypalV2 extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
-     * Determines if the invoice information has to be added
-     * to the authorization-request
+     * If not empty, the payment method will only be shown if one of the allowed currencies is active in checkout
      *
-     * @var bool
+     * @var array
      */
-    protected $blNeedsProductInfo = true;
+    protected $aAllowedCurrencies = [
+        'EUR'
+    ];
 
     /**
-     * Return success url for redirect payment types
+     * Available countries for current payment method
      *
-     * @param  Order $oOrder
-     * @return string
+     * @var string[]
      */
-    public function getSuccessUrl(?Order $oOrder = null)
-    {
-        if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
-            return $this->getReturnedUrl();
-        }
-        return parent::getSuccessUrl($oOrder);
-    }
-
-    /**
-     * @return string
-     */
-    public function getReturnedUrl()
-    {
-        return $this->url->getUrl('payone/paypal/returned');
-    }
-
-    /**
-     * Returns if the current payment process is a express payment
-     *
-     * @return false
-     */
-    public function isExpressPayment()
-    {
-        return $this->isPayPalExpress();
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isPayPalExpress()
-    {
-        if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
-            return true;
-        }
-        return false;
-    }
+    protected $aAvailableCountries = [
+        'DE',
+        'BE',
+        'FR',
+    ];
 
     /**
      * Return parameters specific to this payment type
@@ -122,16 +98,8 @@ class PaypalV2 extends PayoneMethod
      */
     public function getPaymentSpecificParameters(Order $oOrder)
     {
-        $aParams = [
+        return [
             'wallettype' => $this->getWallettype(),
         ];
-
-        if ($this->isPayPalExpress() === true) {
-            $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
-            if ($sWorkorderId) {
-                $aParams['workorderid'] = $sWorkorderId;
-            }
-        }
-        return $aParams;
     }
 }

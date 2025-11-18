@@ -13,12 +13,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2025 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -41,55 +41,32 @@
             <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
-        
-        <form class="debit_form" action="#" method="post" data-bind="attr: {id: getCode() + '_form'}">
-            <fieldset data-bind="attr: {class: 'fieldset payment items ' + getCode()}">
-                <legend class="visually-hidden payone" data-bind="text: getTitle()"></legend>
-                <div class="field">
-                    <label data-bind="attr: {for: getCode() + '_bank_group'}" class="label">
-                        <span><!-- ko i18n: 'Bank group'--><!-- /ko --></span>
-                    </label>
-                    <div class='control'>
-                        <select style="width:200px;" name="payment[bank_group]" class="select"
-                            data-bind=" attr: {id: getCode() + '_bank_group', 'data-container': getCode() + '_bank_group'},
-                                        enable: true,
-                                        options: getBankGroups(),
-                                        optionsValue: 'id',
-                                        optionsText: 'title',
-                                        optionsCaption: $t('--Please Select--'),
-                                        value: bankGroup">
-                        </select>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-        
         <p data-bind="html: getInstructions()"></p>
         <div class="checkout-agreements-block">
             <!-- ko foreach: $parent.getRegion('before-place-order') -->
-                <!-- ko template: getTemplate() --><!-- /ko -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
             <!--/ko-->
         </div>
         <div data-role="checkout-payone-boni-agreement">
             <div class="checkout-payone-boni-agreement">
                 <!-- ko if: (isAgreementVisible()) -->
-                    <!-- ko if: (canShowPaymentHintText()) -->
-                        <div>
-                            <strong><span data-bind="html: getPaymentHintText()"></span></strong>
-                        </div>
-                    <!-- /ko -->
-                    <!-- ko if: (canShowAgreementMessage()) -->
-                        <div>
-                            <input type="checkbox"
-                                   data-bind="attr: {
+                <!-- ko if: (canShowPaymentHintText()) -->
+                <div>
+                    <strong><span data-bind="html: getPaymentHintText()"></span></strong>
+                </div>
+                <!-- /ko -->
+                <!-- ko if: (canShowAgreementMessage()) -->
+                <div>
+                    <input type="checkbox"
+                           data-bind="attr: {
                                                         'id': 'payone_boni_agreement_' + getCode(),
                                                         'name': 'payone_boni_agreement',
                                                         'value': '1'}" />
-                            <label data-bind="attr: {'for': 'payone_boni_agreement_' + getCode()}">
-                                <span data-bind="html: getAgreementMessage()"></span>
-                            </label>
-                        </div>
-                    <!-- /ko -->
+                    <label data-bind="attr: {'for': 'payone_boni_agreement_' + getCode()}">
+                        <span data-bind="html: getAgreementMessage()"></span>
+                    </label>
+                </div>
+                <!-- /ko -->
                 <!-- /ko -->
             </div>
         </div>

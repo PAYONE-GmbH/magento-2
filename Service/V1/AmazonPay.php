@@ -300,6 +300,8 @@ class AmazonPay implements AmazonPayInterface
         $sPayload = $this->checkoutSession->getPayoneAmazonPayPayload();
         $sSignature = $this->checkoutSession->getPayoneAmazonPaySignature();
         if (!empty($sPayload) && !empty($sSignature)) {
+            $this->checkoutSession->setPayoneCustomerIsRedirected(true);
+
             $blSuccess = true;
 
             $oResponse->setData('payload', $sPayload);

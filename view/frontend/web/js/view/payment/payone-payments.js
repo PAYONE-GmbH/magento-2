@@ -167,6 +167,10 @@ define(
             {
                 type: 'payone_google_pay',
                 component: 'Payone_Core/js/view/payment/method-renderer/google_pay-method'
+            },
+            {
+                type: 'payone_wero',
+                component: 'Payone_Core/js/view/payment/method-renderer/wero-method'
             }
         );
         /** Add view logic here if needed */

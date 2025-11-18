@@ -131,6 +131,7 @@ class AmazonPayTest extends BaseTestCase
                 'setPayoneQuoteComparisonString',
                 'getPayoneAmazonPayPayload',
                 'getPayoneAmazonPaySignature',
+                'setPayoneCustomerIsRedirected',
             ])
             ->getMock();
         $checkoutSession->method('getAmazonWorkorderId')->willReturn(null);

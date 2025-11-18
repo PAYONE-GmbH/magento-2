@@ -85,6 +85,27 @@ class Paypal extends PayoneMethod
     }
 
     /**
+     * Returns if the current payment process is a express payment
+     *
+     * @return false
+     */
+    public function isExpressPayment()
+    {
+        return $this->isPayPalExpress();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isPayPalExpress()
+    {
+        if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder
@@ -94,7 +115,7 @@ class Paypal extends PayoneMethod
     {
         $aParams = ['wallettype' => $this->getWallettype()];
 
-        if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
+        if ($this->isPayPalExpress() === true) {
             $sWorkorderId = $this->checkoutSession->getPayoneWorkorderId();
             if ($sWorkorderId) {
                 $aParams['workorderid'] = $sWorkorderId;

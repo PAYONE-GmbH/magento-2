@@ -12,46 +12,30 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2020 Payone GmbH
+ * @copyright 2003 - 2025 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
+define(
+    [
+        'Payone_Core/js/view/payment/method-renderer/base'
+    ],
+    function (Component) {
+        'use strict';
+        return Component.extend({
+            defaults: {
+                template: 'Payone_Core/payment/wero'
+            },
 
-.payone_place_order_not_allowed {
-    color: #999999;
-}
-
-.payone_place_order_not_allowed SPAN {
-    float: right;
-}
-
-.payone_place_order_not_allowed DIV {
-    clear: both;
-}
-.payoneClear {
-    clear:both;
-}
-
-.payoneBNPLselector {
-    margin-bottom:0.7em;
-}
-
-#payone-paypal-button-minibasket {
-    margin-top: 1em;
-}
-
-LEGEND.payone.visually-hidden {
-    position: absolute;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    width: 1px;
-    margin: -1px;
-    padding: 0;
-    border: 0;
-}
+            /** Returns payment method instructions */
+            getInstructions: function () {
+                return window.checkoutConfig.payment.instructions[this.item.method];
+            }
+        });
+    }
+);

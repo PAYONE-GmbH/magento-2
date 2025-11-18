@@ -32,7 +32,7 @@ namespace Payone\Core\Model;
 abstract class PayoneConfig
 {
     /* Module version */
-    const MODULE_VERSION = '3.14.2';
+    const MODULE_VERSION = '3.16.0';
 
     /* Authorization request types */
     const REQUEST_TYPE_PREAUTHORIZATION = 'preauthorization';
@@ -97,6 +97,7 @@ abstract class PayoneConfig
     const METHOD_BNPL_INSTALLMENT = 'payone_bnpl_installment';
     const METHOD_BNPL_DEBIT = 'payone_bnpl_debit';
     const METHOD_GOOGLE_PAY = 'payone_google_pay';
+    const METHOD_WERO = 'payone_wero';
 
     /* Payment method group identifiers */
     const METHOD_GROUP_ONLINE_BANK_TRANSFER = 'payone_online_bank_transfer';
