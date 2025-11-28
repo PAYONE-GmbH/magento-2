@@ -27,6 +27,7 @@
 namespace Payone\Core\Controller\Transactionstatus;
 
 use Magento\Sales\Model\Order;
+use Payone\Core\Model\Methods\PayoneMethod;
 
 /**
  * TransactionStatus receiver
@@ -175,7 +176,13 @@ class Index extends \Payone\Core\Controller\ExternalAction
 
         $this->logTransactionStatus($oOrder, $this->getPostArray(), true);
 
-        $this->transactionStatusHandler->handle($oOrder, $this->getPostArray());
+        if (!empty($oOrder->getPayment()) &&
+            !empty($oOrder->getPayment()->getMethodInstance()) &&
+            $oOrder->getPayment()->getMethodInstance() instanceof PayoneMethod &&
+            $oOrder->getPayment()->getMethodInstance()->canHandleTransactionStatus($this->getPostArray()) === true
+        ) { // There are special cases with certain payment methods where transaction status shall be ignored - so canHandleTransactionStatus === false -> ignore transaction status
+            $this->transactionStatusHandler->handle($oOrder, $this->getPostArray());
+        }
 
         return 'TSOK';
     }
