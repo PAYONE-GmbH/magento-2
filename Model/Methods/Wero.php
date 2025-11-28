@@ -91,6 +91,22 @@ class Wero extends PayoneMethod
     ];
 
     /**
+     * Determines if the transaction status can be handled by this payment method
+     *
+     * @param array $transactionStatus
+     * @return bool
+     */
+    public function canHandleTransactionStatus($transactionStatus)
+    {
+        // Ignore type pending calls
+        if (!empty($transactionStatus['txaction'])           && $transactionStatus['txaction'] == PayoneConfig::TRANSACTIONSTATUS_APPOINTED &&
+            !empty($transactionStatus['transaction_status']) && $transactionStatus['transaction_status'] == 'pending') {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder
