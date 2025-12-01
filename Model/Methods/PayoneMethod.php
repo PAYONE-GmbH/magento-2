@@ -538,4 +538,17 @@ abstract class PayoneMethod extends BaseMethod
 
         return $blParentReturn;
     }
+
+    /**
+     * Determines if the transaction status can be handled by this payment method
+     *
+     * @param array $transactionStatus
+     * @return bool
+     */
+    public function canHandleTransactionStatus($transactionStatus)
+    {
+        // Hook to be overloaded by child classes
+        // Can introduce additional checks for transaction status
+        return true;
+    }
 }
