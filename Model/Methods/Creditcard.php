@@ -80,6 +80,79 @@ class Creditcard extends PayoneMethod
     ];
 
     /**
+     * @var \Payone\Core\Helper\Payment
+     */
+    protected $paymentHelper;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\Model\Context                        $context
+     * @param \Magento\Framework\Registry                             $registry
+     * @param \Magento\Framework\Api\ExtensionAttributesFactory       $extensionFactory
+     * @param \Magento\Framework\Api\AttributeValueFactory            $customAttrFactory
+     * @param \Magento\Payment\Helper\Data                            $paymentData
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface      $scopeConfig
+     * @param \Magento\Payment\Model\Method\Logger                    $logger
+     * @param \Payone\Core\Helper\Toolkit                             $toolkitHelper
+     * @param \Payone\Core\Helper\Shop                                $shopHelper
+     * @param \Magento\Framework\Url                                  $url
+     * @param \Magento\Checkout\Model\Session                         $checkoutSession
+     * @param \Payone\Core\Model\Api\Request\Debit                    $debitRequest
+     * @param \Payone\Core\Model\Api\Request\Capture                  $captureRequest
+     * @param \Payone\Core\Model\Api\Request\Authorization            $authorizationRequest
+     * @param \Payone\Core\Model\ResourceModel\SavedPaymentData       $savedPaymentData
+     * @param \Payone\Core\Helper\Payment                             $paymentHelper
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection
+     * @param array                                                   $data
+     */
+    public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory,
+        \Magento\Framework\Api\AttributeValueFactory $customAttrFactory,
+        \Magento\Payment\Helper\Data $paymentData,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Payment\Model\Method\Logger $logger,
+        \Payone\Core\Helper\Toolkit $toolkitHelper,
+        \Payone\Core\Helper\Shop $shopHelper,
+        \Magento\Framework\Url $url,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Payone\Core\Model\Api\Request\Debit $debitRequest,
+        \Payone\Core\Model\Api\Request\Capture $captureRequest,
+        \Payone\Core\Model\Api\Request\Authorization $authorizationRequest,
+        \Payone\Core\Model\ResourceModel\SavedPaymentData $savedPaymentData,
+        \Payone\Core\Helper\Payment $paymentHelper,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $extensionFactory, $customAttrFactory, $paymentData, $scopeConfig, $logger, $toolkitHelper, $shopHelper, $url, $checkoutSession, $debitRequest, $captureRequest, $authorizationRequest, $savedPaymentData, $resource, $resourceCollection, $data);
+        $this->paymentHelper = $paymentHelper;
+    }
+
+    /**
+     * Check whether payment method can be used
+     *
+     * @param \Magento\Quote\Api\Data\CartInterface|null $quote
+     * @return bool
+     */
+    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    {
+        $blParentReturn = parent::isAvailable($quote);
+        if ($blParentReturn === false) {
+            return false;
+        }
+
+        // dont show payment method when configuration is not complete
+        if (empty($this->paymentHelper->getAvailableCreditcardTypes())) {
+            return false;
+        }
+        return $blParentReturn;
+    }
+
+    /**
      * Return parameters specific to this payment type
      *
      * @param  Order $oOrder
