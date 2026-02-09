@@ -32,12 +32,16 @@
             <config_path>payment/payone_creditcardv2/active</config_path>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
-        <field id="clicktopay_enabled" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Title</label>
+            <config_path>payment/payone_creditcardv2/title</config_path>
+        </field>
+        <field id="clicktopay_enabled" translate="label" type="select" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Click To Pay - Enabled</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <tooltip>When Click To Pay is disabled, only manual input of the creditcard data is displayed.</tooltip>
         </field>
-        <field id="clicktopay_register_enabled" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field id="clicktopay_register_enabled" translate="label" type="select" sortOrder="18" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Click To Pay - Registration enabled</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <tooltip>Allows registration with Click To Pay checkout method. When disabled Click To Pay is only usable for already registered customers. Unregistered customers can use manual input of cc data.</tooltip>
@@ -45,20 +49,16 @@
                 <field id="clicktopay_enabled">1</field>
             </depends>
         </field>
-        <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Title</label>
-            <config_path>payment/payone_creditcardv2/title</config_path>
-        </field>
         <field id="dpa_id" translate="label,tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-            <label>Click to Pay DPA ID</label>
+            <label>Click To Pay - DPA ID</label>
             <tooltip>Unique identifier of your Click to Pay Digital Payment Application (DPA), provided by Payone.</tooltip>
         </field>
         <field id="initiator_id_visa" translate="label,tooltip" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
-            <label>Click to Pay Initiator ID Visa</label>
+            <label>Click To Pay - Initiator ID Visa</label>
             <tooltip>Technical initiator identifier for Click to Pay for Visa, provided by Payone.</tooltip>
         </field>
         <field id="initiator_id_mastercard" translate="label,tooltip" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
-            <label>Click to Pay Initiator ID Mastercard</label>
+            <label>Click To Pay - Initiator ID Mastercard</label>
             <tooltip>Technical initiator identifier for Click to Pay for Mastercard, provided by Payone.</tooltip>
         </field>
         <field id="order_status" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
