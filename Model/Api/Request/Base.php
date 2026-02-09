@@ -261,8 +261,6 @@ abstract class Base
         return $this->aHeaders;
     }
 
-    }
-
     /**
      * Set response array
      *
