@@ -48,9 +48,10 @@ class CurlPhp
      * Send php Curl request
      *
      * @param  array $aParsedRequestUrl
+     * @param  array $aHeaders
      * @return array
      */
-    public function sendCurlPhpRequest($aParsedRequestUrl)
+    public function sendCurlPhpRequest($aParsedRequestUrl, $aHeaders = [])
     {
         if (!$this->isApplicable()) {
             return ["errormessage" => "Php-Curl is not applicable on this server."];
@@ -65,6 +66,10 @@ class CurlPhp
         curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($oCurl, CURLOPT_TIMEOUT, 45);
+
+        if (!empty($aHeaders)) {
+            curl_setopt($oCurl, CURLOPT_HTTPHEADER, $aHeaders);
+        }
 
         $sResult = curl_exec($oCurl);
         if (curl_error($oCurl)) {

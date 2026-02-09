@@ -63,6 +63,7 @@ abstract class PayoneConfig
 
     /* Payment method codes */
     const METHOD_CREDITCARD = 'payone_creditcard';
+    const METHOD_CREDITCARDV2 = 'payone_creditcardv2';
     const METHOD_CASH_ON_DELIVERY = 'payone_cash_on_delivery';
     const METHOD_DEBIT = 'payone_debit';
     const METHOD_ADVANCE_PAYMENT = 'payone_advance_payment';

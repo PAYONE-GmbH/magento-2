@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -12,40 +14,40 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2018 Payone GmbH
+ * @copyright 2003 - 2026 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-.ccard .payment-method-title IMG {
-    height: 15px;
-    margin-right: 5px;
-}
-.ccard .payment-method-title * {
-    vertical-align: middle;
-}
-.ccard .payment-method-title .cardholder {
-    display: inline-block;
-    min-width: 120px;
-    margin: 0 15px 0 15px;
-}
 
-.ccard .cc-icon {
-    max-height: 20px;
-    max-width: 40px;
-    width: auto;
-    height: auto;
-    display: none;
-}
+namespace Payone\Core\Model\Api\Request;
 
-.ccard .cc-icon--show {
-    display: inline;
-}
+use Payone\Core\Model\Methods\PayoneMethod;
 
-.payoneCCV2Iframe {
-    margin: 5rem 2rem 1rem 2rem;
+/**
+ * Class for the PAYONE Server API request "getJWT"
+ */
+class GetJWT extends Base
+{
+    /**
+     * Send request "getJWT" to PAYONE server API
+     *
+     * @param  PayoneMethod $oPayment
+     * @return array
+     */
+    public function sendRequest(PayoneMethod $oPayment)
+    {
+        $this->addParameter('request', 'getJWT'); // Request method
+        $this->addParameter('mode', $oPayment->getOperationMode());
+
+        $this->addHeader('Accept: text/plain'); // Request will receive no response without an Accept header
+
+        $aResponse = $this->send($oPayment);
+
+        return $aResponse;
+    }
 }

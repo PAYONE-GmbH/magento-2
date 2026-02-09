@@ -46,6 +46,16 @@
                 <allowspecific>0</allowspecific>
                 <group>payone</group>
             </payone_creditcard>
+            <payone_creditcardv2>
+                <active>1</active>
+                <payment_action>Authorization</payment_action>
+                <model>Payone\Core\Model\Methods\CreditcardV2</model>
+                <order_status>pending</order_status>
+                <title>PAYONE Credit Card New</title>
+                <auto_cardtype_detection>0</auto_cardtype_detection>
+                <allowspecific>0</allowspecific>
+                <group>payone</group>
+            </payone_creditcardv2>
             <payone_debit>
                 <active>1</active>
                 <payment_action>Authorization</payment_action>
@@ -371,6 +381,7 @@
             </invoicing>
             <statusmapping>
                 <payone_creditcard>{"_1343137391927_927":{"txaction":"appointed","state_status":"processing"}}</payone_creditcard>
+                <payone_creditcardv2>{"_payone_status_creditcardv2":{"txaction":"appointed","state_status":"processing"}}</payone_creditcardv2>
                 <payone_debit>{"_1338893616379_379":{"txaction":"appointed","state_status":"processing"}}</payone_debit>
                 <payone_paypal>{"_1343137411652_652":{"txaction":"appointed","state_status":"processing"}}</payone_paypal>
                 <payone_paypalv2>{"_payone_status_paypalv2":{"txaction":"appointed","state_status":"processing"}}</payone_paypalv2>
@@ -463,6 +474,11 @@
                 <min_validity_period>35</min_validity_period>
                 <save_data_enabled>0</save_data_enabled>
             </payone_creditcard>
+            <payone_creditcardv2>
+                <clicktopay_enabled>1</clicktopay_enabled>
+                <clicktopay_register_enabled>1</clicktopay_register_enabled>
+                <use_global>1</use_global>
+            </payone_creditcardv2>
             <payone_debit>
                 <use_global>1</use_global>
                 <request_bic>0</request_bic>

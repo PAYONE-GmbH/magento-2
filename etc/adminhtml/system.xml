@@ -111,6 +111,11 @@
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
+                <field id="payone_creditcardv2" translate="label" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Creditcard New</label>
+                    <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
+                    <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
+                </field>
                 <field id="payone_debit" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Debit Payment</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
@@ -300,6 +305,7 @@
             <tab>payone</tab>
             <resource>Payone_Core::payone_configuration_payment</resource>
             <include path="Payone_Core::system/payone_creditcard.xml"/>
+            <include path="Payone_Core::system/payone_creditcardv2.xml"/>
             <include path="Payone_Core::system/payone_debit.xml"/>
             <include path="Payone_Core::system/payone_paypal.xml"/>
             <include path="Payone_Core::system/payone_paypalv2.xml"/>

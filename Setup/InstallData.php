@@ -133,6 +133,7 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
         $translations = [
             'payone_cash_on_delivery' => 'PAYONE Nachnahme',
             'payone_creditcard' => 'PAYONE Kreditkarte',
+            'payone_creditcardv2' => 'PAYONE Kreditkarte Neu',
             'payone_debit' => 'PAYONE Lastschrift',
             'payone_advance_payment' => 'PAYONE Vorkasse',
             'payone_invoice' => 'PAYONE Rechnung',
