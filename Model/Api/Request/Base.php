@@ -251,6 +251,8 @@ abstract class Base
     public function getParameters()
     {
         return $this->aParameters;
+    }
+    
     /**
      * Return headers
      *
