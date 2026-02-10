@@ -293,9 +293,6 @@
             </group>
             <group id="creditcardv2" translate="label" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Payment Creditcard New</label>
-                <comment>
-                    Testi Test
-                </comment>
                 <field id="customization_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Customization enabled</label>
                     <comment><![CDATA[<br><br>All colors can be entered as a HTML hex code in this format: <b>#3F44FF</b>]]></comment>
