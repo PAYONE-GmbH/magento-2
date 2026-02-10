@@ -95,14 +95,16 @@ define(
             /** END MAGENTO CHECKOUT CODE **/
 
             /** START ClickToPay SHOW IFRAME CODE **/
-            getVisaInitiatorId: function () {
-                return this.getFrontendConfigParam('initiatorIdVisa');
-            },
-            getMastercardInitiatorId: function () {
-                return this.getFrontendConfigParam('initiatorIdMastercard');
-            },
             getDpaId: function () {
                 return this.getFrontendConfigParam('dpaId');
+            },
+            getVisaInitiatorId: function () {
+                // hardcoded
+                return "2662KBGOLX92KS4XIFYU213JLdGTvLhYkOB-_1gLo1D1jOqgM";
+            },
+            getMastercardInitiatorId: function () {
+                // hardcoded
+                return "559003b0-5d17-4d89-aa2b-b02a4023d64d";
             },
             getEncryptionKey: function () {
                 // hardcoded
@@ -128,6 +130,39 @@ define(
                 };
                 return schemeConfig;
             },
+            getUiConfig: function () {
+                let uiConfig = {};
+                if (this.getFrontendConfigParam('uiConfigCustomizationEnabled') === "1") {
+                    uiConfig.formBgColor = this.getFrontendConfigParam('uiConfigFormBgColor');
+                    uiConfig.fieldBgColor = this.getFrontendConfigParam('uiConfigFieldBgColor');
+                    uiConfig.fieldBorder = this.getFrontendConfigParam('uiConfigFieldBorder');
+                    uiConfig.fieldOutline = this.getFrontendConfigParam('uiConfigFieldOutline');
+                    uiConfig.fieldLabelColor = this.getFrontendConfigParam('uiConfigFieldLabelColor');
+                    uiConfig.fieldPlaceholderColor = this.getFrontendConfigParam('uiConfigFieldPlaceholderColor');
+                    uiConfig.fieldTextColor = this.getFrontendConfigParam('uiConfigFieldTextColor');
+                    uiConfig.fieldErrorCodeColor = this.getFrontendConfigParam('uiConfigFieldErrorCodeColor');
+                }
+                return uiConfig;
+            },
+            getCTPUiConfig: function () {
+                let uiConfig = {};
+                if (this.getFrontendConfigParam('uiConfigCustomizationEnabled') === "1") {
+                    uiConfig.buttonStyle = this.getFrontendConfigParam('uiConfigButtonStyle');
+                    uiConfig.buttonTextCase = this.getFrontendConfigParam('uiConfigButtonTextCase');
+                    uiConfig.buttonAndBadgeColor = this.getFrontendConfigParam('uiConfigButtonAndBadgeColor');
+                    uiConfig.buttonFilledHoverColor = this.getFrontendConfigParam('uiConfigButtonFilledHoverColor');
+                    uiConfig.buttonOutlinedHoverColor = this.getFrontendConfigParam('uiConfigButtonOutlinedHoverColor');
+                    uiConfig.buttonDisabledColor = this.getFrontendConfigParam('uiConfigButtonDisabledColor');
+                    uiConfig.cardItemActiveColor = this.getFrontendConfigParam('uiConfigCardItemActiveColor');
+                    uiConfig.buttonAndBadgeTextColor = this.getFrontendConfigParam('uiConfigButtonAndBadgeTextColor');
+                    uiConfig.linkTextColor = this.getFrontendConfigParam('uiConfigLinkTextColor');
+                    uiConfig.accentColor = this.getFrontendConfigParam('uiConfigAccentColor');
+                    uiConfig.fontFamily = this.getFrontendConfigParam('uiConfigFontFamily');
+                    uiConfig.buttonAndInputRadius = this.getFrontendConfigParam('uiConfigButtonAndInputRadius');
+                    uiConfig.cardItemRadius = this.getFrontendConfigParam('uiConfigCardItemRadius');
+                }
+                return uiConfig;
+            },
             getIsCTPEnabled: function () {
                 if (this.getFrontendConfigParam('ctpEnabled') === "1") {
                     return true;
@@ -140,6 +175,13 @@ define(
                 }
                 return false;
             },
+            getCTPShopName: function () {
+                let shopName = this.getFrontendConfigParam('ctpShopName');
+                if (shopName) {
+                    return shopName;
+                }
+                return "";
+            },
             getConfig: async function (jwtToken) {
                 let config = {
                     iframe: {
@@ -148,16 +190,7 @@ define(
                         height: 500,
                         width: 400
                     },
-                    uiConfig: {
-                        // formBgColor: "#64bbb7",
-                        // fieldBgColor: "wheat",
-                        // fieldBorder: "1px solid #b33cd8",
-                        // fieldOutline: "#101010 solid 5px",
-                        // fieldLabelColor: "#d3d83c",
-                        // fieldPlaceholderColor: "blue",
-                        // fieldTextColor: "crimson",
-                        // fieldErrorCodeColor: "green"
-                    },
+                    uiConfig: this.getUiConfig(),
                     locale: window.checkoutConfig.payment.payone.fullLocale,
                     token: jwtToken,
                     mode: this.getFrontendConfigParam('mode'),
@@ -179,22 +212,8 @@ define(
                             amount: this.getOrderTotalForAPI(),
                             currencyCode: this.getCurrency(),
                         },
-                        uiConfig: {
-                            // "buttonStyle": "OUTLINED",
-                            // "buttonTextCase": "capitalize",
-                            // "buttonAndBadgeColor": "#3B82F6",
-                            // "buttonFilledHoverColor": "#6390f2",
-                            // "buttonOutlinedHoverColor": "#60A5FA",
-                            // "buttonDisabledColor": "#A5B4FC",
-                            // "cardItemActiveColor": "#6390f2",
-                            // "buttonAndBadgeTextColor": "#FFFFFF",
-                            // "linkTextColor": "#3B82F6",
-                            // "accentColor": "#6390f2",
-                            // "fontFamily": "Sansation",
-                            // "buttonAndInputRadius": "1rem",
-                            // "cardItemRadius": "2rem"
-                        },
-                        shopName: "",
+                        uiConfig: this.getCTPUiConfig(),
+                        shopName: this.getCTPShopName(),
                         token: jwtToken,
                     }
                 };

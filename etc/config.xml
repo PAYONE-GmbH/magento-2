@@ -419,6 +419,9 @@
             <creditcard>
                 <cc_template>{"Number_type":"tel","Number_count":"30","Number_max":"16","Number_iframe":"standard","Number_style":"standard","CVC_type":"tel","CVC_count":"30","CVC_max":"4","CVC_iframe":"standard","CVC_style":"standard","Month_type":"select","Month_count":"3","Month_max":"2","Month_iframe":"custom","Month_width":"120px","Month_height":"20px","Month_style":"standard","Year_type":"select","Year_count":"5","Year_max":"4","Year_iframe":"custom","Year_width":"120px","Year_height":"20px","Year_style":"standard","Standard_input":"width:223px;height:30px;padding: 0 9px;font-size:14px;font-family:'Helvetica Neue',Verdana,Arial,sans-serif;","Standard_selection":"width:100px;","Iframe_width":"365px","Iframe_height":"30px","Errors_active":"false","Errors_lang":"de"}</cc_template>
             </creditcard>
+            <creditcardv2>
+                <customization_enabled>0</customization_enabled>
+            </creditcardv2>
             <emails>
                 <send_invoice_email>0</send_invoice_email>
             </emails>
@@ -477,6 +480,7 @@
             <payone_creditcardv2>
                 <clicktopay_enabled>1</clicktopay_enabled>
                 <clicktopay_register_enabled>1</clicktopay_register_enabled>
+                <mode>live</mode>
                 <use_global>1</use_global>
             </payone_creditcardv2>
             <payone_debit>

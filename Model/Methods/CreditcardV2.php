@@ -84,6 +84,17 @@ class CreditcardV2 extends PayoneMethod
     ];
 
     /**
+     * Returns operationmode live or test for this payment method
+     *
+     * @return string
+     */
+    public function getOperationMode()
+    {
+        // This payment method is only available in live mode!
+        return "live";
+    }
+
+    /**
      * @return string
      */
     protected function getCardtype()
@@ -122,16 +133,51 @@ class CreditcardV2 extends PayoneMethod
     /**
      * @return array
      */
-    public function getFrontendConfig()
+    protected function getFrontendUiConfig()
     {
         return [
-            'initiatorIdVisa' => $this->getCustomConfigParam('initiator_id_visa'),
-            'initiatorIdMastercard' => $this->getCustomConfigParam('initiator_id_mastercard'),
+            "uiConfigCustomizationEnabled" => $this->shopHelper->getConfigParam("customization_enabled", "creditcardv2"),
+            "uiConfigFormBgColor" => $this->shopHelper->getConfigParam("form_bg_color", "creditcardv2"),
+            "uiConfigFieldBgColor" => $this->shopHelper->getConfigParam("field_bg_color", "creditcardv2"),
+            "uiConfigFieldBorder" => $this->shopHelper->getConfigParam("field_border", "creditcardv2"),
+            "uiConfigFieldOutline" => $this->shopHelper->getConfigParam("field_outline", "creditcardv2"),
+            "uiConfigFieldLabelColor" => $this->shopHelper->getConfigParam("field_label_color", "creditcardv2"),
+            "uiConfigFieldPlaceholderColor" => $this->shopHelper->getConfigParam("field_placeholder_color", "creditcardv2"),
+            "uiConfigFieldTextColor" => $this->shopHelper->getConfigParam("field_text_color", "creditcardv2"),
+            "uiConfigFieldErrorCodeColor" => $this->shopHelper->getConfigParam("field_error_code_color", "creditcardv2"),
+            "uiConfigButtonStyle" => $this->shopHelper->getConfigParam("button_style", "creditcardv2"),
+            "uiConfigButtonTextCase" => $this->shopHelper->getConfigParam("button_text_case", "creditcardv2"),
+            "uiConfigButtonAndBadgeColor" => $this->shopHelper->getConfigParam("button_badge_color", "creditcardv2"),
+            "uiConfigButtonFilledHoverColor" => $this->shopHelper->getConfigParam("button_hover_color", "creditcardv2"),
+            "uiConfigButtonOutlinedHoverColor" => $this->shopHelper->getConfigParam("button_outlined_hover_color", "creditcardv2"),
+            "uiConfigButtonDisabledColor" => $this->shopHelper->getConfigParam("button_disabled_color", "creditcardv2"),
+            "uiConfigCardItemActiveColor" => $this->shopHelper->getConfigParam("card_item_active_color", "creditcardv2"),
+            "uiConfigButtonAndBadgeTextColor" => $this->shopHelper->getConfigParam("button_badge_text_color", "creditcardv2"),
+            "uiConfigLinkTextColor" => $this->shopHelper->getConfigParam("link_text_color", "creditcardv2"),
+            "uiConfigAccentColor" => $this->shopHelper->getConfigParam("accent_color", "creditcardv2"),
+            "uiConfigFontFamily" => $this->shopHelper->getConfigParam("font_family", "creditcardv2"),
+            "uiConfigButtonAndInputRadius" => $this->shopHelper->getConfigParam("button_input_radius", "creditcardv2"),
+            "uiConfigCardItemRadius" => $this->shopHelper->getConfigParam("card_item_radius", "creditcardv2"),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getFrontendConfig()
+    {
+        $aFrontendConfig = [
             'dpaId' => $this->getCustomConfigParam('dpa_id'),
             'mode' => $this->getOperationMode(),
             'ctpEnabled' => $this->getCustomConfigParam('clicktopay_enabled'),
             'ctpRegisterEnabled' => $this->getCustomConfigParam('clicktopay_register_enabled'),
+            'ctpShopName' => $this->getCustomConfigParam('clicktopay_shopname'),
         ];
+        if ($this->shopHelper->getConfigParam("customization_enabled", "creditcardv2")) {
+            $aFrontendConfig = array_merge($aFrontendConfig, $this->getFrontendUiConfig());
+        }
+
+        return $aFrontendConfig;
     }
 
     /**

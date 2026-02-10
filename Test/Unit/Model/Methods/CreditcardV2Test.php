@@ -132,12 +132,33 @@ class CreditcardV2Test extends BaseTestCase
         $this->shopHelper->method('getConfigParam')->willReturn($expectedConfigParam);
 
         $expected = [
-            'initiatorIdVisa' => $expectedConfigParam,
-            'initiatorIdMastercard' => $expectedConfigParam,
             'dpaId' => $expectedConfigParam,
-            'mode' => $expectedConfigParam,
+            'mode' => 'live',
             'ctpEnabled' => $expectedConfigParam,
             'ctpRegisterEnabled' => $expectedConfigParam,
+            'ctpShopName' => $expectedConfigParam,
+            'uiConfigCustomizationEnabled' => $expectedConfigParam,
+            'uiConfigFormBgColor' => $expectedConfigParam,
+            'uiConfigFieldBgColor' => $expectedConfigParam,
+            'uiConfigFieldBorder' => $expectedConfigParam,
+            'uiConfigFieldOutline' => $expectedConfigParam,
+            'uiConfigFieldLabelColor' => $expectedConfigParam,
+            'uiConfigFieldPlaceholderColor' => $expectedConfigParam,
+            'uiConfigFieldTextColor' => $expectedConfigParam,
+            'uiConfigFieldErrorCodeColor' => $expectedConfigParam,
+            'uiConfigButtonStyle' => $expectedConfigParam,
+            'uiConfigButtonTextCase' => $expectedConfigParam,
+            'uiConfigButtonAndBadgeColor' => $expectedConfigParam,
+            'uiConfigButtonFilledHoverColor' => $expectedConfigParam,
+            'uiConfigButtonOutlinedHoverColor' => $expectedConfigParam,
+            'uiConfigButtonDisabledColor' => $expectedConfigParam,
+            'uiConfigCardItemActiveColor' => $expectedConfigParam,
+            'uiConfigButtonAndBadgeTextColor' => $expectedConfigParam,
+            'uiConfigLinkTextColor' => $expectedConfigParam,
+            'uiConfigAccentColor' => $expectedConfigParam,
+            'uiConfigFontFamily' => $expectedConfigParam,
+            'uiConfigButtonAndInputRadius' => $expectedConfigParam,
+            'uiConfigCardItemRadius' => $expectedConfigParam,
         ];
 
         $result = $this->classToTest->getFrontendConfig();

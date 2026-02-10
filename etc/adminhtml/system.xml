@@ -291,6 +291,80 @@
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
             </group>
+            <group id="creditcardv2" translate="label" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Payment Creditcard New</label>
+                <comment>
+                    Testi Test
+                </comment>
+                <field id="customization_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Customization enabled</label>
+                    <comment><![CDATA[<br><br>All colors can be entered as a HTML hex code in this format: <b>#3F44FF</b>]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="form_bg_color" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Form background color</label>
+                </field>
+                <field id="field_bg_color" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field background color</label>
+                </field>
+                <field id="field_border" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field border</label>
+                </field>
+                <field id="field_outline" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field outline</label>
+                </field>
+                <field id="field_label_color" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field label color</label>
+                </field>
+                <field id="field_placeholder_color" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field placeholder color</label>
+                </field>
+                <field id="field_text_color" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field text color</label>
+                </field>
+                <field id="field_error_code_color" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Field error code color</label>
+                </field>
+                <field id="button_style" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Button style</label>
+                </field>
+                <field id="button_text_case" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Button text case</label>
+                </field>
+                <field id="button_badge_color" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Button and badge color</label>
+                </field>
+                <field id="button_hover_color" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Button filled hover color</label>
+                </field>
+                <field id="button_outlined_hover_color" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Button outlined hover color</label>
+                </field>
+                <field id="button_disabled_color" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Button disabled color</label>
+                </field>
+                <field id="card_item_active_color" translate="label" type="text" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card item active color</label>
+                </field>
+                <field id="button_badge_text_color" translate="label" type="text" sortOrder="170" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Button and badge text color</label>
+                </field>
+                <field id="link_text_color" translate="label" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Link text color</label>
+                </field>
+                <field id="accent_color" translate="label" type="text" sortOrder="190" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Accent color</label>
+                </field>
+                <field id="font_family" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Font family</label>
+                </field>
+                <field id="button_input_radius" translate="label" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Button an dinput radius</label>
+                </field>
+                <field id="card_item_radius" translate="label" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Card item radius</label>
+                </field>
+            </group>
             <group id="emails" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Emails</label>
                 <field id="send_invoice_email" translate="label,comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
