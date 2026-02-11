@@ -325,8 +325,9 @@
                 <field id="button_style" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Button style</label>
                 </field>
-                <field id="button_text_case" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="button_text_case" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Button text case</label>
+                    <source_model>Payone\Core\Model\Source\ButtonTextCase</source_model>
                 </field>
                 <field id="button_badge_color" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Button and badge color</label>

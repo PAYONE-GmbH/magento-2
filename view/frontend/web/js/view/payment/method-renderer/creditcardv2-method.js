@@ -133,33 +133,75 @@ define(
             getUiConfig: function () {
                 let uiConfig = {};
                 if (this.getFrontendConfigParam('uiConfigCustomizationEnabled') === "1") {
-                    uiConfig.formBgColor = this.getFrontendConfigParam('uiConfigFormBgColor');
-                    uiConfig.fieldBgColor = this.getFrontendConfigParam('uiConfigFieldBgColor');
-                    uiConfig.fieldBorder = this.getFrontendConfigParam('uiConfigFieldBorder');
-                    uiConfig.fieldOutline = this.getFrontendConfigParam('uiConfigFieldOutline');
-                    uiConfig.fieldLabelColor = this.getFrontendConfigParam('uiConfigFieldLabelColor');
-                    uiConfig.fieldPlaceholderColor = this.getFrontendConfigParam('uiConfigFieldPlaceholderColor');
-                    uiConfig.fieldTextColor = this.getFrontendConfigParam('uiConfigFieldTextColor');
-                    uiConfig.fieldErrorCodeColor = this.getFrontendConfigParam('uiConfigFieldErrorCodeColor');
+                    if (this.getFrontendConfigParam('uiConfigFormBgColor')) {
+                        uiConfig.formBgColor = this.getFrontendConfigParam('uiConfigFormBgColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigFieldBgColor')) {
+                        uiConfig.fieldBgColor = this.getFrontendConfigParam('uiConfigFieldBgColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigFieldBorder')) {
+                        uiConfig.fieldBorder = this.getFrontendConfigParam('uiConfigFieldBorder');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigFieldOutline')) {
+                        uiConfig.fieldOutline = this.getFrontendConfigParam('uiConfigFieldOutline');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigFieldLabelColor')) {
+                        uiConfig.fieldLabelColor = this.getFrontendConfigParam('uiConfigFieldLabelColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigFieldPlaceholderColor')) {
+                        uiConfig.fieldPlaceholderColor = this.getFrontendConfigParam('uiConfigFieldPlaceholderColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigFieldTextColor')) {
+                        uiConfig.fieldTextColor = this.getFrontendConfigParam('uiConfigFieldTextColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigFieldErrorCodeColor')) {
+                        uiConfig.fieldErrorCodeColor = this.getFrontendConfigParam('uiConfigFieldErrorCodeColor');
+                    }
                 }
                 return uiConfig;
             },
             getCTPUiConfig: function () {
                 let uiConfig = {};
                 if (this.getFrontendConfigParam('uiConfigCustomizationEnabled') === "1") {
-                    uiConfig.buttonStyle = this.getFrontendConfigParam('uiConfigButtonStyle');
-                    uiConfig.buttonTextCase = this.getFrontendConfigParam('uiConfigButtonTextCase');
-                    uiConfig.buttonAndBadgeColor = this.getFrontendConfigParam('uiConfigButtonAndBadgeColor');
-                    uiConfig.buttonFilledHoverColor = this.getFrontendConfigParam('uiConfigButtonFilledHoverColor');
-                    uiConfig.buttonOutlinedHoverColor = this.getFrontendConfigParam('uiConfigButtonOutlinedHoverColor');
-                    uiConfig.buttonDisabledColor = this.getFrontendConfigParam('uiConfigButtonDisabledColor');
-                    uiConfig.cardItemActiveColor = this.getFrontendConfigParam('uiConfigCardItemActiveColor');
-                    uiConfig.buttonAndBadgeTextColor = this.getFrontendConfigParam('uiConfigButtonAndBadgeTextColor');
-                    uiConfig.linkTextColor = this.getFrontendConfigParam('uiConfigLinkTextColor');
-                    uiConfig.accentColor = this.getFrontendConfigParam('uiConfigAccentColor');
-                    uiConfig.fontFamily = this.getFrontendConfigParam('uiConfigFontFamily');
-                    uiConfig.buttonAndInputRadius = this.getFrontendConfigParam('uiConfigButtonAndInputRadius');
-                    uiConfig.cardItemRadius = this.getFrontendConfigParam('uiConfigCardItemRadius');
+                    if (this.getFrontendConfigParam('uiConfigButtonStyle')) {
+                        uiConfig.buttonStyle = this.getFrontendConfigParam('uiConfigButtonStyle');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigButtonTextCase')) {
+                        uiConfig.buttonTextCase = this.getFrontendConfigParam('uiConfigButtonTextCase');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigButtonAndBadgeColor')) {
+                        uiConfig.buttonAndBadgeColor = this.getFrontendConfigParam('uiConfigButtonAndBadgeColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigButtonFilledHoverColor')) {
+                        uiConfig.buttonFilledHoverColor = this.getFrontendConfigParam('uiConfigButtonFilledHoverColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigButtonOutlinedHoverColor')) {
+                        uiConfig.buttonOutlinedHoverColor = this.getFrontendConfigParam('uiConfigButtonOutlinedHoverColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigButtonDisabledColor')) {
+                        uiConfig.buttonDisabledColor = this.getFrontendConfigParam('uiConfigButtonDisabledColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigCardItemActiveColor')) {
+                        uiConfig.cardItemActiveColor = this.getFrontendConfigParam('uiConfigCardItemActiveColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigButtonAndBadgeTextColor')) {
+                        uiConfig.buttonAndBadgeTextColor = this.getFrontendConfigParam('uiConfigButtonAndBadgeTextColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigLinkTextColor')) {
+                        uiConfig.linkTextColor = this.getFrontendConfigParam('uiConfigLinkTextColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigAccentColor')) {
+                        uiConfig.accentColor = this.getFrontendConfigParam('uiConfigAccentColor');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigFontFamily')) {
+                        uiConfig.fontFamily = this.getFrontendConfigParam('uiConfigFontFamily');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigButtonAndInputRadius')) {
+                        uiConfig.buttonAndInputRadius = this.getFrontendConfigParam('uiConfigButtonAndInputRadius');
+                    }
+                    if (this.getFrontendConfigParam('uiConfigCardItemRadius')) {
+                        uiConfig.cardItemRadius = this.getFrontendConfigParam('uiConfigCardItemRadius');
+                    }
                 }
                 return uiConfig;
             },
