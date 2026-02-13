@@ -138,6 +138,11 @@ define(
                 }
                 return parseFloat(orderTotal);
             },
+            getOrderTotalForAPI: function () {
+                let orderTotal = this.getOrderTotal();
+                orderTotal = orderTotal.toFixed(2) * 100;
+                return orderTotal;
+            },
             getBillingCountry: function () {
                 return quote.billingAddress().countryId.toUpperCase();
             },

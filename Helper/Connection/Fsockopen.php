@@ -48,14 +48,18 @@ class Fsockopen
      * Get request header for fsockopen request
      *
      * @param  array $aParsedRequestUrl
+     * @param  array $aHeaders
      * @return string
      */
-    protected function getSocketRequestHeader($aParsedRequestUrl)
+    protected function getSocketRequestHeader($aParsedRequestUrl, $aHeaders = [])
     {
         $sRequestHeader  = "POST ".$aParsedRequestUrl['path']." HTTP/1.1\r\n";
         $sRequestHeader .= "Host: ".$aParsedRequestUrl['host']."\r\n";
         $sRequestHeader .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $sRequestHeader .= "Content-Length: ".strlen($aParsedRequestUrl['query'])."\r\n";
+        foreach ($aHeaders as $sHeader) {
+            $sRequestHeader .= $sHeader."\r\n";
+        }
         $sRequestHeader .= "Connection: close\r\n\r\n";
         $sRequestHeader .= $aParsedRequestUrl['query'];
         return $sRequestHeader;
@@ -89,9 +93,10 @@ class Fsockopen
      * Send fsockopen request
      *
      * @param  array $aParsedRequestUrl
+     * @param  array $aHeaders
      * @return array
      */
-    public function sendSocketRequest($aParsedRequestUrl)
+    public function sendSocketRequest($aParsedRequestUrl, $aHeaders = [])
     {
         if (!$this->isApplicable()) {
             return ["errormessage" => "Cli-Curl is not applicable on this server."];
@@ -109,7 +114,7 @@ class Fsockopen
 
         $oFsockOpen = fsockopen($sScheme.$aParsedRequestUrl['host'], $iPort, $iErrorNumber, $sErrorString, 45);
         if ($oFsockOpen) {
-            fwrite($oFsockOpen, $this->getSocketRequestHeader($aParsedRequestUrl));
+            fwrite($oFsockOpen, $this->getSocketRequestHeader($aParsedRequestUrl, $aHeaders));
             return $this->getSocketResponse($oFsockOpen);
         }
         return ["errormessage=fsockopen:Failed opening http socket connection: ".$sErrorString." (".$iErrorNumber.")"];

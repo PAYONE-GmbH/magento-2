@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PAYONE Magento 2 Connector is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * PHP version 8
+ *
+ * @category  Payone
+ * @package   Payone_Magento2_Plugin
+ * @author    FATCHIP GmbH <support@fatchip.de>
+ * @copyright 2003 - 2026 Payone GmbH
+ * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
+ * @link      http://www.payone.de
+ */
+-->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="payone_creditcardv2" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>Creditcard New</label>
+        <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Enabled</label>
+            <config_path>payment/payone_creditcardv2/active</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+        </field>
+        <field id="title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Title</label>
+            <config_path>payment/payone_creditcardv2/title</config_path>
+        </field>
+        <field id="clicktopay_enabled" translate="label" type="select" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Click To Pay - Enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <tooltip>When Click To Pay is disabled, only manual input of the creditcard data is displayed.</tooltip>
+        </field>
+        <field id="clicktopay_register_enabled" translate="label" type="select" sortOrder="18" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Click To Pay - Registration enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <tooltip>Allows registration with Click To Pay checkout method. When disabled Click To Pay is only usable for already registered customers. Unregistered customers can use manual input of cc data.</tooltip>
+            <depends>
+                <field id="clicktopay_enabled">1</field>
+            </depends>
+        </field>
+        <field id="dpa_id" translate="label,tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Click To Pay - DPA ID</label>
+            <tooltip>Unique identifier of your Click to Pay Digital Payment Application (DPA), provided by Payone.</tooltip>
+        </field>
+        <field id="clicktopay_shopname" translate="label,tooltip" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Shop name</label>
+            <tooltip>Please enter the name of the shop. Used for differentiation of shops in multishop scenarios.</tooltip>
+        </field>
+        <field id="order_status" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>New Order Status</label>
+            <config_path>payment/payone_creditcardv2/order_status</config_path>
+            <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+        </field>
+        <field id="instructions" translate="label" type="textarea" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Instructions</label>
+            <config_path>payment/payone_creditcardv2/instructions</config_path>
+        </field>
+        <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Minimum Order Total</label>
+            <config_path>payment/payone_creditcardv2/min_order_total</config_path>
+        </field>
+        <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Maximum Order Total</label>
+            <config_path>payment/payone_creditcardv2/max_order_total</config_path>
+        </field>
+        <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Sort Order</label>
+            <config_path>payment/payone_creditcardv2/sort_order</config_path>
+        </field>
+        <field id="types" translate="label" type="multiselect" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Creditcard-Type</label>
+            <source_model>Payone\Core\Model\Source\CreditcardTypes</source_model>
+        </field>
+        <field id="min_validity_period" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Minimum Validity Period</label>
+            <comment>Minimum period a CreditCard has to be valid. (in days)</comment>
+        </field>
+        <include path="Payone_Core::system/default_fields_no_mode.xml"/>
+    </group>
+</include>

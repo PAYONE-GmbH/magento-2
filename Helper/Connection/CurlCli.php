@@ -48,9 +48,10 @@ class CurlCli
      * Send cli Curl request
      *
      * @param  array $aParsedRequestUrl
+     * @param  array $aHeaders
      * @return array
      */
-    public function sendCurlCliRequest($aParsedRequestUrl)
+    public function sendCurlCliRequest($aParsedRequestUrl, $aHeaders = [])
     {
         if (!$this->isApplicable()) {
             return ["errormessage" => "Cli-Curl is not applicable on this server."];
@@ -63,7 +64,12 @@ class CurlCli
         $sPostUrl = $aParsedRequestUrl['scheme']."://".$aParsedRequestUrl['host'].$aParsedRequestUrl['path'];
         $sPostData = $aParsedRequestUrl['query'];
 
-        $sCommand = $sCurlPath." -m 45 -k -d \"".$sPostData."\" ".$sPostUrl;
+        $sHeaderString = "";
+        foreach ($aHeaders as $sHeader) {
+            $sHeaderString .= ' -H "'.$sHeader.'" ';
+        }
+
+        $sCommand = $sCurlPath." -m 45 ".$sHeaderString." -k -d \"".$sPostData."\" ".$sPostUrl;
 
         $iSysOut = -1;
         exec($sCommand, $aResponse, $iSysOut);

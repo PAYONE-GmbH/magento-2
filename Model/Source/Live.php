@@ -1,3 +1,5 @@
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -12,40 +14,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2018 Payone GmbH
+ * @copyright 2003 - 2026 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
-.ccard .payment-method-title IMG {
-    height: 15px;
-    margin-right: 5px;
-}
-.ccard .payment-method-title * {
-    vertical-align: middle;
-}
-.ccard .payment-method-title .cardholder {
-    display: inline-block;
-    min-width: 120px;
-    margin: 0 15px 0 15px;
-}
 
-.ccard .cc-icon {
-    max-height: 20px;
-    max-width: 40px;
-    width: auto;
-    height: auto;
-    display: none;
-}
+namespace Payone\Core\Model\Source;
 
-.ccard .cc-icon--show {
-    display: inline;
-}
+use Magento\Framework\Option\ArrayInterface;
 
-.payoneCCV2Iframe {
-    margin: 5rem 2rem 1rem 2rem;
+/**
+ * Source class for existing operation modes
+ */
+class Live implements ArrayInterface
+{
+    /**
+     * Return existing operation modes
+     *
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        return [
+            [
+                'value' => 'live',
+                'label' => __('Live'),
+            ],
+        ];
+    }
 }
