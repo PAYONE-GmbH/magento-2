@@ -112,7 +112,7 @@
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
                 <field id="payone_creditcardv2" translate="label" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Creditcard New</label>
+                    <label>Creditcard (Click to Pay)</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\StatusMapping</frontend_model>
                     <backend_model>Payone\Core\Model\Config\Backend\SerializedOrJson</backend_model>
                 </field>
@@ -292,7 +292,7 @@
                 </field>
             </group>
             <group id="creditcardv2" translate="label" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Payment Creditcard New</label>
+                <label>Payment Creditcard (Click to Pay)</label>
                 <field id="customization_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Customization enabled</label>
                     <comment><![CDATA[<br><br>All colors can be entered as a HTML hex code in this format: <b>#3F44FF</b>]]></comment>

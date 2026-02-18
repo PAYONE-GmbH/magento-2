@@ -26,7 +26,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>        
-        <add id="Payone_Core::payone" title="Payone" module="Payone_Core" sortOrder="79" resource="Payone_Core::payone"/>
+        <add id="Payone_Core::payone" title="PAYONE" module="Payone_Core" sortOrder="79" resource="Payone_Core::payone"/>
         <add id="Payone_Core::payone_orders" title="Orders" module="Payone_Core" sortOrder="10" parent="Payone_Core::payone" action="payone/orders" resource="Payone_Core::payone_orders"/>
         <add id="Payone_Core::payone_configuration" title="Configuration" module="Payone_Core" sortOrder="20" parent="Payone_Core::payone" resource="Payone_Core::payone_configuration"/>
         <add id="Payone_Core::payone_configuration_general" title="General" module="Payone_Core" sortOrder="10" parent="Payone_Core::payone_configuration" action="adminhtml/system_config/edit/section/payone_general" resource="Payone_Core::payone_configuration_general"/>
