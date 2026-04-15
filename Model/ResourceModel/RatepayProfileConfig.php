@@ -66,7 +66,7 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
             ->order('shop_id ASC');
 
         if (!empty($aShopIds)) {
-            $oSelect->where("shop_id IN ('".implode("','", $aShopIds)."')");
+            $oSelect->where("shop_id IN (?)", $aShopIds);
         }
 
         $aResult = $this->getConnection()->fetchAll($oSelect);
@@ -220,7 +220,7 @@ class RatepayProfileConfig extends \Magento\Framework\Model\ResourceModel\Db\Abs
     {
         $oSelect = $this->getConnection()->select()
             ->from($this->getMainTable(), ['shop_id'])
-            ->where("shop_id IN ('".implode("','", $aShopIds)."')")
+            ->where("shop_id IN (?)", $aShopIds)
             ->where("country_code_billing = :countryCode")
             ->where("currency = :currency")
             ->order('shop_id ASC')

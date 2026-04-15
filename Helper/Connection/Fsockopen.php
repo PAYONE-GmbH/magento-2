@@ -38,7 +38,7 @@ class Fsockopen
      */
     public function isApplicable()
     {
-        if (function_exists("fsockopen")) {
+        if (function_exists("stream_socket_client")) {
             return true;
         }
         return false;
@@ -102,7 +102,7 @@ class Fsockopen
             return ["errormessage" => "Cli-Curl is not applicable on this server."];
         }
 
-        $iErrorNumber = '';
+        $iErrorNumber = 0;
         $sErrorString = '';
 
         $sScheme = '';
@@ -112,11 +112,29 @@ class Fsockopen
             $iPort = 443;
         }
 
-        $oFsockOpen = fsockopen($sScheme.$aParsedRequestUrl['host'], $iPort, $iErrorNumber, $sErrorString, 45);
+        $contextOptions = [
+            'ssl' => [
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+                'allow_self_signed' => false,
+            ],
+        ];
+        $context = stream_context_create($contextOptions);
+
+        $sRemoteSocket = $sScheme . $aParsedRequestUrl['host'] . ':' . $iPort;
+        $oFsockOpen = @stream_socket_client(
+            $sRemoteSocket,
+            $iErrorNumber,
+            $sErrorString,
+            45,
+            STREAM_CLIENT_CONNECT,
+            $context
+        );
+
         if ($oFsockOpen) {
             fwrite($oFsockOpen, $this->getSocketRequestHeader($aParsedRequestUrl, $aHeaders));
             return $this->getSocketResponse($oFsockOpen);
         }
-        return ["errormessage=fsockopen:Failed opening http socket connection: ".$sErrorString." (".$iErrorNumber.")"];
+        return ["errormessage=fsockopen:Failed opening http socket connection: " . $sErrorString . " (" . $iErrorNumber . ")"];
     }
 }

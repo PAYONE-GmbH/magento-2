@@ -62,8 +62,9 @@ class CurlPhp
         $oCurl = curl_init($aParsedRequestUrl['scheme']."://".$aParsedRequestUrl['host'].$aParsedRequestUrl['path']);
         curl_setopt($oCurl, CURLOPT_POST, 1);
         curl_setopt($oCurl, CURLOPT_POSTFIELDS, $aParsedRequestUrl['query']);
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($oCurl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+        curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($oCurl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($oCurl, CURLOPT_TIMEOUT, 45);
 

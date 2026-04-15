@@ -66,10 +66,10 @@ class CurlCli
 
         $sHeaderString = "";
         foreach ($aHeaders as $sHeader) {
-            $sHeaderString .= ' -H "'.$sHeader.'" ';
+            $sHeaderString .= ' -H '.escapeshellarg($sHeader).' ';
         }
 
-        $sCommand = $sCurlPath." -m 45 ".$sHeaderString." -k -d \"".$sPostData."\" ".$sPostUrl;
+        $sCommand = $sCurlPath." -m 45 ".$sHeaderString." -d ".escapeshellarg($sPostData)." ".escapeshellarg($sPostUrl);
 
         $iSysOut = -1;
         exec($sCommand, $aResponse, $iSysOut);
