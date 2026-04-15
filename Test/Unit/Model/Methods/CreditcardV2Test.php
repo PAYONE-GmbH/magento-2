@@ -132,7 +132,6 @@ class CreditcardV2Test extends BaseTestCase
         $this->shopHelper->method('getConfigParam')->willReturn($expectedConfigParam);
 
         $expected = [
-            'dpaId' => $expectedConfigParam,
             'mode' => 'live',
             'ctpEnabled' => $expectedConfigParam,
             'ctpRegisterEnabled' => $expectedConfigParam,
