@@ -167,7 +167,6 @@ class CreditcardV2 extends PayoneMethod
     public function getFrontendConfig()
     {
         $aFrontendConfig = [
-            'dpaId' => $this->getCustomConfigParam('dpa_id'),
             'mode' => $this->getOperationMode(),
             'ctpEnabled' => $this->getCustomConfigParam('clicktopay_enabled'),
             'ctpRegisterEnabled' => $this->getCustomConfigParam('clicktopay_register_enabled'),

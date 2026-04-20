@@ -98,38 +98,6 @@ define(
             getDpaId: function () {
                 return this.getFrontendConfigParam('dpaId');
             },
-            getVisaInitiatorId: function () {
-                // hardcoded
-                return "2662KBGOLX92KS4XIFYU213JLdGTvLhYkOB-_1gLo1D1jOqgM";
-            },
-            getMastercardInitiatorId: function () {
-                // hardcoded
-                return "559003b0-5d17-4d89-aa2b-b02a4023d64d";
-            },
-            getEncryptionKey: function () {
-                // hardcoded
-                return "GQJIKLOAMZWIT8IRIGHR14vQUlllxiMWf-XSHQHvjI5wuTZ2w";
-            },
-            getModulus: function () {
-                // hardcoded
-                return "kPujwVJjevI_oeZwZoA2Wjt94DFcMvRCab8iRiEGrGfKWtNCwQYkylyuRoB615cYm2BVbvoKH8Yyv0aC3dwah6UmOdJszmL0pV_cbx_tXzWgYg3sYNsp0sBxUFcQ1A6DVbyOxxJbmnwlHGE5fkuzJr-qqul3RswsCG-vPrh_--2_RSipa9lVr9gvfI4AbFABLTqKeto0rWPbIBKdhcGQ7JMPxzq8239KPUZfSyNueAcdL-yHADi3L2VSzdF7tS7si3ue_IFoXDpbggsFxvEt79UlBDOBsagc_ms9_ZsYlJaKCT8ZjwhakMo_-Zdc97mudVj1jz2_L5l4l_zibF5riw";
-            },
-            getSchemeConfig: function () {
-                let schemeConfig = {
-                    merchantPresentationName: "PayoneC2P-00004",
-                    visaConfig: {
-                        srcInitiatorId: this.getVisaInitiatorId(),
-                        srcDpaId: this.getDpaId(),
-                        encryptionKey: this.getEncryptionKey(),
-                        nModulus: this.getModulus(),
-                    },
-                    mastercardConfig: {
-                        srcInitiatorId: this.getMastercardInitiatorId(),
-                        srcDpaId: this.getDpaId(),
-                    }
-                };
-                return schemeConfig;
-            },
             getUiConfig: function () {
                 let uiConfig = {};
                 if (this.getFrontendConfigParam('uiConfigCustomizationEnabled') === "1") {
@@ -236,6 +204,7 @@ define(
                     locale: window.checkoutConfig.payment.payone.fullLocale,
                     token: jwtToken,
                     mode: this.getFrontendConfigParam('mode'),
+                    email: this.getCustomerEmail(),
                     allowedCardSchemes: [
                         "visa",
                         "mastercard",
@@ -249,7 +218,6 @@ define(
                     CTPConfig: {
                         enableCTP: this.getIsCTPEnabled(),
                         enableCustomerOnboarding: this.getIsCTPRegisterEnabled(),
-                        schemeConfig: this.getSchemeConfig(),
                         transactionAmount: {
                             amount: this.getOrderTotalForAPI(),
                             currencyCode: this.getCurrency(),
@@ -291,7 +259,7 @@ define(
                 var script = document.createElement('script');
                 script.id = 'payone-sdk';
                 script.src = this.getJsSDKUrl();
-                //script.integrity = 'sha384-oga+IGWvy3VpUUrebY+BnLYvsNZRsB3NUCMSa+j3CfA9ePHUZ++8/SVyim9F7Jm3'; // disabled because only working for script in version 1.2.1
+                script.integrity = 'sha384-qV/kvLA3YM9ZkCKfcliuCeR0PkqumnwfDNDF2FwkbZCQTMFJ5kzJc/7dH4E3rT0L';
                 script.async = true;
                 script.crossOrigin = "anonymous";
 
@@ -330,7 +298,7 @@ define(
                 return 'payone-ccv2-iframe';
             },
             getJsSDKUrl: function () {
-                return 'https://sdk.tokenization.secure.payone.com/1.3.0/hosted-tokenization-sdk.js';
+                return 'https://sdk.tokenization.secure.payone.com/1.5.0/hosted-tokenization-sdk.js';
             },
             /** END ClickToPay SHOW IFRAME CODE **/
 

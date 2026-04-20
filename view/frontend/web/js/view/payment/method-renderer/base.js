@@ -26,6 +26,7 @@ define(
         'Magento_Checkout/js/view/payment/default',
         'jquery',
         'Magento_Checkout/js/model/quote',
+        'Magento_Customer/js/model/customer',
         'Magento_Checkout/js/model/payment/additional-validators',
         'Magento_Checkout/js/action/set-payment-information',
         'mage/url',
@@ -34,7 +35,7 @@ define(
         'Magento_Checkout/js/action/select-payment-method',
         'Magento_Checkout/js/action/place-order'
     ],
-    function (Component, $, quote, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction, placeOrderAction) {
+    function (Component, $, quote, customer, additionalValidators, setPaymentInformationAction, url, $t, checkoutData, selectPaymentMethodAction, placeOrderAction) {
         'use strict';
         return Component.extend({
             redirectToPayoneController: function(sUrl) {
@@ -118,6 +119,13 @@ define(
                 }
 
                 return true;
+            },
+            getCustomerEmail: function() {
+                var email = customer.customerData.email;
+                if (!customer.isLoggedIn()) {
+                    email = quote.guestEmail;
+                }
+                return email;
             },
             getCurrency: function () {
                 if (window.checkoutConfig.payment.payone.currency === "display") {

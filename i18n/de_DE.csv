@@ -125,7 +125,6 @@
 "Shop name","Shopname"
 "When Click to Pay is disabled, only manual input of the creditcard data is displayed.","Wenn Click to Pay deaktiviert ist, wird nur die manuelle Eingabe der Kreditkartendaten angezeigt."
 "Allows registration with Click to Pay checkout method. When disabled Click to Pay is only usable for already registered customers. Unregistered customers can use manual input of cc data.","Ermöglicht die Registrierung während des Checkouts mit Click to Pay. Wenn deaktiviert, ist Click to Pay nur für bereits registrierte Kunden nutzbar. Nicht registrierte Kunden können die manuelle Eingabe der Kreditkartendaten nutzen."
-"Unique identifier of your Click to Pay Digital Payment Application (DPA), provided by Payone.","Eindeutige Kennung Ihrer Click to Pay Digital Payment Application (DPA), bereitgestellt von Payone."
 "Please enter the name of the shop. Used for differentiation of shops in multishop scenarios.","Bitte geben Sie den Namen des Shops ein. Wird zur Unterscheidung von Shops in Multishop-Szenarien verwendet."
 
 "Creditcard","Kreditkarte"

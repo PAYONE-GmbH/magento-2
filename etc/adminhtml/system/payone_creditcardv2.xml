@@ -49,10 +49,6 @@
                 <field id="clicktopay_enabled">1</field>
             </depends>
         </field>
-        <field id="dpa_id" translate="label,tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-            <label>Click to Pay - DPA ID</label>
-            <tooltip>Unique identifier of your Click to Pay Digital Payment Application (DPA), provided by Payone.</tooltip>
-        </field>
         <field id="clicktopay_shopname" translate="label,tooltip" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Shop name</label>
             <tooltip>Please enter the name of the shop. Used for differentiation of shops in multishop scenarios.</tooltip>
