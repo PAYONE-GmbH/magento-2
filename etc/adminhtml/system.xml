@@ -37,7 +37,7 @@
                 <label>Global</label>
                 <field id="mid" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Merchant-ID</label>
-                    <comment><![CDATA[Don't have a PAYONE Account yet? Click <a href="https://www.payone.com/DE-de/kampagne/ecom-testaccount" target="_blank" rel="noopener noreferrer" title="Testaccount">here</a> to apply for test credentials.]]></comment>
+                    <comment><![CDATA[Don't have a PAYONE Account yet? Click <a href='https://www.payone.com/DE-de/kampagne/ecom-testaccount' target='_blank' rel='noopener noreferrer' title='Testaccount'>here</a> to apply for test credentials.]]></comment>
                 </field>
                 <field id="portalid" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Portal-ID</label>
@@ -50,7 +50,7 @@
                 </field>
                 <field id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Referencenumber prefix</label>
-                    <comment><![CDATA[optional - Please consider the maximum length of our <a href="https://docs.payone.com/display/PLATFORM/reference+-+definition" target="_blank" rel="noopener noreferrer" title="Documentation: Reference Definition">reference parameter</a>. We strongly suggest using a max of 5 characters as your prefix.]]></comment>
+                    <comment><![CDATA[Optional - Please consider the maximum length of our <a href='https://docs.payone.com/display/PLATFORM/reference+-+definition' target='_blank' rel='noopener noreferrer' title='Documentation: Reference Definition'>reference parameter</a>. We strongly suggest using a max of 5 characters as your prefix.]]></comment>
                     <tooltip>A unique referencenumber has to be transferred to PAYONE with every request. This is a consecutive number, normally starting at 1. When operating multiple shops ( e.g. live- and test-shop ) with the same PAYONE account-data there will be problems when the current referencenumber was already used. This can be avoided by using different prefixes on different shops.</tooltip>
                 </field>
                 <field id="allowspecific" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -67,7 +67,7 @@
                 <field id="currency" translate="label,comment" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Currency</label>
                     <source_model>Payone\Core\Model\Source\Currency</source_model>
-                    <comment>Payment information is transmitted using the selected currency</comment>
+                    <comment><![CDATA[Payment information is transmitted using the selected currency]]></comment>
                 </field>
                 <field id="request_type" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Authorize-method</label>
@@ -80,7 +80,7 @@
                 <field id="proxy_mode" translate="label" type="select" sortOrder="85" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Proxy-Mode</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>If your shop is behind a Proxy. Enable this option to transmit the HTTP_X_FORWARDED_FOR</comment>
+                    <comment><![CDATA[If your shop is behind a Proxy. Enable this option to transmit the HTTP_X_FORWARDED_FOR]]></comment>
                     <config_path>payone_misc/processing/proxy_mode</config_path>
                 </field>
                 <field id="transmit_customerid" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -92,16 +92,16 @@
                 <label>Send invoicing information</label>
                 <field id="transmit_enabled" translate="label,comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Transmit invoice information</label>
-                    <comment>Please note that you can use these options only, if you subscribe to the invoicing module of PAYONE.</comment>
+                    <comment><![CDATA[Please note that you can use these options only, if you subscribe to the invoicing module of PAYONE.]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="invoice_appendix" translate="label,comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dynamic invoice message</label>
-                    <comment>Maximum 255 digits. Placeholders: {order_increment_id}, {customer_id}</comment>
+                    <comment><![CDATA[Maximum 255 digits. Placeholders: {order_increment_id}, {customer_id}]]></comment>
                 </field>
                 <field id="invoice_appendix_refund" translate="label,comment" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dynamic refund message</label>
-                    <comment>Maximum 255 digits. Placeholders: {order_increment_id}, {order_id}, {customer_id}</comment>
+                    <comment><![CDATA[Maximum 255 digits. Placeholders: {order_increment_id}, {order_id}, {customer_id}]]></comment>
                 </field>
             </group>
             <group id="statusmapping" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -367,7 +367,7 @@
                 <label>Emails</label>
                 <field id="send_invoice_email" translate="label,comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Send invoice email</label>
-                    <comment>For authorization only - where the invoice is created automatically when the PAID status arrives.</comment>
+                    <comment><![CDATA[For authorization only - where the invoice is created automatically when the PAID status arrives.]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
@@ -419,7 +419,7 @@
             <resource>Payone_Core::payone_configuration_protect</resource>
             <group id="personstatus" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Personstatus</label>
-                <comment>Mapping configuration is used by the addresscheck and the credit rating with combined addresscheck.</comment>
+                <comment><![CDATA[Mapping configuration is used by the addresscheck and the credit rating with combined addresscheck.]]></comment>
                 <field id="mapping" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Mapping</label>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\PersonStatusMapping</frontend_model>
@@ -450,16 +450,16 @@
                 </field>
                 <field id="confirm_address_correction" translate="label,comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Confirm Address correction</label>
-                    <comment>Consumer must confirm corrections to their address</comment>
+                    <comment><![CDATA[Consumer must confirm corrections to their address]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="message_response_invalid" translate="label,comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Message to display for invalid data</label>
-                    <comment>Placeholder: {payone_customermessage} (Message from Payone-Addresscheck)</comment>
+                    <comment><![CDATA[Placeholder: {payone_customermessage} (Message from Payone-Addresscheck)]]></comment>
                 </field>
                 <field id="handle_response_error" translate="label,comment" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Response ERROR Handling</label>
-                    <comment>Action in case Addresscheck responds with ERROR</comment>
+                    <comment><![CDATA[Action in case Addresscheck responds with ERROR]]></comment>
                     <source_model>Payone\Core\Model\Source\HandleResponseError</source_model>
                 </field>
                 <field id="stop_checkout_message" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -476,7 +476,7 @@
                 </field>
                 <field id="result_lifetime" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Lifetime</label>
-                    <comment>Result lifetime in days</comment>
+                    <comment><![CDATA[Result lifetime in days]]></comment>
                 </field>
             </group>
             <group id="creditrating" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -534,7 +534,7 @@
                 </field>
                 <field id="config_hint" translate="label" type="label" sortOrder="92" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label></label>
-                    <comment>When using the Boniversum creditrating type the gender and birthday of the customer has to be known. Please set both of these fields to required under Backend -&gt; Stores -&gt; Configuration -&gt; Customers -&gt; Customer Configuration -&gt; Name and Address Options -&gt; Show Date of Birth / Show Gender. If you see this warning, your configuration is wrong.</comment>
+                    <comment><![CDATA[When using the Boniversum creditrating type the gender and birthday of the customer has to be known. Please set both of these fields to required under Backend -&gt; Stores -&gt; Configuration -&gt; Customers -&gt; Customer Configuration -&gt; Name and Address Options -&gt; Show Date of Birth / Show Gender. If you see this warning, your configuration is wrong.]]></comment>
                     <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\Label</frontend_model>
                     <depends>
                         <field id="type">CE</field>
@@ -542,12 +542,12 @@
                 </field>
                 <field id="addresscheck" translate="label" type="select" sortOrder="95" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Combine credit rating with address check</label>
-                    <comment>This will always be 'Boniversum Person' when Creditrating-Checktype is 'Boniversum VERITA Score'</comment>
+                    <comment><![CDATA[This will always be 'Boniversum Person' when Creditrating-Checktype is 'Boniversum VERITA Score']]></comment>
                     <source_model>Payone\Core\Model\Source\AddressCheckType</source_model>
                 </field>
                 <field id="unknown_value" translate="label" type="select" sortOrder="97" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default value for unknown scores</label>
-                    <comment>This only affects check results when Creditrating-Checktype is 'Boniversum VERITA Score'</comment>
+                    <comment><![CDATA[This only affects check results when Creditrating-Checktype is 'Boniversum VERITA Score']]></comment>
                     <source_model>Payone\Core\Model\Source\CreditScore</source_model>
                 </field>
                 <field id="allow_payment_methods_yellow" translate="label" type="multiselect" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -560,19 +560,19 @@
                 </field>
                 <field id="sample_mode_enabled" translate="label,comment" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Sample Mode Enabled</label>
-                    <comment>Activate to perform Creditrating check every n-th order</comment>
+                    <comment><![CDATA[Activate to perform Creditrating check every n-th order]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="sample_mode_frequency" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Sample Mode Frequency</label>
-                    <comment>Perform creditrating for 1 out of n orders.</comment>
+                    <comment><![CDATA[Perform creditrating for 1 out of n orders.]]></comment>
                     <depends>
                         <field id="sample_mode_enabled">1</field>
                     </depends>
                 </field>
                 <field id="handle_response_error" translate="label" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Response ERROR Handling</label>
-                    <comment>Action in case Creditrating check responds with ERROR</comment>
+                    <comment><![CDATA[Action in case Creditrating check responds with ERROR]]></comment>
                     <source_model>Payone\Core\Model\Source\HandleResponseError</source_model>
                 </field>
                 <field id="stop_checkout_message" translate="label" type="text" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -592,7 +592,7 @@
                 </field>
                 <field id="result_lifetime" translate="label,comment" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Lifetime</label>
-                    <comment>Result lifetime in days</comment>
+                    <comment><![CDATA[Result lifetime in days]]></comment>
                 </field>
             </group>
         </section>
@@ -604,7 +604,7 @@
                 <label>Transaction-Status Processing</label>
                 <field id="valid_ips" translate="label,comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Valid PAYONE IPs</label>
-                    <comment>Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use *</comment>
+                    <comment><![CDATA[Enter valid PAYONE IPs (Format xxx.xxx.xxx.xxx). As a Wildcard You can use *]]></comment>
                 </field>
             </group>
             <group id="forwarding" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -617,7 +617,7 @@
                 <field id="log_active" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Logging active</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment>Logfile can be found in /var/log/payone_transaction_forwarding.log</comment>
+                    <comment><![CDATA[Logfile can be found in /var/log/payone_transaction_forwarding.log]]></comment>
                 </field>
             </group>
             <group id="discount" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">

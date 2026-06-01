@@ -40,7 +40,7 @@
             <label>Ratepay Shop-IDs</label>
             <frontend_model>Payone\Core\Block\Adminhtml\Config\Form\Field\RatepayShopConfig</frontend_model>
             <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
-            <comment>Enter currency in ISO 4217 form - i.e. EUR or USD</comment>
+            <comment><![CDATA[Enter currency in ISO 4217 form - i.e. EUR or USD]]></comment>
         </field>
         <field id="show_shop_config" translate="label" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Shop-ID configuration</label>

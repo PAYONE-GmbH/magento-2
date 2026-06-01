@@ -38,7 +38,7 @@
         </field>
         <field id="company" translate="label,comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Company name</label>
-            <comment>Required</comment>
+            <comment><![CDATA[Required]]></comment>
         </field>
         <field id="order_status" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>New Order Status</label>

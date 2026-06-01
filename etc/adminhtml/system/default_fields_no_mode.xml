@@ -27,11 +27,11 @@
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
     <field id="narrative_text" translate="label,comment" type="textarea" sortOrder="485" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Narrative Text</label>
-        <comment>Maximum 81 digits. Placeholders: {order_increment_id}</comment>
+        <comment><![CDATA[Maximum 81 digits. Placeholders: {order_increment_id}]]></comment>
     </field>
     <field id="mode" translate="label" type="select" sortOrder="490" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Mode</label>
-        <comment>Payment method only exists in Live Mode</comment>
+        <comment><![CDATA[Payment method only exists in Live Mode]]></comment>
         <source_model>Payone\Core\Model\Source\Live</source_model>
     </field>
     <field id="use_global" translate="label" type="select" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -40,7 +40,7 @@
     </field>
     <field id="mid" translate="label" type="text" sortOrder="510" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Merchant-ID</label>
-        <comment>If you don't have test credentials, please click <a href="https://www.payone.com/DE-de/kampagne/ecom-testaccount" target="_blank" rel="noopener noreferrer" title="Testaccount">here</a></comment>
+        <comment><![CDATA[If you don't have test credentials, please click <a href='https://www.payone.com/DE-de/kampagne/ecom-testaccount' target='_blank' rel='noopener noreferrer' title='Testaccount'>here</a>]]></comment>
         <depends>
             <field id="use_global">0</field>
         </depends>
@@ -65,7 +65,7 @@
     </field>
     <field id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="550" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Referencenumber prefix</label>
-        <comment>optional</comment>
+        <comment><![CDATA[optional]]></comment>
         <tooltip>A unique referencenumber has to be transferred to PAYONE with every request. This is a consecutive number, normally starting at 1. When operating multiple shops ( e.g. live- and test-shop ) with the same PAYONE account-data there will be problems when the current referencenumber was already used. This can be avoided by using different prefixes on different shops.</tooltip>
         <depends>
             <field id="use_global">0</field>

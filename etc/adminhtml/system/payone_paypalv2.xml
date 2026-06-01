@@ -84,7 +84,7 @@
         </field>
         <field id="bill_as_del_address" translate="label,comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Billing address as delivery address</label>
-            <comment>Transmit the billing address as delivery address if delivery address is missing.</comment>
+            <comment><![CDATA[Transmit the billing address as delivery address if delivery address is missing.]]></comment>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <include path="Payone_Core::system/default_fields.xml"/>

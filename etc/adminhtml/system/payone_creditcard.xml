@@ -59,7 +59,7 @@
         </field>
         <field id="auto_cardtype_detection" translate="label,comment" type="select" sortOrder="105" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Auto Cardtype Detection</label>
-            <comment>Enables the cardtype auto-detection and disables the manual cardtype selection for customers.</comment>
+            <comment><![CDATA[Enables the cardtype auto-detection and disables the manual cardtype selection for customers.]]></comment>
             <config_path>payment/payone_creditcard/auto_cardtype_detection</config_path>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
@@ -73,7 +73,7 @@
         </field>
         <field id="min_validity_period" translate="label,comment" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Minimum Validity Period</label>
-            <comment>Minimum period a CreditCard has to be valid. (in days)</comment>
+            <comment><![CDATA[Minimum period a CreditCard has to be valid. (in days)]]></comment>
         </field>
         <field id="save_data_enabled" translate="label,tooltip" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Creditcard-management enabled</label>
