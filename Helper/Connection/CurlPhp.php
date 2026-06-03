@@ -78,7 +78,6 @@ class CurlPhp
         } elseif (!empty($sResult)) {
             $aResponse = explode("\n", $sResult);
         }
-        curl_close($oCurl);
 
         return $aResponse;
     }

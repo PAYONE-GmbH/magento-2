@@ -92,12 +92,12 @@
         </field>
         <field id="bill_as_del_address" translate="label,comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Billing address as delivery address</label>
-            <comment>Transmit the billing address as delivery address if delivery address is missing.</comment>
+            <comment><![CDATA[Transmit the billing address as delivery address if delivery address is missing.]]></comment>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <field id="narrative_text" translate="label,comment" type="textarea" sortOrder="485" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Narrative Text</label>
-            <comment>Maximum 81 digits. Placeholders: {order_increment_id}</comment>
+            <comment><![CDATA[Maximum 81 digits. Placeholders: {order_increment_id}]]></comment>
         </field>
         <field id="mode" translate="label" type="select" sortOrder="490" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Mode</label>
@@ -133,7 +133,7 @@
         </field>
         <field id="ref_prefix" translate="label,comment,tooltip" type="text" sortOrder="550" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Referencenumber prefix</label>
-            <comment>optional</comment>
+            <comment><![CDATA[optional]]></comment>
             <tooltip>A unique referencenumber has to be transferred to PAYONE with every request. This is a consecutive number, normally starting at 1. When operating multiple shops ( e.g. live- and test-shop ) with the same PAYONE account-data there will be problems when the current referencenumber was already used. This can be avoided by using different prefixes on different shops.</tooltip>
             <depends>
                 <field id="use_global">0</field>

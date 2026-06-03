@@ -63,7 +63,7 @@
         </field>
         <field id="check_bankaccount" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Validate bank code</label>
-            <comment>Requires PAYONE Riskmanagement Module</comment>
+            <comment><![CDATA[Requires PAYONE Riskmanagement Module]]></comment>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <field id="bankaccountcheck_type" translate="label" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -85,12 +85,12 @@
         </field>
         <field id="sepa_mandate_enabled" translate="label" type="select" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Mandate enabled</label>
-            <comment>Pay request 'managemandate', includes bankaccountcheck. No query of the POS block list is possible</comment>
+            <comment><![CDATA[Pay request 'managemandate', includes bankaccountcheck. No query of the POS block list is possible]]></comment>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <field id="sepa_mandate_download_enabled" translate="label" type="select" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Mandate download enabled</label>
-            <comment>Can be selected only if the product in PAYONE was posted 'SEPA-Mandate as PDF'</comment>
+            <comment><![CDATA[Can be selected only if the product in PAYONE was posted 'SEPA-Mandate as PDF']]></comment>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <include path="Payone_Core::system/default_fields.xml"/>
