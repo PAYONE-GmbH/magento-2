@@ -39,7 +39,7 @@ class CreditcardTemplate extends \Magento\Config\Block\System\Config\Form\Field\
     protected $aDefaultConfig = [
         'Number_type' => 'tel',
         'Number_count' => '30',
-        'Number_max' => '16',
+        'Number_max' => '19',
         'Number_iframe' => 'standard',
         'Number_width' => '202px',
         'Number_height' => '20px',
