@@ -113,7 +113,7 @@ class HostedIframeTest extends BaseTestCase
         return [
             "Number_type" => "tel",
             "Number_count" => "30",
-            "Number_max" => "16",
+            "Number_max" => "19",
             "Number_iframe" => "standard",
             "Number_style" => "custom",
             "Number_css" => "",
@@ -154,7 +154,7 @@ class HostedIframeTest extends BaseTestCase
                     'selector' => 'cardpan',
                     'type' => 'tel',
                     'size' => '30',
-                    'maxlength' => '16',
+                    'maxlength' => '19',
                     'style' => ''
                 ],
                 'cardcvc2' => [
