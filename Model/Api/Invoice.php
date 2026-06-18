@@ -162,17 +162,36 @@ class Invoice
         if ($this->blNegatePrice === true) {
             $iMultiplier = -1;
         }
-        $this->oRequest->addParameter('id['.$this->iIndex.']', $this->formatSku($sId)); // add invoice item id
-        $this->oRequest->addParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100 * $iMultiplier); // expected in smallest unit of currency
-        $this->oRequest->addParameter('it['.$this->iIndex.']', $sItemType); // add invoice item type
-        $this->oRequest->addParameter('no['.$this->iIndex.']', $iAmount); // add invoice item amount
-        $this->oRequest->addParameter('de['.$this->iIndex.']', $sDesc); // add invoice item description
-        $this->oRequest->addParameter('va['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dVat * 100, 0)); // expected * 100 to also handle vats with decimals
+        $this->oRequest->addInvoiceParameter('id['.$this->iIndex.']', $this->formatSku($sId)); // add invoice item id
+        $this->oRequest->addInvoiceParameter('pr['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dPrice) * 100 * $iMultiplier); // expected in smallest unit of currency
+        $this->oRequest->addInvoiceParameter('it['.$this->iIndex.']', $sItemType); // add invoice item type
+        $this->oRequest->addInvoiceParameter('no['.$this->iIndex.']', $iAmount); // add invoice item amount
+        $this->oRequest->addInvoiceParameter('de['.$this->iIndex.']', $sDesc); // add invoice item description
+        $this->oRequest->addInvoiceParameter('va['.$this->iIndex.']', $this->toolkitHelper->formatNumber($dVat * 100, 0)); // expected * 100 to also handle vats with decimals
         if ($sCategoryUrl !== false) {
-            $this->oRequest->addParameter('add_paydata[category_path_'.$sId.']', $sCategoryUrl); // add category url of a product, needed for BNPL payment methods
+            $this->oRequest->addInvoiceParameter('add_paydata[category_path_'.$sId.']', $sCategoryUrl); // add category url of a product, needed for BNPL payment methods
         }
         $this->dAmount += $dPrice * $iAmount; // needed for return of the main method
         $this->iIndex++; // increase index for next item
+    }
+
+    /**
+     * Reset the state of the current object by clearing and reinitializing variables.
+     *
+     * @return void
+     */
+    protected function resetState()
+    {
+        if ($this->oRequest instanceof Base) {
+            $this->oRequest->resetInvoiceParameters();
+        }
+
+        $this->iIndex = 1;
+        $this->dAmount = 0;
+        $this->dTax = false;
+        $this->blNegatePrice = false;
+        $this->blSendCategoryUrl = false;
+        $this->sStoreCode = false;
     }
 
     /**
@@ -188,11 +207,12 @@ class Invoice
     public function addProductInfo(Base $oRequest, $oOrder, $aPositions = false, $blDebit = false, $dShippingCosts = false)
     {
         $this->oRequest = $oRequest; // write request to property for manipulation of the object
+        $this->resetState();
         $this->setStoreCode($oOrder->getStore()->getCode());
         if ($oOrder instanceof Order) {
             $sInvoiceAppendix = $this->toolkitHelper->getInvoiceAppendix($oOrder); // get invoice appendix
             if (!empty($sInvoiceAppendix)) { // invoice appendix existing?
-                $this->oRequest->addParameter('invoiceappendix', $sInvoiceAppendix); // add appendix to request
+                $this->oRequest->addInvoiceParameter('invoiceappendix', $sInvoiceAppendix); // add appendix to request
             }
         }
 

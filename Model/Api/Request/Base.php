@@ -57,6 +57,13 @@ abstract class Base
     protected $aParameters = [];
 
     /**
+     * Array of invoice request parameters
+     *
+     * @var array
+     */
+    protected $aInvoiceParameters = [];
+  
+    /**
      * Array of request headers
      *
      * @var array
@@ -165,6 +172,7 @@ abstract class Base
     protected function initRequest()
     {
         $this->aParameters = [];
+        $this->resetInvoiceParameters();
         $this->addParameter('mid', $this->shopHelper->getConfigParam('mid', 'global', 'payone_general', $this->storeCode)); // PayOne Merchant ID
         $this->addParameter('portalid', $this->shopHelper->getConfigParam('portalid', 'global', 'payone_general', $this->storeCode)); // PayOne Portal ID
         $this->addParameter('key', $this->toolkitHelper->hashString($this->shopHelper->getConfigParam('key', 'global', 'payone_general', $this->storeCode) ?? '')); // PayOne Portal Key
@@ -205,6 +213,22 @@ abstract class Base
         $this->aParameters[$sKey] = $sValue;
     }
 
+    /**
+     * Add parameter to request
+     *
+     * @param  string $sKey               parameter key
+     * @param  string $sValue             parameter value
+     * @param  bool   $blAddAsNullIfEmpty add parameter with value NULL if empty. Default is false
+     * @return void
+     */
+    public function addInvoiceParameter($sKey, $sValue, $blAddAsNullIfEmpty = false)
+    {
+        if ($blAddAsNullIfEmpty === true && empty($sValue)) {
+            $sValue = 'NULL'; // add value as string NULL - needed in certain situations
+        }
+        $this->aInvoiceParameters[$sKey] = $sValue;
+    }
+  
     /**
      * Adds a header to the collection of headers.
      *
@@ -250,7 +274,27 @@ abstract class Base
      */
     public function getParameters()
     {
-        return $this->aParameters;
+        return array_merge($this->aParameters, $this->getInvoiceParameters());
+    }
+
+    /**
+     * Return all invoice parameters
+     *
+     * @return array
+     */
+    public function getInvoiceParameters()
+    {
+        return $this->aInvoiceParameters;
+    }
+
+    /**
+     * Reset all invoice parameters to an empty state
+     *
+     * @return void
+     */
+    public function resetInvoiceParameters()
+    {
+        $this->aInvoiceParameters = [];
     }
     
     /**
