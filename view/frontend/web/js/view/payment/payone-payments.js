@@ -37,6 +37,10 @@ define(
                 component: 'Payone_Core/js/view/payment/method-renderer/creditcard-method'
             },
             {
+                type: 'payone_creditcardv2',
+                component: 'Payone_Core/js/view/payment/method-renderer/creditcardv2-method'
+            },
+            {
                 type: 'payone_cash_on_delivery',
                 component: 'Payone_Core/js/view/payment/method-renderer/cash_on_delivery-method'
             },

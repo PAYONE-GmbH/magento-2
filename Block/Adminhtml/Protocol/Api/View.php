@@ -117,6 +117,9 @@ class View extends \Magento\Backend\Block\Widget\Container
         if (in_array($sKey, ['add_paydata[amazon_address_token]', 'add_paydata[paymentmethod_token_data]'])) {
             return '<span title="'.$sValue.'">[...]</span>';
         }
+        if ($sKey == "token") {
+            return '<div style="overflow:scroll;max-width:40vw;">'.$sValue.'</div>';
+        }
         return $sValue;
     }
 }

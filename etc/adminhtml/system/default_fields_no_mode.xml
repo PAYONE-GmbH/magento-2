@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2016 Payone GmbH
+ * @copyright 2003 - 2026 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -31,7 +31,8 @@
     </field>
     <field id="mode" translate="label" type="select" sortOrder="490" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Mode</label>
-        <source_model>Payone\Core\Model\Source\Mode</source_model>
+        <comment><![CDATA[Payment method only exists in Live Mode]]></comment>
+        <source_model>Payone\Core\Model\Source\Live</source_model>
     </field>
     <field id="use_global" translate="label" type="select" sortOrder="500" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Use Global Settings</label>

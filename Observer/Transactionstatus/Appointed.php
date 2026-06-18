@@ -31,6 +31,7 @@ use Magento\Sales\Model\Order\Invoice;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Payone\Core\Model\Methods\PayoneMethod;
 use Psr\Log\LoggerInterface;
 use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;

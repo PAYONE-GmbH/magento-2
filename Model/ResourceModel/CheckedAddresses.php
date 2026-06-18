@@ -130,7 +130,7 @@ class CheckedAddresses extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
             'hash' => $this->checkoutHelper->getHashFromAddress($oAddress),
             'isBoni' => $blIsBonicheck,
             'checkType' => $sChecktype,
-            'lifetime' => $sLifetime
+            'lifetime' => (int)$sLifetime
         ];
 
         return $this->getConnection()->fetchOne($oSelect, $aParams);

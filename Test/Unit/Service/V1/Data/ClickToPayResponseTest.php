@@ -14,46 +14,63 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2017 Payone GmbH
+ * @copyright 2003 - 2026 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
 
-namespace Payone\Core\Test\Unit\Helper\Connection;
+namespace Payone\Core\Test\Unit\Service\V1\Data;
 
-use Payone\Core\Helper\Connection\Fsockopen;
+use Payone\Core\Service\V1\Data\ClickToPayResponse as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
-class FsockopenTest extends BaseTestCase
+class ClickToPayResponseTest extends BaseTestCase
 {
     /**
-     * @var ObjectManager|PayoneObjectManager
+     * @var ClassToTest
      */
-    private $objectManager;
-
-    /**
-     * @var Fsockopen
-     */
-    private $fsockopen;
+    private $classToTest;
 
     protected function setUp(): void
     {
-        $this->objectManager = $this->getObjectManager();
+        $objectManager = $this->getObjectManager();
 
-        $this->fsockopen = $this->objectManager->getObject(Fsockopen::class);
+        $data = [
+            'success' => 'success',
+            'errormessage' => 'errormessage',
+            'jwt' => 'jwt',
+        ];
+
+        $this->classToTest = $objectManager->getObject(ClassToTest::class, [
+            'data' => $data
+        ]);
     }
 
-    public function testIsApplicable()
+    public function testGetSuccess()
     {
-        $result = $this->fsockopen->isApplicable();
-        $expected = (function_exists("stream_socket_client"));
+        $result = $this->classToTest->getSuccess();
+        $expected = 'success';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetErrormessage()
+    {
+        $result = $this->classToTest->getErrormessage();
+        $expected = 'errormessage';
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetJwt()
+    {
+        $result = $this->classToTest->getJwt();
+        $expected = 'jwt';
         $this->assertEquals($expected, $result);
     }
 }

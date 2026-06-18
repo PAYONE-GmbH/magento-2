@@ -98,48 +98,6 @@ define(
                 }
                 return environment;
             },
-            selectPrice: function (base_price, price) {
-                let returnPrice = base_price;
-                if (window.checkoutConfig.payment.payone.currency === "display") {
-                    returnPrice = price;
-                }
-                return returnPrice;
-            },
-            getSingleLineItem: function (label, base_price, price, type = 'LINE_ITEM') {
-                return {
-                    "label": label,
-                    "type": type,
-                    "price": this.formatPrice(this.selectPrice(base_price, price)),
-                };
-            },
-            getLineItems: function () {
-                let lineItems = [];
-
-                // Add line items
-                let items = quote.getItems();
-                if (items && items.length > 0) {
-                    for (let item of items) {
-                        lineItems.push(this.getSingleLineItem(item.qty + "x " + item.sku + ": " + item.name, item.base_row_total_incl_tax, item.row_total_incl_tax));
-                    }
-                }
-
-                let totals = quote.totals();
-                if (totals) {
-                    // Add subtotal
-                    lineItems.push(this.getSingleLineItem($t("Subtotal"), totals.base_subtotal, totals.subtotal, 'SUBTOTAL'));
-
-                    // Add Tax
-                    lineItems.push(this.getSingleLineItem($t("Estimate Tax"), totals.base_tax_amount, totals.tax_amount, 'TAX'));
-                }
-
-                // Add shipping
-                let shipping = quote.shippingMethod();
-                if (shipping && shipping.amount > 0) {
-                    lineItems.push(this.getSingleLineItem($t("Shipping") + shipping.carrier_title + " - " + shipping.method_title, shipping.price_incl_tax, shipping.price_incl_tax)); // no base_price_incl_tax here...
-                }
-
-                return lineItems;
-            },
             formatPrice: function (price) {
                 let returnPrice = parseFloat(price);
                 returnPrice.toFixed(2); // Magento prices are formatted like 12.9500 - Google Pay doesn't like that.
@@ -210,15 +168,10 @@ define(
                     countryCode: this.getBillingCountry(),
                     currencyCode: this.getCurrency(),
                     totalPriceStatus: 'FINAL',
+                    totalPriceLabel: $t('Order Total'),
                     // set to cart total
                     totalPrice: this.getOrderTotal().toString(),
                 };
-
-                let lineItems = this.getLineItems();
-                if (lineItems && lineItems.length > 0) {
-                    transactionInfo.totalPriceLabel = $t('Order Total');
-                    transactionInfo.displayItems = lineItems;
-                }
                 return transactionInfo;
             },
             getGooglePaymentDataRequest: function () {

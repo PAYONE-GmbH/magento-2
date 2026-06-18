@@ -19,7 +19,7 @@
  * @category  Payone
  * @package   Payone_Magento2_Plugin
  * @author    FATCHIP GmbH <support@fatchip.de>
- * @copyright 2003 - 2024 Payone GmbH
+ * @copyright 2003 - 2026 Payone GmbH
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
@@ -32,7 +32,7 @@ namespace Payone\Core\Model;
 abstract class PayoneConfig
 {
     /* Module version */
-    const MODULE_VERSION = '3.16.2';
+    const MODULE_VERSION = '3.17.2';
 
     /* Authorization request types */
     const REQUEST_TYPE_PREAUTHORIZATION = 'preauthorization';
@@ -63,6 +63,7 @@ abstract class PayoneConfig
 
     /* Payment method codes */
     const METHOD_CREDITCARD = 'payone_creditcard';
+    const METHOD_CREDITCARDV2 = 'payone_creditcardv2';
     const METHOD_CASH_ON_DELIVERY = 'payone_cash_on_delivery';
     const METHOD_DEBIT = 'payone_debit';
     const METHOD_ADVANCE_PAYMENT = 'payone_advance_payment';

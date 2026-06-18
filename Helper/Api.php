@@ -150,9 +150,10 @@ class Api extends Base
      * Check which communication possibilities are existing and send the request
      *
      * @param  string $sRequestUrl
+     * @param  array  $aHeaders
      * @return array
      */
-    public function sendApiRequest($sRequestUrl)
+    public function sendApiRequest($sRequestUrl, $aHeaders = [])
     {
         $aParsedRequestUrl = parse_url($sRequestUrl);
         if ($aParsedRequestUrl === false) {
@@ -161,13 +162,13 @@ class Api extends Base
 
         if ($this->connCurlPhp->isApplicable()) {
             // php native curl exists so we gonna use it for requesting
-            $aResponse = $this->connCurlPhp->sendCurlPhpRequest($aParsedRequestUrl);
+            $aResponse = $this->connCurlPhp->sendCurlPhpRequest($aParsedRequestUrl, $aHeaders);
         } elseif ($this->connCurlCli->isApplicable()) {
             // cli version of curl exists on server
-            $aResponse = $this->connCurlCli->sendCurlCliRequest($aParsedRequestUrl);
+            $aResponse = $this->connCurlCli->sendCurlCliRequest($aParsedRequestUrl, $aHeaders);
         } else {
             // last resort => via sockets
-            $aResponse = $this->connFsockopen->sendSocketRequest($aParsedRequestUrl);
+            $aResponse = $this->connFsockopen->sendSocketRequest($aParsedRequestUrl, $aHeaders);
         }
 
         $aResponse = $this->formatOutputByResponse($aResponse);

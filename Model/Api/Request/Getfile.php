@@ -72,7 +72,7 @@ class Getfile extends Base
             ],
         ];
         $oContext = stream_context_create($aOptions);
-        $sMandate = file_get_contents($this->sApiUrl, false, $oContext);
+        $sMandate = file_get_contents($this->getApiUrl(), false, $oContext);
         if ($sMandate !== false) {
             $sReturn = $sMandate;
             $sStatus = 'SUCCESS';

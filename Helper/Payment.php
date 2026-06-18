@@ -42,6 +42,7 @@ class Payment extends \Payone\Core\Helper\Base
      */
     protected $aAvailablePayments = [
         PayoneConfig::METHOD_CREDITCARD,
+        PayoneConfig::METHOD_CREDITCARDV2,
         PayoneConfig::METHOD_DEBIT,
         PayoneConfig::METHOD_PAYPAL,
         PayoneConfig::METHOD_PAYPALV2,
@@ -83,6 +84,7 @@ class Payment extends \Payone\Core\Helper\Base
      */
     protected $aPaymentAbbreviation = [
         PayoneConfig::METHOD_CREDITCARD => 'cc',
+        PayoneConfig::METHOD_CREDITCARDV2 => 'cc',
         PayoneConfig::METHOD_CASH_ON_DELIVERY => 'cod',
         PayoneConfig::METHOD_DEBIT => 'elv',
         PayoneConfig::METHOD_ADVANCE_PAYMENT => 'vor',

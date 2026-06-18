@@ -40,6 +40,8 @@
     <preference for="Payone\Core\Api\Data\KlarnaHandlerResponseInterface" type="Payone\Core\Service\V1\Data\KlarnaHandlerResponse" />
     <preference for="Payone\Core\Api\PayPalInterface" type="Payone\Core\Service\V1\PayPal" />
     <preference for="Payone\Core\Api\Data\PayPalResponseInterface" type="Payone\Core\Service\V1\Data\PayPalResponse" />
+    <preference for="Payone\Core\Api\ClickToPayInterface" type="Payone\Core\Service\V1\ClickToPay" />
+    <preference for="Payone\Core\Api\Data\ClickToPayResponseInterface" type="Payone\Core\Service\V1\Data\ClickToPayResponse" />
     <virtualType name="Payone\Core\Model\ResourceModel\ApiLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
         <arguments>
             <argument name="mainTable" xsi:type="string">payone_protocol_api</argument>

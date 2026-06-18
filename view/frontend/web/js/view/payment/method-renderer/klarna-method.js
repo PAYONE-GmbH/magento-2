@@ -99,14 +99,6 @@ define(
                 return window.checkoutConfig.payment.payone.klarnaTitles[methodCode];
             },
 
-            getCustomerEmail: function() {
-                var email = customer.customerData.email;
-                if (!customer.isLoggedIn()) {
-                    email = quote.guestEmail;
-                }
-                return email;
-            },
-
             startKlarnaCheckout: function (event, elem) {
                 var methodeCode = elem.currentTarget.id.replace("_selection", "");
                 var paymentMethodCategory = this.methodCategories[methodeCode];

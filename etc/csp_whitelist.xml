@@ -21,6 +21,7 @@
                 <value id="payone_klarna_js2" type="host">cdn.klarna.com</value>
                 <value id="payone_jsctool_script" type="host">jsctool.com</value>
                 <value id="payone_payla_script" type="host">d.payla.io</value>
+                <value id="payone_ccv2_script" type="host">*.tokenization.secure.payone.com</value>
             </values>
         </policy>
         <policy id="style-src">
@@ -28,6 +29,7 @@
                 <value id="payone_ratepay_css" type="host">d.ratepay.com</value>
                 <value id="payone_payla_css" type="host">d.payla.io</value>
                 <value id="payone_payla_css2" type="host">dr.payla.io</value>
+                <value id="payone_ccv2_css" type="host">src.mastercard.com</value>
             </values>
         </policy>
         <policy id="frame-src">
@@ -37,6 +39,7 @@
                 <value id="payone_jsctool_frame" type="host">jsctool.com</value>
                 <value id="payone_wwwjsctool_frame" type="host">www.jsctool.com</value>
                 <value id="payone_klarna_frame" type="host">js.playground.klarna.com</value>
+                <value id="payone_ccv2_script" type="host">*.tokenization.secure.payone.com</value>
             </values>
         </policy>
         <policy id="connect-src">
@@ -46,6 +49,12 @@
                 <value id="payone_ratepay_connect" type="host">d.ratepay.com</value>
                 <value id="payone_jsctool_connect" type="host">jsctool.com</value>
                 <value id="payone_klarna_connect" type="host">eu.playground.klarnaevt.com</value>
+                <value id="payone_ccv2_connect" type="host">*.tokenization.secure.payone.com</value>
+            </values>
+        </policy>
+        <policy id="font-src">
+            <values>
+                <value id="base64_fonts" type="host">data:</value>
             </values>
         </policy>
     </policies>

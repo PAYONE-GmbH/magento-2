@@ -45,3 +45,7 @@
 .ccard .cc-icon--show {
     display: inline;
 }
+
+.payoneCCV2Iframe {
+    margin: 5rem 2rem 1rem 2rem;
+}

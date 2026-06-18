@@ -62,6 +62,13 @@ abstract class Base
      * @var array
      */
     protected $aInvoiceParameters = [];
+  
+    /**
+     * Array of request headers
+     *
+     * @var array
+     */
+    protected $aHeaders = [];
 
     /**
      * Response of the request
@@ -221,6 +228,17 @@ abstract class Base
         }
         $this->aInvoiceParameters[$sKey] = $sValue;
     }
+  
+    /**
+     * Adds a header to the collection of headers.
+     *
+     * @param  string $sHeader
+     * @return void
+     */
+    public function addHeader($sHeader)
+    {
+        $this->aHeaders[] = $sHeader;
+    }
 
     /**
      * Remove parameter from request
@@ -277,6 +295,16 @@ abstract class Base
     public function resetInvoiceParameters()
     {
         $this->aInvoiceParameters = [];
+    }
+    
+    /**
+     * Return headers
+     *
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->aHeaders;
     }
 
     /**
@@ -372,6 +400,16 @@ abstract class Base
     }
 
     /**
+     * Retrieve the API URL.
+     *
+     * @return string
+     */
+    protected function getApiUrl()
+    {
+        return $this->sApiUrl;
+    }
+
+    /**
      * Send the previously prepared request, log request and response into the database and return the response
 
      * @param  PayoneMethod $oPayment
@@ -386,9 +424,9 @@ abstract class Base
         if (!$this->validateParameters()) {// all base parameters existing?
             return ["errormessage" => "Payone API Setup Data not complete (API-URL, MID, AID, PortalID, Key, Mode)"];
         }
-        
-        $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->sApiUrl);
-        $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl); // send request to PAYONE
+
+        $sRequestUrl = $this->apiHelper->getRequestUrl($this->getParameters(), $this->getApiUrl());
+        $aResponse = $this->apiHelper->sendApiRequest($sRequestUrl, $this->getHeaders()); // send request to PAYONE
 
         $this->setResponse($aResponse);
 

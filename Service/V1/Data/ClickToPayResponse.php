@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<!--
+<?php
+
 /**
  * PAYONE Magento 2 Connector is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with PAYONE Magento 2 Connector. If not, see <http://www.gnu.org/licenses/>.
  *
- * PHP version 5
+ * PHP version 8
  *
  * @category  Payone
  * @package   Payone_Magento2_Plugin
@@ -23,12 +23,43 @@
  * @license   <http://www.gnu.org/licenses/> GNU Lesser General Public License
  * @link      http://www.payone.de
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Module/etc/module.xsd">
-    <module name="Payone_Core" setup_version="3.17.2">
-        <sequence>
-            <module name="Magento_Quote" />
-            <module name="Magento_Sales" />
-        </sequence>
-    </module>
-</config>
+
+namespace Payone\Core\Service\V1\Data;
+
+use Payone\Core\Api\Data\ClickToPayResponseInterface;
+
+/**
+ * Object for PayPal Express V2 response
+ */
+class ClickToPayResponse extends \Magento\Framework\Api\AbstractExtensibleObject implements ClickToPayResponseInterface
+{
+    /**
+     * Returns JSON web token
+     *
+     * @return string
+     */
+    public function getJwt()
+    {
+        return $this->_get('jwt');
+    }
+
+    /**
+     * Returns if the call was successful
+     *
+     * @return bool
+     */
+    public function getSuccess()
+    {
+        return $this->_get('success');
+    }
+
+    /**
+     * Returns errormessage
+     *
+     * @return string
+     */
+    public function getErrormessage()
+    {
+        return $this->_get('errormessage');
+    }
+}
