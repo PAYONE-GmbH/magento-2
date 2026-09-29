@@ -35,6 +35,9 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Payone\Core\Helper\ApplePay;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\Read;
+use Magento\Framework\Filesystem\Directory\Write;
+use Magento\Framework\Filesystem\Directory\WriteFactory;
+use Magento\Framework\Filesystem\DriverInterface;
 
 #[AllowMockObjectsWithoutExpectations]
 class UploadTest extends BaseTestCase
@@ -50,7 +53,7 @@ class UploadTest extends BaseTestCase
     private $objectManager;
 
     /**
-     * @var ApplePay|\PHPUnit\Framework\MockObject\MockObject 
+     * @var ApplePay|\PHPUnit\Framework\MockObject\MockObject
      */
     private $applePayHelper;
 
@@ -64,15 +67,25 @@ class UploadTest extends BaseTestCase
         $this->objectManager = $this->getObjectManager();
 
         $this->applePayHelper = $this->getMockBuilder(ApplePay::class)->disableOriginalConstructor()->getMock();
-        
+
         $this->tmpDirectory = $this->getMockBuilder(Read::class)->disableOriginalConstructor()->getMock();
-        
+
         $filesystem = $this->getMockBuilder(Filesystem::class)->disableOriginalConstructor()->getMock();
         $filesystem->method('getDirectoryRead')->willReturn($this->tmpDirectory);
 
+        $driver = $this->getMockBuilder(DriverInterface::class)->disableOriginalConstructor()->getMock();
+        $driver->method('isExists')->willReturn(false);
+
+        $write = $this->getMockBuilder(Write::class)->disableOriginalConstructor()->getMock();
+        $write->method('getDriver')->willReturn($driver);
+
+        $writeFactory = $this->getMockBuilder(WriteFactory::class)->disableOriginalConstructor()->getMock();
+        $writeFactory->method('create')->willReturn($write);
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'applePayHelper' => $this->applePayHelper,
-            'filesystem' => $filesystem
+            'filesystem' => $filesystem,
+            'writeFactory' => $writeFactory,
         ]);
     }
 
@@ -82,6 +95,7 @@ class UploadTest extends BaseTestCase
 
         $this->applePayHelper->method('getApplePayUploadPath')->willReturn($uploadPath);
         $this->tmpDirectory->method('getRelativePath')->willReturn("Existing path");
+        $this->tmpDirectory->method('getAbsolutePath')->willReturn($uploadPath);
         $this->tmpDirectory->method('isExist')->willReturn(true);
         $this->tmpDirectory->method('stat')->willReturn(['size' => 100]);
 
@@ -94,8 +108,6 @@ class UploadTest extends BaseTestCase
 
         $result = $this->classToTest->beforeSave();
         $this->assertInstanceOf(ClassToTest::class, $result);
-
-        rmdir($uploadPath);
     }
 
     public function testBeforeSaveException()
@@ -104,6 +116,7 @@ class UploadTest extends BaseTestCase
 
         $this->applePayHelper->method('getApplePayUploadPath')->willReturn($uploadPath);
         $this->tmpDirectory->method('getRelativePath')->willReturn("Existing path");
+        $this->tmpDirectory->method('getAbsolutePath')->willReturn($uploadPath);
         $this->tmpDirectory->method('isExist')->willReturn(true);
         $this->tmpDirectory->method('stat')->willReturn(['size' => false]);
 
