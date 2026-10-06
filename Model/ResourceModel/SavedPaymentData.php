@@ -252,7 +252,7 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
      */
     public function deletePaymentData($iId, $iCustomerId, $sPaymentMethod = false)
     {
-        $this->getConnection()->delete($this->getMainTable(), ['id = ?' => $iId]);
+        $this->getConnection()->delete($this->getMainTable(), ['id = ?' => (int)$iId, 'customer_id = ?' => (int)$iCustomerId]);
 
         $aAllRows = $this->getSavedPaymentData($iCustomerId, $sPaymentMethod);
         if (!empty($aAllRows)) {
@@ -271,11 +271,11 @@ class SavedPaymentData extends \Magento\Framework\Model\ResourceModel\Db\Abstrac
     public function setDefault($iId, $iCustomerId)
     {
         $data = ['is_default' => 0];
-        $where = ['customer_id = ?' => $iCustomerId];
+        $where = ['customer_id = ?' => (int)$iCustomerId];
         $this->getConnection()->update($this->getMainTable(), $data, $where);
 
         $data = ['is_default' => 1];
-        $where = ['id = ?' => $iId];
+        $where = ['id = ?' => (int)$iId, 'customer_id = ?' => (int)$iCustomerId];
         $this->getConnection()->update($this->getMainTable(), $data, $where);
     }
 }
