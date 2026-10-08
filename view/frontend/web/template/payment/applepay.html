@@ -73,10 +73,17 @@
         </div>
         <div class="actions-toolbar">
             <div class="primary">
+                <!-- ko if: (buttonLoaded()) -->
                 <div id="payoneApplePayButton" class="apple-pay-button-with-text apple-pay-button-black-with-text" data-bind="click: initializeApplePay">
                     <span class="text">Buy with</span>
                     <span class="logo"></span>
                 </div>
+                <!-- /ko -->
+                <!-- ko if: (!buttonLoaded()) -->
+                <div class="apple-pay-button-placeholder" style="height: 40px; background-color: #eee; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                    <span data-bind="i18n: 'Loading Apple Pay...'"></span>
+                </div>
+                <!-- /ko -->
                 <!--button class="action primary checkout"
                         type="submit"
                         data-bind="
