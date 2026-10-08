@@ -143,6 +143,17 @@ class ApplePay extends PayoneMethod
     }
 
     /**
+     * @return array
+     */
+    public function getFrontendConfig()
+    {
+        return [
+            'merchantId' => $this->applePayHelper->getMerchantId(),
+            'merchantName' => $this->shopHelper->getStoreName(),
+        ];
+    }
+
+    /**
      * Maps ApplePay cardtype to Payone cardtype
      *
      * @param  array $aToken

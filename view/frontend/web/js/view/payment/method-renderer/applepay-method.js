@@ -39,7 +39,8 @@ define(
             defaults: {
                 template: 'Payone_Core/payment/applepay',
                 token: false,
-                session: false
+                session: false,
+                buttonLoaded: false
             },
 
             initObservable: function () {
@@ -47,6 +48,7 @@ define(
                     .observe([
                         'token',
                         'session',
+                        'buttonLoaded'
                     ]);
                 return this;
             },
@@ -54,6 +56,23 @@ define(
             /** Returns payment method instructions */
             getInstructions: function () {
                 return window.checkoutConfig.payment.instructions[this.item.method];
+            },
+
+            initialize: function () {
+                this._super();
+                this.initApplePaySDK();
+            },
+
+            initApplePaySDK: function () {
+                if (this.buttonLoaded() === false) {
+                    var self = this;
+                    var script = document.createElement('script');
+                    script.src = "https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js";
+                    script.onload = function () {
+                        self.buttonLoaded(true);
+                    };
+                    document.head.appendChild(script);
+                }
             },
 
             isApplePayAvailable: function () {
@@ -66,7 +85,10 @@ define(
             },
 
             afterPlaceOrder: function () {
-                this.session().completePayment({status: 'STATUS_SUCCESS'});
+                var session = this.session();
+                if (session && typeof session.completePayment === 'function') {
+                    session.completePayment({status: 'STATUS_SUCCESS'});
+                }
             },
 
             getData: function () {
@@ -81,12 +103,19 @@ define(
                 var self = this;
 
                 return this._super().fail(function () {
-                    self.session().abort();
+                    var session = self.session();
+                    if (session && typeof session.abort === 'function') {
+                        session.abort();
+                    }
                 });
             },
 
             initializeApplePay: function () {
+                var self = this;
+                var config = window.checkoutConfig.payment.payone.payone_applepay;
                 var params = {
+                    merchantIdentifier: config.merchantId,
+                    merchantName: config.merchantName,
                     countryCode: quote.billingAddress().countryId,
                     currencyCode: this.getCurrency(),
                     supportedNetworks: window.checkoutConfig.payment.payone.availableApplePayTypes,
@@ -100,6 +129,7 @@ define(
                 var self = this;
                 session.onvalidatemerchant = function(event) {
                     var request = {
+                        validationUrl:event.validationUrl,
                         cartId: quote.getQuoteId()
                     };
                     var serviceUrl = urlBuilder.createUrl('/carts/mine/payone-getApplePaySession', {});
