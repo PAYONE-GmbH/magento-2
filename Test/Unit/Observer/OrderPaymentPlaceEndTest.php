@@ -35,6 +35,7 @@ use Magento\Framework\Event;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Model\Order;
+use Payone\Core\Model\Methods\PayoneMethod;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -88,12 +89,42 @@ class OrderPaymentPlaceEndTest extends BaseTestCase
     {
         $expectedStatus = 'new';
 
-        $paymentMethod = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $paymentMethod = $this->getMockBuilder(PayoneMethod::class)->disableOriginalConstructor()->getMock();
         $paymentMethod->method('getCode')->willReturn(PayoneConfig::METHOD_CREDITCARD);
         $paymentMethod->method('getConfigData')->willReturn($expectedStatus);
 
         $order = $this->objectManager->getObject(Order::class);
 
+        $result = $this->classToTest->execute($this->getObserver($paymentMethod, $order));
+        $this->assertNull($result);
+
+        $this->assertEquals(Order::STATE_NEW, $order->getState());
+        $this->assertEquals($expectedStatus, $order->getStatus());
+    }
+
+    public function testExecuteOtherPaymentModule()
+    {
+        $paymentMethod = $this->getMockBuilder(MethodInterface::class)->disableOriginalConstructor()->getMock();
+        $paymentMethod->method('getCode')->willReturn('payone_cp_creditcard');
+
+        $order = $this->objectManager->getObject(Order::class);
+        $order->setState(Order::STATE_PENDING_PAYMENT);
+        $order->setStatus('pending_payment');
+
+        $result = $this->classToTest->execute($this->getObserver($paymentMethod, $order));
+        $this->assertNull($result);
+
+        $this->assertEquals(Order::STATE_PENDING_PAYMENT, $order->getState());
+        $this->assertEquals('pending_payment', $order->getStatus());
+    }
+
+    /**
+     * @param  MethodInterface $paymentMethod
+     * @param  Order           $order
+     * @return Observer
+     */
+    private function getObserver($paymentMethod, $order)
+    {
         $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
         $payment->method('getMethodInstance')->willReturn($paymentMethod);
         $payment->method('getOrder')->willReturn($order);
@@ -104,10 +135,6 @@ class OrderPaymentPlaceEndTest extends BaseTestCase
         $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->getMock();
         $observer->method('getEvent')->willReturn($event);
 
-        $result = $this->classToTest->execute($observer);
-        $this->assertNull($result);
-
-        $this->assertEquals(Order::STATE_NEW, $order->getState());
-        $this->assertEquals($expectedStatus, $order->getStatus());
+        return $observer;
     }
 }
