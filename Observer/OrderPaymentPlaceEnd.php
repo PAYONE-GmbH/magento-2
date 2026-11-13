@@ -30,6 +30,7 @@ use Magento\Sales\Model\Order;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
 use Payone\Core\Helper\Consumerscore;
+use Payone\Core\Model\Methods\PayoneMethod;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Checkout\Model\Session;
 
@@ -95,7 +96,7 @@ class OrderPaymentPlaceEnd implements ObserverInterface
         /** @var Payment $oPayment */
         $oPayment = $observer->getEvent()->getPayment();
         $oPaymentInstance = $oPayment->getMethodInstance();
-        if (stripos($oPaymentInstance->getCode(), 'payone') !== false) {
+        if ($oPaymentInstance instanceof PayoneMethod) { // not by method code, other modules may use "payone" in their codes too
             $oOrder = $oPayment->getOrder();
             $oOrder->setState(Order::STATE_NEW);
             $oOrder->setStatus($oPaymentInstance->getConfigData('order_status'));
