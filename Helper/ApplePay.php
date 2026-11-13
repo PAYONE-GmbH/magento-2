@@ -97,10 +97,18 @@ class ApplePay extends \Payone\Core\Helper\Base
      */
     public function hasMerchantId()
     {
-        if (!empty($this->getConfigParam("merchant_id", PayoneConfig::METHOD_APPLEPAY, "payment"))) {
+        if (!empty($this->getMerchantId())) {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantId()
+    {
+        return (string)$this->getConfigParam("merchant_id", PayoneConfig::METHOD_APPLEPAY, "payment");
     }
 
     /**

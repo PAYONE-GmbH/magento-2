@@ -39,7 +39,8 @@ define(
             defaults: {
                 template: 'Payone_Core/payment/applepay',
                 token: false,
-                session: false
+                session: false,
+                buttonLoaded: false
             },
 
             initObservable: function () {
@@ -47,6 +48,7 @@ define(
                     .observe([
                         'token',
                         'session',
+                        'buttonLoaded'
                     ]);
                 return this;
             },
@@ -56,17 +58,49 @@ define(
                 return window.checkoutConfig.payment.instructions[this.item.method];
             },
 
+            initialize: function () {
+                this._super();
+                this.initApplePaySDK();
+            },
+
+            initApplePaySDK: function () {
+                if (this.buttonLoaded() === false) {
+                    var self = this;
+                    var script = document.createElement('script');
+                    script.src = "https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js";
+                    script.crossOrigin = "anonymous";
+                    script.onload = function () {
+                        self.buttonLoaded(true);
+                    };
+                    document.head.appendChild(script);
+                }
+            },
+
             isApplePayAvailable: function () {
+                // Reading the buttonLoaded observable registers it as a Knockout dependency,
+                // so the template re-evaluates this check once the SDK has been loaded
+                if (!this.buttonLoaded()) {
+                    return false;
+                }
                 try {
-                    return window.ApplePaySession && window.ApplePaySession.canMakePayments();
+                    return !!window.ApplePaySession && window.ApplePaySession.canMakePayments();
                 } catch (exc) {
                     console.warn('Apple Pay could not be initialized:', exc);
                 }
                 return false;
             },
 
+            /** Returns the shop locale in the BCP 47 format expected by the Apple Pay button (e.g. de-DE) */
+            getApplePayLocale: function () {
+                var locale = window.checkoutConfig.payment.payone.fullLocale;
+                return locale ? locale.replace('_', '-') : 'en-US';
+            },
+
             afterPlaceOrder: function () {
-                this.session().completePayment({status: 'STATUS_SUCCESS'});
+                var session = this.session();
+                if (session && typeof session.completePayment === 'function') {
+                    session.completePayment({status: 'STATUS_SUCCESS'});
+                }
             },
 
             getData: function () {
@@ -81,12 +115,19 @@ define(
                 var self = this;
 
                 return this._super().fail(function () {
-                    self.session().abort();
+                    var session = self.session();
+                    if (session && typeof session.abort === 'function') {
+                        session.abort();
+                    }
                 });
             },
 
             initializeApplePay: function () {
+                var self = this;
+                var config = window.checkoutConfig.payment.payone.payone_applepay;
                 var params = {
+                    merchantIdentifier: config.merchantId,
+                    merchantName: config.merchantName,
                     countryCode: quote.billingAddress().countryId,
                     currencyCode: this.getCurrency(),
                     supportedNetworks: window.checkoutConfig.payment.payone.availableApplePayTypes,
@@ -97,9 +138,9 @@ define(
                     ],
                 };
                 var session = new ApplePaySession(3, params);
-                var self = this;
                 session.onvalidatemerchant = function(event) {
                     var request = {
+                        validationUrl: event.validationURL,
                         cartId: quote.getQuoteId()
                     };
                     var serviceUrl = urlBuilder.createUrl('/carts/mine/payone-getApplePaySession', {});
@@ -132,6 +173,9 @@ define(
                     self.token(event.payment.token);
                     self.session(session);
                     self.placeOrder();
+                };
+                session.oncancel = function (event) {
+                    console.log("Apple Pay cancelled", event);
                 };
                 session.begin();
             }

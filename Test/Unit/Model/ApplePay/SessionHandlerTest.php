@@ -90,7 +90,7 @@ class SessionHandlerTest extends BaseTestCase
         $this->applePayHelper->method("hasPrivateKeyFile")->willReturn(true);
         $this->curl->method("getBody")->willReturn($expected);
 
-        $result = $this->classToTest->getApplePaySession();
+        $result = $this->classToTest->getApplePaySession('https://apple-pay-gateway.apple.com/paymentservices/startSession');
         $this->assertEquals($expected, $result);
     }
 
@@ -101,7 +101,7 @@ class SessionHandlerTest extends BaseTestCase
         $this->applePayHelper->method("hasPrivateKeyFile")->willReturn(true);
 
         $this->expectException(\Exception::class);
-        $result = $this->classToTest->getApplePaySession();
+        $result = $this->classToTest->getApplePaySession('https://apple-pay-gateway.apple.com/paymentservices/startSession');
     }
 
     public function testGetApplePaySessionPrivateKeyException()
@@ -111,6 +111,6 @@ class SessionHandlerTest extends BaseTestCase
         $this->applePayHelper->method("hasPrivateKeyFile")->willReturn(false);
 
         $this->expectException(\Exception::class);
-        $result = $this->classToTest->getApplePaySession();
+        $result = $this->classToTest->getApplePaySession('https://apple-pay-gateway.apple.com/paymentservices/startSession');
     }
 }

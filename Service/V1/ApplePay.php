@@ -70,15 +70,16 @@ class ApplePay implements ApplePayInterface
      * cant handle this with its fake type system!
      *
      * @param  string $cartId
+     * @param  string $validationUrl
      * @return \Payone\Core\Service\V1\Data\ApplePayResponse
      */
-    public function getApplePaySession($cartId)
+    public function getApplePaySession($cartId, $validationUrl)
     {
         $oResponse = $this->responseFactory->create();
         $blSuccess = false;
 
         try {
-            $sSession = $this->sessionHandler->getApplePaySession();
+            $sSession = $this->sessionHandler->getApplePaySession($validationUrl);
             if (!empty($sSession)) {
                 $oResponse->setData('session', $sSession);
                 $blSuccess = true;

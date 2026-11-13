@@ -73,10 +73,10 @@
         </div>
         <div class="actions-toolbar">
             <div class="primary">
-                <div id="payoneApplePayButton" class="apple-pay-button-with-text apple-pay-button-black-with-text" data-bind="click: initializeApplePay">
-                    <span class="text">Buy with</span>
-                    <span class="logo"></span>
-                </div>
+                <apple-pay-button id="payoneApplePayButton"
+                                  buttonstyle="black"
+                                  type="buy"
+                                  data-bind="attr: {locale: getApplePayLocale()}, click: initializeApplePay"></apple-pay-button>
                 <!--button class="action primary checkout"
                         type="submit"
                         data-bind="
