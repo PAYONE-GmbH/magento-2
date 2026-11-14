@@ -133,7 +133,7 @@ class Paid implements ObserverInterface
 
         // if advance payment is paid should create an invoice
         if ($oOrder->getPayment()->getMethodInstance()->getCode() === PayoneConfig::METHOD_ADVANCE_PAYMENT) {
-            if ($this->orderHelper->getConfigParam('create_invoice', 'payone_advance_payment', 'payone_payment')) {
+            if ($this->orderHelper->getConfigParam('create_invoice', 'payone_advance_payment', 'payone_payment') && !$oOrder->isCanceled()) {
                 $oInvoice = $this->invoiceService->prepareInvoice($oOrder);
                 $oInvoice->setRequestedCaptureCase(Invoice::NOT_CAPTURE);
                 $oInvoice->setTransactionId($oOrder->getPayment()->getLastTransId());

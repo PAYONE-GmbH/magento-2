@@ -26,6 +26,8 @@
 
 namespace Payone\Core\Model\TransactionStatus;
 
+use Magento\Sales\Api\Data\OrderStatusHistoryInterfaceFactory;
+use Magento\Sales\Api\OrderStatusHistoryRepositoryInterface;
 use Magento\Sales\Model\Order;
 
 /**
@@ -48,17 +50,37 @@ class Mapping
     protected $databaseHelper;
 
     /**
+     * Order status history factory
+     *
+     * @var OrderStatusHistoryInterfaceFactory
+     */
+    private $historyFactory;
+
+    /**
+     * Order status history repository
+     *
+     * @var OrderStatusHistoryRepositoryInterface
+     */
+    private $historyRepository;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Helper\Payment  $paymentHelper
      * @param \Payone\Core\Helper\Database $databaseHelper
+     * @param OrderStatusHistoryInterfaceFactory $historyFactory
+     * @param OrderStatusHistoryRepositoryInterface $historyRepository
      */
     public function __construct(
         \Payone\Core\Helper\Payment $paymentHelper,
-        \Payone\Core\Helper\Database $databaseHelper
+        \Payone\Core\Helper\Database $databaseHelper,
+        OrderStatusHistoryInterfaceFactory $historyFactory,
+        OrderStatusHistoryRepositoryInterface $historyRepository
     ) {
         $this->paymentHelper = $paymentHelper;
         $this->databaseHelper = $databaseHelper;
+        $this->historyFactory = $historyFactory;
+        $this->historyRepository = $historyRepository;
     }
 
     /**
@@ -74,11 +96,23 @@ class Mapping
         $aStatusMapping = $this->paymentHelper->getStatusMappingByCode($sPaymentCode);
         if (isset($aStatusMapping[$sAction])) {
             $sStatus = $aStatusMapping[$sAction];
+            $sState = $this->databaseHelper->getStateByStatus($sStatus);
+
+            if ($oOrder->isCanceled() && $sState != Order::STATE_CANCELED) {
+                $oHistory = $this->historyFactory->create();
+                $oHistory->setParentId($oOrder->getId());
+                $oHistory->setStatus($oOrder->getStatus());
+                $oHistory->setComment('Received PAYONE status "'.$sAction.'".');
+                $oHistory->setEntityName(Order::ENTITY);
+                $oHistory->setIsCustomerNotified(0);
+                $oHistory->setIsVisibleOnFront(0);
+                $this->historyRepository->save($oHistory);
+                return;
+            }
 
             $sMsg = 'Received PAYONE status "'.$sAction.'". Order set to "'.$sStatus.'" by PAYONE StatusMapping';
             $oOrder->addStatusToHistory($sStatus, $sMsg, false);
 
-            $sState = $this->databaseHelper->getStateByStatus($sStatus);
             if ($sState) {
                 $oOrder->setState($sState);
             }
