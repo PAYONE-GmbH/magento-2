@@ -37,6 +37,8 @@ use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\ResourceModel\Order\Invoice\Collection;
 use Payone\Core\Helper\Base;
+use Payone\Core\Helper\Order as OrderHelper;
+use Payone\Core\Model\Methods\AdvancePayment;
 use Payone\Core\Model\Methods\Creditcard;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -94,6 +96,69 @@ class PaidTest extends BaseTestCase
 
         $result = $this->classToTest->execute($observer);
         $this->assertNull($result);
+    }
+
+    public function testExecuteAdvancePaymentCreatesInvoice()
+    {
+        $invoiceService = $this->getAdvancePaymentInvoiceService($this->once());
+        $classToTest = $this->getAdvancePaymentClassToTest($invoiceService);
+
+        $result = $classToTest->execute($this->getAdvancePaymentObserver(false));
+        $this->assertNull($result);
+    }
+
+    public function testExecuteAdvancePaymentCanceledOrderCreatesNoInvoice()
+    {
+        $invoiceService = $this->getAdvancePaymentInvoiceService($this->never());
+        $classToTest = $this->getAdvancePaymentClassToTest($invoiceService);
+
+        $result = $classToTest->execute($this->getAdvancePaymentObserver(true));
+        $this->assertNull($result);
+    }
+
+    private function getAdvancePaymentInvoiceService($expectedPrepareCalls)
+    {
+        $invoice = $this->getMockBuilder(Invoice::class)->disableOriginalConstructor()->getMock();
+
+        $invoiceService = $this->getMockBuilder(InvoiceService::class)->disableOriginalConstructor()->getMock();
+        $invoiceService->expects($expectedPrepareCalls)->method('prepareInvoice')->willReturn($invoice);
+
+        return $invoiceService;
+    }
+
+    private function getAdvancePaymentClassToTest($invoiceService)
+    {
+        $orderHelper = $this->getMockBuilder(OrderHelper::class)->disableOriginalConstructor()->getMock();
+        $orderHelper->method('getConfigParam')->willReturnCallback(function ($sKey) {
+            return $sKey === 'create_invoice' ? '1' : '0';
+        });
+
+        return $this->objectManager->getObject(ClassToTest::class, [
+            'invoiceService' => $invoiceService,
+            'orderHelper' => $orderHelper
+        ]);
+    }
+
+    private function getAdvancePaymentObserver($isCanceled)
+    {
+        $method = $this->getMockBuilder(AdvancePayment::class)->disableOriginalConstructor()->getMock();
+        $method->method('getCode')->willReturn(PayoneConfig::METHOD_ADVANCE_PAYMENT);
+
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getMethodInstance')->willReturn($method);
+
+        $invoiceCollection = $this->getMockBuilder(Collection::class)->disableOriginalConstructor()->getMock();
+        $invoiceCollection->method('getItems')->willReturn([]);
+
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getPayment')->willReturn($payment);
+        $order->method('isCanceled')->willReturn($isCanceled);
+        $order->method('getInvoiceCollection')->willReturn($invoiceCollection);
+
+        $observer = $this->getMockBuilder(Observer::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $observer->setData('order', $order);
+
+        return $observer;
     }
 
     public function testExecuteNoOrder()
