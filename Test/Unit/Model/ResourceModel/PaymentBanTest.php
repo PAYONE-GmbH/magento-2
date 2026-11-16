@@ -98,8 +98,32 @@ class PaymentBanTest extends BaseTestCase
 
     public function testGetPaymentBans()
     {
+        $select = $this->connection->select();
+        $conditions = ['`customer_id` = :customerId', '`to_date` > :toDate'];
+        $select->expects($this->exactly(2))
+            ->method('where')
+            ->with($this->callback(function ($condition) use (&$conditions) {
+                $this->assertSame(array_shift($conditions), $condition);
+                return true;
+            }));
+        $identifiers = ['customer_id', 'to_date'];
+        $this->connection->expects($this->exactly(2))
+            ->method('quoteIdentifier')
+            ->willReturnCallback(function ($identifier) use (&$identifiers) {
+                $this->assertSame(array_shift($identifiers), $identifier);
+                return '`' . $identifier . '`';
+            });
         $fetchReturn = [['payment_method' => 'payone_debit', 'to_date' => '2020-12-12 12:20:00']];
-        $this->connection->method('fetchAll')->willReturn($fetchReturn);
+        $this->connection->expects($this->once())
+            ->method('fetchAll')
+            ->with($this->identicalTo($select), $this->callback(function ($params) {
+                $this->assertSame(['customerId', 'toDate'], array_keys($params));
+                $this->assertSame(5, $params['customerId']);
+                $this->assertIsString($params['toDate']);
+                $this->assertNotSame('', $params['toDate']);
+                return true;
+            }))
+            ->willReturn($fetchReturn);
         $expected = ['payone_debit' => '2020-12-12 12:20:00'];
         $result = $this->classToTest->getPaymentBans(5);
         $this->assertEquals($expected, $result);

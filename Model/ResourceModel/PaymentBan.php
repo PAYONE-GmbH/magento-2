@@ -81,10 +81,11 @@ class PaymentBan extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function getPaymentBans($iCustomerId)
     {
-        $oSelect = $this->getConnection()->select()
+        $oConnection = $this->getConnection();
+        $oSelect = $oConnection->select()
             ->from($this->getMainTable(), ['payment_method', 'to_date'])
-            ->where("customer_id = :customerId")
-            ->where("to_date > :toDate")
+            ->where($oConnection->quoteIdentifier('customer_id') . ' = :customerId')
+            ->where($oConnection->quoteIdentifier('to_date') . ' > :toDate')
             ->order('to_date ASC');
 
         $aParams = [
@@ -92,7 +93,7 @@ class PaymentBan extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             'toDate' => date('Y-m-d H:i:s')
         ];
 
-        $aResult = $this->getConnection()->fetchAll($oSelect, $aParams);
+        $aResult = $oConnection->fetchAll($oSelect, $aParams);
 
         $aReturn = [];
         foreach ($aResult as $aItem) {
