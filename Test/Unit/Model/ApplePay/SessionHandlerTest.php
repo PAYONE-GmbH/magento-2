@@ -94,6 +94,115 @@ class SessionHandlerTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testGetApplePaySessionWithoutValidationUrl()
+    {
+        $this->shopHelper->method("getStoreBaseUrl")->willReturn("https://www.testshop.net");
+        $this->applePayHelper->method("hasCertificateFile")->willReturn(true);
+        $this->applePayHelper->method("hasPrivateKeyFile")->willReturn(true);
+        $this->curl->method("getBody")->willReturn("ApplePay Session");
+
+        $this->curl->expects($this->once())
+            ->method("post")
+            ->with('https://apple-pay-gateway.apple.com/paymentservices/startSession', $this->anything());
+
+        $result = $this->classToTest->getApplePaySession();
+        $this->assertEquals("ApplePay Session", $result);
+    }
+
+    public function testGetApplePaySessionSandboxValidationUrl()
+    {
+        $sValidationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
+
+        $this->shopHelper->method("getStoreBaseUrl")->willReturn("https://www.testshop.net");
+        $this->applePayHelper->method("hasCertificateFile")->willReturn(true);
+        $this->applePayHelper->method("hasPrivateKeyFile")->willReturn(true);
+
+        $this->curl->expects($this->once())
+            ->method("post")
+            ->with($sValidationUrl, $this->anything());
+
+        $this->classToTest->getApplePaySession($sValidationUrl);
+    }
+
+    public function testGetApplePaySessionHttpSchemeIsRejected()
+    {
+        $this->curl->expects($this->never())->method("post");
+
+        $this->expectException(\Exception::class);
+        $this->classToTest->getApplePaySession('http://apple-pay-gateway.apple.com/paymentservices/startSession');
+    }
+
+    public function testGetApplePaySessionForeignHostIsRejected()
+    {
+        $this->curl->expects($this->never())->method("post");
+
+        $this->expectException(\Exception::class);
+        $this->classToTest->getApplePaySession('https://www.example.com/paymentservices/startSession');
+    }
+
+    public function testGetApplePaySessionHostWithAppleSuffixIsRejected()
+    {
+        $this->curl->expects($this->never())->method("post");
+
+        $this->expectException(\Exception::class);
+        $this->classToTest->getApplePaySession('https://apple-pay-gateway.apple.com.example.com/paymentservices/startSession');
+    }
+
+    public function testGetApplePaySessionHostWithApplePrefixIsRejected()
+    {
+        $this->curl->expects($this->never())->method("post");
+
+        $this->expectException(\Exception::class);
+        $this->classToTest->getApplePaySession('https://example-apple-pay-gateway.apple.com/paymentservices/startSession');
+    }
+
+    public function testGetApplePaySessionDerCertificate()
+    {
+        $aOptions = $this->getCurlOptionsForCertificate("\x30\x82\x05\xd1\x30\x82\x04\xb9");
+
+        $this->assertArrayHasKey(CURLOPT_SSLCERTTYPE, $aOptions);
+        $this->assertEquals('DER', $aOptions[CURLOPT_SSLCERTTYPE]);
+    }
+
+    public function testGetApplePaySessionPemCertificate()
+    {
+        $aOptions = $this->getCurlOptionsForCertificate("-----BEGIN CERTIFICATE-----\nMIIF0TCCBLmgAwIBAgIIZ\n-----END CERTIFICATE-----\n");
+
+        $this->assertArrayNotHasKey(CURLOPT_SSLCERTTYPE, $aOptions);
+    }
+
+    /**
+     * Requests a session with the given certificate file content and returns the curl options that were set
+     *
+     * @param  string $sCertificateContent
+     * @return array
+     */
+    private function getCurlOptionsForCertificate($sCertificateContent)
+    {
+        $sUploadDir = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('payone_applepay_').DIRECTORY_SEPARATOR;
+        mkdir($sUploadDir);
+        $sCertFile = $sUploadDir."value"; // getConfigParam returns "value" for the certificate file name
+        file_put_contents($sCertFile, $sCertificateContent);
+
+        $this->shopHelper->method("getStoreBaseUrl")->willReturn("https://www.testshop.net");
+        $this->applePayHelper->method("hasCertificateFile")->willReturn(true);
+        $this->applePayHelper->method("hasPrivateKeyFile")->willReturn(true);
+        $this->applePayHelper->method("getApplePayUploadPath")->willReturn($sUploadDir);
+
+        $aOptions = [];
+        $this->curl->method("setOption")->willReturnCallback(function ($iOption, $mValue) use (&$aOptions) {
+            $aOptions[$iOption] = $mValue;
+        });
+
+        try {
+            $this->classToTest->getApplePaySession('https://apple-pay-gateway.apple.com/paymentservices/startSession');
+        } finally {
+            unlink($sCertFile);
+            rmdir($sUploadDir);
+        }
+        return $aOptions;
+    }
+
     public function testGetApplePaySessionCertificateException()
     {
         $this->shopHelper->method("getStoreBaseUrl")->willReturn("https://www.testshop.net");

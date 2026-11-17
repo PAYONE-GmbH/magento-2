@@ -28,18 +28,11 @@ class SessionHandler
     protected $applePayHelper;
 
     /**
-     * Payment helper object
+     * Apple Pay production gateway, used when the frontend does not send a validation URL
      *
-     * @var \Magento\Payment\Helper\Data
+     * @var string
      */
-    protected $dataHelper;
-
-    /**
-     * Checkout session
-     *
-     * @var \Magento\Checkout\Model\Session
-     */
-    protected $checkoutSession;
+    const DEFAULT_VALIDATION_URL = 'https://apple-pay-gateway.apple.com/paymentservices/startSession';
 
     /**
      * Pattern for Apple Pay gateway hosts the validation URL may point to
@@ -56,21 +49,15 @@ class SessionHandler
      * @param \Magento\Framework\HTTP\Client\Curl $curl
      * @param \Payone\Core\Helper\Shop            $shopHelper
      * @param \Payone\Core\Helper\ApplePay        $applePayHelper
-     * @param \Magento\Payment\Helper\Data        $dataHelper
-     * @param \Magento\Checkout\Model\Session     $checkoutSession
      */
     public function __construct(
         \Magento\Framework\HTTP\Client\Curl $curl,
         \Payone\Core\Helper\Shop $shopHelper,
-        \Payone\Core\Helper\ApplePay $applePayHelper,
-        \Magento\Payment\Helper\Data $dataHelper,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Payone\Core\Helper\ApplePay $applePayHelper
     ) {
         $this->curl = $curl;
         $this->shopHelper = $shopHelper;
         $this->applePayHelper = $applePayHelper;
-        $this->dataHelper = $dataHelper;
-        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -141,16 +128,16 @@ class SessionHandler
     }
 
     /**
-     * Requests the Apple Pay session directly from Apple with the merchants own certificate
+     * Requests the Apple Pay merchant session from Apple with the merchants certificate
      *
-     * @param  string $validationUrl
+     * @param  string $sValidationUrl
      * @return bool|string
      * @throws \Exception
      */
-    protected function getApplePaySessionThroughDevAccount($validationUrl)
+    protected function requestMerchantSession($sValidationUrl)
     {
         $aRequest = [
-            'merchantIdentifier' => $this->shopHelper->getConfigParam("merchant_id", PayoneConfig::METHOD_APPLEPAY, "payment"),
+            'merchantIdentifier' => $this->applePayHelper->getMerchantId(),
             'displayName' => 'PAYONE Apple Pay Magento2',
             'initiative' => 'web',
             'initiativeContext' => $this->getShopDomain(),
@@ -171,25 +158,30 @@ class SessionHandler
             $this->curl->setOption( CURLOPT_KEYPASSWD, $sKeyPass);
         }
 
-        $this->curl->post($validationUrl, json_encode($aRequest));
+        $this->curl->post($sValidationUrl, json_encode($aRequest));
         return $this->curl->getBody();
     }
 
     /**
      * Requests apple pay session and returns it
+     * Falls back to the Apple Pay production gateway when no validation URL is given
      *
-     * @param string $validationUrl
+     * @param  string|null $sValidationUrl
      * @return bool|string
      * @throws \Exception
      */
-    public function getApplePaySession($validationUrl)
+    public function getApplePaySession($sValidationUrl = null)
     {
-        $scheme = parse_url($validationUrl, PHP_URL_SCHEME);
-        $host = strtolower((string)parse_url($validationUrl, PHP_URL_HOST));
-        if ($scheme !== 'https' || preg_match(self::ALLOWED_HOST_PATTERN, $host) !== 1) {
+        if (empty($sValidationUrl)) {
+            $sValidationUrl = self::DEFAULT_VALIDATION_URL;
+        }
+
+        $sScheme = parse_url($sValidationUrl, PHP_URL_SCHEME);
+        $sHost = strtolower((string)parse_url($sValidationUrl, PHP_URL_HOST));
+        if ($sScheme !== 'https' || preg_match(self::ALLOWED_HOST_PATTERN, $sHost) !== 1) {
             throw new \Exception('Disallowed Apple Pay validation URL');
         }
 
-        return $this->getApplePaySessionThroughDevAccount($validationUrl);
+        return $this->requestMerchantSession($sValidationUrl);
     }
 }

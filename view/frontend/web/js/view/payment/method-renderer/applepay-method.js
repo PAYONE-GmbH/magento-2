@@ -124,10 +124,7 @@ define(
 
             initializeApplePay: function () {
                 var self = this;
-                var config = window.checkoutConfig.payment.payone.payone_applepay;
                 var params = {
-                    merchantIdentifier: config.merchantId,
-                    merchantName: config.merchantName,
                     countryCode: quote.billingAddress().countryId,
                     currencyCode: this.getCurrency(),
                     supportedNetworks: window.checkoutConfig.payment.payone.availableApplePayTypes,
@@ -173,9 +170,6 @@ define(
                     self.token(event.payment.token);
                     self.session(session);
                     self.placeOrder();
-                };
-                session.oncancel = function (event) {
-                    console.log("Apple Pay cancelled", event);
                 };
                 session.begin();
             }
