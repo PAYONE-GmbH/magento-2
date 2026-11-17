@@ -172,6 +172,23 @@ class DebitTest extends BaseTestCase
         $this->assertEquals($response, $result);
     }
 
+    public function testGetParametersRefundAppendixOverridesInvoiceAppendix()
+    {
+        $this->classToTest->addInvoiceParameter('invoiceappendix', 'invoice appendix');
+        $this->classToTest->addParameter('invoiceappendix', 'refund appendix');
+
+        $aParameters = $this->classToTest->getParameters();
+        $this->assertEquals('refund appendix', $aParameters['invoiceappendix']);
+    }
+
+    public function testGetParametersInvoiceAppendixWithoutRefundAppendix()
+    {
+        $this->classToTest->addInvoiceParameter('invoiceappendix', 'invoice appendix');
+
+        $aParameters = $this->classToTest->getParameters();
+        $this->assertEquals('invoice appendix', $aParameters['invoiceappendix']);
+    }
+
     public function testSendRequestPositions()
     {
         $this->shopHelper->method('getConfigParam')->willReturnMap(
