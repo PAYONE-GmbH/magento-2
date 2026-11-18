@@ -28,11 +28,20 @@ class SessionHandler
     protected $applePayHelper;
 
     /**
-     * Request URL for collecting the Apple Pay session
+     * Apple Pay production gateway, used when the frontend does not send a validation URL
      *
      * @var string
      */
-    protected $applePaySessionUrl =  "https://apple-pay-gateway-cert.apple.com/paymentservices/startSession";
+    const DEFAULT_VALIDATION_URL = 'https://apple-pay-gateway.apple.com/paymentservices/startSession';
+
+    /**
+     * Pattern for Apple Pay gateway hosts the validation URL may point to
+     * Matches e.g. apple-pay-gateway.apple.com, apple-pay-gateway-cert.apple.com,
+     * apple-pay-gateway-nc-pod1.apple.com and cn-apple-pay-gateway-sh-pod1.apple.com
+     *
+     * @var string
+     */
+    private const ALLOWED_HOST_PATTERN = '/^(cn-)?apple-pay-gateway(-[a-z0-9]+)*\.apple\.com$/';
 
     /**
      * Constructor
@@ -104,25 +113,44 @@ class SessionHandler
     }
 
     /**
-     * Requests apple pay session and returns it
+     * Checks if the given file is PEM encoded
      *
+     * @param  string $sFilePath
+     * @return bool
+     */
+    protected function isPemFile($sFilePath)
+    {
+        if (!is_file($sFilePath) || !is_readable($sFilePath)) {
+            return false;
+        }
+        $sContent = file_get_contents($sFilePath);
+        return $sContent !== false && strpos($sContent, '-----BEGIN') !== false;
+    }
+
+    /**
+     * Requests the Apple Pay merchant session from Apple with the merchants certificate
+     *
+     * @param  string $sValidationUrl
      * @return bool|string
      * @throws \Exception
      */
-    public function getApplePaySession()
+    protected function requestMerchantSession($sValidationUrl)
     {
         $aRequest = [
-            'merchantIdentifier' => $this->shopHelper->getConfigParam("merchant_id", PayoneConfig::METHOD_APPLEPAY, "payment"),
+            'merchantIdentifier' => $this->applePayHelper->getMerchantId(),
             'displayName' => 'PAYONE Apple Pay Magento2',
             'initiative' => 'web',
             'initiativeContext' => $this->getShopDomain(),
         ];
 
-        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, 0);
-        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, 0);
+        $sCertFilePath = $this->getCertificateFilePath();
+
         $this->curl->setOption(CURLOPT_RETURNTRANSFER, 1);
-        $this->curl->setOption(CURLOPT_RETURNTRANSFER, 1);
-        $this->curl->setOption(CURLOPT_SSLCERT, $this->getCertificateFilePath());
+        $this->curl->setOption(CURLOPT_SSLCERT, $sCertFilePath);
+        if ($this->isPemFile($sCertFilePath) === false) {
+            // The merchant_id.cer downloaded from the Apple developer portal is DER encoded
+            $this->curl->setOption(CURLOPT_SSLCERTTYPE, 'DER');
+        }
         $this->curl->setOption(CURLOPT_SSLKEY, $this->getPrivateKeyFilePath());
 
         $sKeyPass = $this->shopHelper->getConfigParam("private_key_password", PayoneConfig::METHOD_APPLEPAY, "payment");
@@ -130,7 +158,30 @@ class SessionHandler
             $this->curl->setOption( CURLOPT_KEYPASSWD, $sKeyPass);
         }
 
-        $this->curl->post($this->applePaySessionUrl, json_encode($aRequest));
+        $this->curl->post($sValidationUrl, json_encode($aRequest));
         return $this->curl->getBody();
+    }
+
+    /**
+     * Requests apple pay session and returns it
+     * Falls back to the Apple Pay production gateway when no validation URL is given
+     *
+     * @param  string|null $sValidationUrl
+     * @return bool|string
+     * @throws \Exception
+     */
+    public function getApplePaySession($sValidationUrl = null)
+    {
+        if (empty($sValidationUrl)) {
+            $sValidationUrl = self::DEFAULT_VALIDATION_URL;
+        }
+
+        $sScheme = parse_url($sValidationUrl, PHP_URL_SCHEME);
+        $sHost = strtolower((string)parse_url($sValidationUrl, PHP_URL_HOST));
+        if ($sScheme !== 'https' || preg_match(self::ALLOWED_HOST_PATTERN, $sHost) !== 1) {
+            throw new \Exception('Disallowed Apple Pay validation URL');
+        }
+
+        return $this->requestMerchantSession($sValidationUrl);
     }
 }

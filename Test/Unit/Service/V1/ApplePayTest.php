@@ -72,11 +72,23 @@ class ApplePayTest extends BaseTestCase
         ]);
     }
 
+    public function testGetApplePaySessionWithoutValidationUrl()
+    {
+        $this->sessionHandler->expects($this->once())
+            ->method('getApplePaySession')
+            ->with(null)
+            ->willReturn("ApplePay Session");
+
+        $result = $this->classToTest->getApplePaySession(4711);
+        $result = $result->__toArray();
+        $this->assertTrue($result['success']);
+    }
+
     public function testGetApplePaySession()
     {
         $this->sessionHandler->method('getApplePaySession')->willReturn("ApplePay Session");
 
-        $result = $this->classToTest->getApplePaySession(4711);
+        $result = $this->classToTest->getApplePaySession(4711, 'https://apple-pay-gateway.apple.com/paymentservices/startSession');
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
     }
@@ -85,7 +97,7 @@ class ApplePayTest extends BaseTestCase
     {
         $this->sessionHandler->method('getApplePaySession')->willThrowException(new \Exception("Error"));
 
-        $result = $this->classToTest->getApplePaySession(4711);
+        $result = $this->classToTest->getApplePaySession(4711, 'https://apple-pay-gateway.apple.com/paymentservices/startSession');
         $result = $result->__toArray();
         $this->assertFalse($result['success']);
     }
