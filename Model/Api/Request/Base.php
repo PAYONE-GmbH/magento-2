@@ -274,7 +274,7 @@ abstract class Base
      */
     public function getParameters()
     {
-        return array_merge($this->aParameters, $this->getInvoiceParameters());
+        return array_merge($this->getInvoiceParameters(), $this->aParameters);
     }
 
     /**
