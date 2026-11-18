@@ -92,6 +92,13 @@ class Addresscheck
     protected $quoteRepository;
 
     /**
+     * PAYONE checkout helper
+     *
+     * @var \Payone\Core\Helper\Checkout
+     */
+    protected $checkoutHelper;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Model\Api\Request\Addresscheck $addresscheck
@@ -99,19 +106,22 @@ class Addresscheck
      * @param \Payone\Core\Helper\Toolkit                 $toolkitHelper
      * @param \Magento\Checkout\Model\Session             $checkoutSession
      * @param \Magento\Quote\Api\CartRepositoryInterface  $quoteRepository
+     * @param \Payone\Core\Helper\Checkout                $checkoutHelper
      */
     public function __construct(
         \Payone\Core\Model\Api\Request\Addresscheck $addresscheck,
         \Payone\Core\Helper\Database $databaseHelper,
         \Payone\Core\Helper\Toolkit $toolkitHelper,
         \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
+        \Payone\Core\Helper\Checkout $checkoutHelper
     ) {
         $this->addresscheck = $addresscheck;
         $this->databaseHelper = $databaseHelper;
         $this->toolkitHelper = $toolkitHelper;
         $this->checkoutSession = $checkoutSession;
         $this->quoteRepository = $quoteRepository;
+        $this->checkoutHelper = $checkoutHelper;
     }
 
     /**
@@ -346,11 +356,19 @@ class Addresscheck
         $oQuote = $this->quoteRepository->getActive($iCartId);
 
         $sScore = $this->checkoutSession->getPayoneBillingAddresscheckScore();
+        $aHashes = $this->checkoutSession->getPayoneBillingAddresscheckHashes();
         if ($blIsBillingAddress === false) {
             $sScore = $this->checkoutSession->getPayoneShippingAddresscheckScore();
+            $aHashes = $this->checkoutSession->getPayoneShippingAddresscheckHashes();
         }
         $this->checkoutSession->unsPayoneBillingAddresscheckScore();
+        $this->checkoutSession->unsPayoneBillingAddresscheckHashes();
         $this->checkoutSession->unsPayoneShippingAddresscheckScore();
+        $this->checkoutSession->unsPayoneShippingAddresscheckHashes();
+
+        if ($sScore && (!is_array($aHashes) || !in_array($this->checkoutHelper->getHashFromAddress($oAddress), $aHashes, true))) {
+            $sScore = false; // the score in the session was determined for a different address
+        }
 
         if (!$sScore && empty($oAddress->getPayoneAddresscheckScore())) {
             if ($this->isCheckNeededForQuote($blIsBillingAddress, $oQuote->isVirtual(), $oQuote->getSubtotal())) {
@@ -365,6 +383,33 @@ class Addresscheck
             $oAddress->setPayoneAddresscheckScore($sScore);
         }
         return $oAddress;
+    }
+
+    /**
+     * Save the score of the checked address in the checkout session
+     * The hashes of the checked address are saved with it, so that the score is only used for this address
+     * Both versions of the address are allowed: with the corrections from the response and without them,
+     * because the customer can decline the suggested correction
+     *
+     * @param  AddressInterface $oAddress
+     * @param  array            $aResponse
+     * @param  bool             $blIsBillingAddress
+     * @return void
+     */
+    public function addScoreToSession(AddressInterface $oAddress, $aResponse, $blIsBillingAddress)
+    {
+        $sScore = $this->getScore($oAddress);
+        $aHashes = [
+            $this->checkoutHelper->getHashFromAddress($oAddress),
+            $this->checkoutHelper->getHashFromAddress($oAddress, $aResponse),
+        ];
+        if ($blIsBillingAddress === true) {
+            $this->checkoutSession->setPayoneBillingAddresscheckScore($sScore);
+            $this->checkoutSession->setPayoneBillingAddresscheckHashes($aHashes);
+        } else {
+            $this->checkoutSession->setPayoneShippingAddresscheckScore($sScore);
+            $this->checkoutSession->setPayoneShippingAddresscheckHashes($aHashes);
+        }
     }
 
     /**

@@ -135,6 +135,20 @@ class BaseTest extends BaseTestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testIsSslVerificationActive()
+    {
+        $this->state->method('getAreaCode')->willReturn(\Magento\Framework\App\Area::AREA_FRONTEND);
+        $this->scopeConfig->expects($this->any())
+            ->method('getValue')
+            ->willReturnMap(
+                [
+                    ['payone_general/global/ssl_verify', ScopeInterface::SCOPE_STORES, null, '0']
+                ]
+            );
+        $result = $this->base->isSslVerificationActive();
+        $this->assertFalse($result);
+    }
+
     public function testGetConfigParamAllStores()
     {
         $this->state->method('getAreaCode')->willReturn(\Magento\Framework\App\Area::AREA_FRONTEND);

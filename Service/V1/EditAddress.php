@@ -27,6 +27,7 @@
 namespace Payone\Core\Service\V1;
 
 use Payone\Core\Api\EditAddressInterface;
+use Magento\Authorization\Model\UserContextInterface;
 
 /**
  * Web API model for the PAYONE addresscheck
@@ -48,17 +49,27 @@ class EditAddress implements EditAddressInterface
     protected $addressRepository;
 
     /**
+     * Context of the current API user
+     *
+     * @var UserContextInterface
+     */
+    protected $userContext;
+
+    /**
      * Constructor
      *
      * @param \Payone\Core\Service\V1\Data\EditAddressResponseFactory $responseFactory
      * @param \Magento\Customer\Api\AddressRepositoryInterface        $addressRepository
+     * @param UserContextInterface                                    $userContext
      */
     public function __construct(
         \Payone\Core\Service\V1\Data\EditAddressResponseFactory $responseFactory,
-        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
+        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository,
+        UserContextInterface $userContext
     ) {
         $this->responseFactory = $responseFactory;
         $this->addressRepository = $addressRepository;
+        $this->userContext = $userContext;
     }
 
     /**
@@ -72,7 +83,16 @@ class EditAddress implements EditAddressInterface
      */
     public function editAddress($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData)
     {
+        $oResponse = $this->responseFactory->create();
+
         $address = $this->addressRepository->getById($addressData->getCustomerAddressId());
+        if ($this->userContext->getUserType() != UserContextInterface::USER_TYPE_CUSTOMER ||
+            (int)$address->getCustomerId() !== (int)$this->userContext->getUserId()
+        ) { // only the owner of the address may edit it
+            $oResponse->setData('success', false);
+            return $oResponse;
+        }
+
         $address->setPostcode($addressData->getPostcode());
         $address->setFirstname($addressData->getFirstname());
         $address->setLastname($addressData->getLastname());
@@ -87,7 +107,6 @@ class EditAddress implements EditAddressInterface
 
         $this->addressRepository->save($address);
 
-        $oResponse = $this->responseFactory->create();
         $oResponse->setData('success', true);
         return $oResponse;
     }

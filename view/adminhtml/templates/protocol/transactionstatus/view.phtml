@@ -40,17 +40,17 @@ $oTransactionStatus = $block->getTransactionStatusEntry();
                         <tbody>
                             <?php foreach ($oTransactionStatus->getRawStatusArray() as $sKey => $mValue): ?>
                             <tr>
-                                <th><?php echo $sKey; ?></th>
+                                <th><?php echo $block->escapeHtml($sKey); ?></th>
                                 <td>
-                                    <?php 
-                                        if (!is_array($mValue)) { 
-                                            echo $mValue; 
+                                    <?php
+                                        if (!is_array($mValue)) {
+                                            echo $block->escapeHtml($mValue);
                                         } elseif (count($mValue) > 0) { 
                                             $blFirst = true;
                                             foreach ($mValue as $sSubKey => $sSubValue) {
                                                 if (!empty($sSubValue)) {
                                                     if (!$blFirst) echo ', ';
-                                                    echo $sSubValue;
+                                                    echo $block->escapeHtml($sSubValue);
                                                     $blFirst = false;
                                                 }
                                             }

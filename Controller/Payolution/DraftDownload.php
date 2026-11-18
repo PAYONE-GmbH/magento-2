@@ -63,11 +63,11 @@ class DraftDownload extends \Magento\Framework\App\Action\Action
     protected $oOrder = null;
 
     /**
-     * Magento curl object
+     * Factory for Magento curl object
      *
-     * @var \Magento\Framework\HTTP\Client\Curl
+     * @var \Magento\Framework\HTTP\Client\CurlFactory
      */
-    protected $curl;
+    protected $curlFactory;
 
     /**
      * Constructor
@@ -76,22 +76,20 @@ class DraftDownload extends \Magento\Framework\App\Action\Action
      * @param \Magento\Checkout\Model\Session                 $checkoutSession
      * @param \Payone\Core\Helper\Payment                     $paymentHelper
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
-     * @param \Magento\Framework\HTTP\Client\Curl             $curl
+     * @param \Magento\Framework\HTTP\Client\CurlFactory      $curlFactory
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Helper\Payment $paymentHelper,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        \Magento\Framework\HTTP\Client\Curl $curl
+        \Magento\Framework\HTTP\Client\CurlFactory $curlFactory
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
         $this->paymentHelper = $paymentHelper;
         $this->resultRawFactory = $resultRawFactory;
-        $this->curl = $curl;
-        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
-        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
+        $this->curlFactory = $curlFactory;
     }
 
     /**
@@ -105,10 +103,17 @@ class DraftDownload extends \Magento\Framework\App\Action\Action
         $aDraftLinks = $this->checkoutSession->getInstallmentDraftLinks();
         $sUser = $this->paymentHelper->getConfigParam('installment_draft_user', PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT, 'payone_payment');
         $sPassword = $this->paymentHelper->getConfigParam('installment_draft_password', PayoneConfig::METHOD_PAYOLUTION_INSTALLMENT, 'payone_payment');
-        if (isset($aDraftLinks[$iDuration]) && $sUser && $sPassword) {
-            $sDownloadUrl = str_ireplace('https://', 'https://'.$sUser.':'.$sPassword.'@', $aDraftLinks[$iDuration]);
-            $this->curl->get($sDownloadUrl);
-            return $this->curl->getBody();
+        // the credentials are only sent over an encrypted connection
+        if (isset($aDraftLinks[$iDuration]) && stripos($aDraftLinks[$iDuration], 'https://') === 0 && $sUser && $sPassword) {
+            $oCurl = $this->curlFactory->create();
+            $oCurl->setCredentials($sUser, $sPassword);
+            $this->paymentHelper->setCurlSslOptions($oCurl);
+            try {
+                $oCurl->get($aDraftLinks[$iDuration]);
+            } catch (\Exception $exc) {
+                return false; // e.g. connection or certificate error
+            }
+            return $oCurl->getBody();
         }
         return false;
     }

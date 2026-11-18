@@ -69,17 +69,18 @@ class Upload extends \Magento\Framework\App\Config\Value
         $value = $this->getValue();
 
         if (!empty($value['value'])) {
-            $this->setValue($value['value']);
+            $this->setValue(basename($value['value'])); // only files directly in the upload folder can be used
         } elseif (!isset($value['value'])) {
             $this->setValue('');
         }
 
         if (is_array($value) && !empty($value['delete'])) {
-            $sCurrentFile = $this->applePayHelper->getApplePayUploadPath().$value['value'];
+            $sFileName = basename($value['value']); // only files directly in the upload folder can be deleted
+            $sCurrentFile = $this->applePayHelper->getApplePayUploadPath().$sFileName;
             if (file_exists($sCurrentFile)) {
                 unlink($sCurrentFile);
             } else {
-                $sCurrentFile = $this->applePayHelper->getApplePayUploadPath(true).$value['value'];
+                $sCurrentFile = $this->applePayHelper->getApplePayUploadPath(true).$sFileName;
                 if (file_exists($sCurrentFile)) {
                     unlink($sCurrentFile);
                 }
@@ -97,9 +98,10 @@ class Upload extends \Magento\Framework\App\Config\Value
             if (!$this->_tmpDirectory->stat($tmpPath)['size']) {
                 throw new \Magento\Framework\Exception\LocalizedException(__('The certificate file is empty.'));
             }
-            $this->setValue($value['name']);
+            $sFileName = basename($value['name']); // the file is always saved directly in the upload folder
+            $this->setValue($sFileName);
 
-            $this->moveFile($value['tmp_name'], $value['name']);
+            $this->moveFile($value['tmp_name'], $sFileName);
         }
         return $this;
     }

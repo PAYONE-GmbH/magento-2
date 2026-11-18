@@ -44,6 +44,7 @@ use Magento\Framework\DataObject;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Directory\Model\Currency;
+use Magento\Framework\App\DeploymentConfig;
 
 #[AllowMockObjectsWithoutExpectations]
 class ToolkitTest extends BaseTestCase
@@ -98,11 +99,15 @@ class ToolkitTest extends BaseTestCase
         $paymentHelper = $this->objectManager->getObject(Payment::class);
         $this->shopHelper = $this->getMockBuilder(Shop::class)->disableOriginalConstructor()->getMock();
 
+        $deploymentConfig = $this->getMockBuilder(DeploymentConfig::class)->disableOriginalConstructor()->getMock();
+        $deploymentConfig->method('get')->willReturn('0123456789abcdef0123456789abcdef');
+
         $this->toolkit = $this->objectManager->getObject(Toolkit::class, [
             'context' => $context,
             'storeManager' => $storeManager,
             'paymentHelper' => $paymentHelper,
-            'shopHelper' => $this->shopHelper
+            'shopHelper' => $this->shopHelper,
+            'deploymentConfig' => $deploymentConfig
         ]);
     }
 
@@ -146,6 +151,51 @@ class ToolkitTest extends BaseTestCase
         $this->assertTrue($result);
 
         $result = $this->toolkit->isKeyValid('no hash');
+        $this->assertFalse($result);
+    }
+
+    public function testIsKeyValidNoKeyConfigured()
+    {
+        $this->scopeConfig->method('getValue')->willReturn(null);
+
+        $result = $this->toolkit->isKeyValid($this->toolkit->hashString('', 'md5'));
+        $this->assertFalse($result);
+    }
+
+    public function testIsSignatureValid()
+    {
+        $hash = $this->toolkit->getSignature('000000123');
+        $this->assertEquals(32, strlen($hash));
+
+        $result = $this->toolkit->isSignatureValid('000000123', $hash);
+        $this->assertTrue($result);
+
+        $result = $this->toolkit->isSignatureValid('000000124', $hash);
+        $this->assertFalse($result);
+
+        $result = $this->toolkit->isSignatureValid('000000123', null);
+        $this->assertFalse($result);
+
+        $result = $this->toolkit->isSignatureValid(['000000123'], $hash);
+        $this->assertFalse($result);
+
+        $result = $this->toolkit->isSignatureValid('000000123', [$hash]);
+        $this->assertFalse($result);
+    }
+
+    public function testGetSignatureNoCryptKey()
+    {
+        $deploymentConfig = $this->getMockBuilder(DeploymentConfig::class)->disableOriginalConstructor()->getMock();
+        $deploymentConfig->method('get')->willReturn(null);
+        $toolkit = $this->objectManager->getObject(Toolkit::class, ['deploymentConfig' => $deploymentConfig]);
+
+        $this->expectException(\RuntimeException::class);
+        $toolkit->getSignature('000000123');
+    }
+
+    public function testIsKeyValidNoString()
+    {
+        $result = $this->toolkit->isKeyValid(['abc']);
         $this->assertFalse($result);
     }
 

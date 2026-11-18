@@ -29,6 +29,8 @@ namespace Payone\Core\Service\V1;
 use Payone\Core\Api\AddresscheckInterface;
 use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Magento\Quote\Api\Data\AddressInterface;
+use Magento\Authorization\Model\UserContextInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Web API model for the PAYONE addresscheck
@@ -50,27 +52,73 @@ class Addresscheck implements AddresscheckInterface
     protected $responseFactory;
 
     /**
-     * Checkout session object
+     * Quote repository
      *
-     * @var \Magento\Checkout\Model\Session
+     * @var \Magento\Quote\Api\CartRepositoryInterface
      */
-    protected $checkoutSession;
+    protected $quoteRepository;
+
+    /**
+     * Factory for the masked quote ids of guest carts
+     *
+     * @var \Magento\Quote\Model\QuoteIdMaskFactory
+     */
+    protected $quoteIdMaskFactory;
+
+    /**
+     * Context of the current API user
+     *
+     * @var UserContextInterface
+     */
+    protected $userContext;
 
     /**
      * Constructor
      *
      * @param \Payone\Core\Model\Risk\Addresscheck                  $addresscheck
      * @param \Payone\Core\Service\V1\Data\AddresscheckResponseFactory $responseFactory
-     * @param \Magento\Checkout\Model\Session                       $checkoutSession
+     * @param \Magento\Quote\Api\CartRepositoryInterface            $quoteRepository
+     * @param \Magento\Quote\Model\QuoteIdMaskFactory               $quoteIdMaskFactory
+     * @param UserContextInterface                                  $userContext
      */
     public function __construct(
         \Payone\Core\Model\Risk\Addresscheck $addresscheck,
         \Payone\Core\Service\V1\Data\AddresscheckResponseFactory $responseFactory,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
+        \Magento\Quote\Model\QuoteIdMaskFactory $quoteIdMaskFactory,
+        UserContextInterface $userContext
     ) {
         $this->addresscheck = $addresscheck;
         $this->responseFactory = $responseFactory;
-        $this->checkoutSession = $checkoutSession;
+        $this->quoteRepository = $quoteRepository;
+        $this->quoteIdMaskFactory = $quoteIdMaskFactory;
+        $this->userContext = $userContext;
+    }
+
+    /**
+     * Load the active quote for the given cart id
+     * Guests send the masked cart id, for logged in customers the real cart id is set by the webapi
+     *
+     * @param  string $cartId
+     * @return \Magento\Quote\Model\Quote|false
+     */
+    protected function getQuote($cartId)
+    {
+        $iQuoteId = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id')->getQuoteId();
+        if (empty($iQuoteId) && $this->userContext->getUserType() == UserContextInterface::USER_TYPE_CUSTOMER) {
+            $iQuoteId = $cartId;
+        }
+
+        try {
+            $oQuote = $this->quoteRepository->getActive($iQuoteId);
+        } catch (NoSuchEntityException $exc) {
+            return false;
+        }
+
+        if ($oQuote->getCustomerId() && (int)$oQuote->getCustomerId() !== (int)$this->userContext->getUserId()) {
+            return false; // cart of a different customer
+        }
+        return $oQuote;
     }
 
     /**
@@ -93,23 +141,6 @@ class Addresscheck implements AddresscheckInterface
         $sMessage .= $addressData->getPostcode().' '.$addressData->getCity();
 
         return $sMessage;
-    }
-
-    /**
-     * Add the score to the correct session variable
-     *
-     * @param  AddressInterface $oAddress
-     * @param  bool             $blIsBillingAddress
-     * @return void
-     */
-    protected function addScoreToSession(AddressInterface $oAddress, $blIsBillingAddress)
-    {
-        $sScore = $this->addresscheck->getScore($oAddress);
-        if ($blIsBillingAddress === true) { // is billing address?
-            $this->checkoutSession->setPayoneBillingAddresscheckScore($sScore);
-        } else {
-            $this->checkoutSession->setPayoneShippingAddresscheckScore($sScore);
-        }
     }
 
     /**
@@ -165,7 +196,7 @@ class Addresscheck implements AddresscheckInterface
     protected function handleAddresscheck(AddresscheckResponse $oResponse, AddressInterface $oAddress, $blIsBillingAddress) {
         $aResponse = $this->addresscheck->getResponse($oAddress, $blIsBillingAddress);
         if (is_array($aResponse) && array_key_exists('wrongCountry', $aResponse) === false) { // is a real response existing?
-            $this->addScoreToSession($oAddress, $blIsBillingAddress);
+            $this->addresscheck->addScoreToSession($oAddress, $aResponse, $blIsBillingAddress);
             $oResponse = $this->handleResponse($oResponse, $oAddress, $aResponse);
         } elseif ($aResponse === true || isset($aResponse['wrongCountry'])) { // set success to true
             $oResponse->setData('success', true);
@@ -181,17 +212,24 @@ class Addresscheck implements AddresscheckInterface
      * @param  string $cartId
      * @param  \Magento\Quote\Api\Data\AddressInterface $addressData
      * @param  bool $isBillingAddress
-     * @param  bool $isVirtual
-     * @param  double $dTotal
+     * @param  bool $isVirtual not used anymore, the value is taken from the quote
+     * @param  double $dTotal not used anymore, the value is taken from the quote
      * @return \Payone\Core\Service\V1\Data\AddresscheckResponse
      */
     public function checkAddress($cartId, \Magento\Quote\Api\Data\AddressInterface $addressData, $isBillingAddress, $isVirtual, $dTotal)
     {
         $oResponse = $this->responseFactory->create();
         $oResponse->setData('success', false); // set success to false as default, set to true later if true
-        if ($this->addresscheck->isCheckNeededForQuote($isBillingAddress, $isVirtual, $dTotal)) {
-            $oResponse = $this->handleAddresscheck($oResponse, $addressData, $isBillingAddress);
+
+        $oQuote = $this->getQuote($cartId);
+        if (!$oQuote || !$oQuote->hasItems() ||
+            !$this->addresscheck->isCheckNeededForQuote($isBillingAddress, $oQuote->isVirtual(), $oQuote->getSubtotal())
+        ) {
+            // no check is executed here, the checkout can continue - the address is checked again when it is assigned to the quote
+            $oResponse->setData('success', true);
+            return $oResponse;
         }
-        return $oResponse;
+
+        return $this->handleAddresscheck($oResponse, $addressData, $isBillingAddress);
     }
 }

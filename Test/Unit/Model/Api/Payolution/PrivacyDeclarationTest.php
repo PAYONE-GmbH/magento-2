@@ -31,6 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Shop;
 use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\HTTP\Client\CurlFactory;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Magento\Framework\App\Cache;
 
@@ -65,12 +66,14 @@ class PrivacyDeclarationTest extends BaseTestCase
         $this->shopHelper->method('getLocale')->willReturn('de');
 
         $this->curl = $this->getMockBuilder(Curl::class)->disableOriginalConstructor()->getMock();
+        $curlFactory = $this->getMockBuilder(CurlFactory::class)->disableOriginalConstructor()->onlyMethods(['create'])->getMock();
+        $curlFactory->method('create')->willReturn($this->curl);
 
         $this->cache = $this->getMockBuilder(Cache::class)->disableOriginalConstructor()->getMock();
 
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'shopHelper' => $this->shopHelper,
-            'curl' => $this->curl,
+            'curlFactory' => $curlFactory,
             'cache' => $this->cache
         ]);
     }

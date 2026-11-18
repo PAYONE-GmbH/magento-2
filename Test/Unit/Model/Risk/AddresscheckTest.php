@@ -33,6 +33,7 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Model\Api\Request\Addresscheck;
 use Payone\Core\Helper\Database;
 use Payone\Core\Helper\Toolkit;
+use Payone\Core\Helper\Checkout;
 use Magento\Checkout\Model\Session;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote;
@@ -79,6 +80,11 @@ class AddresscheckTest extends BaseTestCase
      */
     private $quoteRepository;
 
+    /**
+     * @var array
+     */
+    private $checkoutSessionData;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
@@ -104,12 +110,16 @@ class AddresscheckTest extends BaseTestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['__call'])
             ->getMock();
-        $checkoutSessionData = [
+        $this->checkoutSessionData = [
             'getPayoneShippingAddresscheckScore' => null,
         ];
-        $checkoutSession->method('__call')->willReturnCallback(function ($method) use (&$checkoutSession, &$checkoutSessionData) {
-            if (array_key_exists($method, $checkoutSessionData)) {
-                return $checkoutSessionData[$method];
+        $checkoutSession->method('__call')->willReturnCallback(function ($method, $args) use (&$checkoutSession) {
+            if (strpos($method, 'set') === 0) {
+                $this->checkoutSessionData['get'.substr($method, 3)] = $args[0];
+                return $checkoutSession;
+            }
+            if (array_key_exists($method, $this->checkoutSessionData)) {
+                return $this->checkoutSessionData[$method];
             }
             return strpos($method, 'get') === 0 ? null : $checkoutSession;
         });
@@ -117,13 +127,71 @@ class AddresscheckTest extends BaseTestCase
         $this->quoteRepository = $this->getMockBuilder(CartRepositoryInterface::class)->disableOriginalConstructor()->getMock();
         $this->quoteRepository->method('getActive')->willReturn($this->quote);
 
+        $checkoutHelper = $this->getMockBuilder(Checkout::class)->disableOriginalConstructor()->getMock();
+        $checkoutHelper->method('getHashFromAddress')->willReturnCallback(function ($oAddress, $aResponse = false) {
+            return $aResponse === false ? 'hash_of_address' : 'hash_of_corrected_address';
+        });
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'addresscheck' => $this->addresscheck,
             'databaseHelper' => $this->databaseHelper,
             'toolkitHelper' => $this->toolkitHelper,
             'checkoutSession' => $checkoutSession,
-            'quoteRepository' => $this->quoteRepository
+            'quoteRepository' => $this->quoteRepository,
+            'checkoutHelper' => $checkoutHelper
         ]);
+    }
+
+    public function testAddScoreToSession()
+    {
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods(['getStreet'])->getMock();
+        $this->addresscheck->method('sendRequest')->willReturn(['status' => 'INVALID']);
+
+        $this->classToTest->addScoreToSession($address, ['status' => 'INVALID'], true);
+
+        $this->assertEquals('R', $this->checkoutSessionData['getPayoneBillingAddresscheckScore']);
+        $this->assertEquals(
+            ['hash_of_address', 'hash_of_corrected_address'],
+            $this->checkoutSessionData['getPayoneBillingAddresscheckHashes']
+        );
+    }
+
+    public function testHandleAddressManagementSessionScoreCorrectionAccepted()
+    {
+        // the assigned address has the hash of the corrected address from the check
+        $this->checkoutSessionData['getPayoneBillingAddresscheckScore'] = 'G';
+        $this->checkoutSessionData['getPayoneBillingAddresscheckHashes'] = ['hash_of_original_address', 'hash_of_address'];
+
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods(['getStreet'])->getMock();
+        $this->addresscheck->expects($this->never())->method('sendRequest');
+
+        $result = $this->classToTest->handleAddressManagement($address, $this->quote, true);
+        $this->assertEquals('G', $result->getPayoneAddresscheckScore());
+    }
+
+    public function testHandleAddressManagementSessionScoreCorrectionDeclined()
+    {
+        // the assigned address has the hash of the original address from the check
+        $this->checkoutSessionData['getPayoneBillingAddresscheckScore'] = 'G';
+        $this->checkoutSessionData['getPayoneBillingAddresscheckHashes'] = ['hash_of_address', 'hash_of_corrected_address'];
+
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods(['getStreet'])->getMock();
+        $this->addresscheck->expects($this->never())->method('sendRequest');
+
+        $result = $this->classToTest->handleAddressManagement($address, $this->quote, true);
+        $this->assertEquals('G', $result->getPayoneAddresscheckScore());
+    }
+
+    public function testHandleAddressManagementSessionScoreOtherAddress()
+    {
+        $this->checkoutSessionData['getPayoneBillingAddresscheckScore'] = 'G';
+        $this->checkoutSessionData['getPayoneBillingAddresscheckHashes'] = ['hash_of_other_address', 'hash_of_other_corrected_address'];
+
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods(['getStreet'])->getMock();
+        $this->addresscheck->expects($this->once())->method('sendRequest')->willReturn(['status' => 'VALID', 'personstatus' => 'NONE']);
+
+        $result = $this->classToTest->handleAddressManagement($address, $this->quote, true);
+        $this->assertEquals('G', $result->getPayoneAddresscheckScore());
     }
 
     public function testIsCheckNeededForQuoteMinBasket()

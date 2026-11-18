@@ -130,11 +130,14 @@ class Checkout extends \Payone\Core\Helper\Base
      */
     protected function getAddressArray(AddressInterface $oAddress)
     {
+        $aStreet = $oAddress->getStreet();
+        $sStreet = is_array($aStreet) ? implode(' ', $aStreet) : $aStreet; // all street lines, the same way they are sent to PAYONE
+
         return [
             'firstname' => $oAddress->getFirstname(),
             'lastname' => $oAddress->getLastname(),
             'company' => $oAddress->getCompany(),
-            'street' => $oAddress->getStreet()[0],
+            'street' => $sStreet,
             'zip' => $oAddress->getPostcode(),
             'city' => $oAddress->getCity(),
             'country' => $oAddress->getCountryId(),
@@ -160,6 +163,9 @@ class Checkout extends \Payone\Core\Helper\Base
                 if ($aResponse !== false && array_key_exists($sParamKey, $aResponse) !== false && $aResponse[$sParamKey] != $sParamValue) {
                     //take the corrected value from the address-check
                     $sParamValue = $aResponse[$sParamKey];
+                    if ($sParamKey == 'street') {
+                        $sParamValue = $this->getCorrectedStreet($oAddress, $aResponse[$sParamKey]);
+                    }
                 }
                 $sAddress .= $sParamValue;
             }
@@ -167,6 +173,24 @@ class Checkout extends \Payone\Core\Helper\Base
         $sHash = md5($sAddress); // generate hash from address for identification
 
         return $sHash;
+    }
+
+    /**
+     * Returns the street the way it is saved after the customer accepted the correction in the checkout:
+     * The corrected street replaces the first street line, the other street lines are kept
+     *
+     * @param  AddressInterface $oAddress
+     * @param  string           $sCorrectedStreet
+     * @return string
+     */
+    protected function getCorrectedStreet(AddressInterface $oAddress, $sCorrectedStreet)
+    {
+        $aStreet = $oAddress->getStreet();
+        if (!is_array($aStreet)) {
+            return $sCorrectedStreet;
+        }
+        $aStreet[0] = $sCorrectedStreet;
+        return implode(' ', $aStreet);
     }
 
     /**

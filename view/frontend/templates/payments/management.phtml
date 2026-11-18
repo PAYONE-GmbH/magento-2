@@ -40,12 +40,12 @@
             <tbody>
             <?php foreach ($paymentData as $data): ?>
                 <tr>
-                    <td class="col cardtype"><img src="<?php echo $block->getCardtypeUrl($data); ?>"></td>
-                    <td class="col masked"><?php echo __('ends with').' -'.substr($data['payment_data']['masked'], strlen($data['payment_data']['masked']) - 4, 4); ?></td>
-                    <td class="col default"><?php echo $data['payment_data']['cardholder']; ?></td>
-                    <td class="col expirationdate"><?php echo substr($data['payment_data']['cardexpiredate'], 2, 2).'/20'.substr($data['payment_data']['cardexpiredate'], 0, 2); ?></td>
+                    <td class="col cardtype"><img src="<?php echo $block->escapeHtml($block->getCardtypeUrl($data)); ?>"></td>
+                    <td class="col masked"><?php echo __('ends with').' -'.$block->escapeHtml(substr($data['payment_data']['masked'], strlen($data['payment_data']['masked']) - 4, 4)); ?></td>
+                    <td class="col default"><?php echo $block->escapeHtml($data['payment_data']['cardholder']); ?></td>
+                    <td class="col expirationdate"><?php echo $block->escapeHtml(substr($data['payment_data']['cardexpiredate'], 2, 2).'/20'.substr($data['payment_data']['cardexpiredate'], 0, 2)); ?></td>
                     <td class="col default"><?php echo $data['is_default'] == 1 ? __('Yes') : __('No'); ?></td>
-                    <td class="col created_at"><?php echo $data['created_at']; ?></td>
+                    <td class="col created_at"><?php echo $block->escapeHtml($data['created_at']); ?></td>
                     <td class="col actions">
                         <a href="<?php echo $block->getActionUrl($data['id'], 'delete') ?>" class="action view"><span><?php echo __('Delete') ?></span></a>
                         <?php if ($data['is_default'] == 0): ?>

@@ -110,6 +110,27 @@ class UploadTest extends BaseTestCase
         $this->assertInstanceOf(ClassToTest::class, $result);
     }
 
+    public function testBeforeSaveFileNameWithPath()
+    {
+        $uploadPath = __DIR__.DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
+
+        $this->applePayHelper->method('getApplePayUploadPath')->willReturn($uploadPath);
+        $this->tmpDirectory->method('getRelativePath')->willReturn("Existing path");
+        $this->tmpDirectory->method('getAbsolutePath')->willReturn($uploadPath);
+        $this->tmpDirectory->method('isExist')->willReturn(true);
+        $this->tmpDirectory->method('stat')->willReturn(['size' => 100]);
+
+        $fileUpload = [
+            'value' => '../test.file',
+            'name' => '../../uploaded.tmp',
+            'tmp_name' => $uploadPath."upload.tmp",
+        ];
+        $this->classToTest->setValue($fileUpload);
+
+        $this->classToTest->beforeSave();
+        $this->assertEquals('uploaded.tmp', $this->classToTest->getValue());
+    }
+
     public function testBeforeSaveException()
     {
         $uploadPath = __DIR__.DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;

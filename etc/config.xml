@@ -375,6 +375,7 @@
                 <key></key>
                 <currency>base</currency>
                 <transmit_ip>1</transmit_ip>
+                <ssl_verify>1</ssl_verify>
             </global>
             <invoicing>
                 <transmit_enabled>1</transmit_enabled>

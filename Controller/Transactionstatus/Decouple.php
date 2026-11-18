@@ -75,7 +75,15 @@ class Decouple extends \Payone\Core\Controller\ExternalAction
     {
         $aStatus = $this->getRequest()->getPostValue();
 
-        $this->statusForwarding->handleForwardings($aStatus);
+        $sSignature = '';
+        if (isset($aStatus[Forwarding::DECOUPLE_SIGNATURE_PARAM])) {
+            $sSignature = $aStatus[Forwarding::DECOUPLE_SIGNATURE_PARAM];
+            unset($aStatus[Forwarding::DECOUPLE_SIGNATURE_PARAM]);
+        }
+
+        if ($this->statusForwarding->isDecoupleSignatureValid($aStatus, $sSignature)) { // only status sent by the shop itself are forwarded
+            $this->statusForwarding->handleForwardings($aStatus);
+        }
 
         $oResultRaw = $this->resultRawFactory->create();
         $oResultRaw->setContents('');

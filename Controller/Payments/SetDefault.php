@@ -29,6 +29,7 @@ namespace Payone\Core\Controller\Payments;
 use Magento\Framework\App\Action\Context;
 use Payone\Core\Model\ResourceModel\SavedPaymentData;
 use Magento\Customer\Model\Session;
+use Magento\Framework\Data\Form\FormKey\Validator;
 
 /**
  * Controller for setting the default of saved payment data
@@ -50,20 +51,30 @@ class SetDefault extends \Magento\Framework\App\Action\Action
     protected $customerSession;
 
     /**
+     * Form key validator
+     *
+     * @var Validator
+     */
+    protected $formKeyValidator;
+
+    /**
      * Constructor
      *
      * @param Context          $context
      * @param SavedPaymentData $savedPaymentData
      * @param Session          $customerSession
+     * @param Validator        $formKeyValidator
      */
     public function __construct(
         Context $context,
         SavedPaymentData $savedPaymentData,
-        Session $customerSession
+        Session $customerSession,
+        Validator $formKeyValidator
     ) {
         parent::__construct($context);
         $this->savedPaymentData = $savedPaymentData;
         $this->customerSession = $customerSession;
+        $this->formKeyValidator = $formKeyValidator;
     }
 
     /**
@@ -76,7 +87,11 @@ class SetDefault extends \Magento\Framework\App\Action\Action
         $iDataId = $this->getRequest()->getParam('id');
         $iCustomerId = $this->customerSession->getCustomerId();
         if ($iCustomerId) {
-            $this->savedPaymentData->setDefault($iDataId, $iCustomerId);
+            if ($this->formKeyValidator->validate($this->getRequest())) {
+                $this->savedPaymentData->setDefault($iDataId, $iCustomerId);
+            } else {
+                $this->messageManager->addErrorMessage(__('Invalid Form Key. Please refresh the page.'));
+            }
         }
         return $this->resultRedirectFactory->create()->setPath('payone/payments/management');
     }

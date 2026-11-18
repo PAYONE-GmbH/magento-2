@@ -265,7 +265,8 @@ abstract class PayoneMethod extends BaseMethod
     {
         $sAddedParams = '';
         if ($oOrder !== null) {
-            $sAddedParams = '?incrementId='.$oOrder->getIncrementId();
+            $sIncrementId = $oOrder->getIncrementId();
+            $sAddedParams = '?incrementId='.rawurlencode($sIncrementId).'&hash='.$this->toolkitHelper->getSignature($sIncrementId);
         }
         return $this->url->getUrl('payone/onepage/returned').$sAddedParams;
     }

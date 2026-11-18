@@ -33,7 +33,7 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\App\Request\Http;
-use Magento\Framework\DataObject;
+use Payone\Core\Model\TransactionStatus\Forwarding;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -55,17 +55,24 @@ class DecoupleTest extends BaseTestCase
      */
     private $request;
 
+    /**
+     * @var Forwarding|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $statusForwarding;
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
-        $post = new DataObject(['test' => 'array']);
-
         $this->request = $this->getMockBuilder(Http::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getParam', 'setParam', 'getPost', 'isPost'])
+            ->onlyMethods(['getParam', 'setParam', 'getPostValue', 'isPost'])
             ->getMock();
-        $this->request->method('getPost')->willReturn($post);
+        $this->request->method('getPostValue')->willReturn([
+            'txaction' => 'paid',
+            'key' => 'abc',
+            Forwarding::DECOUPLE_SIGNATURE_PARAM => 'signature'
+        ]);
         $this->request->method('isPost')->willReturn(true);
 
         $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
@@ -78,14 +85,34 @@ class DecoupleTest extends BaseTestCase
             ->getMock();
         $resultRawFactory->method('create')->willReturn($rawResponse);
 
+        $this->statusForwarding = $this->getMockBuilder(Forwarding::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
-            'resultRawFactory' => $resultRawFactory
+            'resultRawFactory' => $resultRawFactory,
+            'statusForwarding' => $this->statusForwarding
         ]);
     }
 
     public function testExecute()
     {
+        $expectedStatus = ['txaction' => 'paid', 'key' => 'abc'];
+
+        $this->statusForwarding->expects($this->once())
+            ->method('isDecoupleSignatureValid')
+            ->with($expectedStatus, 'signature')
+            ->willReturn(true);
+        $this->statusForwarding->expects($this->once())->method('handleForwardings')->with($expectedStatus);
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Raw::class, $result);
+    }
+
+    public function testExecuteInvalidSignature()
+    {
+        $this->statusForwarding->method('isDecoupleSignatureValid')->willReturn(false);
+        $this->statusForwarding->expects($this->never())->method('handleForwardings');
+
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Raw::class, $result);
     }
