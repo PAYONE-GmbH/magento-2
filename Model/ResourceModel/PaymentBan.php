@@ -84,7 +84,7 @@ class PaymentBan extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $oSelect = $this->getConnection()->select()
             ->from($this->getMainTable(), ['payment_method', 'to_date'])
             ->where("customer_id = :customerId")
-            ->where("to_date > :toDate")
+            ->where("`to_date` > :toDate")
             ->order('to_date ASC');
 
         $aParams = [
