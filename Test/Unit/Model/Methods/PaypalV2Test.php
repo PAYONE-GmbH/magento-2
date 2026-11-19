@@ -112,7 +112,7 @@ class PaypalV2Test extends BaseTestCase
     public function testGetSuccessUrlParent()
     {
         $this->checkoutSessionData['getIsPayonePayPalExpress'] = false;
-        $expected = 'http://testdomain.org?incrementId=12345';
+        $expected = 'http://testdomain.org?incrementId=12345&hash=';
 
         $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
         $order->method('getIncrementId')->willReturn('12345');

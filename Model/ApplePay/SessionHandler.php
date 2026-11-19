@@ -7,11 +7,11 @@ use Payone\Core\Model\PayoneConfig;
 class SessionHandler
 {
     /**
-     * Magento 2 Curl library
+     * Factory for Magento 2 Curl library
      *
-     * @var \Magento\Framework\HTTP\Client\Curl
+     * @var \Magento\Framework\HTTP\Client\CurlFactory
      */
-    protected $curl;
+    protected $curlFactory;
 
     /**
      * Payone shop helper object
@@ -46,16 +46,16 @@ class SessionHandler
     /**
      * Constructor
      *
-     * @param \Magento\Framework\HTTP\Client\Curl $curl
-     * @param \Payone\Core\Helper\Shop            $shopHelper
-     * @param \Payone\Core\Helper\ApplePay        $applePayHelper
+     * @param \Magento\Framework\HTTP\Client\CurlFactory $curlFactory
+     * @param \Payone\Core\Helper\Shop                   $shopHelper
+     * @param \Payone\Core\Helper\ApplePay               $applePayHelper
      */
     public function __construct(
-        \Magento\Framework\HTTP\Client\Curl $curl,
+        \Magento\Framework\HTTP\Client\CurlFactory $curlFactory,
         \Payone\Core\Helper\Shop $shopHelper,
         \Payone\Core\Helper\ApplePay $applePayHelper
     ) {
-        $this->curl = $curl;
+        $this->curlFactory = $curlFactory;
         $this->shopHelper = $shopHelper;
         $this->applePayHelper = $applePayHelper;
     }
@@ -145,21 +145,23 @@ class SessionHandler
 
         $sCertFilePath = $this->getCertificateFilePath();
 
-        $this->curl->setOption(CURLOPT_RETURNTRANSFER, 1);
-        $this->curl->setOption(CURLOPT_SSLCERT, $sCertFilePath);
+        $oCurl = $this->curlFactory->create();
+        $this->shopHelper->setCurlSslOptions($oCurl);
+        $oCurl->setOption(CURLOPT_RETURNTRANSFER, 1);
+        $oCurl->setOption(CURLOPT_SSLCERT, $sCertFilePath);
         if ($this->isPemFile($sCertFilePath) === false) {
             // The merchant_id.cer downloaded from the Apple developer portal is DER encoded
-            $this->curl->setOption(CURLOPT_SSLCERTTYPE, 'DER');
+            $oCurl->setOption(CURLOPT_SSLCERTTYPE, 'DER');
         }
-        $this->curl->setOption(CURLOPT_SSLKEY, $this->getPrivateKeyFilePath());
+        $oCurl->setOption(CURLOPT_SSLKEY, $this->getPrivateKeyFilePath());
 
         $sKeyPass = $this->shopHelper->getConfigParam("private_key_password", PayoneConfig::METHOD_APPLEPAY, "payment");
         if (!empty($sKeyPass)) {
-            $this->curl->setOption( CURLOPT_KEYPASSWD, $sKeyPass);
+            $oCurl->setOption( CURLOPT_KEYPASSWD, $sKeyPass);
         }
 
-        $this->curl->post($sValidationUrl, json_encode($aRequest));
-        return $this->curl->getBody();
+        $oCurl->post($sValidationUrl, json_encode($aRequest));
+        return $oCurl->getBody();
     }
 
     /**

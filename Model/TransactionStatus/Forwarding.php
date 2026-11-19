@@ -32,6 +32,13 @@ namespace Payone\Core\Model\TransactionStatus;
 class Forwarding
 {
     /**
+     * Name of the POST parameter containing the signature for the decouple controller
+     *
+     * @var string
+     */
+    const DECOUPLE_SIGNATURE_PARAM = 'payone_decouple_signature';
+
+    /**
      * PAYONE config helper
      *
      * @var \Payone\Core\Helper\Config
@@ -39,11 +46,12 @@ class Forwarding
     protected $configHelper;
 
     /**
-     * Magento 2 Curl library
+     * Factory for Magento 2 Curl library
+     * A new curl object is created for every request, so that options don't affect other requests
      *
-     * @var \Magento\Framework\HTTP\Client\Curl
+     * @var \Magento\Framework\HTTP\Client\CurlFactory
      */
-    protected $curl;
+    protected $curlFactory;
 
     /**
      * Logger object
@@ -53,20 +61,30 @@ class Forwarding
     protected $logger;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Constructor.
      *
      * @param \Payone\Core\Helper\Config            $configHelper
-     * @param \Magento\Framework\HTTP\Client\Curl   $curl
+     * @param \Magento\Framework\HTTP\Client\CurlFactory $curlFactory
      * @param \Psr\Log\LoggerInterface              $logger
+     * @param \Payone\Core\Helper\Toolkit           $toolkitHelper
      */
     public function __construct(
         \Payone\Core\Helper\Config $configHelper,
-        \Magento\Framework\HTTP\Client\Curl $curl,
-        \Psr\Log\LoggerInterface $logger
+        \Magento\Framework\HTTP\Client\CurlFactory $curlFactory,
+        \Psr\Log\LoggerInterface $logger,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         $this->configHelper = $configHelper;
-        $this->curl = $curl;
+        $this->curlFactory = $curlFactory;
         $this->logger = $logger;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -103,19 +121,42 @@ class Forwarding
 
         $this->log($sUrl.' Forward with timeout of '.$iTimeout.' seconds', $aPostArray);
 
-        $this->curl->setTimeout($iTimeout);
-        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
-        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
+        $oCurl = $this->curlFactory->create();
+        $oCurl->setTimeout($iTimeout);
+        $this->configHelper->setCurlSslOptions($oCurl);
         try {
-            $this->curl->post($sUrl, $aPostArray);
-            $this->log($sUrl.' Response: '.$this->curl->getBody(), $aPostArray);
+            $oCurl->post($sUrl, $aPostArray);
+            $this->log($sUrl.' Response: '.$oCurl->getBody(), $aPostArray);
         } catch(\Exception $exc) {
             $this->log($sUrl.' Exception: '.$exc->getMessage(), $aPostArray);
         }
     }
 
     /**
-     * Forward a request and dont wait for a response
+     * Generate the signature for a status sent to the decouple controller of the shop
+     *
+     * @param  array $aPostArray
+     * @return string
+     */
+    protected function getDecoupleSignature($aPostArray)
+    {
+        return $this->toolkitHelper->getSignature(http_build_query($aPostArray));
+    }
+
+    /**
+     * Check if the signature of a status received by the decouple controller is valid
+     *
+     * @param  array  $aPostArray status without the signature parameter
+     * @param  string $sSignature
+     * @return bool
+     */
+    public function isDecoupleSignatureValid($aPostArray, $sSignature)
+    {
+        return $this->toolkitHelper->isSignatureValid(http_build_query($aPostArray), $sSignature);
+    }
+
+    /**
+     * Forward a request to the decouple controller of the shop and dont wait for a response
      *
      * @param  array  $aPostArray
      * @param  string $sUrl
@@ -123,14 +164,26 @@ class Forwarding
      */
     public function forwardAsyncRequest($aPostArray, $sUrl)
     {
+        if (empty($this->configHelper->getForwardingUrls())) {
+            return; // the decouple controller only handles the forwardings, so it doesn't have to be called without them
+        }
+
+        // The decouple controller only accepts requests signed by the shop itself
+        $aPostArray[self::DECOUPLE_SIGNATURE_PARAM] = $this->getDecoupleSignature($aPostArray);
+
+        $oCurl = $this->curlFactory->create();
 	// Increased timeout to 5500ms
 	// See payone-gmbh/magento-2 issue #316
-        $this->curl->setOption(CURLOPT_TIMEOUT_MS, 5500);
-        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
-        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
-	$this->curl->setOption(CURLOPT_FOLLOWLOCATION, true);
+        $oCurl->setOption(CURLOPT_TIMEOUT_MS, 5500);
+        // Unlike all other external connections, the certificate is not verified here regardless of the ssl_verify setting:
+        // This request goes to the shop itself. Shops with a self-signed or internally resolved certificate would otherwise
+        // lose all status forwardings without any notice, because errors of this async request can not be logged
+        // (it always ends with a timeout exception). The content is protected by the signature added above.
+        $oCurl->setOption(CURLOPT_SSL_VERIFYPEER, false);
+        $oCurl->setOption(CURLOPT_SSL_VERIFYHOST, 0);
+	$oCurl->setOption(CURLOPT_FOLLOWLOCATION, true);
         try {
-            $this->curl->post($sUrl, $aPostArray);
+            $oCurl->post($sUrl, $aPostArray);
         } catch (\Exception $exc) {
             // Async calls will always throw a timeout exception
         }

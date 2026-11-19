@@ -35,6 +35,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Backend\Block\Widget\Context;
 use Magento\Backend\Block\Widget\Button\ButtonList;
 use Magento\Framework\UrlInterface;
+use Magento\Framework\Escaper;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -81,6 +82,7 @@ class ViewTest extends BaseTestCase
         $context->method('getRequest')->willReturn($request);
         $context->method('getButtonList')->willReturn($buttonList);
         $context->method('getUrlBuilder')->willReturn($urlBuilder);
+        $context->method('getEscaper')->willReturn($this->objectManager->getObject(Escaper::class));
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
@@ -110,5 +112,14 @@ class ViewTest extends BaseTestCase
 
         $result = $this->classToTest->formatValue($key, $value);
         $this->assertNotEquals($value, $result);
+    }
+
+    public function testFormatValueHtml()
+    {
+        $key = 'a';
+        $value = '<b>"test"</b>';
+
+        $result = $this->classToTest->formatValue($key, $value);
+        $this->assertEquals('&lt;b&gt;&quot;test&quot;&lt;/b&gt;', $result);
     }
 }

@@ -34,6 +34,7 @@ use Payone\Core\Helper\ApplePay;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\HTTP\Client\CurlFactory;
 
 #[AllowMockObjectsWithoutExpectations]
 class SessionHandlerTest extends BaseTestCase
@@ -73,11 +74,13 @@ class SessionHandlerTest extends BaseTestCase
         $this->applePayHelper = $this->getMockBuilder(ApplePay::class)->disableOriginalConstructor()->getMock();
 
         $this->curl = $this->getMockBuilder(Curl::class)->disableOriginalConstructor()->getMock();
+        $curlFactory = $this->getMockBuilder(CurlFactory::class)->disableOriginalConstructor()->onlyMethods(['create'])->getMock();
+        $curlFactory->method('create')->willReturn($this->curl);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'shopHelper' => $this->shopHelper,
             'applePayHelper' => $this->applePayHelper,
-            'curl' => $this->curl,
+            'curlFactory' => $curlFactory,
         ]);
     }
 

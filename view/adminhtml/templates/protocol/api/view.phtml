@@ -42,7 +42,7 @@ $blVerticalDisplay = $block->isVerticalDisplayNeeded();
                     <tbody>
                         <?php foreach ($oApiLog->getRawRequestArray() as $sKey => $sValue): ?>
                         <tr>
-                            <th><?php echo $sKey; ?></th>
+                            <th><?php echo $block->escapeHtml($sKey); ?></th>
                             <td><?php echo $block->formatValue($sKey, $sValue); ?></td>
                         </tr>                
                         <?php endforeach; ?>
@@ -62,7 +62,7 @@ $blVerticalDisplay = $block->isVerticalDisplayNeeded();
                     <tbody>
                         <?php foreach ($oApiLog->getRawResponseArray() as $sKey => $sValue): ?>
                         <tr>
-                            <th><?php echo $sKey; ?></th>
+                            <th><?php echo $block->escapeHtml($sKey); ?></th>
                             <td><?php echo $block->formatValue($sKey, $sValue); ?></td>
                         </tr>                
                         <?php endforeach; ?>

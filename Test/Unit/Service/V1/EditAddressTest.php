@@ -37,6 +37,7 @@ use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Customer\Model\Address;
 use Magento\Customer\Api\Data\AddressInterface as CustomerAddressInterface;
+use Magento\Authorization\Model\UserContextInterface;
 
 #[AllowMockObjectsWithoutExpectations]
 class EditAddressTest extends BaseTestCase
@@ -51,6 +52,11 @@ class EditAddressTest extends BaseTestCase
      */
     private $response;
 
+    /**
+     * @var UserContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $userContext;
+
     protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
@@ -63,22 +69,40 @@ class EditAddressTest extends BaseTestCase
         $responseFactory->method('create')->willReturn($this->response);
 
         $address = $this->getMockBuilder(CustomerAddressInterface::class)->disableOriginalConstructor()->getMock();
+        $address->method('getCustomerId')->willReturn(5);
 
         $addressRepository = $this->getMockBuilder(AddressRepository::class)->disableOriginalConstructor()->getMock();
         $addressRepository->method('getById')->willReturn($address);
 
+        $this->userContext = $this->getMockBuilder(UserContextInterface::class)->disableOriginalConstructor()->getMock();
+        $this->userContext->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_CUSTOMER);
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'responseFactory' => $responseFactory,
-            'addressRepository' => $addressRepository
+            'addressRepository' => $addressRepository,
+            'userContext' => $this->userContext
         ]);
     }
 
     public function testEditAddress()
     {
+        $this->userContext->method('getUserId')->willReturn(5);
+
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
         $result = $this->classToTest->editAddress(4711, $addressData);
         $result = $result->__toArray();
         $this->assertTrue($result['success']);
+    }
+
+    public function testEditAddressOtherCustomer()
+    {
+        $this->userContext->method('getUserId')->willReturn(6);
+
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->editAddress(4711, $addressData);
+        $result = $result->__toArray();
+        $this->assertFalse($result['success']);
     }
 }

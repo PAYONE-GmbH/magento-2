@@ -114,6 +114,7 @@ class View extends \Magento\Backend\Block\Widget\Container
      */
     public function formatValue($sKey, $sValue)
     {
+        $sValue = $this->escapeHtml($sValue);
         if (in_array($sKey, ['add_paydata[amazon_address_token]', 'add_paydata[paymentmethod_token_data]'])) {
             return '<span title="'.$sValue.'">[...]</span>';
         }

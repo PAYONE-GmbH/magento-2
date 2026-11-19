@@ -35,6 +35,12 @@ use Payone\Core\Service\V1\Data\AddresscheckResponse;
 use Payone\Core\Service\V1\Data\AddresscheckResponseFactory;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
+use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\QuoteIdMask;
+use Magento\Quote\Model\QuoteIdMaskFactory;
+use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Authorization\Model\UserContextInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 #[AllowMockObjectsWithoutExpectations]
 class AddresscheckTest extends BaseTestCase
@@ -54,6 +60,36 @@ class AddresscheckTest extends BaseTestCase
      */
     private $response;
 
+    /**
+     * @var Quote|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $quote;
+
+    /**
+     * @var bool
+     */
+    private $quoteHasItems = true;
+
+    /**
+     * @var int|null
+     */
+    private $quoteCustomerId = null;
+
+    /**
+     * @var CartRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $quoteRepository;
+
+    /**
+     * @var QuoteIdMask|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $quoteIdMask;
+
+    /**
+     * @var UserContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $userContext;
+
     protected function setUp(): void
     {
         $objectManager = $this->getObjectManager();
@@ -66,21 +102,115 @@ class AddresscheckTest extends BaseTestCase
             ->getMock();
         $responseFactory->method('create')->willReturn($this->response);
 
+        $this->quote = $this->getMockBuilder(Quote::class)->disableOriginalConstructor()->getMock();
+        $this->quote->method('getId')->willReturn(4711);
+        $this->quote->method('isVirtual')->willReturn(false);
+        $this->quote->method('hasItems')->willReturnCallback(function () {
+            return $this->quoteHasItems;
+        });
+        $this->quote->method('__call')->willReturnCallback(function ($method) {
+            if ($method == 'getSubtotal') {
+                return 100;
+            }
+            if ($method == 'getCustomerId') {
+                return $this->quoteCustomerId;
+            }
+            return null;
+        });
+
+        $this->quoteRepository = $this->getMockBuilder(CartRepositoryInterface::class)->disableOriginalConstructor()->getMock();
+        $this->quoteRepository->method('getActive')->willReturnCallback(function ($iQuoteId) {
+            if ($iQuoteId != 4711) {
+                throw new NoSuchEntityException();
+            }
+            return $this->quote;
+        });
+
+        $this->quoteIdMask = $this->getMockBuilder(QuoteIdMask::class)->disableOriginalConstructor()->onlyMethods(['load'])->getMock();
+        $this->quoteIdMask->method('load')->willReturn($this->quoteIdMask);
+        $this->quoteIdMask->setData('quote_id', 4711);
+        $quoteIdMaskFactory = $this->getMockBuilder(QuoteIdMaskFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
+        $quoteIdMaskFactory->method('create')->willReturn($this->quoteIdMask);
+
+        $this->userContext = $this->getMockBuilder(UserContextInterface::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $objectManager->getObject(ClassToTest::class, [
             'addresscheck' => $this->addresscheck,
-            'responseFactory' => $responseFactory
+            'responseFactory' => $responseFactory,
+            'quoteRepository' => $this->quoteRepository,
+            'quoteIdMaskFactory' => $quoteIdMaskFactory,
+            'userContext' => $this->userContext
         ]);
     }
 
-    public function testCheckAddressFalse()
+    public function testCheckAddressUnknownCart()
     {
-        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(false);
+        $this->quoteIdMask->setData('quote_id', null);
+        $this->addresscheck->expects($this->never())->method('isCheckNeededForQuote');
+        $this->addresscheck->expects($this->never())->method('getResponse');
+
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->checkAddress('unknown', $addressData, false, false, 100);
+        $result = $result->__toArray();
+        $this->assertTrue($result['success']); // checkout continues without a check
+    }
+
+    public function testCheckAddressCustomerCart()
+    {
+        $this->quoteIdMask->setData('quote_id', null);
+        $this->quoteCustomerId = 5;
+        $this->userContext->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_CUSTOMER);
+        $this->userContext->method('getUserId')->willReturn(5);
+        $this->addresscheck->expects($this->once())->method('isCheckNeededForQuote')->willReturn(false);
+
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+
+        $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
+    }
+
+    public function testCheckAddressCartOfOtherCustomer()
+    {
+        $this->quoteIdMask->setData('quote_id', null);
+        $this->quoteCustomerId = 5;
+        $this->userContext->method('getUserType')->willReturn(UserContextInterface::USER_TYPE_CUSTOMER);
+        $this->userContext->method('getUserId')->willReturn(6);
+        $this->addresscheck->expects($this->never())->method('isCheckNeededForQuote');
+        $this->addresscheck->expects($this->never())->method('getResponse');
 
         $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
 
         $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
         $result = $result->__toArray();
-        $this->assertFalse($result['success']);
+        $this->assertTrue($result['success']); // checkout continues without a check
+    }
+
+    public function testCheckAddressEmptyQuote()
+    {
+        $this->quoteHasItems = false;
+        $this->addresscheck->expects($this->never())->method('isCheckNeededForQuote');
+        $this->addresscheck->expects($this->never())->method('getResponse');
+
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
+        $result = $result->__toArray();
+        $this->assertTrue($result['success']); // checkout continues without a check
+    }
+
+    public function testCheckAddressNotNeeded()
+    {
+        $this->addresscheck->method('isCheckNeededForQuote')->willReturn(false);
+        $this->addresscheck->expects($this->never())->method('getResponse');
+
+        $addressData = $this->getMockBuilder(AddressInterface::class)->disableOriginalConstructor()->getMock();
+
+        $result = $this->classToTest->checkAddress(4711, $addressData, false, false, 100);
+        $result = $result->__toArray();
+        $this->assertTrue($result['success']); // checkout continues without a check
     }
 
     public function testCheckAddressTrue()

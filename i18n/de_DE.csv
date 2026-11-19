@@ -1210,3 +1210,6 @@
 "Payment with differing billing- and shipping-address is not supported for this payment type","Die Zahlung bei abweichender Rechnungs- und Lieferadressen wird für diese Zahlart nicht unterstützt"
 "Place Order","Jetzt kaufen"
 "Y-m-d","d.m.Y"
+"Verify SSL certificates","SSL-Zertifikate prüfen"
+"Applies to the connections to Apple Pay, Payolution and the Transaction-Status forwarding. Only disable this if a target server uses a certificate that can not be verified.","Gilt für die Verbindungen zu Apple Pay, Payolution und für die Transaktionsstatus-Weiterleitung. Deaktivieren Sie diese Option nur, wenn ein Zielserver ein Zertifikat verwendet, das nicht geprüft werden kann."
+"Invalid Form Key. Please refresh the page.","Ungültiger Formularschlüssel. Bitte laden Sie die Seite neu."

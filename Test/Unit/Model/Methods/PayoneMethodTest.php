@@ -34,6 +34,8 @@ use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Url;
+use Magento\Sales\Model\Order;
+use Payone\Core\Helper\Toolkit;
 
 #[AllowMockObjectsWithoutExpectations]
 class PayoneMethodTest extends BaseTestCase
@@ -67,10 +69,23 @@ class PayoneMethodTest extends BaseTestCase
         $url = $this->getMockBuilder(Url::class)->disableOriginalConstructor()->getMock();
         $url->method('getUrl')->willReturn('http://testdomain.org');
 
+        $toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
+        $toolkitHelper->method('getSignature')->willReturn('abc');
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'shopHelper' => $this->shopHelper,
-            'url' => $url
+            'url' => $url,
+            'toolkitHelper' => $toolkitHelper
         ]);
+    }
+
+    public function testGetSuccessUrlEncodedIncrementId()
+    {
+        $order = $this->getMockBuilder(Order::class)->disableOriginalConstructor()->getMock();
+        $order->method('getIncrementId')->willReturn('WEB+100&1');
+
+        $result = $this->classToTest->getSuccessUrl($order);
+        $this->assertEquals('http://testdomain.org?incrementId=WEB%2B100%261&hash=abc', $result);
     }
 
     public function testGetClearingtype()

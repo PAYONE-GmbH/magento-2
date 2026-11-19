@@ -45,6 +45,13 @@ class Toolkit extends \Payone\Core\Helper\Base
     protected $paymentHelper;
 
     /**
+     * Magento deployment config (app/etc/env.php)
+     *
+     * @var \Magento\Framework\App\DeploymentConfig
+     */
+    protected $deploymentConfig;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Helper\Context      $context
@@ -52,16 +59,19 @@ class Toolkit extends \Payone\Core\Helper\Base
      * @param \Payone\Core\Helper\Payment                $paymentHelper
      * @param \Payone\Core\Helper\Shop                   $shopHelper
      * @param \Magento\Framework\App\State               $state
+     * @param \Magento\Framework\App\DeploymentConfig    $deploymentConfig
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Payone\Core\Helper\Payment $paymentHelper,
         \Payone\Core\Helper\Shop $shopHelper,
-        \Magento\Framework\App\State $state
+        \Magento\Framework\App\State $state,
+        \Magento\Framework\App\DeploymentConfig $deploymentConfig
     ) {
         parent::__construct($context, $storeManager, $shopHelper, $state);
         $this->paymentHelper = $paymentHelper;
+        $this->deploymentConfig = $deploymentConfig;
     }
 
     /**
@@ -106,13 +116,53 @@ class Toolkit extends \Payone\Core\Helper\Base
      */
     public function isKeyValid($sKey)
     {
+        if (!is_string($sKey)) {
+            return false;
+        }
+
         $aKeyValues = $this->getAllPayoneSecurityKeys();
         foreach ($aKeyValues as $sConfigKey) {
-            if ($this->hashString($sConfigKey ?? '', 'md5') == $sKey) {
+            if (empty($sConfigKey)) { // a store or payment type without configured key is skipped
+                continue;
+            }
+            if (hash_equals($this->hashString($sConfigKey, 'md5'), $sKey)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Generate a signature for the given value with the Magento crypt key
+     * Used for values which are sent out by the shop and have to be verified when they come back
+     * The HMAC is shortened to 32 characters (128 bit) to keep URLs short
+     *
+     * @param  string $sValue
+     * @return string
+     * @throws \RuntimeException
+     */
+    public function getSignature($sValue)
+    {
+        $sKey = (string)$this->deploymentConfig->get('crypt/key');
+        if (empty($sKey)) {
+            throw new \RuntimeException('No crypt key available');
+        }
+        return substr(hash_hmac('sha256', (string)$sValue, $sKey), 0, 32);
+    }
+
+    /**
+     * Check if the given signature belongs to the given value
+     *
+     * @param  string $sValue
+     * @param  string $sSignature
+     * @return bool
+     */
+    public function isSignatureValid($sValue, $sSignature)
+    {
+        if (!is_string($sValue) || !is_string($sSignature)) {
+            return false;
+        }
+        return hash_equals($this->getSignature($sValue), $sSignature);
     }
 
     /**

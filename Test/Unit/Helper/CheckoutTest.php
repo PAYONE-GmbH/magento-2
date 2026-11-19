@@ -31,6 +31,7 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Checkout\Model\Type\Onepage;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\Quote\Address;
 use Magento\Customer\Model\Session;
 use Magento\Checkout\Helper\Data;
 use Payone\Core\Test\Unit\BaseTestCase;
@@ -145,5 +146,35 @@ class CheckoutTest extends BaseTestCase
         $result = $this->checkout->getQuoteComparisonString($quote);
 
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetHashFromAddressAllStreetLines()
+    {
+        $address1 = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods(['getStreet', 'getRegionCode'])->getMock();
+        $address1->method('getStreet')->willReturn(['Teststr.', '12']);
+        $address1->setData(['firstname' => 'Paul', 'lastname' => 'Payer', 'postcode' => '12345', 'city' => 'Berlin', 'country_id' => 'DE']);
+
+        $address2 = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods(['getStreet', 'getRegionCode'])->getMock();
+        $address2->method('getStreet')->willReturn(['Teststr.', '13']);
+        $address2->setData(['firstname' => 'Paul', 'lastname' => 'Payer', 'postcode' => '12345', 'city' => 'Berlin', 'country_id' => 'DE']);
+
+        $this->assertNotEquals($this->checkout->getHashFromAddress($address1), $this->checkout->getHashFromAddress($address2));
+    }
+
+    public function testGetHashFromAddressCorrectedStreet()
+    {
+        $address = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods(['getStreet', 'getRegionCode'])->getMock();
+        $address->method('getStreet')->willReturn(['Main 1', 'Apt 2']);
+        $address->setData(['firstname' => 'Paul', 'lastname' => 'Payer', 'postcode' => '12345', 'city' => 'Berlin', 'country_id' => 'DE']);
+
+        // the checkout replaces only the first street line with the corrected street
+        $correctedAddress = $this->getMockBuilder(Address::class)->disableOriginalConstructor()->onlyMethods(['getStreet', 'getRegionCode'])->getMock();
+        $correctedAddress->method('getStreet')->willReturn(['Mainstr. 1', 'Apt 2']);
+        $correctedAddress->setData(['firstname' => 'Paul', 'lastname' => 'Payer', 'postcode' => '12345', 'city' => 'Berlin', 'country_id' => 'DE']);
+
+        $this->assertEquals(
+            $this->checkout->getHashFromAddress($correctedAddress),
+            $this->checkout->getHashFromAddress($address, ['street' => 'Mainstr. 1'])
+        );
     }
 }

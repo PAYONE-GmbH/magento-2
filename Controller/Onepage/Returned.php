@@ -56,6 +56,13 @@ class Returned extends \Payone\Core\Controller\ExternalAction
     protected $databaseHelper;
 
     /**
+     * PAYONE toolkit helper
+     *
+     * @var \Payone\Core\Helper\Toolkit
+     */
+    protected $toolkitHelper;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\App\Action\Context         $context
@@ -63,18 +70,21 @@ class Returned extends \Payone\Core\Controller\ExternalAction
      * @param \Magento\Checkout\Model\Session               $checkoutSession
      * @param \Payone\Core\Model\Handler\SubstituteOrder    $substituteOrder
      * @param \Payone\Core\Helper\Database                  $databaseHelper
+     * @param \Payone\Core\Helper\Toolkit                   $toolkitHelper
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Data\Form\FormKey $formKey,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Payone\Core\Model\Handler\SubstituteOrder $substituteOrder,
-        \Payone\Core\Helper\Database $databaseHelper
+        \Payone\Core\Helper\Database $databaseHelper,
+        \Payone\Core\Helper\Toolkit $toolkitHelper
     ) {
         parent::__construct($context, $formKey);
         $this->checkoutSession = $checkoutSession;
         $this->substituteOrder = $substituteOrder;
         $this->databaseHelper = $databaseHelper;
+        $this->toolkitHelper = $toolkitHelper;
     }
 
     /**
@@ -87,14 +97,17 @@ class Returned extends \Payone\Core\Controller\ExternalAction
     protected function getCanceledOrder()
     {
         $order = $this->checkoutSession->getLastRealOrder();
-        if (!$order->getId() && !empty($this->getRequest()->getParam('incrementId'))) {
-            $sSubstituteIncrementId = $this->databaseHelper->getSubstituteOrderIncrementId($this->getRequest()->getParam('incrementId'));
+        $sIncrementId = $this->getRequest()->getParam('incrementId');
+        if (!$order->getId() && !empty($sIncrementId) &&
+            $this->toolkitHelper->isSignatureValid($sIncrementId, $this->getRequest()->getParam('hash'))
+        ) {
+            $sSubstituteIncrementId = $this->databaseHelper->getSubstituteOrderIncrementId($sIncrementId);
             if (!empty($sSubstituteIncrementId)) {
                 $order->loadByIncrementId($sSubstituteIncrementId);
                 $this->substituteOrder->updateCheckoutSession($order);
                 return false;
             } else {
-                $order->loadByIncrementId($this->getRequest()->getParam('incrementId'));
+                $order->loadByIncrementId($sIncrementId);
             }
         }
 

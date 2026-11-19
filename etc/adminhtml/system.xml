@@ -87,6 +87,11 @@
                     <label>Transmit customer-id</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="ssl_verify" translate="label,comment" type="select" sortOrder="95" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Verify SSL certificates</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Applies to the connections to Apple Pay, Payolution and the Transaction-Status forwarding. Only disable this if a target server uses a certificate that can not be verified.]]></comment>
+                </field>
             </group>
             <group id="invoicing" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Send invoicing information</label>

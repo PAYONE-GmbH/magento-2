@@ -97,11 +97,11 @@ class PrivacyDeclaration
     protected $shopHelper;
 
     /**
-     * Magento curl object
+     * Factory for Magento curl object
      *
-     * @var \Magento\Framework\HTTP\Client\Curl
+     * @var \Magento\Framework\HTTP\Client\CurlFactory
      */
-    protected $curl;
+    protected $curlFactory;
 
     /**
      * @var \Magento\Framework\App\CacheInterface
@@ -112,18 +112,16 @@ class PrivacyDeclaration
      * Constructor
      *
      * @param \Payone\Core\Helper\Shop $shopHelper
-     * @param \Magento\Framework\HTTP\Client\Curl $curl
+     * @param \Magento\Framework\HTTP\Client\CurlFactory $curlFactory
      * @param \Magento\Framework\App\CacheInterface $cache
      */
     public function __construct(
         \Payone\Core\Helper\Shop $shopHelper,
-        \Magento\Framework\HTTP\Client\Curl $curl,
+        \Magento\Framework\HTTP\Client\CurlFactory $curlFactory,
         \Magento\Framework\App\CacheInterface $cache
     ) {
         $this->shopHelper = $shopHelper;
-        $this->curl = $curl;
-        $this->curl->setOption(CURLOPT_SSL_VERIFYPEER, false);
-        $this->curl->setOption(CURLOPT_SSL_VERIFYHOST, false);
+        $this->curlFactory = $curlFactory;
         $this->cache = $cache;
     }
 
@@ -143,8 +141,10 @@ class PrivacyDeclaration
             return $cache;
         }
 
-        $this->curl->get($sUrl);
-        $sContent = $this->curl->getBody();
+        $oCurl = $this->curlFactory->create();
+        $this->shopHelper->setCurlSslOptions($oCurl);
+        $oCurl->get($sUrl);
+        $sContent = $oCurl->getBody();
         $sPage = false;
         if (!empty($sContent) && stripos($sContent, 'payolution') !== false && stripos($sContent, '<header>') !== false) {
             //Parse content from HTML-body-tag from the given page

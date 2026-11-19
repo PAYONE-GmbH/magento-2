@@ -43,6 +43,7 @@ use Magento\Quote\Model\QuoteRepository;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Order\Payment;
 use Payone\Core\Helper\Database;
+use Payone\Core\Helper\Toolkit;
 use Payone\Core\Model\Entities\TransactionStatusFactory;
 use Payone\Core\Model\Entities\TransactionStatus;
 use Magento\Framework\App\Request\Http;
@@ -69,6 +70,11 @@ class ReturnedTest extends BaseTestCase
      * @var Database|\PHPUnit_Framework_MockObject_MockObject
      */
     private $databaseHelper;
+
+    /**
+     * @var Toolkit|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $toolkitHelper;
 
     protected function setUp(): void
     {
@@ -127,13 +133,16 @@ class ReturnedTest extends BaseTestCase
             ->getMock();
         $statusFactory->method('create')->willReturn($status);
 
+        $this->toolkitHelper = $this->getMockBuilder(Toolkit::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
             'checkoutSession' => $this->checkoutSession,
             'quoteRepository' => $quoteRepository,
             'orderRepository' => $orderRepository,
             'databaseHelper' => $this->databaseHelper,
-            'statusFactory' => $statusFactory
+            'statusFactory' => $statusFactory,
+            'toolkitHelper' => $this->toolkitHelper
         ]);
     }
 
@@ -176,6 +185,24 @@ class ReturnedTest extends BaseTestCase
         $this->checkoutSession->method('getQuote')->willReturn($quote);
 
         $this->databaseHelper->method('getSubstituteOrderIncrementId')->willReturn('12345');
+
+        $this->toolkitHelper->method('isSignatureValid')->willReturn(true);
+
+        $result = $this->classToTest->execute();
+        $this->assertNull($result);
+    }
+
+    public function testExecuteInvalidHash()
+    {
+        $order = $this->getMockBuilder(OrderCore::class)->disableOriginalConstructor()->getMock();
+        $order->method('getId')->willReturn(null);
+        $order->expects($this->never())->method('loadByIncrementId');
+
+        $this->checkoutSession->method('getLastRealOrder')->willReturn($order);
+
+        $this->databaseHelper->expects($this->never())->method('getSubstituteOrderIncrementId');
+
+        $this->toolkitHelper->method('isSignatureValid')->willReturn(false);
 
         $result = $this->classToTest->execute();
         $this->assertNull($result);

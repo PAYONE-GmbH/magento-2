@@ -30,6 +30,7 @@ use Magento\Framework\View\Element\Template;
 use Payone\Core\Model\PayoneConfig;
 use Payone\Core\Model\ResourceModel\SavedPaymentData;
 use Magento\Customer\Model\Session;
+use Magento\Framework\Data\Form\FormKey;
 
 /**
  * Block class for saved payment data
@@ -51,22 +52,32 @@ class Management extends \Magento\Framework\View\Element\Template
     protected $customerSession;
 
     /**
+     * Form key object
+     *
+     * @var FormKey
+     */
+    protected $formKey;
+
+    /**
      * Constructor
      *
      * @param Template\Context $context
      * @param SavedPaymentData $savedPaymentData
      * @param Session          $customerSession
+     * @param FormKey          $formKey
      * @param array            $data
      */
     public function __construct(
         Template\Context $context,
         SavedPaymentData $savedPaymentData,
         Session $customerSession,
+        FormKey $formKey,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->savedPaymentData = $savedPaymentData;
         $this->customerSession = $customerSession;
+        $this->formKey = $formKey;
     }
 
     public function getCardtypeUrl($aData)
@@ -94,6 +105,6 @@ class Management extends \Magento\Framework\View\Element\Template
      */
     public function getActionUrl($iId, $sAction)
     {
-        return $this->getUrl('payone/payments/'.$sAction, ['id' => $iId]);
+        return $this->getUrl('payone/payments/'.$sAction, ['id' => $iId, 'form_key' => $this->formKey->getFormKey()]);
     }
 }

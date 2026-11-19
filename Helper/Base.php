@@ -89,6 +89,29 @@ class Base extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Returns if SSL certificates of external connections have to be verified
+     *
+     * @return bool
+     */
+    public function isSslVerificationActive()
+    {
+        return (bool)$this->getConfigParam('ssl_verify');
+    }
+
+    /**
+     * Set the SSL certificate verification options on the given curl client as configured
+     *
+     * @param  \Magento\Framework\HTTP\Client\Curl $oCurl
+     * @return void
+     */
+    public function setCurlSslOptions(\Magento\Framework\HTTP\Client\Curl $oCurl)
+    {
+        $blSslVerify = $this->isSslVerificationActive();
+        $oCurl->setOption(CURLOPT_SSL_VERIFYPEER, $blSslVerify);
+        $oCurl->setOption(CURLOPT_SSL_VERIFYHOST, $blSslVerify ? 2 : 0);
+    }
+
+    /**
      * Helper method to get parameter from the config by path
      *
      * @param  string $sPath

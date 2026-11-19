@@ -36,6 +36,9 @@ use Payone\Core\Test\Unit\PayoneObjectManager;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Customer\Model\Session;
+use Magento\Framework\Data\Form\FormKey\Validator;
+use Payone\Core\Model\ResourceModel\SavedPaymentData;
+use Magento\Framework\Message\ManagerInterface;
 
 #[AllowMockObjectsWithoutExpectations]
 class DeleteTest extends BaseTestCase
@@ -49,6 +52,21 @@ class DeleteTest extends BaseTestCase
      * @var ObjectManager|PayoneObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var SavedPaymentData|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $savedPaymentData;
+
+    /**
+     * @var Validator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $formKeyValidator;
+
+    /**
+     * @var ManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $messageManager;
 
     protected function setUp(): void
     {
@@ -69,17 +87,37 @@ class DeleteTest extends BaseTestCase
         $context->method('getRequest')->willReturn($request);
         $context->method('getResultRedirectFactory')->willReturn($resultRedirectFactory);
 
+        $this->messageManager = $this->getMockBuilder(ManagerInterface::class)->disableOriginalConstructor()->getMock();
+        $context->method('getMessageManager')->willReturn($this->messageManager);
+
         $customerSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
         $customerSession->method('getCustomerId')->willReturn(123);
 
+        $this->savedPaymentData = $this->getMockBuilder(SavedPaymentData::class)->disableOriginalConstructor()->getMock();
+        $this->formKeyValidator = $this->getMockBuilder(Validator::class)->disableOriginalConstructor()->getMock();
+
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'context' => $context,
-            'customerSession' => $customerSession
+            'customerSession' => $customerSession,
+            'savedPaymentData' => $this->savedPaymentData,
+            'formKeyValidator' => $this->formKeyValidator
         ]);
     }
 
     public function testExecute()
     {
+        $this->formKeyValidator->method('validate')->willReturn(true);
+        $this->savedPaymentData->expects($this->once())->method('deletePaymentData');
+
+        $result = $this->classToTest->execute();
+        $this->assertInstanceOf(Redirect::class, $result);
+    }
+
+    public function testExecuteInvalidFormKey()
+    {
+        $this->formKeyValidator->method('validate')->willReturn(false);
+        $this->savedPaymentData->expects($this->never())->method('deletePaymentData');
+        $this->messageManager->expects($this->once())->method('addErrorMessage');
 
         $result = $this->classToTest->execute();
         $this->assertInstanceOf(Redirect::class, $result);

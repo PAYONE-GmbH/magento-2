@@ -31,6 +31,9 @@ use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Payone\Core\Helper\Config;
 use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\HTTP\Client\CurlFactory;
+use Magento\Framework\App\DeploymentConfig;
+use Payone\Core\Helper\Toolkit;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
 
@@ -52,22 +55,53 @@ class ForwardingTest extends BaseTestCase
      */
     private $curl;
 
+    /**
+     * @var array
+     */
+    private $forwarding = [['txaction' => ['appointed', 'paid'], 'url' => 'http://testdomain.com', 'timeout' => 0]];
+
     protected function setUp(): void
     {
         $this->objectManager = $this->getObjectManager();
 
-        $forwarding = [['txaction' => ['appointed', 'paid'], 'url' => 'http://testdomain.com', 'timeout' => 0]];
-
         $configHelper = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $configHelper->method('getForwardingUrls')->willReturn($forwarding);
+        $configHelper->method('getForwardingUrls')->willReturnCallback(function () {
+            return $this->forwarding;
+        });
         $configHelper->method('getConfigParam')->willReturn(true);
 
         $this->curl = $this->getMockBuilder(Curl::class)->disableOriginalConstructor()->getMock();
+        $curlFactory = $this->getMockBuilder(CurlFactory::class)->disableOriginalConstructor()->onlyMethods(['create'])->getMock();
+        $curlFactory->method('create')->willReturn($this->curl);
+
+        $deploymentConfig = $this->getMockBuilder(DeploymentConfig::class)->disableOriginalConstructor()->getMock();
+        $deploymentConfig->method('get')->willReturn('0123456789abcdef0123456789abcdef');
+        $toolkitHelper = $this->objectManager->getObject(Toolkit::class, ['deploymentConfig' => $deploymentConfig]);
 
         $this->classToTest = $this->objectManager->getObject(ClassToTest::class, [
             'configHelper' => $configHelper,
-            'curl' => $this->curl
+            'curlFactory' => $curlFactory,
+            'toolkitHelper' => $toolkitHelper
         ]);
+    }
+
+    public function testDecoupleSignature()
+    {
+        $post = ['txid' => '12345', 'txaction' => 'appointed', 'array' => ['te' => 'st']];
+
+        $sentPost = null;
+        $this->curl->method('post')->willReturnCallback(function ($sUrl, $aPost) use (&$sentPost) {
+            $sentPost = $aPost;
+        });
+        $this->classToTest->forwardAsyncRequest($post, 'http://testdomain.com');
+
+        $signature = $sentPost[ClassToTest::DECOUPLE_SIGNATURE_PARAM];
+        unset($sentPost[ClassToTest::DECOUPLE_SIGNATURE_PARAM]);
+
+        $this->assertTrue($this->classToTest->isDecoupleSignatureValid($sentPost, $signature));
+
+        $sentPost['txaction'] = 'paid';
+        $this->assertFalse($this->classToTest->isDecoupleSignatureValid($sentPost, $signature));
     }
 
     public function testHandleForwardings()
@@ -98,5 +132,14 @@ class ForwardingTest extends BaseTestCase
 
         $result = $this->classToTest->forwardAsyncRequest($post, 'http://testdomain.com');
         $this->assertNull($result);
+    }
+
+    public function testForwardAsyncRequestNoForwarding()
+    {
+        $this->forwarding = [];
+        $this->curl->expects($this->never())->method('post');
+
+        $post = ['txid' => '12345', 'txaction' => 'appointed'];
+        $this->classToTest->forwardAsyncRequest($post, 'http://testdomain.com');
     }
 }
