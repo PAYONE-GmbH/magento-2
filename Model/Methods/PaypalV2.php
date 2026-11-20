@@ -64,14 +64,6 @@ class PaypalV2 extends PayoneMethod
     protected $blNeedsRedirectUrls = true;
 
     /**
-     * Determines if the invoice information has to be added
-     * to the authorization-request
-     *
-     * @var bool
-     */
-    protected $blNeedsProductInfo = true;
-
-    /**
      * Return success url for redirect payment types
      *
      * @param  Order $oOrder
@@ -109,6 +101,32 @@ class PaypalV2 extends PayoneMethod
     protected function isPayPalExpress()
     {
         if ($this->checkoutSession->getIsPayonePayPalExpress() === true) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return if invoice data has to be added to the request
+     * Invoice data is only mandatory for PayPal Express, for the normal PayPal flow it is optional
+     *
+     * @return bool
+     */
+    public function needsProductInfo()
+    {
+        if ($this->isPayPalExpress() === true) {
+            return true;
+        }
+
+        $oOrder = null;
+        try {
+            $oOrder = $this->getInfoInstance()->getOrder(); // using getInfoInstance when it is not set will throw an exception
+        } catch (\Exception $exc) {
+            // do nothing
+        }
+
+        // The checkout session is not available for captures and debits in the admin area, so the order is checked instead
+        if ($oOrder instanceof Order && $oOrder->getPayoneExpressType() == $this->getCode()) {
             return true;
         }
         return false;
