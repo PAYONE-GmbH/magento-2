@@ -31,6 +31,7 @@ use Payone\Core\Model\Methods\PaypalV2 as ClassToTest;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment;
 use Magento\Framework\Url;
 use Payone\Core\Test\Unit\BaseTestCase;
 use Payone\Core\Test\Unit\PayoneObjectManager;
@@ -119,6 +120,59 @@ class PaypalV2Test extends BaseTestCase
 
         $result = $this->classToTest->getSuccessUrl($order);
         $this->assertEquals($expected, $result);
+    }
+
+    public function testNeedsProductInfoExpress()
+    {
+        $this->checkoutSessionData['getIsPayonePayPalExpress'] = true;
+
+        $result = $this->classToTest->needsProductInfo();
+        $this->assertTrue($result);
+    }
+
+    public function testNeedsProductInfoNoInfoInstance()
+    {
+        $this->checkoutSessionData['getIsPayonePayPalExpress'] = false;
+
+        $result = $this->classToTest->needsProductInfo();
+        $this->assertFalse($result);
+    }
+
+    public function testNeedsProductInfoExpressOrder()
+    {
+        $this->checkoutSessionData['getIsPayonePayPalExpress'] = false;
+        $this->classToTest->setInfoInstance($this->getPaymentInfoWithOrder('payone_paypalv2'));
+
+        $result = $this->classToTest->needsProductInfo();
+        $this->assertTrue($result);
+    }
+
+    public function testNeedsProductInfoNormalOrder()
+    {
+        $this->checkoutSessionData['getIsPayonePayPalExpress'] = false;
+        $this->classToTest->setInfoInstance($this->getPaymentInfoWithOrder(null));
+
+        $result = $this->classToTest->needsProductInfo();
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @param  string|null $sExpressType
+     * @return Payment
+     */
+    private function getPaymentInfoWithOrder($sExpressType)
+    {
+        $order = $this->getMockBuilder(Order::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['__call'])
+            ->getMock();
+        $order->method('__call')->willReturnCallback(function ($method) use ($sExpressType) {
+            return $method == 'getPayoneExpressType' ? $sExpressType : null;
+        });
+
+        $payment = $this->getMockBuilder(Payment::class)->disableOriginalConstructor()->getMock();
+        $payment->method('getOrder')->willReturn($order);
+        return $payment;
     }
 
     public function testGetReturnedUrl()

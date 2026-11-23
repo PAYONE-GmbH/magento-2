@@ -98,7 +98,8 @@ class PayPalExpress extends Base
                 $this->addParameter('add_paydata[payment_action]', $oPayment->getAuthorizationMode() == PayoneConfig::REQUEST_TYPE_AUTHORIZATION ? 'Capture' : 'Authorize'); # Is either Capture (for Authorization call) or Authorize (for preauthorization call)
             }
 
-            if ($this->apiHelper->isInvoiceDataNeeded($oPayment)) {
+            // setexpresscheckout is always a PayPal Express request and PayPalV2 Express needs the invoice data
+            if ($oPayment instanceof PaypalV2 || $this->apiHelper->isInvoiceDataNeeded($oPayment)) {
                 $this->invoiceGenerator->addProductInfo($this, $oQuote);
             }
         }
